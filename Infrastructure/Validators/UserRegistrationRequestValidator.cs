@@ -12,6 +12,7 @@ namespace Infrastructure.Validators
     {
         public UserRegistrationRequestValidator()
         {
+            //Comentario
             RuleFor(request => request.Password)
                 .NotEmpty()
                 .MinimumLength(8)
