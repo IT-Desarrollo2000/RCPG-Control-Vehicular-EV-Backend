@@ -28,7 +28,7 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        //Creación de perfiles de usuario/conductores
+        //Obtener perfil de usuario por Id
         public async Task<ProfileDto> GetUserProfile(int UserId)
         {
             var profile = await _unitOfWork.UserProfileRepo.Get(filter: p => p.UserId == UserId);
