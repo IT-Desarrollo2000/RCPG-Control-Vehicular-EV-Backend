@@ -1,4 +1,5 @@
 ﻿using Domain.DTOs.Requests;
+using Domain.Enums;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
