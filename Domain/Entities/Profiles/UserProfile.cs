@@ -24,6 +24,14 @@ namespace Domain.Entities.Profiles
         public string? ProfileImagePath { get; set; }
         public DateTime? ProfileImageUploadDate { get; set; }
 
+        //Relacionados al conductor
+        public bool IsVerified { get; set; }
+        public string? DriversLicenceUrl { get; set; }
+        public string? DriversLicencePath { get; set; }
+        public int? LicenceValidityYears { get; set; }
+        public DateTime? LicenceExpeditionDate { get; set; }
+        public DateTime? LicenceExpirationDate { get; set; }
+
         //Unique
         //public string SharingKey { get; set; }
         //public ICollection<UserContact> Contacts { get; set; }
