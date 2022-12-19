@@ -1,4 +1,6 @@
-﻿using Domain.Enums;
+﻿using Domain.Entities.Profiles;
+using Domain.Enums;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +18,13 @@ namespace Domain.DTOs.Requests
         public string LastNameM { get; set; }
         public SocialNetworkType RegistrationType { get; set; }
         public string? FirebaseUID { get; set; }
+
+        //Para registro de conductores
+        public IFormFile DriversLicenceFile { get; set; }
+        public int LicenceValidityYears { get; set; }
+        public DateTime LicenceExpeditionDate { get; set; }
+        public DateTime LicenceExpirationDate { get; set; }
+        public int ProfileId { get; set; }
+        public UserProfile Profile { get; set; }
     }
 }

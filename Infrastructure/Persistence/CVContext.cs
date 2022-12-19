@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Infrastructure.Persistence.Configurations;
+using Domain.Entities.User_Approvals;
 
 namespace Infrastructure.Persistence
 {
@@ -27,6 +28,7 @@ namespace Infrastructure.Persistence
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
         public virtual DbSet<AppUserSocial> AppUserSocials { get; set; }
         public virtual DbSet<UserProfile> UserProfiles { get; set; }
+        public virtual DbSet<UserApproval> UserApprovals { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)

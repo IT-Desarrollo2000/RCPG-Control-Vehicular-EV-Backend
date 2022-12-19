@@ -24,6 +24,7 @@ namespace Infrastructure.Mappings
             CreateMap<AppUser, WebAdmUserRegistrationRequest>();
             CreateMap<AppUserRegistrationRequest, AppUser>();
             CreateMap<AppUser, AppUserRegistrationRequest>();
+
         }
     }
 }

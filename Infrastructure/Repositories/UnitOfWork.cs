@@ -15,7 +15,6 @@ namespace Infrastructure.Repositories
         private readonly CVContext _context;
         private readonly IRepository<RefreshToken> _RefreshTokenRepo;
         private readonly IRepository<UserProfile> _UserProfileRepo;
-
         public UnitOfWork(CVContext context)
         {
             _context = context;
