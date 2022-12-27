@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
+using Domain.Entities.User_Approvals;
 using Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,8 @@ namespace Infrastructure.Repositories
         private readonly CVContext _context;
         private readonly IRepository<RefreshToken> _RefreshTokenRepo;
         private readonly IRepository<UserProfile> _UserProfileRepo;
+        private readonly IRepository<UserApproval> _UserApprovalRepo;
+
         public UnitOfWork(CVContext context)
         {
             _context = context;
@@ -23,6 +26,7 @@ namespace Infrastructure.Repositories
         //DECLARAR REPOSITORIOS
         public IRepository<RefreshToken> RefreshTokenRepo => _RefreshTokenRepo ?? new BaseRepository<RefreshToken>(_context);
         public IRepository<UserProfile> UserProfileRepo => _UserProfileRepo ?? new BaseRepository<UserProfile>(_context);
+        public IRepository<UserApproval> UserApprovalRepo => _UserApprovalRepo ?? new BaseRepository<UserApproval>(_context);
 
 
         //FUNCIONES DEL SERVICIO

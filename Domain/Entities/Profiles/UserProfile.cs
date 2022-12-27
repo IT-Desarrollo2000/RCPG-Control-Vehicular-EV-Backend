@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.Identity;
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,9 +27,12 @@ namespace Domain.Entities.Profiles
 
         //Relacionados al conductor
         public bool IsVerified { get; set; }
-        public string? DriversLicenceUrl { get; set; }
-        public string? DriversLicencePath { get; set; }
+        public string? DriversLicenceFrontUrl { get; set; }
+        public string? DriversLicenceBackUrl { get; set; }
+        public string? DriversLicenceFrontPath { get; set; }
+        public string? DriversLicenceBackPath { get; set; }
         public int? LicenceValidityYears { get; set; }
+        public LicenceType? LicenceType { get; set; }
         public DateTime? LicenceExpeditionDate { get; set; }
         public DateTime? LicenceExpirationDate { get; set; }
 
