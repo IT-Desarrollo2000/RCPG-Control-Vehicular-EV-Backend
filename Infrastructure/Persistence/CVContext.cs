@@ -1,4 +1,4 @@
-﻿using Domain.Entities.Company;
+using Domain.Entities.Company;
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
@@ -38,6 +38,7 @@ namespace Infrastructure.Persistence
 
             builder.ApplyConfiguration(new AppUserConfiguration());
             builder.ApplyConfiguration(new AppRoleConfiguration());
+            builder.ApplyConfiguration(new UserApprovalConfiguration());
             builder.ApplyConfiguration(new CompanyDepartamentConfiguration());
         }
     }

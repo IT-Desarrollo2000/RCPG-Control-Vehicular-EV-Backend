@@ -1,13 +1,20 @@
-﻿using Domain.Entities.Identity;
+using Domain.Entities.Identity;
+using Domain.Entities.User_Approvals;
+using Domain.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Domain.Entities.Profiles
 {
     public class UserProfile : BaseEntity
     {
-        //public userprofile()
-        //{
-        //    this.contacts = new hashset<usercontact>();
-        //}
+        public UserProfile()
+        {
+            this.Approvals = new HashSet<UserApproval>();
+        }
 
         public int UserId { get; set; }
         public virtual AppUser User { get; set; }
@@ -20,10 +27,14 @@ namespace Domain.Entities.Profiles
         public DateTime? ProfileImageUploadDate { get; set; }
 
         //Relacionados al conductor
+        public virtual ICollection<UserApproval> Approvals { get; set; }
         public bool IsVerified { get; set; }
-        public string? DriversLicenceUrl { get; set; }
-        public string? DriversLicencePath { get; set; }
+        public string? DriversLicenceFrontUrl { get; set; }
+        public string? DriversLicenceBackUrl { get; set; }
+        public string? DriversLicenceFrontPath { get; set; }
+        public string? DriversLicenceBackPath { get; set; }
         public int? LicenceValidityYears { get; set; }
+        public LicenceType? LicenceType { get; set; }
         public DateTime? LicenceExpeditionDate { get; set; }
         public DateTime? LicenceExpirationDate { get; set; }
 

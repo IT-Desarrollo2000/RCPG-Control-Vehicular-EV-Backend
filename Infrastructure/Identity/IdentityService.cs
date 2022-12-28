@@ -19,13 +19,15 @@ namespace Infrastructure.Identity
         private readonly IUserClaimsPrincipalFactory<AppUser> _userClaimsPrincipalFactory;
         private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
+        private readonly IUserApprovalServices _userApprovalServices;
 
         public IdentityService(
             UserManager<AppUser> userManager, RoleManager<AppRole> roleManager,
             IUserClaimsPrincipalFactory<AppUser> userClaimsPrincipalFactory,
             IAuthorizationService authorizationService,
             IMapper mapper,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, 
+            IUserApprovalServices userApprovalServices)
         {
             _userManager = userManager;
             _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
@@ -33,6 +35,7 @@ namespace Infrastructure.Identity
             _mapper = mapper;
             _roleManager = roleManager;
             _unitOfWork = unitOfWork;
+            _userApprovalServices = userApprovalServices;
         }
         #region ..::Registro y Autenticación::..
         public async Task<AuthResult> LoginWebAdmUser(AppUser user, string password)
@@ -85,18 +88,55 @@ namespace Infrastructure.Identity
             }
             else
             {
-                var signedIn = await _userManager.CheckPasswordAsync(user, password);
 
-                var response = new AuthResult
+                //Revisar que el usuario este verificado
+                var query = await _unitOfWork.UserProfileRepo.Get(p => p.UserId == user.Id);
+                var profile = query.FirstOrDefault();
+
+                if (profile == null)
                 {
-                    Success = signedIn,
-                    Errors = new List<string>()
-                {
-                    "Usuario y/o contraseña incorrectos"
+                    var responseP = new AuthResult
+                    {
+                        Success = false,
+                        Errors = new List<string>()
+                        {
+                            "El usuario no cuenta con un perfil"
+                        }
+                    };
+
+                    return responseP;
                 }
-                };
+                else
+                {
+                    if(!profile.IsVerified)
+                    {
+                        var responseV = new AuthResult
+                        {
+                            Success = false,
+                            Errors = new List<string>()
+                        {
+                            "El usuario no ha sido verificado por la administración"
+                        }
+                        };
 
-                return response;
+                        return responseV;
+                    } 
+                    else
+                    {
+                        var signedIn = await _userManager.CheckPasswordAsync(user, password);
+
+                        var response = new AuthResult
+                        {
+                            Success = signedIn,
+                            Errors = new List<string>()
+                            {
+                                "Usuario y/o contraseña incorrectos"
+                            }
+                        };
+
+                        return response;
+                    }
+                }
             }
         }
 
@@ -147,6 +187,12 @@ namespace Infrastructure.Identity
 
         public async Task<AppUserRegistrationResponse> CreateAppUserAsync(AppUserRegistrationRequest user)
         {
+            //Validar archivos
+            if(!user.DriversLicenceFrontFile.ContentType.Contains("image") || user.DriversLicenceBackFile.ContentType.Contains("image"))
+            {
+                return null;
+            }
+
             var newUser = _mapper.Map<AppUser>(user);
 
             newUser.UserName = $"{Guid.NewGuid()}-{DateTime.UtcNow.Day}{DateTime.UtcNow.Month}{DateTime.UtcNow.Year}";
@@ -179,18 +225,33 @@ namespace Infrastructure.Identity
             var appUser = await _userManager.FindByNameAsync(newUser.UserName);
             await _userManager.AddToRoleAsync(appUser, "AppUser");
 
+
+            //Crear perfil nuevo
             var newProfile = new UserProfile()
             {
                 User = appUser,
                 FullName = $"{user.FirstName} {user.LastNameP} {user.LastNameM}",
                 Name = user.FirstName,
                 SurnameP = user.LastNameP,
-                SurnameM = user.LastNameM
+                SurnameM = user.LastNameM,
+                IsVerified = false
             };
 
             await _unitOfWork.UserProfileRepo.Add(newProfile);
             await _unitOfWork.SaveChangesAsync();
 
+            //Crear solicitud de aprobación
+            var request = _mapper.Map<ApprovalCreationRequest>(user);
+            request.ProfileId = newProfile.Id;
+
+            var approval = await _userApprovalServices.CreateApproval(request);
+
+            if (!approval.success)
+            {
+                return null;
+            }
+
+            //Mapear resultado
             var dto = _mapper.Map<ProfileDto>(newProfile);
             return new AppUserRegistrationResponse()
             {
@@ -323,6 +384,9 @@ namespace Infrastructure.Identity
                     case AdminRoleType.WebAdm:
                         await _userManager.AddToRoleAsync(adminUser, "AdminUser");
                         break;
+                    case AdminRoleType.Supervisor:
+                        await _userManager.AddToRoleAsync(adminUser, "Supervisor");
+                        break;
                     default:
                         break;
                 }
@@ -342,6 +406,9 @@ namespace Infrastructure.Identity
                     case AdminRoleType.WebAdm:
                         await _userManager.RemoveFromRoleAsync(user, "AdminUser");
                         break;
+                    case AdminRoleType.Supervisor:
+                        await _userManager.RemoveFromRoleAsync(user, "Supervisor");
+                        break;
                     default:
                         break;
                 }
@@ -360,6 +427,9 @@ namespace Infrastructure.Identity
                 {
                     case AdminRoleType.WebAdm:
                         await _userManager.AddToRoleAsync(user, "AdminUser");
+                        break;
+                    case AdminRoleType.Supervisor:
+                        await _userManager.AddToRoleAsync(user, "Supervisor");
                         break;
                     default:
                         break;
@@ -393,6 +463,9 @@ namespace Infrastructure.Identity
             {
                 case AdminRoleType.WebAdm:
                     adminRole = await _roleManager.FindByNameAsync("AdminUser");
+                    break;
+                case AdminRoleType.Supervisor:
+                    adminRole = await _roleManager.FindByNameAsync("Supervisor");
                     break;
                 default:
                     break;
