@@ -41,6 +41,11 @@ namespace Infrastructure.Persistence
                 await roleManager.CreateAsync(new AppRole { Name = "AppUser" });
             }
 
+            if (!await roleManager.RoleExistsAsync("Supervisor"))
+            {
+                await roleManager.CreateAsync(new AppRole { Name = "Supervisor" });
+            }
+
             var adminUser = await userManager.FindByNameAsync("CVAdmin");
             await userManager.AddToRoleAsync(adminUser, "Administrator");
         }

@@ -307,8 +307,25 @@ namespace Application.Services
 
             try
             {
+                var approval = await _unitOfWork.UserApprovalRepo.GetById(ApprovalId);
+                if (approval == null)
+                {
+                    response.success = false;
+                    response.Data = false;
+                    response.AddError("Not Found","No se encontro un elemento con el Id especificado", 2);
 
-            } catch(Exception ex)
+                    return response;
+                }
+
+                await _unitOfWork.UserApprovalRepo.Delete(approval.Id);
+                await _unitOfWork.SaveChangesAsync();
+
+                response.success = true;
+                response.Data = true;
+
+                return response;
+            } 
+            catch(Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);

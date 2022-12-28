@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.Identity;
+using Domain.Entities.User_Approvals;
 using Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,10 @@ namespace Domain.Entities.Profiles
 {
     public class UserProfile : BaseEntity
     {
-        //public userprofile()
-        //{
-        //    this.contacts = new hashset<usercontact>();
-        //}
+        public UserProfile()
+        {
+            this.Approvals = new HashSet<UserApproval>();
+        }
 
         public int UserId { get; set; }
         public virtual AppUser User { get; set; }
@@ -26,6 +27,7 @@ namespace Domain.Entities.Profiles
         public DateTime? ProfileImageUploadDate { get; set; }
 
         //Relacionados al conductor
+        public virtual ICollection<UserApproval> Approvals { get; set; }
         public bool IsVerified { get; set; }
         public string? DriversLicenceFrontUrl { get; set; }
         public string? DriversLicenceBackUrl { get; set; }

@@ -26,6 +26,5 @@ namespace Domain.DTOs.Requests
         public int LicenceValidityYears { get; set; }
         public DateTime LicenceExpeditionDate { get; set; }
         public DateTime LicenceExpirationDate { get; set; }
-        public int ProfileId { get; set; }
     }
 }

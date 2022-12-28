@@ -22,6 +22,6 @@ namespace Domain.Entities.User_Approvals
         public DateTime LicenceExpeditionDate { get; set; }
         public DateTime LicenceExpirationDate { get; set; }
         public int ProfileId { get; set; }
-        public UserProfile Profile { get; set; }
+        public virtual UserProfile Profile { get; set; }
     }
 }
