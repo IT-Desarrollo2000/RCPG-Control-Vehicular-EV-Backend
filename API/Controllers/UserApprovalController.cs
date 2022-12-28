@@ -28,23 +28,11 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<UserApproval>))]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [HttpGet]
-        [Route("")]
-        public async Task<IActionResult> GetApprovals(UserApprovalFilter filter)
-        {
-            var approval = await _approvalServices.GetApprovals(filter);
-
-            return Ok(approval);
-        }
-
-        [Authorize(Roles = "Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<UserApproval>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
-        [Route("GetById")]
-        public async Task<IActionResult> GetUserProfile([FromQuery]UserApprovalFilter filter)
+        [Route("")]
+        public async Task<IActionResult> GetApprovals([FromQuery]UserApprovalFilter filter)
         {
             var approval = await _approvalServices.GetApprovals(filter);
 
@@ -68,6 +56,20 @@ namespace API.Controllers
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
 
             return Ok(response);
+        }
+
+        [Authorize(Roles = "Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<UserApproval>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetById")]
+        public async Task<IActionResult> GetApprovalById(int ApprovalId)
+        {
+            var approval = await _approvalServices.GetApprovalById(ApprovalId);
+
+            if (approval == null) return NotFound();
+
+            return Ok(approval);
         }
 
         [Authorize(Roles = "Administrator, AdminUser")]

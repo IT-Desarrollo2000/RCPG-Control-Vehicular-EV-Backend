@@ -9,7 +9,7 @@ using System.Net;
 
 namespace API.Controllers
 {
-    [Route("api/v0/company")]
+    [Route("api/company")]
     [ApiController]
     [AllowAnonymous]
     public class CompanyController : ControllerBase
