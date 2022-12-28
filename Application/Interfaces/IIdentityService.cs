@@ -3,11 +3,6 @@ using Domain.DTOs.Requests;
 using Domain.Entities.Identity;
 using Domain.Enums;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {

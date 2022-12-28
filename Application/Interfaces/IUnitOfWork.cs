@@ -1,10 +1,7 @@
-﻿using Domain.Entities.Identity;
+﻿using Domain.Entities.Company;
+using Domain.Entities.Departament;
+using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
@@ -12,6 +9,8 @@ namespace Application.Interfaces
     {
         IRepository<RefreshToken> RefreshTokenRepo { get; }
         IRepository<UserProfile> UserProfileRepo { get; }
+        IRepository<Companies> Companies { get; }
+        IRepository<Departaments> Departaments { get; }
 
         void Dispose();
         void SaveChanges();

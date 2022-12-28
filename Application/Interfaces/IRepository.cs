@@ -1,12 +1,7 @@
 ﻿using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Application.Interfaces 
+namespace Application.Interfaces
 {
     public interface IRepository<T> where T : BaseEntity
     {
@@ -19,5 +14,6 @@ namespace Application.Interfaces
         Task Add(T entity);
         Task Update(T entity);
         Task<bool> Delete(int Id);
+        Task ToListAsync();
     }
 }

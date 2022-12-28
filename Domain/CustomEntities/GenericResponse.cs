@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.CustomEntities
+﻿namespace Domain.CustomEntities
 {
     public class GenericResponse<T>
     {
@@ -31,5 +25,6 @@ namespace Domain.CustomEntities
             errors.Add(errorTitle, errorDescription);
             ErrorCode = errorCode ?? 0;
         }
+
     }
 }

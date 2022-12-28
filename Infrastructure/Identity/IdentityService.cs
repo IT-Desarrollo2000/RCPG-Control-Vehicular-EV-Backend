@@ -3,20 +3,15 @@ using AutoMapper;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Identity;
+using Domain.Entities.Profiles;
+using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Domain.Entities.Profiles;
 
 namespace Infrastructure.Identity
 {
-    public class IdentityService : IIdentityService 
+    public class IdentityService : IIdentityService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<AppUser> _userManager;
