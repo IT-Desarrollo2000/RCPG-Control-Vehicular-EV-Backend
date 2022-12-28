@@ -1,20 +1,20 @@
-﻿using Azure.Storage.Blobs;
+﻿using Application.Interfaces;
+using Azure.Storage.Blobs;
+using Domain.CustomEntities;
+using Domain.Entities.Identity;
+using FluentValidation;
 using FluentValidation.AspNetCore;
+using Infrastructure.BlobStorage;
+using Infrastructure.Filters;
+using Infrastructure.Identity;
+using Infrastructure.Persistence;
+using Infrastructure.Repositories;
+using Infrastructure.Validators;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json.Serialization;
-using Infrastructure.Filters;
-using Application.Interfaces;
-using Infrastructure.BlobStorage;
-using Domain.CustomEntities;
-using Domain.Entities.Identity;
-using Infrastructure.Persistence;
-using Infrastructure.Repositories;
-using Infrastructure.Identity;
-using Infrastructure.Validators;
-using FluentValidation;
 
 namespace Infrastructure
 {

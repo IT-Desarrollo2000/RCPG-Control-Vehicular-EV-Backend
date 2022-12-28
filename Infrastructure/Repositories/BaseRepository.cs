@@ -2,13 +2,7 @@
 using Domain.Entities;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -82,6 +76,11 @@ namespace Infrastructure.Repositories
 
             _entities.Update(entity);
             await _context.SaveChangesAsync();
+        }
+
+        public Task ToListAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }
