@@ -1,15 +1,12 @@
-﻿using Domain.Entities.Identity;
+using Domain.Entities.Company;
+using Domain.Entities.Departament;
+using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Infrastructure.Persistence.Configurations;
 using Domain.Entities.User_Approvals;
+using Infrastructure.Persistence.Configurations;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence
 {
@@ -30,6 +27,10 @@ namespace Infrastructure.Persistence
         public virtual DbSet<UserProfile> UserProfiles { get; set; }
         public virtual DbSet<UserApproval> UserApprovals { get; set; }
 
+        //Companies
+        public virtual DbSet<Companies> Companies { get; set; }
+        //Departamens
+        public virtual DbSet<Departaments> Departaments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -38,6 +39,7 @@ namespace Infrastructure.Persistence
             builder.ApplyConfiguration(new AppUserConfiguration());
             builder.ApplyConfiguration(new AppRoleConfiguration());
             builder.ApplyConfiguration(new UserApprovalConfiguration());
+            builder.ApplyConfiguration(new CompanyDepartamentConfiguration());
         }
     }
 }

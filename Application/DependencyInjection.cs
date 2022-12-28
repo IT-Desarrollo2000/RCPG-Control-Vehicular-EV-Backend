@@ -5,11 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Application
 {
@@ -22,6 +18,8 @@ namespace Application
             services.AddScoped<ITokenService, TokenService>();
             services.AddTransient<IProfileServices, ProfileServices>();
             services.AddTransient<IUserApprovalServices, UserApprovalServices>();
+            services.AddTransient<ICompanyServices, CompanyServices>();
+            services.AddTransient<IDepartamentServices, DepartamentServices>();
 
             //Parametros para validación de tokens
             var tokenValidationParameters = new TokenValidationParameters

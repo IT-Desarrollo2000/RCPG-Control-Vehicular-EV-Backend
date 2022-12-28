@@ -1,4 +1,6 @@
-﻿using Domain.Entities.Identity;
+﻿using Domain.Entities.Company;
+using Domain.Entities.Departament;
+using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
 using Domain.Entities.User_Approvals;
 using System;
@@ -14,7 +16,9 @@ namespace Application.Interfaces
         IRepository<RefreshToken> RefreshTokenRepo { get; }
         IRepository<UserProfile> UserProfileRepo { get; }
         IRepository<UserApproval> UserApprovalRepo { get; }
-
+        IRepository<Companies> Companies { get; }
+        IRepository<Departaments> Departaments { get; }
+        
         void Dispose();
         void SaveChanges();
         Task SaveChangesAsync();

@@ -1,4 +1,4 @@
-﻿using Domain.Entities.Identity;
+using Domain.Entities.Identity;
 using Domain.Entities.User_Approvals;
 using Domain.Enums;
 using System;

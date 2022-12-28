@@ -1,13 +1,10 @@
-﻿using Application.Interfaces;
+using Application.Interfaces;
+using Domain.Entities.Company;
+using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
 using Domain.Entities.User_Approvals;
 using Infrastructure.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -17,7 +14,9 @@ namespace Infrastructure.Repositories
         private readonly IRepository<RefreshToken> _RefreshTokenRepo;
         private readonly IRepository<UserProfile> _UserProfileRepo;
         private readonly IRepository<UserApproval> _UserApprovalRepo;
-
+        private readonly IRepository<Companies> _Companies;
+        private readonly IRepository<Departaments> _Departaments;
+        
         public UnitOfWork(CVContext context)
         {
             _context = context;
@@ -27,7 +26,8 @@ namespace Infrastructure.Repositories
         public IRepository<RefreshToken> RefreshTokenRepo => _RefreshTokenRepo ?? new BaseRepository<RefreshToken>(_context);
         public IRepository<UserProfile> UserProfileRepo => _UserProfileRepo ?? new BaseRepository<UserProfile>(_context);
         public IRepository<UserApproval> UserApprovalRepo => _UserApprovalRepo ?? new BaseRepository<UserApproval>(_context);
-
+        public IRepository<Companies> Companies => _Companies ?? new BaseRepository<Companies>(_context);
+        public IRepository<Departaments> Departaments => _Departaments ?? new BaseRepository<Departaments>(_context);
 
         //FUNCIONES DEL SERVICIO
         public void Dispose()

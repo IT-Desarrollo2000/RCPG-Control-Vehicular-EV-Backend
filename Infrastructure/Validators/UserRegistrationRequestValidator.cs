@@ -1,11 +1,5 @@
 ﻿using Domain.DTOs.Requests;
-using Domain.Enums;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Validators
 {
@@ -13,6 +7,7 @@ namespace Infrastructure.Validators
     {
         public UserRegistrationRequestValidator()
         {
+            //Comentario
             RuleFor(request => request.Password)
                 .NotEmpty()
                 .MinimumLength(8)
