@@ -1,10 +1,16 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Company;
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
+using Domain.Entities.User_Approvals;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Mappings
 {
@@ -22,6 +28,10 @@ namespace Infrastructure.Mappings
             CreateMap<AppUserRegistrationRequest, AppUser>();
             CreateMap<AppUser, AppUserRegistrationRequest>();
 
+            //Approval Mapping
+            CreateMap<UserApproval, UserProfile>();
+            CreateMap<AppUserRegistrationRequest, ApprovalCreationRequest>();
+            
             //Company
             CreateMap<Companies, CompanyRequest>();
             CreateMap<CompanyRequest, Companies>();

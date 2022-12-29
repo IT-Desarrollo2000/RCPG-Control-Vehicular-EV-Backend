@@ -41,6 +41,7 @@ namespace Infrastructure
             {
                 return new BlobServiceClient(configuration.GetConnectionString("AzureBlobStorage"));
             });
+
             services.AddScoped<IBlobStorageService, BlobStorageService>();
             services.Configure<BlobContainers>(configuration.GetSection("BlobContainers"));
 
@@ -74,7 +75,7 @@ namespace Infrastructure
             //Loop Reference Handler
             services.AddControllers().AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 //options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
             });

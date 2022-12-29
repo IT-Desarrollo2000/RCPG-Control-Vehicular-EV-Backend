@@ -26,7 +26,7 @@ namespace Application.Services
         //Obtener perfil de usuario por Id
         public async Task<ProfileDto> GetUserProfile(int UserId)
         {
-            var profile = await _unitOfWork.UserProfileRepo.Get(filter: p => p.UserId == UserId);
+            var profile = await _unitOfWork.UserProfileRepo.Get(filter: p => p.UserId == UserId, includeProperties: "Department");
             var result = profile.FirstOrDefault();
             var profileDto = _mapper.Map<ProfileDto>(result);
 
@@ -38,7 +38,7 @@ namespace Application.Services
 
         public async Task<ProfileDto> GetCurrentProfile(AppUser user)
         {
-            var profile = await _unitOfWork.UserProfileRepo.Get(filter: p => p.UserId == user.Id);
+            var profile = await _unitOfWork.UserProfileRepo.Get(filter: p => p.UserId == user.Id, includeProperties: "Department");
             var result = profile.FirstOrDefault();
             var profileDto = _mapper.Map<ProfileDto>(result);
 
