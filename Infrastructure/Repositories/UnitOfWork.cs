@@ -3,6 +3,7 @@ using Domain.Entities.Company;
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
+using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
 using Infrastructure.Persistence;
 
@@ -16,6 +17,7 @@ namespace Infrastructure.Repositories
         private readonly IRepository<UserApproval> _UserApprovalRepo;
         private readonly IRepository<Companies> _Companies;
         private readonly IRepository<Departaments> _Departaments;
+        private readonly IRepository<Vehicle> _VehicleRepo;
         
         public UnitOfWork(CVContext context)
         {
@@ -28,6 +30,7 @@ namespace Infrastructure.Repositories
         public IRepository<UserApproval> UserApprovalRepo => _UserApprovalRepo ?? new BaseRepository<UserApproval>(_context);
         public IRepository<Companies> Companies => _Companies ?? new BaseRepository<Companies>(_context);
         public IRepository<Departaments> Departaments => _Departaments ?? new BaseRepository<Departaments>(_context);
+        public IRepository<Vehicle> VehicleRepo => _VehicleRepo ?? new BaseRepository<Vehicle>(_context);
 
         //FUNCIONES DEL SERVICIO
         public void Dispose()

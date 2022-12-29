@@ -2,6 +2,7 @@
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
+using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,8 @@ namespace Application.Interfaces
         IRepository<UserApproval> UserApprovalRepo { get; }
         IRepository<Companies> Companies { get; }
         IRepository<Departaments> Departaments { get; }
-        
+        IRepository<Vehicle> VehicleRepo { get; }
+
         void Dispose();
         void SaveChanges();
         Task SaveChangesAsync();
