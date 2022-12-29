@@ -2,6 +2,7 @@ using Domain.Entities.Company;
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
+using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
 using Infrastructure.Persistence.Configurations;
 using Microsoft.AspNetCore.Identity;
@@ -33,6 +34,7 @@ namespace Infrastructure.Persistence
 
         //User Approvals
         public virtual DbSet<UserApproval> UserApprovals { get; set; }
+        public virtual DbSet<Vehicle> Vehicles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
