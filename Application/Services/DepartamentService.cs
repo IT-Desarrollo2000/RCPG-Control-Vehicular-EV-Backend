@@ -35,8 +35,9 @@ namespace Application.Services
         public async Task<GenericResponse<DepartamentDto>> GetDepartamentById(int Id)
         {
             GenericResponse<DepartamentDto> response = new GenericResponse<DepartamentDto>();
-            var entidad = await _unitOfWork.Departaments.GetById(Id);
-            var DepartamentDTO = _mapper.Map<DepartamentDto>(entidad);
+            var entidad = await _unitOfWork.Departaments.Get(p => p.Id == Id, includeProperties: "Company");
+            var result =  entidad.FirstOrDefault();
+            var DepartamentDTO = _mapper.Map<DepartamentDto>(result);
             response.success = true;
             response.Data = DepartamentDTO;
             return response;
@@ -46,6 +47,17 @@ namespace Application.Services
         public async Task<GenericResponse<DepartamentDto>> PostDepartament([FromBody] DepartamentRequest departamentRequest)
         {
             GenericResponse<DepartamentDto> response = new GenericResponse<DepartamentDto>();
+            //Validacion si existe compañia
+            var existeCompany = await _unitOfWork.Companies.Get(c => c.Id == departamentRequest.CompanyId);
+            var resultCompany = existeCompany.FirstOrDefault();
+            if (resultCompany == null)
+            {
+                response.success = false;
+                response.AddError("No existe Company", $"No existe Company con el CompanyId {departamentRequest.CompanyId} solicitado", 1);
+
+                return response;
+            }
+
             var entidad = _mapper.Map<Departaments>(departamentRequest);
             await _unitOfWork.Departaments.Add(entidad);
             await _unitOfWork.SaveChangesAsync();
@@ -62,14 +74,22 @@ namespace Application.Services
             var profile = await _unitOfWork.Departaments.Get(p => p.Id == id);
             var result = profile.FirstOrDefault();
             if (result == null) return null;
-            if (result.CompanyId == null) return null;
 
 
-            //var existe = await _unitOfWork.Companies.Get(c)
+            var existeCompany = await _unitOfWork.Companies.Get(c => c.Id == departamentRequest.CompanyId);
+            var resultCompany = existeCompany.FirstOrDefault();
+            if(resultCompany == null)
+            {
+                response.success = false;
+                response.AddError("No existe Company", $"No existe Company con el CompanyId { departamentRequest.CompanyId } solicitado", 1);
+
+                return response;
+            }
 
 
             result.Name = departamentRequest.name;
             result.CompanyId = departamentRequest.CompanyId;
+
             await _unitOfWork.Departaments.Update(result);
             await _unitOfWork.SaveChangesAsync();
             var DepartamentDTP = _mapper.Map<DepartamentDto>(result);
