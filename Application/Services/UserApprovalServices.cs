@@ -250,6 +250,16 @@ namespace Application.Services
                 var result = query.FirstOrDefault();
                 if (result == null) return null;
 
+                //Revisar que el departamento especificado exista
+                var department = await _unitOfWork.Departaments.GetById(request.DepartmentId);
+                if(department == null)
+                {
+                    response.success = false;
+                    response.AddError("Not found", $"El Id {request.DepartmentId} de departamento especificado no existe");
+
+                    return response;
+                }
+
                 if (request.IsApproved)
                 {
                     //obtener el perfil a aprobar
@@ -263,6 +273,9 @@ namespace Application.Services
                     result.ApprovalDate = DateTime.UtcNow;
                     result.Status = Domain.Enums.ApprovalStatus.APROVADO;
                     result.Comment = request.Comment;
+
+                    //Asignar un departamento al usuario
+                    profile.Department = department;
 
                     //Guardar los cambios
                     await _unitOfWork.UserProfileRepo.Update(profile);
