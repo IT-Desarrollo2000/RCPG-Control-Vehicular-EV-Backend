@@ -1,3 +1,4 @@
+using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.User_Approvals;
 using Domain.Enums;
@@ -37,6 +38,9 @@ namespace Domain.Entities.Profiles
         public LicenceType? LicenceType { get; set; }
         public DateTime? LicenceExpeditionDate { get; set; }
         public DateTime? LicenceExpirationDate { get; set; }
+        public int? DepartmentId { get; set; }
+        public virtual Departaments? Department { get; set; }
+        
 
         //Unique
         //public string SharingKey { get; set; }
