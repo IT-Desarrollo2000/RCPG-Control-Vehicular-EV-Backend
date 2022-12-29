@@ -11,7 +11,6 @@ namespace API.Controllers
 {
     [Route("api/v0/company")]
     [ApiController]
-    [AllowAnonymous]
     public class CompanyController : ControllerBase
     {
         private readonly IMapper mapper;
@@ -24,10 +23,10 @@ namespace API.Controllers
         }
 
         //GETALL
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(CompanyDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
-        [AllowAnonymous]
         public async Task<ActionResult<List<CompanyDto>>> GetAll()
         {
             var users = await _companyServices.GetCompanyAll();
@@ -43,6 +42,7 @@ namespace API.Controllers
         }
 
         //GETBYID
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(CompanyDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet("{id:int}", Name = "obtenerGenero")]
@@ -52,7 +52,7 @@ namespace API.Controllers
 
             if(entidad.Data == null) 
             {
-                return NotFound("No existe compañia con este Id");
+                return NotFound($"No existe compañia con este Id { id }");
             }
             if (entidad.success)
             {
@@ -67,6 +67,7 @@ namespace API.Controllers
         }
 
         //POST
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(CompanyDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
@@ -85,6 +86,7 @@ namespace API.Controllers
         }
 
         //PUT
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(CompanyDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
@@ -110,6 +112,7 @@ namespace API.Controllers
         }
 
         //Delete
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(CompanyDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]

@@ -10,7 +10,6 @@ namespace API.Controllers
 {
     [Route("api/v0/departament")]
     [ApiController]
-    [AllowAnonymous]
     public class DepartamentController : ControllerBase
     {
         private readonly IDepartamentServices _departamentServices;
@@ -21,10 +20,10 @@ namespace API.Controllers
         }
 
         //GETALL
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(DepartamentDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
-        [AllowAnonymous]
         public async Task<ActionResult<List<DepartamentDto>>> GetAll()
         {
             var users = await _departamentServices.GetDepartamentALL();
@@ -40,6 +39,7 @@ namespace API.Controllers
         }
 
         //GETBYID
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(DepartamentDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet("{id:int}", Name = "obtenerDepartament")]
@@ -48,7 +48,7 @@ namespace API.Controllers
             var entidad = await _departamentServices.GetDepartamentById(id);
             if (entidad.Data == null)
             {
-                return NotFound("No existe Departamento con este Id");
+                return NotFound($"No existe Departamento con este Id { id }");
             }
             if (entidad.success)
             {
@@ -63,12 +63,23 @@ namespace API.Controllers
         }
 
         //POST
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(DepartamentDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         public async Task<ActionResult<DepartamentDto>> Post([FromBody] DepartamentRequest departamentRequest)
         {
             var entidad = await _departamentServices.PostDepartament(departamentRequest);
+            if (entidad.Data == null)
+            {
+                return NotFound($"No existe Departamento con el DepartamentoId {departamentRequest.CompanyId} para Actualizar Departamento");
+            }
+
+            if(departamentRequest.name == null && departamentRequest.CompanyId == null)
+            {
+                return BadRequest("Los campos Name y CompanyId no pueden ir vacios");
+            }
+
             if (entidad.success)
             {
                 return Ok(entidad);
@@ -81,6 +92,7 @@ namespace API.Controllers
         }
 
         //PUT
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(DepartamentDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
@@ -93,12 +105,12 @@ namespace API.Controllers
 
             if(entidad == null)
             {
-                return NotFound($"No existe Departamento con el DepartamentoId {id} para Actualizar");
+                return NotFound($"No existe Departamento con el DepartamentoId {id} para Actualizar Departamento");
             }
 
-            if(departamentRequest.CompanyId == null)
+            if(entidad.Data == null)
             {
-                return NotFound();
+                return NotFound($"No existe Departamento con el DepartamentoId { departamentRequest.CompanyId } para Actualizar Departamento");
             }
 
             if (entidad.success)
@@ -108,11 +120,12 @@ namespace API.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest($"No se pudo agregar el departamento");
             }
         }
 
         //Delete
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(DepartamentDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
@@ -125,6 +138,7 @@ namespace API.Controllers
             {
                 return NotFound($"No existe Departamento con el Id {id} para borrar");
             }
+
             if (existe.success)
             {
                 return Ok(existe);
