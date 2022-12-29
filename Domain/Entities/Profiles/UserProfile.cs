@@ -38,8 +38,8 @@ namespace Domain.Entities.Profiles
         public LicenceType? LicenceType { get; set; }
         public DateTime? LicenceExpeditionDate { get; set; }
         public DateTime? LicenceExpirationDate { get; set; }
-        public int DepartmentId { get; set; }
-        public virtual Departaments Department { get; set; }
+        public int? DepartmentId { get; set; }
+        public virtual Departaments? Department { get; set; }
         
 
         //Unique
