@@ -8,7 +8,7 @@ using System.Net;
 
 namespace API.Controllers
 {
-    [Route("api/v0/departament")]
+    [Route("api/departament")]
     [ApiController]
     public class DepartamentController : ControllerBase
     {

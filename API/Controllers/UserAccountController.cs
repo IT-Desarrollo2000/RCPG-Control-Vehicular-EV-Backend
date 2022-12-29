@@ -147,7 +147,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("App/Register")]
-        public async Task<ActionResult> RegisterAppUser([FromBody] AppUserRegistrationRequest user)
+        public async Task<ActionResult> RegisterAppUser([FromForm] AppUserRegistrationRequest user)
         {
             var existingUser = await _identityService.GetAppUserByPhoneEmail(user.Email);
             if (existingUser != null)
@@ -161,6 +161,8 @@ namespace API.Controllers
             }
 
             var isCreated = await _identityService.CreateAppUserAsync(user);
+
+            if (isCreated == null) return BadRequest("Error al crear el usuario");
 
             if (isCreated.Result.Succeeded)
             {
@@ -299,7 +301,7 @@ namespace API.Controllers
             return Ok(users);
         }
 
-        [Authorize(Roles = "Administrator")]
+        /*[Authorize(Roles = "Administrator")]
         [HttpPost]
         [Route("Dummy/Register")]
         public async Task<ActionResult> RegisterDummyAppUser([FromBody] AppUserRegistrationRequest user)
@@ -362,7 +364,7 @@ namespace API.Controllers
 
                 return BadRequest(response);
             }
-        }
+        }*/
         #endregion
     }
 }

@@ -1,4 +1,4 @@
-﻿using Domain.Entities.Company;
+using Domain.Entities.Company;
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
@@ -25,12 +25,14 @@ namespace Infrastructure.Persistence
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
         public virtual DbSet<AppUserSocial> AppUserSocials { get; set; }
         public virtual DbSet<UserProfile> UserProfiles { get; set; }
-        public virtual DbSet<UserApproval> UserApprovals { get; set; }
 
         //Companies
         public virtual DbSet<Companies> Companies { get; set; }
         //Departamens
         public virtual DbSet<Departaments> Departaments { get; set; }
+
+        //User Approvals
+        public virtual DbSet<UserApproval> UserApprovals { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -38,6 +40,7 @@ namespace Infrastructure.Persistence
 
             builder.ApplyConfiguration(new AppUserConfiguration());
             builder.ApplyConfiguration(new AppRoleConfiguration());
+            builder.ApplyConfiguration(new UserApprovalConfiguration());
             builder.ApplyConfiguration(new CompanyDepartamentConfiguration());
         }
     }

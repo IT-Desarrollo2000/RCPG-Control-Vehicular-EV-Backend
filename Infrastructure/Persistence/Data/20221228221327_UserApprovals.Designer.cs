@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20221228221327_UserApprovals")]
+    partial class UserApprovals
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -282,9 +285,6 @@ namespace Infrastructure.Persistence.Data
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("DriversLicenceBackPath")
                         .HasColumnType("nvarchar(max)");
 
@@ -344,8 +344,6 @@ namespace Infrastructure.Persistence.Data
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -556,17 +554,11 @@ namespace Infrastructure.Persistence.Data
 
             modelBuilder.Entity("Domain.Entities.Profiles.UserProfile", b =>
                 {
-                    b.HasOne("Domain.Entities.Departament.Departaments", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentId");
-
                     b.HasOne("Domain.Entities.Identity.AppUser", "User")
                         .WithOne("Profile")
                         .HasForeignKey("Domain.Entities.Profiles.UserProfile", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Department");
 
                     b.Navigation("User");
                 });

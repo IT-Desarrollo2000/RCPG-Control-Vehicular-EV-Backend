@@ -15,11 +15,11 @@ namespace Domain.DTOs.Requests
         public string? FirebaseUID { get; set; }
 
         //Para registro de conductores
-        public IFormFile DriversLicenceFile { get; set; }
+        public IFormFile DriversLicenceFrontFile { get; set; }
+        public IFormFile DriversLicenceBackFile { get; set; }
+        public LicenceType LicenceType { get; set; }
         public int LicenceValidityYears { get; set; }
         public DateTime LicenceExpeditionDate { get; set; }
         public DateTime LicenceExpirationDate { get; set; }
-        public int ProfileId { get; set; }
-        public UserProfile Profile { get; set; }
     }
 }
