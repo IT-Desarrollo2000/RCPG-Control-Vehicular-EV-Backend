@@ -18,8 +18,8 @@ namespace Infrastructure.Repositories
         private readonly IRepository<Companies> _Companies;
         private readonly IRepository<Departaments> _Departaments;
         private readonly IRepository<Vehicle> _VehicleRepo;
-        private readonly IRepository<VehicleService> _VehicleServiceRepo;
-        
+        private readonly IRepository<Checklist> _ChecklistRepo;
+
         public UnitOfWork(CVContext context)
         {
             _context = context;
@@ -32,7 +32,9 @@ namespace Infrastructure.Repositories
         public IRepository<Companies> Companies => _Companies ?? new BaseRepository<Companies>(_context);
         public IRepository<Departaments> Departaments => _Departaments ?? new BaseRepository<Departaments>(_context);
         public IRepository<Vehicle> VehicleRepo => _VehicleRepo ?? new BaseRepository<Vehicle>(_context);
-        public IRepository<VehicleService> VehicleServiceRepo => _VehicleServiceRepo?? new BaseRepository<VehicleService>(_context);
+
+        //Registered Cars
+        public IRepository<Checklist> ChecklistRepo => _ChecklistRepo ?? new BaseRepository<Checklist>(_context);
 
         //FUNCIONES DEL SERVICIO
         public void Dispose()
