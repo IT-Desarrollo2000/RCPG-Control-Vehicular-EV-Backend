@@ -13,5 +13,6 @@ namespace Domain.Entities.Registered_Cars
         public bool IsUtilitary { get; set; }
         public string Color { get; set; }
         public string Brand { get; set; }
+        public virtual ICollection<VehicleService> VehicleServices { get; set; }
     }
 }
