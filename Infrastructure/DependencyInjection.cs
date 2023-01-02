@@ -33,6 +33,7 @@ namespace Infrastructure
             services.AddValidatorsFromAssemblyContaining<UserRegistrationRequestValidator>();
             services.AddValidatorsFromAssemblyContaining<TokenRequestValidator>();
             services.AddValidatorsFromAssemblyContaining<ProfileImageValidator>();
+            //services.AddValidatorsFromAssemblyContaining<AccountsGroupRequestValidator>();
 
 
             //Azure blob storage

@@ -364,7 +364,7 @@ namespace Infrastructure.Identity
 
             newUser.NormalizedEmail = newUser.UserName.ToLower();
             newUser.NormalizedUserName = newUser.UserName.ToLower();
-            newUser.LockoutEnabled = true;  
+            newUser.LockoutEnabled = true;
             newUser.EmailConfirmed = true;
             newUser.PhoneNumberConfirmed = true;
 
