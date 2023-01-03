@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Domain.DTOs.Filters
+{
+    public class ChecklistFilter
+    {
+        public DateTime? CreatedAfterDate { get; set; }
+        public DateTime? CreatedBeforeDate { get; set; }
+        public int? VehicleId { get; set; }
+        public bool? CirculationCard { get; set; }
+        public bool? CarInsurancePolicy { get; set; }
+        public bool? HydraulicTires { get; set; }
+        public bool? TireRefurmishment { get; set; }
+        public bool? JumperCable { get; set; }
+        public bool? SecurityDice { get; set; }
+        public bool? Extinguisher { get; set; }
+        public bool? CarJack { get; set; }
+        public bool? CarJackKey { get; set; }
+        public bool? ToolBag { get; set; }
+        public bool? SafetyTriangle { get; set; }
+        public int PageSize { get; set; }
+        public int PageNumber { get; set; }
+    }
+}

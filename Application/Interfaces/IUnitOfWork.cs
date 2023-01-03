@@ -20,6 +20,7 @@ namespace Application.Interfaces
         IRepository<Companies> Companies { get; }
         IRepository<Departaments> Departaments { get; }
         IRepository<Vehicle> VehicleRepo { get; }
+        IRepository<Checklist> ChecklistRepo { get; }
 
         void Dispose();
         void SaveChanges();

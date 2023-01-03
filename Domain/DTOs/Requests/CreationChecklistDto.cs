@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities.Registered_Cars
+namespace Domain.DTOs.Requests
 {
-    public class Checklist: BaseEntity
+    public class CreationChecklistDto
     {
-        public int VehicleId { get; set; }
         public bool CirculationCard { get; set; }
         public bool CarInsurancePolicy { get; set; }
         public bool HydraulicTires { get; set; }
@@ -20,9 +19,5 @@ namespace Domain.Entities.Registered_Cars
         public bool CarJackKey { get; set; }
         public bool ToolBag { get; set; }
         public bool SafetyTriangle { get; set; }
-
-
-        public virtual Vehicle Vehicle { get; set; }
-
     }
 }

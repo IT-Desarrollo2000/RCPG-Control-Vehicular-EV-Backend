@@ -14,5 +14,6 @@ namespace Domain.Entities.Registered_Cars
         public string Color { get; set; }
         public string Brand { get; set; }
         public virtual ICollection<VehicleService> VehicleServices { get; set; }
+        public virtual ICollection<Checklist> Checklists { get; set; }
     }
 }
