@@ -34,7 +34,10 @@ namespace Infrastructure.Persistence
 
         //User Approvals
         public virtual DbSet<UserApproval> UserApprovals { get; set; }
-        public virtual DbSet<Domain.Entities.Registered_Cars.Vehicle> Vehicles { get; set; }
+
+        //Vehicles
+        public virtual DbSet<Vehicle> Vehicles { get; set; }
+        public virtual DbSet<VehicleImage> VehicleImages { get; set; }
 
         //VehicleService
         public virtual DbSet<VehicleService> VehicleServices { get; set; }
@@ -51,6 +54,7 @@ namespace Infrastructure.Persistence
             builder.ApplyConfiguration(new UserApprovalConfiguration());
             builder.ApplyConfiguration(new CompanyDepartamentConfiguration());
             builder.ApplyConfiguration(new VehicleConfiguration());
+            builder.ApplyConfiguration(new VehicleImageConfiguration());
         }
     }
 }
