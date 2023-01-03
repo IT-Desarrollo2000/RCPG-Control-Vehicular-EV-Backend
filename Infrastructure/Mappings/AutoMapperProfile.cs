@@ -5,6 +5,7 @@ using Domain.Entities.Company;
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
+using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace Infrastructure.Mappings
             //Approval Mapping
             CreateMap<UserApproval, UserProfile>();
             CreateMap<AppUserRegistrationRequest, ApprovalCreationRequest>();
-            
+
             //Company
             CreateMap<Companies, CompanyRequest>();
             CreateMap<CompanyRequest, Companies>();
@@ -43,6 +44,11 @@ namespace Infrastructure.Mappings
             CreateMap<DepartamentRequest, Departaments>();
             CreateMap<DepartamentRequest, DepartamentDto>().ReverseMap();
             CreateMap<Departaments, DepartamentDto>().ReverseMap();
+
+            //Checklist
+            CreateMap<Checklist, ChecklistDto>().ReverseMap();
+            CreateMap<ChecklistDto, CreationChecklistDto>().ReverseMap();
+            CreateMap<Checklist, CreationChecklistDto>().ReverseMap();
 
         }
     }

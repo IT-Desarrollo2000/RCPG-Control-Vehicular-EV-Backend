@@ -20,6 +20,7 @@ namespace Application
             services.AddTransient<IUserApprovalServices, UserApprovalServices>();
             services.AddTransient<ICompanyServices, CompanyServices>();
             services.AddTransient<IDepartamentServices, DepartamentServices>();
+            services.AddTransient<IChecklistServices, ChecklistServices>();
 
             //Parametros para validación de tokens
             var tokenValidationParameters = new TokenValidationParameters

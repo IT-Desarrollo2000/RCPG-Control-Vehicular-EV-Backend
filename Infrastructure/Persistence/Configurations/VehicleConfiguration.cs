@@ -18,6 +18,13 @@ namespace Infrastructure.Persistence.Configurations
                     .HasForeignKey(ur => ur.VehicleId)
                     .IsRequired();
 
+            builder.HasMany(x => x.Checklists)
+                .WithOne(xr => xr.Vehicle)
+                .HasForeignKey(x => x.VehicleId)
+                .IsRequired();
+
         }
+
+
     }
 }
