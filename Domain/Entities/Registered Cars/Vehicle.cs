@@ -32,5 +32,6 @@ namespace Domain.Entities.Registered_Cars
 
         public virtual ICollection<VehicleImage> VehicleImages { get; set; }
         public virtual ICollection<VehicleService> VehicleServices { get; set; }
+        public virtual ICollection<Checklist> Checklists { get; set; }
     }
 }

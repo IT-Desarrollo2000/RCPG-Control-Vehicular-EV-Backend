@@ -42,6 +42,9 @@ namespace Infrastructure.Persistence
         //VehicleService
         public virtual DbSet<VehicleService> VehicleServices { get; set; }
 
+        //Registered Cars
+        public virtual DbSet<Checklist> Checklists { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
