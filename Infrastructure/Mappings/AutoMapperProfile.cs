@@ -31,6 +31,7 @@ namespace Infrastructure.Mappings
             //Approval Mapping
             CreateMap<UserApproval, UserProfile>();
             CreateMap<AppUserRegistrationRequest, ApprovalCreationRequest>();
+            CreateMap<ApprovalCreationRequest, UserApproval>();
             
             //Company
             CreateMap<Companies, CompanyRequest>();
