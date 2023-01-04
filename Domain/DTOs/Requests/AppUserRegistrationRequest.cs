@@ -1,5 +1,4 @@
-﻿using Domain.Entities.Profiles;
-using Domain.Enums;
+﻿using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
 namespace Domain.DTOs.Requests

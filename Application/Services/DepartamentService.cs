@@ -5,7 +5,6 @@ using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Departament;
 using Microsoft.AspNetCore.Mvc;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services
 {
@@ -36,7 +35,7 @@ namespace Application.Services
         {
             GenericResponse<DepartamentDto> response = new GenericResponse<DepartamentDto>();
             var entidad = await _unitOfWork.Departaments.Get(p => p.Id == Id, includeProperties: "Company");
-            var result =  entidad.FirstOrDefault();
+            var result = entidad.FirstOrDefault();
             var DepartamentDTO = _mapper.Map<DepartamentDto>(result);
             response.success = true;
             response.Data = DepartamentDTO;
@@ -78,10 +77,10 @@ namespace Application.Services
 
             var existeCompany = await _unitOfWork.Companies.Get(c => c.Id == departamentRequest.CompanyId);
             var resultCompany = existeCompany.FirstOrDefault();
-            if(resultCompany == null)
+            if (resultCompany == null)
             {
                 response.success = false;
-                response.AddError("No existe Company", $"No existe Company con el CompanyId { departamentRequest.CompanyId } solicitado", 1);
+                response.AddError("No existe Company", $"No existe Company con el CompanyId {departamentRequest.CompanyId} solicitado", 1);
 
                 return response;
             }

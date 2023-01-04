@@ -2,11 +2,6 @@ using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.User_Approvals;
 using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Entities.Profiles
 {
@@ -40,7 +35,7 @@ namespace Domain.Entities.Profiles
         public DateTime? LicenceExpirationDate { get; set; }
         public int? DepartmentId { get; set; }
         public virtual Departaments? Department { get; set; }
-        
+
 
         //Unique
         //public string SharingKey { get; set; }
