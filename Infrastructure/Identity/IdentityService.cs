@@ -26,7 +26,7 @@ namespace Infrastructure.Identity
             IUserClaimsPrincipalFactory<AppUser> userClaimsPrincipalFactory,
             IAuthorizationService authorizationService,
             IMapper mapper,
-            IUnitOfWork unitOfWork, 
+            IUnitOfWork unitOfWork,
             IUserApprovalServices userApprovalServices)
         {
             _userManager = userManager;
@@ -108,7 +108,7 @@ namespace Infrastructure.Identity
                 }
                 else
                 {
-                    if(!profile.IsVerified)
+                    if (!profile.IsVerified)
                     {
                         var responseV = new AuthResult
                         {
@@ -120,7 +120,7 @@ namespace Infrastructure.Identity
                         };
 
                         return responseV;
-                    } 
+                    }
                     else
                     {
                         var signedIn = await _userManager.CheckPasswordAsync(user, password);
@@ -188,7 +188,7 @@ namespace Infrastructure.Identity
         public async Task<AppUserRegistrationResponse> CreateAppUserAsync(AppUserRegistrationRequest user)
         {
             //Validar archivos
-            if(!user.DriversLicenceFrontFile.ContentType.Contains("image") || user.DriversLicenceBackFile.ContentType.Contains("image"))
+            if (!user.DriversLicenceFrontFile.ContentType.Contains("image") || user.DriversLicenceBackFile.ContentType.Contains("image"))
             {
                 return null;
             }

@@ -64,7 +64,7 @@ namespace Application.Services
             GenericResponse<CompanyDto> response = new GenericResponse<CompanyDto>();
             var profile = await _unitOfWork.Companies.Get(p => p.Id == id);
             var result = profile.FirstOrDefault();
-            if(result == null) return null; 
+            if (result == null) return null;
 
             result.Name = companyRequest.Name;
             result.ReasonSocial = companyRequest.ReasonSocial;
@@ -85,7 +85,7 @@ namespace Application.Services
             //  var entidad = await _unitOfWork.Companies.GetById(id);
             var entidad = await _unitOfWork.Companies.Get(filter: p => p.Id == id);
             var result = entidad.FirstOrDefault();
-            if(result == null)
+            if (result == null)
             {
                 return null;
             }

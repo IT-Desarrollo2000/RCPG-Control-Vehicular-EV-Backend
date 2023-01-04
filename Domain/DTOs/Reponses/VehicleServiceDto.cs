@@ -1,9 +1,11 @@
-﻿using Domain.Enums;
+﻿using Domain.Entities.Registered_Cars;
+using Domain.Enums;
 
-namespace Domain.Entities.Registered_Cars
+namespace Domain.DTOs.Reponses
 {
-    public class VehicleService : BaseEntity
+    public class VehicleServiceDto
     {
+        public int Id { get; set; }
         public string WhereService { get; set; }
         public string? CarryPerson { get; set; }
         public int VehicleId { get; set; }

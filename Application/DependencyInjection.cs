@@ -1,7 +1,6 @@
 ﻿using Application.Interfaces;
 using Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +19,7 @@ namespace Application
             services.AddTransient<IUserApprovalServices, UserApprovalServices>();
             services.AddTransient<ICompanyServices, CompanyServices>();
             services.AddTransient<IDepartamentServices, DepartamentServices>();
+            services.AddTransient<IVehicleServiService, VehicleServiServices>();
 
             //Parametros para validación de tokens
             var tokenValidationParameters = new TokenValidationParameters
