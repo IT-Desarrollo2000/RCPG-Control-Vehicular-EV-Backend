@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+using Application.Interfaces;
 using AutoMapper;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
@@ -188,7 +188,7 @@ namespace Infrastructure.Identity
         public async Task<AppUserRegistrationResponse> CreateAppUserAsync(AppUserRegistrationRequest user)
         {
             //Validar archivos
-            if (!user.DriversLicenceFrontFile.ContentType.Contains("image") || user.DriversLicenceBackFile.ContentType.Contains("image"))
+            if(!user.DriversLicenceFrontFile.ContentType.Contains("image") || !user.DriversLicenceBackFile.ContentType.Contains("image"))
             {
                 return null;
             }

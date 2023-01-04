@@ -27,7 +27,8 @@ namespace Infrastructure.Mappings
             //Approval Mapping
             CreateMap<UserApproval, UserProfile>();
             CreateMap<AppUserRegistrationRequest, ApprovalCreationRequest>();
-
+            CreateMap<ApprovalCreationRequest, UserApproval>();
+            
             //Company
             CreateMap<Companies, CompanyRequest>();
             CreateMap<CompanyRequest, Companies>();
@@ -44,6 +45,11 @@ namespace Infrastructure.Mappings
             CreateMap<VehicleService, VehicleServiceRequest>().ReverseMap();
             CreateMap<VehicleServiceRequest, VehicleServiceDto>().ReverseMap();
             CreateMap<VehicleService, VehicleServiceDto>().ReverseMap();
+            
+            //Checklist
+            CreateMap<Checklist, ChecklistDto>().ReverseMap();
+            CreateMap<ChecklistDto, CreationChecklistDto>().ReverseMap();
+            CreateMap<Checklist, CreationChecklistDto>().ReverseMap();
 
         }
     }

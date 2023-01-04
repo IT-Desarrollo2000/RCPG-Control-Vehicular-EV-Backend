@@ -27,7 +27,7 @@ namespace Application.Services
             _mapper = mapper;
             _paginationOptions = options.Value;
         }
-
+        
         public async Task<PagedList<UserApproval>> GetApprovals(UserApprovalFilter filter)
         {
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
@@ -212,6 +212,9 @@ namespace Application.Services
 
                     await _unitOfWork.UserApprovalRepo.Add(newApproval);
                     await _unitOfWork.SaveChangesAsync();
+
+                    response.success = true;
+                    response.Data = newApproval;
 
                     return response;
                 }
