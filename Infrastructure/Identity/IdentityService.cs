@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+using Application.Interfaces;
 using AutoMapper;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
@@ -26,7 +26,7 @@ namespace Infrastructure.Identity
             IUserClaimsPrincipalFactory<AppUser> userClaimsPrincipalFactory,
             IAuthorizationService authorizationService,
             IMapper mapper,
-            IUnitOfWork unitOfWork, 
+            IUnitOfWork unitOfWork,
             IUserApprovalServices userApprovalServices)
         {
             _userManager = userManager;
@@ -108,7 +108,7 @@ namespace Infrastructure.Identity
                 }
                 else
                 {
-                    if(!profile.IsVerified)
+                    if (!profile.IsVerified)
                     {
                         var responseV = new AuthResult
                         {
@@ -120,7 +120,7 @@ namespace Infrastructure.Identity
                         };
 
                         return responseV;
-                    } 
+                    }
                     else
                     {
                         var signedIn = await _userManager.CheckPasswordAsync(user, password);

@@ -2,11 +2,6 @@
 using Domain.DTOs.Filters;
 using Domain.DTOs.Requests;
 using Domain.Entities.User_Approvals;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
