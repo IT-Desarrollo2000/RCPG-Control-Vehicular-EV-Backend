@@ -6,7 +6,10 @@ using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
+using System.Net;
 using System.Text.Json;
 
 namespace API.Controllers
@@ -26,8 +29,11 @@ namespace API.Controllers
             this._mapper = mapper;
         }
 
-
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<Checklist>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
+        [Route("")]
         public async Task<IActionResult> GetChecklist([FromQuery] ChecklistFilter filter)
         {
             var checklists = await _checklistServices.GetChecklist(filter);
@@ -54,27 +60,44 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{id}")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ChecklistDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetChecklistById/{id}")]
         public async Task<IActionResult> GetChecklistById(int id)
         {
             var result = await _checklistServices.GetChecklistById(id);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ChecklistDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
+        [Route("PostChecklist")]
         public async Task<IActionResult> PostChecklist(int vehicleId, CreationChecklistDto creationChecklistDto)
         {
             var result = await _checklistServices.PostChecklist(vehicleId, creationChecklistDto);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        //[HttpPut] 
-        //public async Task<IActionResult> PutChecklists(CreationChecklistDto creationChecklistDto, int id)
-        //{
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<Checklist>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPut]
+        [Route("PutChecklists")]
+        public async Task<IActionResult> PutChecklists(CreationChecklistDto creationChecklistDto, int id)
+        {
+            var result = await _checklistServices.PutChecklists(creationChecklistDto, id);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
 
-        //}
-
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete]
+        [Route("DeleteChecklists")]
         public async Task<IActionResult> DeleteChecklists(int id)
         {
             var result = await _checklistServices.DeleteChecklists(id);
