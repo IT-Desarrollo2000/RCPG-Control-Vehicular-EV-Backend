@@ -1,6 +1,5 @@
 ﻿using Application.Interfaces;
 using AutoMapper;
-using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Microsoft.AspNetCore.Authorization;
@@ -50,9 +49,9 @@ namespace API.Controllers
         {
             var entidad = await _companyServices.GetCompanyById(id);
 
-            if(entidad.Data == null) 
+            if (entidad.Data == null)
             {
-                return NotFound($"No existe compañia con este Id { id }");
+                return NotFound($"No existe compañia con este Id {id}");
             }
             if (entidad.success)
             {
@@ -122,9 +121,9 @@ namespace API.Controllers
         {
             var existe = await _companyServices.DeleteCompany(id);
 
-            if(existe == null)
+            if (existe == null)
             {
-                return NotFound($"No existe company con el Id { id } para borrar");
+                return NotFound($"No existe company con el Id {id} para borrar");
             }
 
             if (existe.success)

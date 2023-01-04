@@ -1,5 +1,4 @@
 ﻿using Application.Interfaces;
-using Application.Services;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +13,7 @@ namespace API.Controllers
     {
         private readonly IDepartamentServices _departamentServices;
 
-        public DepartamentController( IDepartamentServices departamentServices) 
+        public DepartamentController(IDepartamentServices departamentServices)
         {
             this._departamentServices = departamentServices;
         }
@@ -48,7 +47,7 @@ namespace API.Controllers
             var entidad = await _departamentServices.GetDepartamentById(id);
             if (entidad.Data == null)
             {
-                return NotFound($"No existe Departamento con este Id { id }");
+                return NotFound($"No existe Departamento con este Id {id}");
             }
             if (entidad.success)
             {
@@ -75,7 +74,7 @@ namespace API.Controllers
                 return NotFound($"No existe Departamento con el DepartamentoId {departamentRequest.CompanyId} para Actualizar Departamento");
             }
 
-            if(departamentRequest.name == null && departamentRequest.CompanyId == null)
+            if (departamentRequest.name == null && departamentRequest.CompanyId == null)
             {
                 return BadRequest("Los campos Name y CompanyId no pueden ir vacios");
             }
@@ -103,14 +102,14 @@ namespace API.Controllers
 
             var entidad = await _departamentServices.PutDepartament(id, departamentRequest);
 
-            if(entidad == null)
+            if (entidad == null)
             {
                 return NotFound($"No existe Departamento con el DepartamentoId {id} para Actualizar Departamento");
             }
 
-            if(entidad.Data == null)
+            if (entidad.Data == null)
             {
-                return NotFound($"No existe Departamento con el DepartamentoId { departamentRequest.CompanyId } para Actualizar Departamento");
+                return NotFound($"No existe Departamento con el DepartamentoId {departamentRequest.CompanyId} para Actualizar Departamento");
             }
 
             if (entidad.success)

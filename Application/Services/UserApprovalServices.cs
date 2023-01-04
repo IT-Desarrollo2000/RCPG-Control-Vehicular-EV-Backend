@@ -3,19 +3,11 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
-using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Profiles;
 using Domain.Entities.User_Approvals;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services
 {
@@ -173,7 +165,7 @@ namespace Application.Services
 
                 return response;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
@@ -187,9 +179,9 @@ namespace Application.Services
             try
             {
                 var userProfile = await _unitOfWork.UserProfileRepo.GetById(request.ProfileId);
-                
+
                 //Validar de que el perfil exista
-                if(userProfile == null)
+                if (userProfile == null)
                 {
                     response.success = false;
                     response.AddError("Profile not found", "No se pudo identificar el perfil de usuario solicitado", 2);
@@ -234,8 +226,8 @@ namespace Application.Services
                     return response;
                 }
 
-            } 
-            catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
@@ -255,7 +247,7 @@ namespace Application.Services
 
                 //Revisar que el departamento especificado exista
                 var department = await _unitOfWork.Departaments.GetById(request.DepartmentId);
-                if(department == null)
+                if (department == null)
                 {
                     response.success = false;
                     response.AddError("Not found", $"El Id {request.DepartmentId} de departamento especificado no existe");
@@ -289,7 +281,7 @@ namespace Application.Services
                     response.Data = result;
 
                     return response;
-                } 
+                }
                 else
                 {
                     //Modificar la solicitud
@@ -308,7 +300,7 @@ namespace Application.Services
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
@@ -328,7 +320,7 @@ namespace Application.Services
                 {
                     response.success = false;
                     response.Data = false;
-                    response.AddError("Not Found","No se encontro un elemento con el Id especificado", 2);
+                    response.AddError("Not Found", "No se encontro un elemento con el Id especificado", 2);
 
                     return response;
                 }
@@ -340,8 +332,8 @@ namespace Application.Services
                 response.Data = true;
 
                 return response;
-            } 
-            catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);

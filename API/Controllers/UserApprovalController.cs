@@ -1,16 +1,10 @@
 ﻿using Application.Interfaces;
-using Application.Services;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
-using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
-using Domain.Entities.Identity;
 using Domain.Entities.User_Approvals;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using System.Net;
 using System.Text.Json;
 
@@ -32,7 +26,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetApprovals([FromQuery]UserApprovalFilter filter)
+        public async Task<IActionResult> GetApprovals([FromQuery] UserApprovalFilter filter)
         {
             var approval = await _approvalServices.GetApprovals(filter);
 
@@ -77,7 +71,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("Create")]
-        public async Task<IActionResult> CreateApproval([FromForm]ApprovalCreationRequest request)
+        public async Task<IActionResult> CreateApproval([FromForm] ApprovalCreationRequest request)
         {
             var result = await _approvalServices.CreateApproval(request);
 
@@ -91,7 +85,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("Manage")]
-        public async Task<IActionResult> ManageApproval([FromBody]ApprovalManagementRequest request)
+        public async Task<IActionResult> ManageApproval([FromBody] ApprovalManagementRequest request)
         {
             var result = await _approvalServices.ManageApproval(request);
 
@@ -109,7 +103,7 @@ namespace API.Controllers
         {
             var result = await _approvalServices.DeleteApproval(ApprovalId);
 
-            if(result.success) { return Ok(result); } else { return BadRequest(result); }
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
     }
 }
