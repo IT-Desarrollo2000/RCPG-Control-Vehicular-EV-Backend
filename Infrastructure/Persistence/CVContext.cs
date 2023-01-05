@@ -45,6 +45,10 @@ namespace Infrastructure.Persistence
         //Registered Cars
         public virtual DbSet<Checklist> Checklists { get; set; }
 
+        //Vehicle Maintenance With Vehicle MaintenanceWorkShop
+        public virtual DbSet<VehicleMaintenance> VehicleMaintenances { get; set; }
+        public virtual DbSet<VehicleMaintenanceWorkshop> VehicleMaintenanceWorkshops { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -55,6 +59,7 @@ namespace Infrastructure.Persistence
             builder.ApplyConfiguration(new CompanyDepartamentConfiguration());
             builder.ApplyConfiguration(new VehicleConfiguration());
             builder.ApplyConfiguration(new VehicleImageConfiguration());
+            builder.ApplyConfiguration(new VehicleMaintenanceConfiguration());
         }
     }
 }

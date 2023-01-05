@@ -18,6 +18,11 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(x => x.VehicleId)
                 .IsRequired();
 
+            builder.HasMany(pu => pu.VehicleMaintenances)
+                   .WithOne(p => p.Vehicle)
+                   .HasForeignKey(pu => pu.VehicleId)
+                   .IsRequired();
+
         }
 
 

@@ -6,6 +6,7 @@ using Domain.Entities.Profiles;
 using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Infrastructure.Repositories
 {
@@ -21,6 +22,9 @@ namespace Infrastructure.Repositories
         private readonly IRepository<VehicleService> _VehicleServiceRepo;
         private readonly IRepository<VehicleImage> _VehicleImageRepo;
         private readonly IRepository<Checklist> _ChecklistRepo;
+        private readonly IRepository<VehicleMaintenance> _VehicleMaintenanceRepo;
+        private readonly IRepository<VehicleMaintenanceWorkshop> _VehicleMaintenanceWorkshopRepo;
+
         
         public UnitOfWork(CVContext context)
         {
@@ -35,9 +39,10 @@ namespace Infrastructure.Repositories
         public IRepository<Departaments> Departaments => _Departaments ?? new BaseRepository<Departaments>(_context);
         public IRepository<Vehicle> VehicleRepo => _VehicleRepo ?? new BaseRepository<Vehicle>(_context);
         public IRepository<VehicleService> VehicleServiceRepo => _VehicleServiceRepo ?? new BaseRepository<VehicleService>(_context);
-        public IRepository<VehicleService> VehicleServiceRepo => _VehicleServiceRepo?? new BaseRepository<VehicleService>(_context);
         public IRepository<VehicleImage> VehicleImageRepo => _VehicleImageRepo ?? new BaseRepository<VehicleImage>(_context);
         public IRepository<Checklist> ChecklistRepo => _ChecklistRepo ?? new BaseRepository<Checklist>(_context);
+        public IRepository<VehicleMaintenance> VehicleMaintenanceRepo => _VehicleMaintenanceRepo ?? new BaseRepository<VehicleMaintenance>(_context);
+        public IRepository<VehicleMaintenanceWorkshop> VehicleMaintenanceWorkshopRepo => _VehicleMaintenanceWorkshopRepo ?? new BaseRepository<VehicleMaintenanceWorkshop>(_context); 
 
         //FUNCIONES DEL SERVICIO
         public void Dispose()
