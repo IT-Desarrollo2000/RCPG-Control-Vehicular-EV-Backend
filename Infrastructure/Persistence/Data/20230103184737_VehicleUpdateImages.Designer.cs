@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230103184737_VehicleUpdateImages")]
+    partial class VehicleUpdateImages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,7 +49,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies", (string)null);
+                    b.ToTable("Companies");
                 });
 
             modelBuilder.Entity("Domain.Entities.Departament.Departaments", b =>
@@ -74,7 +77,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Departaments", (string)null);
+                    b.ToTable("Departaments");
                 });
 
             modelBuilder.Entity("Domain.Entities.Identity.AppRole", b =>
@@ -224,7 +227,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AppUserSocials", (string)null);
+                    b.ToTable("AppUserSocials");
                 });
 
             modelBuilder.Entity("Domain.Entities.Identity.RefreshToken", b =>
@@ -268,7 +271,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("Domain.Entities.Profiles.UserProfile", b =>
@@ -350,7 +353,7 @@ namespace Infrastructure.Persistence.Data
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserProfiles", (string)null);
+                    b.ToTable("UserProfiles");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Checklist", b =>
@@ -407,7 +410,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("Checklists", (string)null);
+                    b.ToTable("Checklists");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Vehicle", b =>
@@ -475,7 +478,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasKey("Id");
 
-                    b.ToTable("Vehicles", (string)null);
+                    b.ToTable("Vehicles");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleImage", b =>
@@ -544,7 +547,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("VehicleServices", (string)null);
+                    b.ToTable("VehicleServices");
                 });
 
             modelBuilder.Entity("Domain.Entities.User_Approvals.UserApproval", b =>
@@ -605,7 +608,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("ProfileId");
 
-                    b.ToTable("UserApprovals", (string)null);
+                    b.ToTable("UserApprovals");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
