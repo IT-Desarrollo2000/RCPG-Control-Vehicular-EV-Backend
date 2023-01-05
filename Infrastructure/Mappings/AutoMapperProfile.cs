@@ -51,6 +51,11 @@ namespace Infrastructure.Mappings
             CreateMap<ChecklistDto, CreationChecklistDto>().ReverseMap();
             CreateMap<Checklist, CreationChecklistDto>().ReverseMap();
 
+            //Expenses
+            CreateMap<Expenses, ExpensesDto>().ReverseMap();
+            CreateMap<Expenses, ExpensesRequest>().ReverseMap();
+            CreateMap<ExpensesRequest, ExpensesDto>().ReverseMap(); 
+
         }
     }
 }

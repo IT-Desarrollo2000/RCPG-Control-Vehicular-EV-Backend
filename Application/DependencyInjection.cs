@@ -21,6 +21,7 @@ namespace Application
             services.AddTransient<IDepartamentServices, DepartamentServices>();
             services.AddTransient<IVehicleServiService, VehicleServiServices>();
             services.AddTransient<IChecklistServices, ChecklistServices>();
+            services.AddTransient<IExpensesServices, ExpensesServices>();
 
             //Parametros para validación de tokens
             var tokenValidationParameters = new TokenValidationParameters

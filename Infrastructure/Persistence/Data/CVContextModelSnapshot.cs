@@ -46,7 +46,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Companies", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Departament.Departaments", b =>
@@ -74,7 +74,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Departaments");
+                    b.ToTable("Departaments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Identity.AppRole", b =>
@@ -224,7 +224,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AppUserSocials");
+                    b.ToTable("AppUserSocials", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Identity.RefreshToken", b =>
@@ -268,7 +268,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Profiles.UserProfile", b =>
@@ -350,7 +350,7 @@ namespace Infrastructure.Persistence.Data
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserProfiles");
+                    b.ToTable("UserProfiles", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Checklist", b =>
@@ -407,7 +407,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("Checklists");
+                    b.ToTable("Checklists", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Vehicle", b =>
@@ -475,7 +475,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasKey("Id");
 
-                    b.ToTable("Vehicles");
+                    b.ToTable("Vehicles", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleImage", b =>
@@ -544,7 +544,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("VehicleServices");
+                    b.ToTable("VehicleServices", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.User_Approvals.UserApproval", b =>
@@ -605,7 +605,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("ProfileId");
 
-                    b.ToTable("UserApprovals");
+                    b.ToTable("UserApprovals", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

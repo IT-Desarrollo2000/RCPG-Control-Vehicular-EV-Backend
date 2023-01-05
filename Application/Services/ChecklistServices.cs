@@ -200,7 +200,7 @@ namespace Application.Services
         public async Task<GenericResponse<ChecklistDto>> GetChecklistById(int id)
         {
             GenericResponse<ChecklistDto> response = new GenericResponse<ChecklistDto>();
-            var entity = await _unitOfWork.ChecklistRepo.Get(filter: a => a.Id == id);
+            var entity = await _unitOfWork.ExpensesRepo.Get(filter: a => a.Id == id);
             var check = entity.FirstOrDefault();
             var map = _mapper.Map<ChecklistDto>(check);
             response.success = true;
