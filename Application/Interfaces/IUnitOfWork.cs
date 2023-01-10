@@ -17,6 +17,8 @@ namespace Application.Interfaces
         IRepository<Vehicle> VehicleRepo { get; }
         IRepository<VehicleService> VehicleServiceRepo { get; }
         IRepository<Checklist> ChecklistRepo { get; }
+        IRepository<VehicleMaintenance> VehicleMaintenanceRepo { get; }
+        IRepository<VehicleMaintenanceWorkshop> MaintenanceWorkshopRepo { get; }
 
         void Dispose();
         void SaveChanges();
