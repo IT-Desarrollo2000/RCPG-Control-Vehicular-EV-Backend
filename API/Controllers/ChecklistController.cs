@@ -72,9 +72,9 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return NotFound(result); }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ChecklistDto>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ChecklistDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("PostChecklist")]
         public async Task<IActionResult> PostChecklist(int vehicleId, CreationChecklistDto creationChecklistDto)
