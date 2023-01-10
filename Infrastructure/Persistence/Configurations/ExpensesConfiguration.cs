@@ -28,6 +28,8 @@ namespace Infrastructure.Persistence.Configurations
                 .WithOne(pr => pr.Expenses)
                 .HasForeignKey(p => p.ExpensesId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(v => v.Cost).HasColumnType("decimal(18,2)");
         }
     }
 }

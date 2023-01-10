@@ -9,13 +9,14 @@ namespace Domain.DTOs.Requests
 {
     public class ExpensesRequest
     {
-        public virtual TypesOfExpenses TypesOfExpenses { get; set; }
+       
         public decimal Cost { get; set; }
-        public DateTime ExpenseDate { get; set; }
-        public virtual Vehicle Vehicle { get; set; }
+        public int VehicleId { get; set; }
+        public int TypesOfExpensesId { get; set; }
+        public DateTime ExpenseDate { get; set; }      
         public string MechanicalWorkshop { get; set; }
         public string ERPFolio { get; set; }
-        public virtual ICollection<PhotosOfSpending> PhotosOfSpending { get; set; }
+       
 
     }
 }

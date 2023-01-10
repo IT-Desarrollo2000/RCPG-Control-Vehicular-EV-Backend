@@ -37,9 +37,17 @@ namespace Application.Services
         {
             GenericResponse<ChecklistDto> response = new GenericResponse<ChecklistDto>();
             var entity = _mapper.Map<Checklist>(creationChecklistDto);
+            var existevehicleid = await _unitOfWork.VehicleRepo.Get(v => v.Id == vehicleId);
+            var resultExpenses = existevehicleid.FirstOrDefault();
+
+            if (resultExpenses == null)
+            {
+                response.success = false;
+                response.AddError("No existe vehiculo", $"No existe vehiculo con ese id{vehicleId} solicitado", 1);
+                return response;
+            }
             //entity.Vehicle = _unitOfWork.VehicleRepo.Get(VehicleDB => VehicleDB.Id == vehicleId);
             entity.VehicleId = vehicleId;
-            
             await _unitOfWork.ChecklistRepo.Add(entity);
             await _unitOfWork.SaveChangesAsync();
             response.success = true;
@@ -200,7 +208,7 @@ namespace Application.Services
         public async Task<GenericResponse<ChecklistDto>> GetChecklistById(int id)
         {
             GenericResponse<ChecklistDto> response = new GenericResponse<ChecklistDto>();
-            var entity = await _unitOfWork.ExpensesRepo.Get(filter: a => a.Id == id);
+            var entity = await _unitOfWork.ChecklistRepo.Get(filter: a => a.Id == id);
             var check = entity.FirstOrDefault();
             var map = _mapper.Map<ChecklistDto>(check);
             response.success = true;
