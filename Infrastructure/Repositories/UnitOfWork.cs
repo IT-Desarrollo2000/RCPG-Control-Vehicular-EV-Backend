@@ -22,9 +22,11 @@ namespace Infrastructure.Repositories
         private readonly IRepository<VehicleService> _VehicleServiceRepo;
         private readonly IRepository<VehicleImage> _VehicleImageRepo;
         private readonly IRepository<Checklist> _ChecklistRepo;
+        private readonly IRepository<Expenses> _ExpensesRepo;
+        private readonly IRepository<TypesOfExpenses> _TypesOfExpensesRepo;
+        private readonly IRepository<PhotosOfSpending> _PhotosOfSpendingRepo;
         private readonly IRepository<VehicleMaintenance> _VehicleMaintenanceRepo;
         private readonly IRepository<VehicleMaintenanceWorkshop> _MaintenanceWorkshopRepo;
-
         
         public UnitOfWork(CVContext context)
         {
@@ -41,9 +43,12 @@ namespace Infrastructure.Repositories
         public IRepository<VehicleService> VehicleServiceRepo => _VehicleServiceRepo ?? new BaseRepository<VehicleService>(_context);
         public IRepository<VehicleImage> VehicleImageRepo => _VehicleImageRepo ?? new BaseRepository<VehicleImage>(_context);
         public IRepository<Checklist> ChecklistRepo => _ChecklistRepo ?? new BaseRepository<Checklist>(_context);
+        public IRepository<Expenses> ExpensesRepo => _ExpensesRepo ?? new BaseRepository<Expenses>(_context);
+        public IRepository<TypesOfExpenses> TypesOfExpensesRepo => _TypesOfExpensesRepo ?? new BaseRepository<TypesOfExpenses>(_context);
+        public IRepository<PhotosOfSpending> PhotosOfSpendingRepo => _PhotosOfSpendingRepo ?? new BaseRepository<PhotosOfSpending>(_context);
         public IRepository<VehicleMaintenance> VehicleMaintenanceRepo => _VehicleMaintenanceRepo ?? new BaseRepository<VehicleMaintenance>(_context);
         public IRepository<VehicleMaintenanceWorkshop> MaintenanceWorkshopRepo => _MaintenanceWorkshopRepo ?? new BaseRepository<VehicleMaintenanceWorkshop>(_context); 
-
+        
         //FUNCIONES DEL SERVICIO
         public void Dispose()
         {

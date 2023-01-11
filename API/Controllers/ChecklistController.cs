@@ -68,7 +68,8 @@ namespace API.Controllers
         public async Task<IActionResult> GetChecklistById(int id)
         {
             var result = await _checklistServices.GetChecklistById(id);
-            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+            if (result.Data == null) { return NotFound($"No existe checklist con el Id {id}"); }
+            if (result.success) { return Ok(result); } else { return NotFound(result); }
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
@@ -79,6 +80,7 @@ namespace API.Controllers
         public async Task<IActionResult> PostChecklist(int vehicleId, CreationChecklistDto creationChecklistDto)
         {
             var result = await _checklistServices.PostChecklist(vehicleId, creationChecklistDto);
+            if (result.Data == null) { return NotFound($"No existe vehiculo con el Id {vehicleId}"); }
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
@@ -90,6 +92,7 @@ namespace API.Controllers
         public async Task<IActionResult> PutChecklists(CreationChecklistDto creationChecklistDto, int id)
         {
             var result = await _checklistServices.PutChecklists(creationChecklistDto, id);
+            if (result.Data == null) { return NotFound($"No existe checklist con el Id {id}"); }
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
@@ -101,7 +104,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteChecklists(int id)
         {
             var result = await _checklistServices.DeleteChecklists(id);
-            if (result == null) { return NotFound(); }
+            if (result.Data == null) { return NotFound($"No existe checklist con el Id {id}"); }
             if (result.success) { return Ok(result); }
             else
             {
