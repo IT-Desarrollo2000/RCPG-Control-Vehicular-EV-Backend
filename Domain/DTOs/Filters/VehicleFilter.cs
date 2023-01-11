@@ -20,7 +20,8 @@ namespace Domain.DTOs.Filters
         public VehicleStatus? VehicleStatus { get; set; }
         public OwnershipType? OwnershipType { get; set; }
         public string? OwnersName { get; set; }
-        public decimal? DesiredPerformance { get; set; }
+        public decimal? MinDesiredPerformance { get; set; }
+        public decimal? MaxDesiredPerformance { get; set; }
         public DateTime? CreatedBefore { get; set; }
         public DateTime? CreatedAfter { get; set; }
         public int PageSize { get; set; }

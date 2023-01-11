@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230105224043_Expenses")]
+    partial class Expenses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -608,86 +611,6 @@ namespace Infrastructure.Persistence.Data
                     b.ToTable("VehicleImages");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleMaintenance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CarryPerson")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CauseServiceMaintenance")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("NextServiceMaintenance")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("WhereServiceMaintenance")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("VehicleMaintenances");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleMaintenanceWorkshop", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("Latitude")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Longitude")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Telephone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Ubication")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("VehicleMaintenanceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VehicleMaintenanceId");
-
-                    b.ToTable("VehicleMaintenanceWorkshops");
-                });
-
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleService", b =>
                 {
                     b.Property<int>("Id")
@@ -994,28 +917,6 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleMaintenance", b =>
-                {
-                    b.HasOne("Domain.Entities.Registered_Cars.Vehicle", "Vehicle")
-                        .WithMany("VehicleMaintenances")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Vehicle");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleMaintenanceWorkshop", b =>
-                {
-                    b.HasOne("Domain.Entities.Registered_Cars.VehicleMaintenance", "VehicleMaintenance")
-                        .WithMany("VehicleMaintenanceWorkshops")
-                        .HasForeignKey("VehicleMaintenanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("VehicleMaintenance");
-                });
-
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleService", b =>
                 {
                     b.HasOne("Domain.Entities.Registered_Cars.Vehicle", "Vehicle")
@@ -1117,14 +1018,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.Navigation("VehicleImages");
 
-                    b.Navigation("VehicleMaintenances");
-
                     b.Navigation("VehicleServices");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleMaintenance", b =>
-                {
-                    b.Navigation("VehicleMaintenanceWorkshops");
                 });
 #pragma warning restore 612, 618
         }
