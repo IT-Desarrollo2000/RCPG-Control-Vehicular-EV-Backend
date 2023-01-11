@@ -171,7 +171,7 @@ namespace Application.Services
                 vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: properties);
             }
 
-            var pagedApprovals = PagedList<Vehicle>.Create(userApprovals, filter.PageNumber, filter.PageSize);
+            var pagedApprovals = PagedList<Vehicle>.Create(vehicles, filter.PageNumber, filter.PageSize);
 
             return pagedApprovals;
         }
