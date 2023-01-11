@@ -109,7 +109,7 @@ namespace API.Controllers
 
         //PUT
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(DepartamentDto))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleServiceDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -142,12 +142,12 @@ namespace API.Controllers
 
         //Delete
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(DepartamentDto))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleServiceDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<VehicleServiceDto>> DeleteCompany(int id)
+        public async Task<ActionResult<VehicleServiceDto>> DeleteVehicleService(int id)
         {
             var existe = await _vehicleServiService.DeleteVehicleService(id);
             if (existe == null)
