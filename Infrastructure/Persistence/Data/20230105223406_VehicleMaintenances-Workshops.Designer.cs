@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230105223406_VehicleMaintenances-Workshops")]
+    partial class VehicleMaintenancesWorkshops
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -408,104 +411,6 @@ namespace Infrastructure.Persistence.Data
                     b.HasIndex("VehicleId");
 
                     b.ToTable("Checklists");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.Expenses", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Cost")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ERPFolio")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ExpenseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MechanicalWorkshop")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TypesOfExpensesId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TypesOfExpensesId");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("Expenses");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.PhotosOfSpending", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ExpensesId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileURL")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExpensesId");
-
-                    b.ToTable("PhotosOfSpendings");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.TypesOfExpenses", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TypesOfExpenses");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Vehicle", b =>
@@ -954,35 +859,6 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.Expenses", b =>
-                {
-                    b.HasOne("Domain.Entities.Registered_Cars.TypesOfExpenses", "TypesOfExpenses")
-                        .WithMany("Expenses")
-                        .HasForeignKey("TypesOfExpensesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Registered_Cars.Vehicle", "Vehicle")
-                        .WithMany("Expenses")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("TypesOfExpenses");
-
-                    b.Navigation("Vehicle");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.PhotosOfSpending", b =>
-                {
-                    b.HasOne("Domain.Entities.Registered_Cars.Expenses", "Expenses")
-                        .WithMany("PhotosOfSpending")
-                        .HasForeignKey("ExpensesId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Expenses");
-                });
-
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleImage", b =>
                 {
                     b.HasOne("Domain.Entities.Registered_Cars.Vehicle", "Vehicle")
@@ -1099,21 +975,9 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("Approvals");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.Expenses", b =>
-                {
-                    b.Navigation("PhotosOfSpending");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.TypesOfExpenses", b =>
-                {
-                    b.Navigation("Expenses");
-                });
-
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Vehicle", b =>
                 {
                     b.Navigation("Checklists");
-
-                    b.Navigation("Expenses");
 
                     b.Navigation("VehicleImages");
 

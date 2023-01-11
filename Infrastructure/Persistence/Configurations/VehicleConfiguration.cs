@@ -19,6 +19,11 @@ namespace Infrastructure.Persistence.Configurations
                 .IsRequired();
 
             builder.Property(v => v.DesiredPerformance).HasColumnType("decimal(18,2)");
+            builder.HasMany(pu => pu.VehicleMaintenances)
+                   .WithOne(p => p.Vehicle)
+                   .HasForeignKey(pu => pu.VehicleId)
+                   .IsRequired();
+
         }
     }
 }
