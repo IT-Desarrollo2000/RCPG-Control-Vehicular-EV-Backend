@@ -25,7 +25,7 @@ namespace Infrastructure.Mappings
             CreateMap<AppUser, AppUserRegistrationRequest>();
 
             //Approval Mapping
-            CreateMap<UserApproval, UserProfile>();
+            CreateMap<UserApproval, UserProfile>().ReverseMap();
             CreateMap<AppUserRegistrationRequest, ApprovalCreationRequest>();
             CreateMap<ApprovalCreationRequest, UserApproval>();
             
