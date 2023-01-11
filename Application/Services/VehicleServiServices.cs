@@ -84,7 +84,7 @@ namespace Application.Services
 
             if (Query != null)
             {
-                userApprovals = await _unitOfWork.VehicleServiceRepo.Get(filter: Query, includeProperties: "Vehicle");
+                userApprovals = await _unitOfWork.VehicleServiceRepo.Get(filter: Query, includeProperties:"Vehicle");
             }
             else
             {

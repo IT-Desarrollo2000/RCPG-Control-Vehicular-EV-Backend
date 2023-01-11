@@ -49,6 +49,10 @@ namespace Infrastructure.Persistence
         public virtual DbSet<PhotosOfSpending> PhotosOfSpendings { get; set; }
 
 
+        //Vehicle Maintenance With Vehicle MaintenanceWorkShop
+        public virtual DbSet<VehicleMaintenance> VehicleMaintenances { get; set; }
+        public virtual DbSet<VehicleMaintenanceWorkshop> VehicleMaintenanceWorkshops { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -60,6 +64,7 @@ namespace Infrastructure.Persistence
             builder.ApplyConfiguration(new VehicleConfiguration());
             builder.ApplyConfiguration(new VehicleImageConfiguration());
             builder.ApplyConfiguration(new ExpensesConfiguration());
+            builder.ApplyConfiguration(new VehicleMaintenanceConfiguration());
         }
     }
 }

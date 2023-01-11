@@ -6,6 +6,7 @@ using Domain.Entities.Profiles;
 using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Infrastructure.Repositories
 {
@@ -24,8 +25,9 @@ namespace Infrastructure.Repositories
         private readonly IRepository<Expenses> _ExpensesRepo;
         private readonly IRepository<TypesOfExpenses> _TypesOfExpensesRepo;
         private readonly IRepository<PhotosOfSpending> _PhotosOfSpendingRepo;
-
-
+        private readonly IRepository<VehicleMaintenance> _VehicleMaintenanceRepo;
+        private readonly IRepository<VehicleMaintenanceWorkshop> _MaintenanceWorkshopRepo;
+        
         public UnitOfWork(CVContext context)
         {
             _context = context;
@@ -44,7 +46,9 @@ namespace Infrastructure.Repositories
         public IRepository<Expenses> ExpensesRepo => _ExpensesRepo ?? new BaseRepository<Expenses>(_context);
         public IRepository<TypesOfExpenses> TypesOfExpensesRepo => _TypesOfExpensesRepo ?? new BaseRepository<TypesOfExpenses>(_context);
         public IRepository<PhotosOfSpending> PhotosOfSpendingRepo => _PhotosOfSpendingRepo ?? new BaseRepository<PhotosOfSpending>(_context);
-
+        public IRepository<VehicleMaintenance> VehicleMaintenanceRepo => _VehicleMaintenanceRepo ?? new BaseRepository<VehicleMaintenance>(_context);
+        public IRepository<VehicleMaintenanceWorkshop> MaintenanceWorkshopRepo => _MaintenanceWorkshopRepo ?? new BaseRepository<VehicleMaintenanceWorkshop>(_context); 
+        
         //FUNCIONES DEL SERVICIO
         public void Dispose()
         {

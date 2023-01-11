@@ -7,6 +7,7 @@ using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
 using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
+using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
 
 namespace Infrastructure.Mappings
 {
@@ -50,7 +51,7 @@ namespace Infrastructure.Mappings
             CreateMap<Checklist, ChecklistDto>().ReverseMap();
             CreateMap<ChecklistDto, CreationChecklistDto>().ReverseMap();
             CreateMap<Checklist, CreationChecklistDto>().ReverseMap();
-
+            
             //Expenses
             CreateMap<Expenses, ExpensesDto>().ReverseMap();
             CreateMap<Expenses, ExpensesRequest>().ReverseMap();
@@ -60,6 +61,16 @@ namespace Infrastructure.Mappings
             CreateMap<TypesOfExpenses, TypesOfExpensesDto>().ReverseMap();
             CreateMap<TypesOfExpenses, TypesOfExpensesRequest>().ReverseMap();
             CreateMap<TypesOfExpensesDto, TypesOfExpensesRequest>().ReverseMap();
+            
+            //VehicleMaintenance
+            CreateMap<VehicleMaintenance, VehicleMaintenanceRequest>().ReverseMap();
+            CreateMap<VehicleMaintenanceRequest, VehicleMaintenanceDto>().ReverseMap();
+            CreateMap<VehicleMaintenance, VehicleMaintenanceDto>().ReverseMap();
+
+            //MaintenanceWorkshops
+            CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopRequest>().ReverseMap();
+            CreateMap<MaintenanceWorkshopRequest, MaintenanceWorkshopDto>().ReverseMap();
+            CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopDto>().ReverseMap();
 
         }
     }
