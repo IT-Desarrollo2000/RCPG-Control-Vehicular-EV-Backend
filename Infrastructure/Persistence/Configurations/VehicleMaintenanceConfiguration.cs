@@ -15,8 +15,7 @@ namespace Infrastructure.Persistence.Configurations
         {
             builder.HasMany(ur => ur.VehicleMaintenanceWorkshops)
                    .WithOne(u => u.VehicleMaintenance)
-                   .HasForeignKey(x => x.VehicleMaintenanceId)
-                   .IsRequired();
+                   .HasForeignKey(x => x.VehicleMaintenanceId);
 
         }
 
