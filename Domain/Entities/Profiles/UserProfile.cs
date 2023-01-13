@@ -1,5 +1,6 @@
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
+using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
 using Domain.Enums;
 
@@ -35,6 +36,7 @@ namespace Domain.Entities.Profiles
         public DateTime? LicenceExpirationDate { get; set; }
         public int? DepartmentId { get; set; }
         public virtual Departaments? Department { get; set; }
+        public ICollection<VehicleReport> VehicleReports { get; set; }
 
 
         //Unique

@@ -9,12 +9,12 @@ namespace Domain.DTOs.Requests
 {
     public class ExpensesRequest
     {
-       
+
         public decimal Cost { get; set; }
         public int VehicleId { get; set; }
         public int TypesOfExpensesId { get; set; }
+        public int? VehicleMaintenanceWorkshopId { get; set; }
         public DateTime ExpenseDate { get; set; }      
-        public string MechanicalWorkshop { get; set; }
         public string ERPFolio { get; set; }
        
 

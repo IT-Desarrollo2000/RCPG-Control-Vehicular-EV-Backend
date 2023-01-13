@@ -14,7 +14,7 @@ namespace Domain.DTOs.Filters
         public decimal? Cost { get; set; }
         public DateTime? ExpenseDate { get; set; }
         public int? VehicleId { get; set; }
-        public string? MechanicalWorkshop { get; set; }
+        public int? VehicleMaintenanceWorkshopId { get; set; }
         public string? ERPFolio { get; set; }
         public int PageSize { get; set; }
         public int PageNumber { get; set; }

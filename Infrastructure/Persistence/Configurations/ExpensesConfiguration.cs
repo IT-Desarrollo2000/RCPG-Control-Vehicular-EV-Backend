@@ -22,11 +22,16 @@ namespace Infrastructure.Persistence.Configurations
                 .WithMany(xr => xr.Expenses)
                 .HasForeignKey(x => x.VehicleId)
                 .OnDelete(DeleteBehavior.Restrict);
-                
+
 
             builder.HasMany(p => p.PhotosOfSpending)
                 .WithOne(pr => pr.Expenses)
                 .HasForeignKey(p => p.ExpensesId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(m => m.VehicleMaintenanceWorkshop)
+                .WithMany(mx => mx.Expenses)
+                .HasForeignKey(m => m.VehicleMaintenanceWorkshopId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(v => v.Cost).HasColumnType("decimal(18,2)");

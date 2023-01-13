@@ -165,10 +165,10 @@ namespace Application.Services
 
             result.Name = maintenanceWorkshopRequest.Name;
             result.Ubication = maintenanceWorkshopRequest.Ubication;
-            result.Latitude = maintenanceWorkshopRequest.Latitude;
-            result.Longitude = maintenanceWorkshopRequest.Longitude;
+            result.Latitude = (double)maintenanceWorkshopRequest.Latitude;
+            result.Longitude = (double)maintenanceWorkshopRequest.Longitude;
             result.Telephone = maintenanceWorkshopRequest.Telephone;
-            result.VehicleMaintenanceId = maintenanceWorkshopRequest.VehicleMaintenanceId;
+            result.VehicleMaintenanceId = (int)maintenanceWorkshopRequest.VehicleMaintenanceId;
 
             await _unitOfWork.MaintenanceWorkshopRepo.Update(result);
             await _unitOfWork.SaveChangesAsync();
