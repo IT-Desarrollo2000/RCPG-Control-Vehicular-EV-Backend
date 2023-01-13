@@ -1,4 +1,5 @@
 using AutoMapper;
+using AutoMapper.Configuration.Annotations;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Company;
@@ -26,7 +27,8 @@ namespace Infrastructure.Mappings
             CreateMap<AppUser, AppUserRegistrationRequest>();
 
             //Approval Mapping
-            CreateMap<UserApproval, UserProfile>().ReverseMap();
+            CreateMap<UserProfile, UserApproval>();
+            CreateMap<UserApproval, UserProfile>().ForMember(a => a.Id, opt => opt.Ignore());
             CreateMap<AppUserRegistrationRequest, ApprovalCreationRequest>();
             CreateMap<ApprovalCreationRequest, UserApproval>();
             
