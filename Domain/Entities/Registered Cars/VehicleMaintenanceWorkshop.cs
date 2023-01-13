@@ -15,6 +15,7 @@ namespace Domain.Entities.Registered_Cars
         public string Telephone { get; set; }
         public int VehicleMaintenanceId { get; set; }
         public virtual VehicleMaintenance VehicleMaintenance { get; set; }
+        public ICollection<Expenses> Expenses { get; set; }
 
     }
 }

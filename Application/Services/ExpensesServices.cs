@@ -39,6 +39,7 @@ namespace Application.Services
             var existetypeOfExpenses = await _unitOfWork.TypesOfExpensesRepo.Get(v => v.Id == expensesRequest.TypesOfExpensesId);
             var resultType = existetypeOfExpenses.FirstOrDefault();
 
+
             if (resultExpenses == null)
             {
                 response.success = false;
@@ -51,9 +52,26 @@ namespace Application.Services
                 response.success = false;
                 response.AddError("No existe el tipo de gastos", $"No existe tipo de gastos con el id{expensesRequest.TypesOfExpensesId} solicitado", 1);
                 return response;
-            } 
+            }
 
             var entity = _mapper.Map<Expenses>(expensesRequest);
+
+            if(expensesRequest.VehicleMaintenanceWorkshopId.HasValue)
+            {
+                var existeworkshops = await _unitOfWork.MaintenanceWorkshopRepo.Get(v => v.Id == expensesRequest.VehicleMaintenanceWorkshopId);
+                var resultworkshop = existeworkshops.FirstOrDefault();
+
+                if (resultworkshop == null)
+                {
+                    response.success = false;
+                    response.AddError("No existe el taller", $"No existe taller con el id{expensesRequest.VehicleMaintenanceWorkshopId} solicitado", 1);
+                    return response;
+                }
+
+                entity.VehicleMaintenanceWorkshop = resultworkshop;
+            }
+
+
             await _unitOfWork.ExpensesRepo.Add(entity);
             await _unitOfWork.SaveChangesAsync();
             response.success = true;
@@ -80,12 +98,11 @@ namespace Application.Services
             var result = await _unitOfWork.ExpensesRepo.Get(r => r.Id == id);
             var expenses = result.FirstOrDefault();
             if (expenses == null) return null;
-            expenses.Cost = expensesRequest.Cost;
-            expenses.ExpenseDate = expensesRequest.ExpenseDate;           
-            expenses.MechanicalWorkshop = expensesRequest.MechanicalWorkshop;
-            expenses.ERPFolio = expensesRequest.ERPFolio;
- 
 
+            expenses.TypesOfExpensesId = expensesRequest.TypesOfExpensesId;
+            expenses.Cost = expensesRequest.Cost;
+            expenses.ExpenseDate = expensesRequest.ExpenseDate;                      
+            expenses.VehicleMaintenanceWorkshopId = expensesRequest.VehicleMaintenanceWorkshopId;
 
             await _unitOfWork.ExpensesRepo.Update(expenses);
             await _unitOfWork.SaveChangesAsync();
@@ -171,13 +188,13 @@ namespace Application.Services
                 else { Query = p => p.VehicleId <= filter.VehicleId.Value; }
             }        
 
-            if (!string.IsNullOrEmpty(filter.MechanicalWorkshop))
+            if (filter.VehicleMaintenanceWorkshopId.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.MechanicalWorkshop.Contains(filter.MechanicalWorkshop));
+                    Query = Query.And(p => p.VehicleMaintenanceWorkshopId <= filter.VehicleMaintenanceWorkshopId);
                 }
-                else { Query = p => p.MechanicalWorkshop.Contains(filter.MechanicalWorkshop); }
+                else { Query = p => p.VehicleMaintenanceWorkshopId <= filter.VehicleMaintenanceWorkshopId; }
             }
 
             if (!string.IsNullOrEmpty(filter.ERPFolio))

@@ -102,7 +102,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteExpenses(int id)
         {
             var result = await _expensesServices.DeleteExpenses(id);
-            if (result == null) { return NotFound($"No existe tipo de gasto con el Id {id}"); }
+            if (result == null) { return NotFound($"No existe gasto con el Id {id}"); }
             if (result.success) { return Ok(result); }
             else
             {
