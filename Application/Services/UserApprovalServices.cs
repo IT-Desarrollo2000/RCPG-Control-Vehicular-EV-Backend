@@ -261,7 +261,7 @@ namespace Application.Services
                     var profile = await _unitOfWork.UserProfileRepo.GetById(result.ProfileId);
 
                     //Modificar el perfil
-                    profile = _mapper.Map<UserProfile>(result);
+                    _mapper.Map(result, profile);
                     profile.IsVerified = true;
 
                     //Modificar la solicitud
