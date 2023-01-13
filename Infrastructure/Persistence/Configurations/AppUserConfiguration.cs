@@ -17,6 +17,11 @@ namespace Infrastructure.Persistence.Configurations
                 .WithOne(u => u.User)
                 .HasForeignKey(u => u.UserId)
                 .IsRequired();
+
+            builder.HasMany(pu => pu.VehicleReports)
+                .WithOne(p => p.AppUser)
+                .HasForeignKey(pu => pu.AppUserId)
+                .IsRequired();
         }
     }
 }

@@ -80,7 +80,7 @@ namespace API.Controllers
         }
 
         //POST
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(MaintenanceWorkshopDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
@@ -109,7 +109,7 @@ namespace API.Controllers
         }
 
         //PUT
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(MaintenanceWorkshopDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
