@@ -12,6 +12,7 @@ using System.Net;
 namespace API.Controllers
 {
     [Route("api/typesOfExpenses")]
+    [ApiController]
     public class TypesOfExpensesController:ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

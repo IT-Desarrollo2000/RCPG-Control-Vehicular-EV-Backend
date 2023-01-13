@@ -3,8 +3,11 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
+using Domain.DTOs.Reponses;
+using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +23,11 @@ namespace Application.Services
         private readonly IMapper _mapper;
         private readonly PaginationOptions _paginationOptions;
 
-        public RegisteredVehiclesServices(IUnitOfWork unitOfWork, IMapper mapper, PaginationOptions paginationOptions)
+        public RegisteredVehiclesServices(IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            _paginationOptions = paginationOptions;
+            this._unitOfWork = unitOfWork;
+            this._mapper = mapper;
+            this._paginationOptions = options.Value;
         }
 
         public async Task<PagedList<Vehicle>> GetVehicles(VehicleFilter filter)
@@ -72,7 +75,7 @@ namespace Application.Services
                 else { Query = p => p.IsUtilitary == filter.IsUtilitary.Value; }
             }
 
-            if(filter.FuelType.HasValue)
+            if (filter.FuelType.HasValue)
             {
                 if (Query != null)
                 {
@@ -176,5 +179,134 @@ namespace Application.Services
             return pagedApprovals;
         }
 
+        public async Task<GenericResponse<VehiclesDto>> AddVehicles(VehicleRequest vehicleRequest)
+        {
+            GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
+            var entity = _mapper.Map<Vehicle>(vehicleRequest);
+            await _unitOfWork.VehicleRepo.Add(entity);
+            await _unitOfWork.SaveChangesAsync();
+            response.success = true;
+            var vDto = _mapper.Map<VehiclesDto>(entity);
+            response.Data = vDto;
+            return response;
+        }
+
+        public async Task<GenericResponse<VehiclesDto>> GetVehicleById(int id)
+        {
+            GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
+            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id);
+
+            var veh = entity.FirstOrDefault();
+            var map = _mapper.Map<VehiclesDto>(veh);
+            response.success = true;
+            response.Data = map;
+            return response;
+        }
+
+        public async Task<GenericResponse<Vehicle>> DeleteVehicles(int id)
+        {
+            GenericResponse<Vehicle> response = new GenericResponse<Vehicle>();
+            var exp = await _unitOfWork.VehicleRepo.GetById(id);
+            if (exp == null) return null;
+            var exists = await _unitOfWork.VehicleRepo.Delete(id);
+            await _unitOfWork.SaveChangesAsync();
+            var vehicledto = _mapper.Map<Vehicle>(exp);
+            response.success = true;
+            response.Data = vehicledto;
+            return response;
+        }
+
+        public async Task<GenericResponse<Vehicle>> PutVehicles(VehiclesUpdateRequest vehiclesUpdateRequest, int id)
+        {
+
+            GenericResponse<Vehicle> response = new GenericResponse<Vehicle>();
+            var result = await _unitOfWork.VehicleRepo.Get(r => r.Id == id);
+            var veh = result.FirstOrDefault();
+            if (veh == null) return null;         
+
+            if (!string.IsNullOrEmpty(vehiclesUpdateRequest.Name))
+            {               
+                veh.Name = vehiclesUpdateRequest.Name;
+            }
+
+            if (!string.IsNullOrEmpty(vehiclesUpdateRequest.Serial))
+            {
+                veh.Serial = vehiclesUpdateRequest.Serial;
+            }
+
+            if (vehiclesUpdateRequest.IsUtilitary.HasValue)
+            {
+                veh.IsUtilitary = vehiclesUpdateRequest.IsUtilitary.Value;
+            }
+
+            if (!string.IsNullOrEmpty(vehiclesUpdateRequest.Brand))
+            {
+                veh.Brand = vehiclesUpdateRequest.Brand;
+            }
+
+
+            if (!string.IsNullOrEmpty(vehiclesUpdateRequest.Color))
+            {
+                veh.Color = vehiclesUpdateRequest.Color;
+            }
+
+            if (vehiclesUpdateRequest.ModelYear.HasValue)
+            {
+                veh.ModelYear = vehiclesUpdateRequest.ModelYear.Value;
+            }
+
+            if (vehiclesUpdateRequest.FuelCapacity.HasValue)
+            {
+                veh.FuelCapacity = vehiclesUpdateRequest.FuelCapacity.Value;
+            }
+
+            if (vehiclesUpdateRequest.FuelType.HasValue)
+            {
+                veh.FuelType = vehiclesUpdateRequest.FuelType.Value;
+            }
+
+            if (vehiclesUpdateRequest.VehicleType.HasValue)
+            {
+                veh.VehicleType = vehiclesUpdateRequest.VehicleType.Value;
+            }
+
+            if (vehiclesUpdateRequest.VehicleStatus.HasValue)
+            {
+                veh.VehicleStatus = vehiclesUpdateRequest.VehicleStatus.Value;
+            }
+
+            if (vehiclesUpdateRequest.ServicePeriodMonths.HasValue)
+            {
+                veh.ServicePeriodMonths = vehiclesUpdateRequest.ServicePeriodMonths.Value;
+            }
+
+            if (vehiclesUpdateRequest.ServicePeriodKM.HasValue)
+            {
+                veh.ServicePeriodKM = vehiclesUpdateRequest.ServicePeriodKM.Value;
+            }
+
+            if (vehiclesUpdateRequest.OwnershipType.HasValue)
+            {
+                veh.OwnershipType = vehiclesUpdateRequest.OwnershipType.Value;
+            }
+
+
+            if (!string.IsNullOrEmpty(vehiclesUpdateRequest.OwnersName))
+            {
+                veh.OwnersName = vehiclesUpdateRequest.OwnersName;
+            }
+
+            if (vehiclesUpdateRequest.DesiredPerformance.HasValue)
+            {
+                veh.DesiredPerformance = vehiclesUpdateRequest.DesiredPerformance.Value;
+            }
+
+            await _unitOfWork.VehicleRepo.Update(veh);
+            await _unitOfWork.SaveChangesAsync();
+            response.success = true;
+            response.Data = veh;
+            return response;
+
+        }
     }
 }
