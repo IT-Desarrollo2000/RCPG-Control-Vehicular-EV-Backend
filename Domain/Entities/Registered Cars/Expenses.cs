@@ -17,6 +17,8 @@ namespace Domain.Entities.Registered_Cars
         public string MechanicalWorkshop { get; set; }
         public string ERPFolio { get; set; }
         public virtual ICollection<PhotosOfSpending> PhotosOfSpending { get; set; }
+        public int? VehicleReportId { get; set; }
+        public virtual VehicleReport? VehicleReport { get; set; }
 
 
     }
