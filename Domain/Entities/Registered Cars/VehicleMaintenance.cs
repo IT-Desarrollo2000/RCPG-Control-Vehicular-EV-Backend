@@ -8,6 +8,11 @@ namespace Domain.Entities.Registered_Cars
 {
     public class VehicleMaintenance : BaseEntity
     {
+        public VehicleMaintenance()
+        {
+            this.VehicleMaintenanceWorkshops = new HashSet<VehicleMaintenanceWorkshop>();
+        }
+
         public string WhereServiceMaintenance { get; set; }
         public string? CarryPerson { get; set; }
         public string CauseServiceMaintenance { get; set; }
