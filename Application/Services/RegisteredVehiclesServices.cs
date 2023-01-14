@@ -14,6 +14,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Application.Services
 {
@@ -22,12 +23,16 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly PaginationOptions _paginationOptions;
+        private readonly IOptions<BlobContainers> _azureBlobContainers;
+        private readonly IBlobStorageService _blobStorageService;
 
-        public RegisteredVehiclesServices(IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options)
+        public RegisteredVehiclesServices(IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options, IOptions<BlobContainers> azureBlobContainers, IBlobStorageService blobStorageService)
         {
-            this._unitOfWork = unitOfWork;
-            this._mapper = mapper;
-            this._paginationOptions = options.Value;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _paginationOptions = options.Value;
+            _azureBlobContainers = azureBlobContainers;
+            _blobStorageService = blobStorageService;
         }
 
         public async Task<PagedList<Vehicle>> GetVehicles(VehicleFilter filter)
@@ -182,13 +187,81 @@ namespace Application.Services
         public async Task<GenericResponse<VehiclesDto>> AddVehicles(VehicleRequest vehicleRequest)
         {
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
-            var entity = _mapper.Map<Vehicle>(vehicleRequest);
-            await _unitOfWork.VehicleRepo.Add(entity);
-            await _unitOfWork.SaveChangesAsync();
-            response.success = true;
-            var vDto = _mapper.Map<VehiclesDto>(entity);
-            response.Data = vDto;
-            return response;
+
+            try
+            {
+                //Mapear request
+                var entity = _mapper.Map<Vehicle>(vehicleRequest);
+                entity.VehicleStatus = Domain.Enums.VehicleStatus.ACTIVO;
+                
+                //Revisar que existan los departamentos asociados
+                foreach(var id in vehicleRequest.AssignedDepartments)
+                {
+                    var department = await _unitOfWork.Departaments.GetById(id);
+                    if(department == null)
+                    {
+                        response.success= false;
+                        response.AddError("Not Found", $"No se encontro el departamento con Id {id}", 2);
+
+                        return response;
+                    }
+                    entity.AssignedDepartments.Add(department);
+                }
+
+                //Guardar el Vehiculo
+                await _unitOfWork.VehicleRepo.Add(entity);
+
+                //Guardar las fotos
+                var images = new List<VehicleImage>();
+
+                foreach (var image in vehicleRequest.Images)
+                {
+                    //Validar imagenes y Guardar las imagenes en el blobstorage
+                    if (image.ImageFile.ContentType.Contains("image"))
+                    {
+                        //Manipular el nombre de archivo
+                        var uploadDate = DateTime.UtcNow;
+                        string FileExtn = System.IO.Path.GetExtension(image.ImageFile.FileName);
+                        var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.Serial}{FileExtn}";
+                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image.ImageFile, _azureBlobContainers.Value.RegisteredCars, filePath);
+
+                        //Agregar la imagen en BD
+                        var newImage = new VehicleImage()
+                        {
+                            FilePath = filePath,
+                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.RegisteredCars, filePath)
+                        };
+
+                        await _unitOfWork.VehicleImageRepo.Add(newImage);
+                        images.Add(newImage);
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+
+                        return response;
+                    }
+                }
+
+                //Guardar los cambios
+                await _unitOfWork.SaveChangesAsync();
+
+                response.success = true;
+                var vDto = _mapper.Map<VehiclesDto>(entity);
+                vDto.Images.AddRange(images);
+                response.Data = vDto;
+                return response;
+
+            } 
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
+            
         }
 
         public async Task<GenericResponse<VehiclesDto>> GetVehicleById(int id)
@@ -206,14 +279,36 @@ namespace Application.Services
         public async Task<GenericResponse<Vehicle>> DeleteVehicles(int id)
         {
             GenericResponse<Vehicle> response = new GenericResponse<Vehicle>();
-            var exp = await _unitOfWork.VehicleRepo.GetById(id);
-            if (exp == null) return null;
-            var exists = await _unitOfWork.VehicleRepo.Delete(id);
-            await _unitOfWork.SaveChangesAsync();
-            var vehicledto = _mapper.Map<Vehicle>(exp);
-            response.success = true;
-            response.Data = vehicledto;
-            return response;
+            try
+            {
+                var exp = await _unitOfWork.VehicleRepo.GetById(id);
+                if (exp == null) return null;
+                var exists = await _unitOfWork.VehicleRepo.Delete(id);
+
+
+                //Borrar las fotos del blob
+                var photos = await _unitOfWork.VehicleImageRepo.Get(filter: v => v.VehicleId == id);
+
+                foreach (var photo in photos)
+                {
+                    await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.RegisteredCars, photo.FilePath);
+                    await _unitOfWork.VehicleImageRepo.Delete(photo.Id);
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+                var vehicledto = _mapper.Map<Vehicle>(exp);
+                response.success = true;
+                response.Data = vehicledto;
+                return response;
+            } 
+            catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
+            
         }
 
         public async Task<GenericResponse<Vehicle>> PutVehicles(VehiclesUpdateRequest vehiclesUpdateRequest, int id)
@@ -307,6 +402,84 @@ namespace Application.Services
             response.Data = veh;
             return response;
 
+        }
+
+        public async Task<GenericResponse<VehicleImage>> AddVehicleImage(VehicleImageRequest request, int vehicleId)
+        {
+            GenericResponse<VehicleImage> response = new GenericResponse<VehicleImage>();
+
+            try
+            {
+                //Verificar que exista el vehiculo
+                var vehicle = await _unitOfWork.VehicleRepo.GetById(vehicleId);
+                if (vehicle == null) return null;
+
+                if (request.ImageFile.ContentType.Contains("image"))
+                {
+                    //Manipular el nombre de archivo
+                    var uploadDate = DateTime.UtcNow;
+                    string FileExtn = System.IO.Path.GetExtension(request.ImageFile.FileName);
+                    var filePath = $"{vehicleId}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{vehicle.Serial}{FileExtn}";
+                    var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(request.ImageFile, _azureBlobContainers.Value.RegisteredCars, filePath);
+
+                    //Agregar la imagen en BD
+                    var newImage = new VehicleImage()
+                    {
+                        FilePath = filePath,
+                        FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.RegisteredCars, filePath)
+                    };
+
+                    await _unitOfWork.VehicleImageRepo.Add(newImage);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    response.success = true;
+                    response.Data = newImage;
+
+                    return response;
+                }
+                else
+                {
+                    response.success = false;
+                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+
+                    return response;
+                }
+            } 
+            catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
+            
+        }
+
+        public async Task<GenericResponse<bool>> DeleteVehicleImage(int VehicleImageId)
+        {
+            GenericResponse<bool> response = new GenericResponse<bool>();
+
+            try
+            {
+                //Borrar las fotos del blob
+                var photos = await _unitOfWork.VehicleImageRepo.GetById(VehicleImageId);
+                if(photos == null) return null;
+
+                await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.RegisteredCars, photos.FilePath);
+                await _unitOfWork.VehicleImageRepo.Delete(photos.Id);
+                await _unitOfWork.SaveChangesAsync();
+
+                response.success = true;
+                response.Data = true;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
         }
     }
 }

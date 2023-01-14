@@ -29,6 +29,8 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(m => m.VehicleId)
                 .IsRequired();
 
+            builder.HasMany(v => v.AssignedDepartments)
+                .WithMany(d => d.AssignedVehicles);
         }
     }
 }

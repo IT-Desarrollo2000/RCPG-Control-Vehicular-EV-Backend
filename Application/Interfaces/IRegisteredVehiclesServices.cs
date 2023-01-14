@@ -13,7 +13,9 @@ namespace Application.Interfaces
 {
     public interface IRegisteredVehiclesServices
     {
+        Task<GenericResponse<VehicleImage>> AddVehicleImage(VehicleImageRequest request, int vehicleId);
         Task<GenericResponse<VehiclesDto>> AddVehicles(VehicleRequest vehicleRequest);
+        Task<GenericResponse<bool>> DeleteVehicleImage(int VehicleImageId);
         Task<GenericResponse<Vehicle>> DeleteVehicles(int id);
         Task<GenericResponse<VehiclesDto>> GetVehicleById(int id);
         Task<PagedList<Vehicle>> GetVehicles(VehicleFilter filter);

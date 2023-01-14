@@ -21,6 +21,7 @@ namespace Application.Interfaces
         IRepository<TypesOfExpenses> TypesOfExpensesRepo { get; }
         IRepository<VehicleMaintenance> VehicleMaintenanceRepo { get; }
         IRepository<VehicleMaintenanceWorkshop> MaintenanceWorkshopRepo { get; }
+        IRepository<VehicleImage> VehicleImageRepo { get; }
 
         void Dispose();
         void SaveChanges();
