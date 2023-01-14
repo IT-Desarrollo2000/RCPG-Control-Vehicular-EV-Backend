@@ -59,7 +59,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
-        [Route("GetVehicleById/{id}")] 
+        [Route("GetVehicleById/{id}")]
         public async Task<IActionResult> GetVehicleById(int id)
         {
             var result = await _registeredVehiclesServices.GetVehicleById(id);
@@ -72,7 +72,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("AddVehicles")]
-        public async Task<IActionResult> AddVehicles(VehicleRequest vehicleRequest)
+        public async Task<IActionResult> AddVehicles([FromForm] VehicleRequest vehicleRequest)
         {
             var result = await _registeredVehiclesServices.AddVehicles(vehicleRequest);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
@@ -99,6 +99,34 @@ namespace API.Controllers
         {
             var result = await _registeredVehiclesServices.DeleteVehicles(id);
             if (result == null) { return NotFound($"No existe vehiculo con el Id {id}"); }
+            if (result.success) { return Ok(result); }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleImage>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPost]
+        [Route("Vehicle/{vehicleId:int}/AddImage")]
+        public async Task<IActionResult> AddVehicleImage(int vehicleId, [FromForm] VehicleImageRequest vehicleRequest)
+        {
+            var result = await _registeredVehiclesServices.AddVehicleImage(vehicleRequest, vehicleId);
+            if (result == null) return NotFound("No se encontro el vehiculo especificado");
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpDelete]
+        [Route("Vehicle/{imageId:int}/DeleteImage")]
+        public async Task<IActionResult> DeleteVehicleImage(int imageId)
+        {
+            var result = await _registeredVehiclesServices.DeleteVehicleImage(imageId);
+            if (result == null) { return NotFound($"No existe imagen con el Id {imageId}"); }
             if (result.success) { return Ok(result); }
             else
             {
