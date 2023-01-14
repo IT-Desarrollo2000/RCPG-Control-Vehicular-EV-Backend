@@ -1,3 +1,4 @@
+using Domain.Entities.Departament;
 using Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,11 @@ namespace Domain.Entities.Registered_Cars
         {
             this.VehicleServices = new HashSet<VehicleService>();
             this.VehicleImages = new HashSet<VehicleImage>();
+            this.AssignedDepartments = new HashSet<Departaments>();
+            this.Checklists = new HashSet<Checklist>();
+            this.Expenses = new HashSet<Expenses>();
+            this.VehicleMaintenances = new HashSet<VehicleMaintenance>();
+            this.VehicleReports = new HashSet<VehicleReport>();
         }
         public string Name { get; set; }
         public string Serial { get; set; }
@@ -29,6 +35,8 @@ namespace Domain.Entities.Registered_Cars
         public OwnershipType OwnershipType { get; set; }
         public string? OwnersName { get; set; }
         public decimal DesiredPerformance { get; set; }
+        
+        public virtual ICollection<Departaments> AssignedDepartments { get; set; }
         public virtual ICollection<VehicleImage> VehicleImages { get; set; }
         public virtual ICollection<VehicleService> VehicleServices { get; set; }
         public virtual ICollection<Checklist> Checklists { get; set; }

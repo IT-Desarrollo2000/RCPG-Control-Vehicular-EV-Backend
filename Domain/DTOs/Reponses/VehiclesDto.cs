@@ -1,4 +1,5 @@
-﻿using Domain.Enums;
+﻿using Domain.Entities.Registered_Cars;
+using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,5 +26,6 @@ namespace Domain.DTOs.Reponses
         public OwnershipType OwnershipType { get; set; }
         public string? OwnersName { get; set; }
         public decimal DesiredPerformance { get; set; }
+        public List<VehicleImage> Images { get; set; }
     }
 }
