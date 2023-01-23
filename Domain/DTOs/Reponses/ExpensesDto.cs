@@ -16,7 +16,7 @@ namespace Domain.DTOs.Reponses
         public virtual Vehicle Vehicle { get; set; }
         public string MechanicalWorkshop { get; set; }
         public string ERPFolio { get; set; }
-        public virtual ICollection<PhotosOfSpending> PhotosOfSpending { get; set; }
+        public List<PhotosOfSpending> PhotosOfSpending { get; set; }
 
     }
 }

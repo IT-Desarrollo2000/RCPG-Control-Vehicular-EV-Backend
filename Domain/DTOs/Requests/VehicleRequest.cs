@@ -11,6 +11,12 @@ namespace Domain.DTOs.Requests
 {
     public class VehicleRequest
     {
+        public VehicleRequest() 
+        {
+            AssignedDepartments = new List<int>();
+            Images = new List<VehicleImageRequest>();
+        }
+
         [Required]
         public string Name { get; set; }
         [Required]

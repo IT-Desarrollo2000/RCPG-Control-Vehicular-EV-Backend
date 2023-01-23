@@ -10,6 +10,11 @@ namespace Domain.DTOs.Reponses
 {
     public class VehiclesDto
     {
+        public VehiclesDto()
+        {
+            Images = new List<VehicleImage>();
+        }
+
         public int Id { get; set; }
         public string Name { get; set; }
         public string Serial { get; set; }
