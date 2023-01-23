@@ -88,15 +88,6 @@ namespace API.Controllers
         public async Task<ActionResult<VehicleMaintenanceDto>> Post([FromBody] VehicleMaintenanceRequest vehicleMaintenanceRequest)
         {
             var entidad = await _vehicleMaintenanceService.PostVehicleMaintenance(vehicleMaintenanceRequest);
-            if (entidad.Data == null)
-            {
-                return NotFound($"No existe Vehicle con el VehicleId {vehicleMaintenanceRequest.VehicleId} para Actualizar VehicleMaintenance");
-            }
-
-            /* if ( == null && departamentRequest.CompanyId == null)
-             {
-                 return BadRequest("Los campos Name y CompanyId no pueden ir vacios");
-             }*/
 
             if (entidad.success)
             {
@@ -104,7 +95,7 @@ namespace API.Controllers
             }
             else
             {
-                return BadRequest($"No se pudo agregar el VehicleService");
+                return BadRequest(entidad);
             }
 
         }
@@ -121,7 +112,7 @@ namespace API.Controllers
 
             var entidad = await _vehicleMaintenanceService.PutVehicleMaintenance(id, vehicleMaintenanceRequest);
 
-            if (entidad == null)
+           /* if (entidad == null)
             {
                 return NotFound($"No existe Maintenance con el Id {id} para Actualizar VehicleMaintenance");
             }
@@ -129,7 +120,7 @@ namespace API.Controllers
             if (entidad.Data == null)
             {
                 return NotFound($"No existe vehicle con el vehicleId {vehicleMaintenanceRequest.VehicleId} para Actualizar VehicleService");
-            }
+            }*/
 
             if (entidad.success)
             {
@@ -138,7 +129,7 @@ namespace API.Controllers
             }
             else
             {
-                return BadRequest($"No se pudo agregar el VehicleMaintenance");
+                return BadRequest(entidad);
             }
         }
 

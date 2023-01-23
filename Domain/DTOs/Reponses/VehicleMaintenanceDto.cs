@@ -15,7 +15,8 @@ namespace Domain.DTOs.Reponses
         public string CauseServiceMaintenance { get; set; }
         public int VehicleId { get; set; }
         public DateTime? NextServiceMaintenance { get; set; }
+        public int? VehicleMaintenanceWorkshopId { get; set; }
+        public virtual VehicleMaintenanceWorkshop? VehicleMaintenanceWorkshop { get; set; }
         public virtual Vehicle Vehicle { get; set; }
-        public virtual ICollection<VehicleMaintenanceWorkshop> VehicleMaintenanceWorkshops { get; set; }
     }
 }

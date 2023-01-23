@@ -85,22 +85,13 @@ namespace Application.Services
                 else { Query = p => p.Telephone.Contains(filter.Telephone); }
             }
 
-            if (filter.VehicleMaintenanceId.HasValue)
-            {
-                if (Query != null)
-                {
-                    Query = Query.And(p => p.VehicleMaintenanceId >= filter.VehicleMaintenanceId.Value);
-                }
-                else { Query = p => p.VehicleMaintenanceId >= filter.VehicleMaintenanceId.Value; }
-            }
-
             if (Query != null)
             {
-                userApprovals = await _unitOfWork.MaintenanceWorkshopRepo.Get(filter: Query, includeProperties:"VehicleMaintenance");
+                userApprovals = await _unitOfWork.MaintenanceWorkshopRepo.Get(filter: Query, includeProperties: "VehicleMaintenances,Expenses");
             }
             else
             {
-                userApprovals = await _unitOfWork.MaintenanceWorkshopRepo.Get(includeProperties: "VehicleMaintenance");
+                userApprovals = await _unitOfWork.MaintenanceWorkshopRepo.Get(includeProperties: "VehicleMaintenances,Expenses");
             }
 
             var pagedApprovals = PagedList<VehicleMaintenanceWorkshop>.Create(userApprovals, filter.PageNumber, filter.PageSize);
@@ -113,7 +104,7 @@ namespace Application.Services
         public async Task<GenericResponse<MaintenanceWorkshopDto>> GetMaintenanceWorkshopById(int Id)
         {
             GenericResponse<MaintenanceWorkshopDto> response = new GenericResponse<MaintenanceWorkshopDto>();
-            var profile = await _unitOfWork.MaintenanceWorkshopRepo.Get(filter: p => p.Id == Id, includeProperties:"VehicleMaintenance");
+            var profile = await _unitOfWork.MaintenanceWorkshopRepo.Get(filter: p => p.Id == Id, includeProperties:"VehicleMaintenances,Expenses");
             var result = profile.FirstOrDefault();
             var VehicleMaintenanceDTO = _mapper.Map<MaintenanceWorkshopDto>(result);
             response.success = true;
@@ -125,16 +116,6 @@ namespace Application.Services
         public async Task<GenericResponse<MaintenanceWorkshopDto>> PostMaintenanceWorkshop([FromBody] MaintenanceWorkshopRequest maintenanceWorkshopRequest)
         {
             GenericResponse<MaintenanceWorkshopDto> response = new GenericResponse<MaintenanceWorkshopDto>();
-            var existeVehicleMaintenance = await _unitOfWork.VehicleMaintenanceRepo.Get(c => c.Id == maintenanceWorkshopRequest.VehicleMaintenanceId);
-            var resultVehicleMaintenance = existeVehicleMaintenance.FirstOrDefault();
-
-            if (resultVehicleMaintenance == null)
-            {
-                response.success = false;
-                response.AddError("No existe VehicleMaintenance", $"No existe Mantenimiento de Vehiculo con el VehicleMaintenanceId {maintenanceWorkshopRequest.VehicleMaintenanceId} solicitado", 1);
-                return response;
-            }
-
             var entidad = _mapper.Map<VehicleMaintenanceWorkshop>(maintenanceWorkshopRequest);
             await _unitOfWork.MaintenanceWorkshopRepo.Add(entidad);
             await _unitOfWork.SaveChangesAsync();
@@ -152,32 +133,19 @@ namespace Application.Services
             var profile = await _unitOfWork.MaintenanceWorkshopRepo.Get(p => p.Id == Id);
             var result = profile.FirstOrDefault();
             if (result == null) { return null; }
-
-            var existeVehicleMaintenance = await _unitOfWork.VehicleMaintenanceRepo.Get(c => c.Id == maintenanceWorkshopRequest.VehicleMaintenanceId);
-            var resultVehicleMaintenance = existeVehicleMaintenance.FirstOrDefault();
-
-            if (resultVehicleMaintenance == null)
-            {
-                response.success = false;
-                response.AddError("No existe VehicleMaintenance", $"No existe Mantenimiento de Vehiculo con el VehicleMaintenanceId {maintenanceWorkshopRequest.VehicleMaintenanceId} solicitado", 1);
-                return response;
-            }
-
             result.Name = maintenanceWorkshopRequest.Name;
             result.Ubication = maintenanceWorkshopRequest.Ubication;
-            result.Latitude = (double)maintenanceWorkshopRequest.Latitude;
-            result.Longitude = (double)maintenanceWorkshopRequest.Longitude;
+            result.Latitude = maintenanceWorkshopRequest.Latitude;
+            result.Longitude = maintenanceWorkshopRequest.Longitude;
             result.Telephone = maintenanceWorkshopRequest.Telephone;
-            result.VehicleMaintenanceId = (int)maintenanceWorkshopRequest.VehicleMaintenanceId;
 
             await _unitOfWork.MaintenanceWorkshopRepo.Update(result);
             await _unitOfWork.SaveChangesAsync();
-
             var MaintenanceWorkshopDTO = _mapper.Map<MaintenanceWorkshopDto>(result);
             response.success = true;
             response.Data = MaintenanceWorkshopDTO;
-
             return response;
+
         }
 
         //Delete
