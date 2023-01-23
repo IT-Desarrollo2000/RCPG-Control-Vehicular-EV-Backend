@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Requests;
+using Domain.Entities.Departament;
 using Domain.Entities.Profiles;
 using Domain.Entities.User_Approvals;
 using Microsoft.Extensions.Options;
@@ -33,7 +34,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "";
+            string properties = "Profile";
             IEnumerable<UserApproval> userApprovals = null;
             Expression<Func<UserApproval, bool>> Query = null;
 
@@ -245,16 +246,21 @@ namespace Application.Services
                 var result = query.FirstOrDefault();
                 if (result == null) return null;
 
-                //Revisar que el departamento especificado exista
-                var department = await _unitOfWork.Departaments.GetById(request.DepartmentId);
-                if (department == null)
+                Departaments department = null;
+
+                if(request.DepartmentId.HasValue)
                 {
-                    response.success = false;
-                    response.AddError("Not found", $"El Id {request.DepartmentId} de departamento especificado no existe");
+                    //Revisar que el departamento especificado exista
+                    department = await _unitOfWork.Departaments.GetById(request.DepartmentId.Value);
+                    if (department == null)
+                    {
+                        response.success = false;
+                        response.AddError("Not found", $"El Id {request.DepartmentId} de departamento especificado no existe");
 
-                    return response;
+                        return response;
+                    }
                 }
-
+                
                 if (request.IsApproved)
                 {
                     //obtener el perfil a aprobar

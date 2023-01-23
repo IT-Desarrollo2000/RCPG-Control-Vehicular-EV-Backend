@@ -229,7 +229,8 @@ namespace Application.Services
                         var newImage = new VehicleImage()
                         {
                             FilePath = filePath,
-                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.RegisteredCars, filePath)
+                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.RegisteredCars, filePath),
+                            Vehicle = entity
                         };
 
                         await _unitOfWork.VehicleImageRepo.Add(newImage);
@@ -426,7 +427,8 @@ namespace Application.Services
                     var newImage = new VehicleImage()
                     {
                         FilePath = filePath,
-                        FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.RegisteredCars, filePath)
+                        FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.RegisteredCars, filePath),
+                        Vehicle = vehicle
                     };
 
                     await _unitOfWork.VehicleImageRepo.Add(newImage);
