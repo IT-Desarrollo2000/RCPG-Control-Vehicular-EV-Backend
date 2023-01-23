@@ -14,10 +14,12 @@ namespace Application.Interfaces
 {
     public interface IExpensesServices
     {
+        Task<GenericResponse<PhotosOfSpending>> AddExpenseAttachment(ExpensePhotoRequest request, int expenseId);
+        Task<GenericResponse<bool>> DeleteExpenseAttachment(int expenseImageId);
         Task<GenericResponse<Expenses>> DeleteExpenses(int id);
         Task<PagedList<Expenses>> GetExpenses(ExpensesFilter filter);
         Task<GenericResponse<ExpensesDto>> GetExpensesById(int id);      
-        Task<GenericResponse<ExpensesDto>> PostExpenses([FromBody] ExpensesRequest expensesRequest);
-        Task<GenericResponse<Expenses>> PutExpenses(ExpensesRequest expensesRequest, int id);
+        Task<GenericResponse<ExpensesDto>> PostExpenses(ExpensesRequest expensesRequest);
+        Task<GenericResponse<Expenses>> PutExpenses(ExpenseUpdateRequest expensesRequest, int id);
     }
 }
