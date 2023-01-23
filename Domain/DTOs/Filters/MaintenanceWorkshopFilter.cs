@@ -13,7 +13,6 @@ namespace Domain.DTOs.Filters
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
         public string? Telephone { get; set; }
-        public int? VehicleMaintenanceId { get; set; }
         public int PageSize { get; set; }
         public int PageNumber { get; set; }
     }

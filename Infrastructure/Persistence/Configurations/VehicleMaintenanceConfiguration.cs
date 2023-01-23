@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Persistence.Configurations
 {
-    public class VehicleMaintenanceConfiguration : IEntityTypeConfiguration<VehicleMaintenance>
+    public class VehicleMaintenanceConfiguration : IEntityTypeConfiguration<VehicleMaintenanceWorkshop>
     {
-        public void Configure(EntityTypeBuilder<VehicleMaintenance> builder)
+        public void Configure(EntityTypeBuilder<VehicleMaintenanceWorkshop> builder)
         {
-            builder.HasMany(ur => ur.VehicleMaintenanceWorkshops)
-                   .WithOne(u => u.VehicleMaintenance)
-                   .HasForeignKey(x => x.VehicleMaintenanceId)
+            builder.HasMany(ur => ur.VehicleMaintenances)
+                   .WithOne(u => u.VehicleMaintenanceWorkshop)
+                   .HasForeignKey(x => x.VehicleMaintenanceWorkshopId)
                    .IsRequired(false)
                    .OnDelete(DeleteBehavior.Restrict);
 
