@@ -80,22 +80,13 @@ namespace API.Controllers
         }
 
         //POST
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(MaintenanceWorkshopDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         public async Task<ActionResult<MaintenanceWorkshopDto>> Post([FromBody] MaintenanceWorkshopRequest maintenanceWorkshopRequest)
         {
             var entidad = await _maintenanceWorkshopService.PostMaintenanceWorkshop(maintenanceWorkshopRequest);
-            if (entidad.Data == null)
-            {
-                return NotFound($"No existe Mantenimiento de Vehicle con el VehicleMaintenance {maintenanceWorkshopRequest.VehicleMaintenanceId} para Actualizar MaintenanceWorkshop");
-            }
-
-            /* if ( == null && departamentRequest.CompanyId == null)
-             {
-                 return BadRequest("Los campos Name y CompanyId no pueden ir vacios");
-             }*/
 
             if (entidad.success)
             {
@@ -109,7 +100,7 @@ namespace API.Controllers
         }
 
         //PUT
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(MaintenanceWorkshopDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
@@ -125,10 +116,6 @@ namespace API.Controllers
                 return NotFound($"No existe MaintenanceWorkshop con el Id {id} para Actualizar MaintenanceWorkshop");
             }
 
-            if (entidad.Data == null)
-            {
-                return NotFound($"No existe Taller Mecanico con el MaintenanceWorkshopId {maintenanceWorkshopRequest.VehicleMaintenanceId} para Actualizar MaintenanceWorkshop");
-            }
 
             if (entidad.success)
             {
