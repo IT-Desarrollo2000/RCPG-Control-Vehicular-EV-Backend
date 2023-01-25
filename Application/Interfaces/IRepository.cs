@@ -15,5 +15,6 @@ namespace Application.Interfaces
         Task Update(T entity);
         Task<bool> Delete(int Id);
         Task ToListAsync();
+        Task GetById(object vehicleId);
     }
 }

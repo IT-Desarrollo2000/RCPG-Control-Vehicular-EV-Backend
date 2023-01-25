@@ -79,6 +79,18 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PerformanceDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPost]
+        [Route("Performance")]
+        public async Task<IActionResult> Performance(PerformanceRequest performanceRequest)
+        {
+            var result = await _registeredVehiclesServices.Performance(performanceRequest);
+            if (result.Data == null) { return NotFound($"No existe ese vehiculo"); }
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<Vehicle>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
