@@ -19,6 +19,8 @@ namespace Application.Interfaces
         Task<GenericResponse<bool>> DeleteVehicles(int id);
         Task<GenericResponse<VehiclesDto>> GetVehicleById(int id);
         Task<PagedList<Vehicle>> GetVehicles(VehicleFilter filter);
+        Task<GenericResponse<PerformanceDto>> Performance(PerformanceRequest performanceRequest);
+        Task<GenericResponse<PerformanceDto>> PerformanceList(List<PerformanceRequest> performanceRequests);
         Task<GenericResponse<Vehicle>> PutVehicles(VehiclesUpdateRequest vehiclesUpdateRequest, int id);
     }
 }

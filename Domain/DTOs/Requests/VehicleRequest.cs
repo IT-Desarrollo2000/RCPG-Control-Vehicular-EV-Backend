@@ -32,6 +32,8 @@ namespace Domain.DTOs.Requests
         [Required]
         public int FuelCapacity { get; set; }
         [Required]
+        public CurrentFuel CurrentFuel { get; set; }
+        [Required]
         public FuelType FuelType { get; set; }
         [Required]
         public VehicleType VehicleType { get; set; }
