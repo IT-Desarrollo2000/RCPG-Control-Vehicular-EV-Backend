@@ -11,6 +11,12 @@ namespace Domain.DTOs.Requests
 {
     public class VehicleRequest
     {
+        public VehicleRequest()
+        {
+            Images = new List<VehicleImageRequest>();
+            AssignedDepartments = new List<int>();
+        }
+
         [Required]
         public string Name { get; set; }
         [Required]
@@ -25,6 +31,8 @@ namespace Domain.DTOs.Requests
         public int ModelYear { get; set; }
         [Required]
         public int FuelCapacity { get; set; }
+        [Required]
+        public CurrentFuel CurrentFuel { get; set; }
         [Required]
         public FuelType FuelType { get; set; }
         [Required]

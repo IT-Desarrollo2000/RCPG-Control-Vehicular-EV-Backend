@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Application.Services
@@ -74,6 +75,24 @@ namespace Application.Services
                     Query = Query.And(p => p.IsUtilitary == filter.IsUtilitary.Value);
                 }
                 else { Query = p => p.IsUtilitary == filter.IsUtilitary.Value; }
+            }
+
+            if (filter.FuelCapacity.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.FuelCapacity == filter.FuelCapacity.Value);
+                }
+                else { Query = p => p.FuelCapacity == filter.FuelCapacity.Value; }
+            }
+
+            if (filter.CurrentFuel.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.CurrentFuel == filter.CurrentFuel.Value);
+                }
+                else { Query = p => p.CurrentFuel == filter.CurrentFuel.Value; }
             }
 
             if (filter.FuelType.HasValue)
@@ -352,6 +371,11 @@ namespace Application.Services
                 veh.FuelCapacity = vehiclesUpdateRequest.FuelCapacity.Value;
             }
 
+            if (vehiclesUpdateRequest.CurrentFuel.HasValue)
+            {
+                veh.CurrentFuel = vehiclesUpdateRequest.CurrentFuel.Value;
+            }
+
             if (vehiclesUpdateRequest.FuelType.HasValue)
             {
                 veh.FuelType = vehiclesUpdateRequest.FuelType.Value;
@@ -523,10 +547,10 @@ namespace Application.Services
                 performance.PerformanceOfVehicle = PerformanceOfVehicle;
                 performance.Vehicle = entity;
 
+                response.Data = performance;
+                response.success = true;
             }
-
-            response.success = true;
-
+ 
             return response;
         }
     }
