@@ -23,6 +23,7 @@ namespace Application.Interfaces
         IRepository<VehicleMaintenanceWorkshop> MaintenanceWorkshopRepo { get; }
         IRepository<VehicleImage> VehicleImageRepo { get; }
         IRepository<PhotosOfSpending> PhotosOfSpendingRepo { get; }
+        IRepository<VehicleReport> VehicleReportRepo { get; }
 
         void Dispose();
         void SaveChanges();
