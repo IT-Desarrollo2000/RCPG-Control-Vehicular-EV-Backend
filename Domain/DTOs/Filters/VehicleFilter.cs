@@ -15,6 +15,8 @@ namespace Domain.DTOs.Filters
         public string? Color { get; set; }
         public string? Brand { get; set; }
         public int? ModelYear { get; set; }
+        public int? FuelCapacity { get; set; }
+        public CurrentFuel? CurrentFuel { get; set; }
         public FuelType? FuelType { get; set; }
         public VehicleType? VehicleType { get; set; }
         public VehicleStatus? VehicleStatus { get; set; }
