@@ -6,14 +6,11 @@ using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
-using Domain.Entities.User_Approvals;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Application.Services
@@ -78,6 +75,24 @@ namespace Application.Services
                     Query = Query.And(p => p.IsUtilitary == filter.IsUtilitary.Value);
                 }
                 else { Query = p => p.IsUtilitary == filter.IsUtilitary.Value; }
+            }
+
+            if (filter.FuelCapacity.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.FuelCapacity == filter.FuelCapacity.Value);
+                }
+                else { Query = p => p.FuelCapacity == filter.FuelCapacity.Value; }
+            }
+
+            if (filter.CurrentFuel.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.CurrentFuel == filter.CurrentFuel.Value);
+                }
+                else { Query = p => p.CurrentFuel == filter.CurrentFuel.Value; }
             }
 
             if (filter.FuelType.HasValue)
@@ -193,14 +208,14 @@ namespace Application.Services
                 //Mapear request
                 var entity = _mapper.Map<Vehicle>(vehicleRequest);
                 entity.VehicleStatus = Domain.Enums.VehicleStatus.ACTIVO;
-                
+
                 //Revisar que existan los departamentos asociados
-                foreach(var id in vehicleRequest.AssignedDepartments)
+                foreach (var id in vehicleRequest.AssignedDepartments)
                 {
                     var department = await _unitOfWork.Departaments.GetById(id);
-                    if(department == null)
+                    if (department == null)
                     {
-                        response.success= false;
+                        response.success = false;
                         response.AddError("Not Found", $"No se encontro el departamento con Id {id}", 2);
 
                         return response;
@@ -254,7 +269,7 @@ namespace Application.Services
                 response.Data = vDto;
                 return response;
 
-            } 
+            }
             catch (Exception ex)
             {
                 response.success = false;
@@ -262,7 +277,7 @@ namespace Application.Services
 
                 return response;
             }
-            
+
         }
 
         public async Task<GenericResponse<VehiclesDto>> GetVehicleById(int id)
@@ -271,6 +286,7 @@ namespace Application.Services
             var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id);
 
             var veh = entity.FirstOrDefault();
+
             var map = _mapper.Map<VehiclesDto>(veh);
             response.success = true;
             response.Data = map;
@@ -316,8 +332,8 @@ namespace Application.Services
                 response.success = true;
                 response.Data = true;
                 return response;
-            } 
-            catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 response.success = false;
                 response.Data = false;
@@ -325,7 +341,7 @@ namespace Application.Services
 
                 return response;
             }
-            
+
         }
 
         public async Task<GenericResponse<Vehicle>> PutVehicles(VehiclesUpdateRequest vehiclesUpdateRequest, int id)
@@ -334,10 +350,10 @@ namespace Application.Services
             GenericResponse<Vehicle> response = new GenericResponse<Vehicle>();
             var result = await _unitOfWork.VehicleRepo.Get(r => r.Id == id);
             var veh = result.FirstOrDefault();
-            if (veh == null) return null;         
+            if (veh == null) return null;
 
             if (!string.IsNullOrEmpty(vehiclesUpdateRequest.Name))
-            {               
+            {
                 veh.Name = vehiclesUpdateRequest.Name;
             }
 
@@ -370,6 +386,11 @@ namespace Application.Services
             if (vehiclesUpdateRequest.FuelCapacity.HasValue)
             {
                 veh.FuelCapacity = vehiclesUpdateRequest.FuelCapacity.Value;
+            }
+
+            if (vehiclesUpdateRequest.CurrentFuel.HasValue)
+            {
+                veh.CurrentFuel = vehiclesUpdateRequest.CurrentFuel.Value;
             }
 
             if (vehiclesUpdateRequest.FuelType.HasValue)
@@ -462,15 +483,15 @@ namespace Application.Services
 
                     return response;
                 }
-            } 
-            catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
 
                 return response;
             }
-            
+
         }
 
         public async Task<GenericResponse<bool>> DeleteVehicleImage(int VehicleImageId)
@@ -481,7 +502,7 @@ namespace Application.Services
             {
                 //Borrar las fotos del blob
                 var photos = await _unitOfWork.VehicleImageRepo.GetById(VehicleImageId);
-                if(photos == null) return null;
+                if (photos == null) return null;
 
                 await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.RegisteredCars, photos.FilePath);
                 await _unitOfWork.VehicleImageRepo.Delete(photos.Id);
@@ -496,8 +517,59 @@ namespace Application.Services
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
 
+                response.AddError("Error", ex.Message, 1);
                 return response;
+
             }
+        }
+
+        public async Task<GenericResponse<PerformanceDto>> Performance(PerformanceRequest performanceRequest)
+        {
+            GenericResponse<PerformanceDto> response = new GenericResponse<PerformanceDto>();
+            var entity = await _unitOfWork.VehicleRepo.GetById(performanceRequest.VehicleId);
+            if (entity == null)
+            {
+                return null;
+            }
+            decimal fuelCapacity = Convert.ToDecimal(entity.FuelCapacity);
+
+            decimal PerformanceOfVehicle = (performanceRequest.CurrentKm - performanceRequest.PreviousKm) / entity.FuelCapacity;
+
+            PerformanceDto performance = new PerformanceDto();
+            performance.PerformanceOfVehicle = PerformanceOfVehicle;
+            performance.Vehicle = entity;
+
+            response.Data = performance;
+            response.success = true;
+            return response;
+        }
+
+        public async Task<GenericResponse<PerformanceDto>> PerformanceList(List<PerformanceRequest> performanceRequests)
+        {
+            GenericResponse<PerformanceDto> response = new GenericResponse<PerformanceDto>();
+
+
+            foreach (var element in performanceRequests)
+            {
+                var entity = await _unitOfWork.VehicleRepo.GetById(element.VehicleId);
+                if (entity == null)
+                {
+                    return null;
+                }
+
+                decimal fuelCapacity = Convert.ToDecimal(entity.FuelCapacity);
+
+                decimal PerformanceOfVehicle = (element.CurrentKm - element.PreviousKm) / entity.FuelCapacity;
+
+                PerformanceDto performance = new PerformanceDto();
+                performance.PerformanceOfVehicle = PerformanceOfVehicle;
+                performance.Vehicle = entity;
+
+                response.Data = performance;
+                response.success = true;
+            }
+ 
+            return response;
         }
     }
 }

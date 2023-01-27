@@ -1,5 +1,4 @@
 using AutoMapper;
-using AutoMapper.Configuration.Annotations;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Company;
@@ -27,8 +26,7 @@ namespace Infrastructure.Mappings
             CreateMap<AppUser, AppUserRegistrationRequest>();
 
             //Approval Mapping
-            CreateMap<UserProfile, UserApproval>();
-            CreateMap<UserApproval, UserProfile>().ForMember(a => a.Id, opt => opt.Ignore());
+            CreateMap<UserApproval, UserProfile>().ReverseMap();
             CreateMap<AppUserRegistrationRequest, ApprovalCreationRequest>();
             CreateMap<ApprovalCreationRequest, UserApproval>();
             
@@ -79,10 +77,8 @@ namespace Infrastructure.Mappings
             CreateMap<MaintenanceWorkshopRequest, MaintenanceWorkshopDto>().ReverseMap();
             CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopDto>().ReverseMap();
 
-            //VehicleReport
-            CreateMap<VehicleReport, VehicleReportRequest>().ReverseMap();
-            CreateMap<VehicleReportRequest, VehicleReportDto>().ReverseMap();
-            CreateMap<VehicleReport, VehicleReportDto>().ReverseMap();
+            //Performance
+            CreateMap<PerformanceRequest, PerformanceDto>().ReverseMap();
 
         }
     }
