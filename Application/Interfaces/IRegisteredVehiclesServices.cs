@@ -16,7 +16,7 @@ namespace Application.Interfaces
         Task<GenericResponse<VehicleImage>> AddVehicleImage(VehicleImageRequest request, int vehicleId);
         Task<GenericResponse<VehiclesDto>> AddVehicles(VehicleRequest vehicleRequest);
         Task<GenericResponse<bool>> DeleteVehicleImage(int VehicleImageId);
-        Task<GenericResponse<Vehicle>> DeleteVehicles(int id);
+        Task<GenericResponse<bool>> DeleteVehicles(int id);
         Task<GenericResponse<VehiclesDto>> GetVehicleById(int id);
         Task<PagedList<Vehicle>> GetVehicles(VehicleFilter filter);
         Task<GenericResponse<Vehicle>> PutVehicles(VehiclesUpdateRequest vehiclesUpdateRequest, int id);

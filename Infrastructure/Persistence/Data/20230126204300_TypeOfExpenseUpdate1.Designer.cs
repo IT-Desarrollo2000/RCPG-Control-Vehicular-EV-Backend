@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230126204300_TypeOfExpenseUpdate1")]
+    partial class TypeOfExpenseUpdate1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -721,6 +724,7 @@ namespace Infrastructure.Persistence.Data
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("AppUserId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Commentary")
@@ -1157,7 +1161,9 @@ namespace Infrastructure.Persistence.Data
                 {
                     b.HasOne("Domain.Entities.Identity.AppUser", "AppUser")
                         .WithMany("VehicleReports")
-                        .HasForeignKey("AppUserId");
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.Profiles.UserProfile", "UserProfile")
                         .WithMany("VehicleReports")
