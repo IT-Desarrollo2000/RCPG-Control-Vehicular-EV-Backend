@@ -244,7 +244,8 @@ namespace Application.Services
                         var newImage = new VehicleImage()
                         {
                             FilePath = filePath,
-                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.RegisteredCars, filePath)
+                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.RegisteredCars, filePath),
+                            Vehicle = entity
                         };
 
                         await _unitOfWork.VehicleImageRepo.Add(newImage);
@@ -292,15 +293,13 @@ namespace Application.Services
             return response;
         }
 
-        public async Task<GenericResponse<Vehicle>> DeleteVehicles(int id)
+        public async Task<GenericResponse<bool>> DeleteVehicles(int id)
         {
-            GenericResponse<Vehicle> response = new GenericResponse<Vehicle>();
+            GenericResponse<bool> response = new GenericResponse<bool>();
             try
             {
                 var exp = await _unitOfWork.VehicleRepo.GetById(id);
                 if (exp == null) return null;
-                var exists = await _unitOfWork.VehicleRepo.Delete(id);
-
 
                 //Borrar las fotos del blob
                 var photos = await _unitOfWork.VehicleImageRepo.Get(filter: v => v.VehicleId == id);
@@ -311,15 +310,33 @@ namespace Application.Services
                     await _unitOfWork.VehicleImageRepo.Delete(photo.Id);
                 }
 
+                //Borrar los gastos relacionados
+                var expenses  = await _unitOfWork.ExpensesRepo.Get(filter: e => e.VehicleId == id);
+
+                foreach(var expense in expenses)
+                {
+                    //Borrar las fotos de los attachments
+                    var attachments = await _unitOfWork.PhotosOfSpendingRepo.Get(filter: v => v.ExpensesId == expense.Id);
+
+                    foreach (var attachment in attachments)
+                    {
+                        await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.ExpenseAttachments, attachment.FilePath);
+                        await _unitOfWork.PhotosOfSpendingRepo.Delete(attachment.Id);
+                    }
+
+                    await _unitOfWork.ExpensesRepo.Delete(expense.Id);
+                }
+
+                await _unitOfWork.VehicleRepo.Delete(id);
                 await _unitOfWork.SaveChangesAsync();
-                var vehicledto = _mapper.Map<Vehicle>(exp);
                 response.success = true;
-                response.Data = vehicledto;
+                response.Data = true;
                 return response;
             }
             catch (Exception ex)
             {
                 response.success = false;
+                response.Data = false;
                 response.AddError("Error", ex.Message, 1);
 
                 return response;
@@ -447,7 +464,8 @@ namespace Application.Services
                     var newImage = new VehicleImage()
                     {
                         FilePath = filePath,
-                        FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.RegisteredCars, filePath)
+                        FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.RegisteredCars, filePath),
+                        Vehicle = vehicle
                     };
 
                     await _unitOfWork.VehicleImageRepo.Add(newImage);

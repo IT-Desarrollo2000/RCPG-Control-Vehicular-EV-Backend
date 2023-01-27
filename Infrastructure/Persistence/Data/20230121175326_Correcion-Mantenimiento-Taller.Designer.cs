@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230121175326_Correcion-Mantenimiento-Taller")]
+    partial class CorrecionMantenimientoTaller
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -517,10 +520,6 @@ namespace Infrastructure.Persistence.Data
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -551,9 +550,6 @@ namespace Infrastructure.Persistence.Data
 
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("CurrentFuel")
-                        .HasColumnType("int");
 
                     b.Property<decimal>("DesiredPerformance")
                         .HasColumnType("decimal(18,2)");
@@ -724,6 +720,7 @@ namespace Infrastructure.Persistence.Data
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("AppUserId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Commentary")
@@ -1160,7 +1157,9 @@ namespace Infrastructure.Persistence.Data
                 {
                     b.HasOne("Domain.Entities.Identity.AppUser", "AppUser")
                         .WithMany("VehicleReports")
-                        .HasForeignKey("AppUserId");
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.Profiles.UserProfile", "UserProfile")
                         .WithMany("VehicleReports")

@@ -15,6 +15,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Application.Services
 {
@@ -23,14 +24,18 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly PaginationOptions _paginationOptions;
+        private readonly IOptions<BlobContainers> _azureBlobContainers;
+        private readonly IBlobStorageService _blobStorageService;
 
-        public ExpensesServices(IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options)
+        public ExpensesServices(IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options, IOptions<BlobContainers> azureBlobContainers, IBlobStorageService blobStorageService)
         {
-            this._unitOfWork = unitOfWork;
-            this._mapper = mapper;
-            this._paginationOptions = options.Value;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _paginationOptions = options.Value;
+            _azureBlobContainers = azureBlobContainers;
+            _blobStorageService = blobStorageService;
         }
-        public async Task<GenericResponse<ExpensesDto>> PostExpenses([FromBody] ExpensesRequest expensesRequest)
+        public async Task<GenericResponse<ExpensesDto>> PostExpenses(ExpensesRequest expensesRequest)
         {
             GenericResponse<ExpensesDto> response = new GenericResponse<ExpensesDto>();
             var existevehicleid = await _unitOfWork.VehicleRepo.Get(v => v.Id == expensesRequest.VehicleId);
@@ -71,11 +76,48 @@ namespace Application.Services
                 entity.VehicleMaintenanceWorkshop = resultworkshop;
             }
 
-
+            //Agregar gasto a BD
             await _unitOfWork.ExpensesRepo.Add(entity);
+
+            //Verificar que contenga imagenes
+            //Guardar las fotos
+            var images = new List<PhotosOfSpending>();
+
+            foreach (var photo in expensesRequest.Attachments)
+            {
+                //Validar imagenes y Guardar las imagenes en el blobstorage
+                if (photo.ImageFile.ContentType.Contains("image"))
+                {
+                    //Manipular el nombre de archivo
+                    var uploadDate = DateTime.UtcNow;
+                    string FileExtn = System.IO.Path.GetExtension(photo.ImageFile.FileName);
+                    var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.VehicleId}{entity.TypesOfExpensesId}{FileExtn}";
+                    var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(photo.ImageFile, _azureBlobContainers.Value.ExpenseAttachments, filePath);
+
+                    //Agregar la imagen en BD
+                    var newImage = new PhotosOfSpending()
+                    {
+                        FilePath = filePath,
+                        FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.ExpenseAttachments, filePath),
+                        Expenses = entity
+                    };
+
+                    await _unitOfWork.PhotosOfSpendingRepo.Add(newImage);
+                    images.Add(newImage);
+                }
+                else
+                {
+                    response.success = false;
+                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+
+                    return response;
+                }
+            }
+
             await _unitOfWork.SaveChangesAsync();
             response.success = true;
             var expensesDto = _mapper.Map<ExpensesDto>(entity);
+            expensesDto.PhotosOfSpending.AddRange(images);
             response.Data = expensesDto;
             return response;
         }
@@ -91,7 +133,7 @@ namespace Application.Services
             return response;
         }
 
-        public async Task<GenericResponse<Expenses>> PutExpenses(ExpensesRequest expensesRequest, int id)
+        public async Task<GenericResponse<Expenses>> PutExpenses(ExpenseUpdateRequest expensesRequest, int id)
         {
 
             GenericResponse<Expenses> response = new GenericResponse<Expenses>();
@@ -117,6 +159,16 @@ namespace Application.Services
             GenericResponse<Expenses> response = new GenericResponse<Expenses>();
             var exp = await _unitOfWork.ExpensesRepo.GetById(id);
             if (exp == null) return null;
+
+            //Borrar las fotos del blob
+            var photos = await _unitOfWork.PhotosOfSpendingRepo.Get(filter: v => v.ExpensesId == id);
+
+            foreach (var photo in photos)
+            {
+                await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.ExpenseAttachments, photo.FilePath);
+                await _unitOfWork.PhotosOfSpendingRepo.Delete(photo.Id);
+            }
+
             var exists = await _unitOfWork.ExpensesRepo.Delete(id);
             await _unitOfWork.SaveChangesAsync();
             var expensesdto = _mapper.Map<Expenses>(exp);
@@ -221,5 +273,82 @@ namespace Application.Services
             return pagedExpenses;
         }
         
+        public async Task<GenericResponse<PhotosOfSpending>> AddExpenseAttachment(ExpensePhotoRequest request, int expenseId)
+        {
+            GenericResponse<PhotosOfSpending> response = new GenericResponse<PhotosOfSpending>();
+
+            try
+            {
+                //Verificar que exista el vehiculo
+                var expense = await _unitOfWork.ExpensesRepo.GetById(expenseId);
+                if (expense == null) return null;
+
+                if (request.ImageFile.ContentType.Contains("image"))
+                {
+                    //Manipular el nombre de archivo
+                    var uploadDate = DateTime.UtcNow;
+                    string FileExtn = System.IO.Path.GetExtension(request.ImageFile.FileName);
+                    var filePath = $"{expense.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{expense.VehicleId}{expense.TypesOfExpensesId}{FileExtn}";
+                    var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(request.ImageFile, _azureBlobContainers.Value.ExpenseAttachments, filePath);
+
+                    //Agregar la imagen en BD
+                    var newImage = new PhotosOfSpending()
+                    {
+                        FilePath = filePath,
+                        FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.RegisteredCars, filePath),
+                        Expenses = expense
+                    };
+
+                    await _unitOfWork.PhotosOfSpendingRepo.Add(newImage);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    response.success = true;
+                    response.Data = newImage;
+
+                    return response;
+                }
+                else
+                {
+                    response.success = false;
+                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<bool>> DeleteExpenseAttachment(int expenseImageId)
+        {
+            GenericResponse<bool> response = new GenericResponse<bool>();
+
+            try
+            {
+                //Borrar las fotos del blob
+                var photos = await _unitOfWork.PhotosOfSpendingRepo.GetById(expenseImageId);
+                if (photos == null) return null;
+
+                await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.ExpenseAttachments, photos.FilePath);
+                await _unitOfWork.PhotosOfSpendingRepo.Delete(photos.Id);
+                await _unitOfWork.SaveChangesAsync();
+
+                response.success = true;
+                response.Data = true;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
+        }
     }   
 }

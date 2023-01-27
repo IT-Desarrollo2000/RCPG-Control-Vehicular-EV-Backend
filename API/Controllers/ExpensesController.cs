@@ -7,7 +7,6 @@ using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Net;
@@ -15,7 +14,7 @@ using System.Text.Json;
 
 namespace API.Controllers
 {
-    [Microsoft.AspNetCore.Mvc.Route("api/expenses")]
+    [Route("api/expenses")]
     [ApiController]
     public class ExpensesController : ControllerBase
     {
@@ -32,7 +31,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<Expenses>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
-        [Microsoft.AspNetCore.Mvc.Route("")]
+        [Route("")]
         public async Task<IActionResult> GetExpenses([FromQuery] ExpensesFilter filter)
         {
             var expenses = await _expensesServices.GetExpenses(filter);
@@ -63,7 +62,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ExpensesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
-        [Microsoft.AspNetCore.Mvc.Route("GetTypesOfExpensesId/{id}")]
+        [Route("GetTypesOfExpensesId/{id}")]
         public async Task<IActionResult> GetExpensesById(int id)
         {
             var result = await _expensesServices.GetExpensesById(id);
@@ -75,7 +74,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ExpensesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
-        [Microsoft.AspNetCore.Mvc.Route("PostExpenses")]
+        [Route("PostExpenses")]
         public async Task<IActionResult> PostExpenses([FromBody] ExpensesRequest expensesRequest)
         {
             var result = await _expensesServices.PostExpenses( expensesRequest);
@@ -86,8 +85,8 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<Expenses>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
-        [Microsoft.AspNetCore.Mvc.Route("PutExpenses")]
-        public async Task<IActionResult> PutExpenses(ExpensesRequest expensesRequest, int id)
+        [Route("PutExpenses")]
+        public async Task<IActionResult> PutExpenses(ExpenseUpdateRequest expensesRequest, int id)
         {
             var result = await _expensesServices.PutExpenses(expensesRequest, id);
             if (result.Data == null) { return NotFound($"No existe gasto con el Id {id}"); }
@@ -98,7 +97,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete]
-        [Microsoft.AspNetCore.Mvc.Route("DeleteExpenses")]
+        [Route("DeleteExpenses")]
         public async Task<IActionResult> DeleteExpenses(int id)
         {
             var result = await _expensesServices.DeleteExpenses(id);
@@ -108,6 +107,31 @@ namespace API.Controllers
             {
                 return BadRequest(result);
             }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PhotosOfSpending>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPost]
+        [Route("{expenseId:int}/AddAttachment")]
+        public async Task<IActionResult> AddExpenseAttachment(int expenseId, [FromForm] ExpensePhotoRequest request)
+        {
+            var result = await _expensesServices.AddExpenseAttachment(request, expenseId);
+            if (result == null) return NotFound("No se encontro el vehiculo especificado");
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpDelete]
+        [Route("DeleteAttachment")]
+        public async Task<IActionResult> DeleteExpenseAttachment(int attachmentId)
+        {
+            var result = await _expensesServices.DeleteExpenseAttachment(attachmentId);
+            if (result == null) { return NotFound($"No existe imagen con el Id {attachmentId}"); }
+            if (result.success) { return Ok(result); }
+            else { return BadRequest(result); }
         }
     }
 

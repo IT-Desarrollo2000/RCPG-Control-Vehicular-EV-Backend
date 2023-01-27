@@ -25,7 +25,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ExpensesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<TypesOfExpensesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("")]
@@ -36,7 +36,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ExpensesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<TypesOfExpensesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route ("GetTypesOfExpensesId/{id}")]
@@ -48,7 +48,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ExpensesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<TypesOfExpensesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("CreateTypeOfExpenses")]
@@ -60,7 +60,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<Expenses>))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<TypesOfExpensesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("PutTypesOfExpenses")]

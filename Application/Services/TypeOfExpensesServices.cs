@@ -66,6 +66,7 @@ namespace Application.Services
             if (type == null) return null;
 
             type.Name = typesOfExpensesRequest.Name;
+            type.Description = typesOfExpensesRequest.Description;
 
             await _unitOfWork.TypesOfExpensesRepo.Update(type);
             await _unitOfWork.SaveChangesAsync();
