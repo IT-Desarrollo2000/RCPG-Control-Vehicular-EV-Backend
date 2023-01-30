@@ -86,13 +86,13 @@ namespace Application.Services
             foreach (var photo in expensesRequest.Attachments)
             {
                 //Validar imagenes y Guardar las imagenes en el blobstorage
-                if (photo.ImageFile.ContentType.Contains("image"))
+                if (photo.ContentType.Contains("image"))
                 {
                     //Manipular el nombre de archivo
                     var uploadDate = DateTime.UtcNow;
-                    string FileExtn = System.IO.Path.GetExtension(photo.ImageFile.FileName);
+                    string FileExtn = System.IO.Path.GetExtension(photo.FileName);
                     var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.VehicleId}{entity.TypesOfExpensesId}{FileExtn}";
-                    var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(photo.ImageFile, _azureBlobContainers.Value.ExpenseAttachments, filePath);
+                    var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(photo, _azureBlobContainers.Value.ExpenseAttachments, filePath);
 
                     //Agregar la imagen en BD
                     var newImage = new PhotosOfSpending()

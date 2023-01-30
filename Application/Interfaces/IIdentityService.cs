@@ -1,4 +1,5 @@
-﻿using Domain.DTOs.Reponses;
+﻿using Domain.CustomEntities;
+using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Identity;
 using Domain.Enums;
@@ -29,5 +30,7 @@ namespace Application.Interfaces
         Task<List<string>> GetRoleList();
         Task<object> GetCustomers();
         Task<AppUserRegistrationResponse> CreateDummyAppUser(AppUserRegistrationRequest user);
+        Task<GenericResponse<AppUser>> AssignDepartmentSupervisor(SupervisorAssignmentRequest request);
+        Task<GenericResponse<AppUser>> RemoveDepartmentSupervisor(SupervisorRemovalRequest request);
     }
 }
