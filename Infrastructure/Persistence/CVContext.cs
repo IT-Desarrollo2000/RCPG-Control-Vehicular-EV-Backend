@@ -70,6 +70,7 @@ namespace Infrastructure.Persistence
             builder.ApplyConfiguration(new ExpensesConfiguration());
             builder.ApplyConfiguration(new VehicleMaintenanceConfiguration());
             builder.ApplyConfiguration(new UserProfileConfiguration());
+            builder.ApplyConfiguration(new DepartmentConfiguration());
         }
     }
 }

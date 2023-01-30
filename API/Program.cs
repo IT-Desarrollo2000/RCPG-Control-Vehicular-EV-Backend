@@ -42,6 +42,7 @@ builder.Services.AddSwaggerGen(c =>
                             new string[] {}
                         }
                     });
+    c.SchemaGeneratorOptions.CustomTypeMappings.Add(typeof(IFormFile), () => new OpenApiSchema { Type = "file", Format = "binary"});
 });
 
 var app = builder.Build();

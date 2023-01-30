@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.Company;
+using Domain.Entities.Identity;
 using Domain.Entities.Registered_Cars;
 
 namespace Domain.Entities.Departament
@@ -14,5 +15,6 @@ namespace Domain.Entities.Departament
         public int CompanyId { get; set; }
         public virtual Companies Company { get; set; }
         public virtual ICollection<Vehicle> AssignedVehicles { get; set; }
+        public virtual ICollection<AppUser> Supervisors { get; set; }
     }
 }

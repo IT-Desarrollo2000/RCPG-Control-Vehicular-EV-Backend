@@ -14,14 +14,12 @@ namespace Domain.DTOs.Filters
     {
         public ReportType? ReportType { get; set; }
         public int? VehicleId { get; set; }
-        public string? Commentary { get; set; }
         public int? UserProfileId { get; set; }
         public int? AppUserId { get; set; }
         public DateTime? ReportDate { get; set; }
         public bool? IsResolved { get; set; }
         //Aquí va el Id del reporte de uso que aun no esta implementado
         public GasolineLoadType? GasolineLoad { get; set; }
-        public string? ReportSolutionComment { get; set; }
         public ReportStatusType? ReportStatus { get; set; }
         public int PageSize { get; set; }
         public int PageNumber { get; set; }
