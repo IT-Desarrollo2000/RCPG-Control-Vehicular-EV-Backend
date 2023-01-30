@@ -88,7 +88,7 @@ namespace API.Controllers
             var entidad = await _vehicleServiService.PostVehicleService(vehicleServiceRequest);
             if (entidad.Data == null)
             {
-                return NotFound($"No existe Vehicle con el VehicleId {vehicleServiceRequest.VehicleId} para Actualizar VehicleService");
+                return NotFound($"No existe Vehicle con el VehicleId {vehicleServiceRequest.VehicleId} para Actualizar VehicleServices");
             }
 
             /* if ( == null && departamentRequest.CompanyId == null)

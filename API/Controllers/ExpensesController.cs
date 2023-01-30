@@ -27,9 +27,9 @@ namespace API.Controllers
             this._expensesServices = expensesServices;
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<Expenses>))]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<Expenses>))]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> GetExpenses([FromQuery] ExpensesFilter filter)
@@ -58,9 +58,9 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ExpensesDto>))]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetTypesOfExpensesId/{id}")]
         public async Task<IActionResult> GetExpensesById(int id)
@@ -70,9 +70,9 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return NotFound(result); }
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ExpensesDto>))]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ExpensesDto>))]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("PostExpenses")]
         public async Task<IActionResult> PostExpenses([FromBody] ExpensesRequest expensesRequest)
@@ -133,6 +133,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); }
             else { return BadRequest(result); }
         }
+
     }
 
 }

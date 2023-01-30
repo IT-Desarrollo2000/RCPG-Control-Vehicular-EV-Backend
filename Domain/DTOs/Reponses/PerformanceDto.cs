@@ -9,7 +9,7 @@ namespace Domain.DTOs.Reponses
 {
     public class PerformanceDto
     {
-        public virtual Vehicle Vehicle { get; set; }
+        public  Vehicle Vehicle { get; set; }
         public decimal PerformanceOfVehicle { get; set; }
         
     }
