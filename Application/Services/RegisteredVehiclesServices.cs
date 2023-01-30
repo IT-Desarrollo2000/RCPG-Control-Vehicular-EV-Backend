@@ -37,7 +37,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "";
+            string properties = "VehicleImages";
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
 
@@ -232,13 +232,13 @@ namespace Application.Services
                 foreach (var image in vehicleRequest.Images)
                 {
                     //Validar imagenes y Guardar las imagenes en el blobstorage
-                    if (image.ImageFile.ContentType.Contains("image"))
+                    if (image.ContentType.Contains("image"))
                     {
                         //Manipular el nombre de archivo
                         var uploadDate = DateTime.UtcNow;
-                        string FileExtn = System.IO.Path.GetExtension(image.ImageFile.FileName);
+                        string FileExtn = System.IO.Path.GetExtension(image.FileName);
                         var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.Serial}{FileExtn}";
-                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image.ImageFile, _azureBlobContainers.Value.RegisteredCars, filePath);
+                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.RegisteredCars, filePath);
 
                         //Agregar la imagen en BD
                         var newImage = new VehicleImage()
@@ -283,7 +283,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehiclesDto>> GetVehicleById(int id)
         {
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
-            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id);
+            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages");
 
             var veh = entity.FirstOrDefault();
 

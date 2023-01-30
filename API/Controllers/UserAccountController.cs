@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Net;
 
 namespace API.Controllers
 {
@@ -299,6 +300,32 @@ namespace API.Controllers
             var users = await _identityService.GetCustomers();
 
             return Ok(users);
+        }
+
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<AppUser>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(GenericResponse<AppUser>))]
+        [Authorize(Roles = "Administrator, AdminUser")]
+        [HttpPut]
+        [Route("WebAdm/AssignSupervisor")]
+        public async Task<ActionResult> AssignDepartmentSupervisor(SupervisorAssignmentRequest request)
+        {
+            var users = await _identityService.AssignDepartmentSupervisor(request);
+            if (users == null) return NotFound("No se encontro el usuario especificado");
+
+            if (users.success) { return Ok(users); } else { return BadRequest(users); };
+        }
+
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<AppUser>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(GenericResponse<AppUser>))]
+        [Authorize(Roles = "Administrator, AdminUser")]
+        [HttpPut]
+        [Route("WebAdm/RemoveSupervisor")]
+        public async Task<ActionResult> RemoveDepartmentSupervisor(SupervisorRemovalRequest request)
+        {
+            var users = await _identityService.RemoveDepartmentSupervisor(request);
+            if (users == null) return NotFound("No se encontro el usuario especificado");
+
+            if (users.success) { return Ok(users); } else { return BadRequest(users); };
         }
 
         /*[Authorize(Roles = "Administrator")]
