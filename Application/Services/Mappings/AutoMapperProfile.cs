@@ -80,6 +80,11 @@ namespace Infrastructure.Mappings
             //Performance
             CreateMap<PerformanceRequest, PerformanceDto>().ReverseMap();
 
+            //Graphics
+            CreateMap<GraphicsDto, Vehicle>().ReverseMap();
+            CreateMap<GraphicsDto, VehicleMaintenance>().ReverseMap();
+            CreateMap<GraphicsDto, VehicleService>().ReverseMap();
+
         }
     }
 }
