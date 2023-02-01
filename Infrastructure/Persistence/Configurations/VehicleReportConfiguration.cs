@@ -17,7 +17,7 @@ namespace Infrastructure.Persistence.Configurations
             builder.HasMany(ur => ur.Expenses)
                 .WithOne(u => u.VehicleReport)
                 .HasForeignKey(ur => ur.VehicleReportId)
-                .IsRequired();
+                .IsRequired(false);
 
             builder.HasMany(xu => xu.VehicleReportImages)
                 .WithOne(x => x.VehicleReport)

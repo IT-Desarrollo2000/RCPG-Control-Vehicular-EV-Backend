@@ -11,6 +11,8 @@ namespace Domain.Entities.Profiles
         public UserProfile()
         {
             this.Approvals = new HashSet<UserApproval>();
+            this.VehicleReports = new HashSet<VehicleReport>();
+            this.VehicleReportUses = new HashSet<VehicleReportUse>();
         }
 
         public int UserId { get; set; }
@@ -37,6 +39,7 @@ namespace Domain.Entities.Profiles
         public int? DepartmentId { get; set; }
         public virtual Departaments? Department { get; set; }
         public ICollection<VehicleReport> VehicleReports { get; set; }
+        public ICollection<VehicleReportUse> VehicleReportUses { get; set; }
 
 
         //Unique

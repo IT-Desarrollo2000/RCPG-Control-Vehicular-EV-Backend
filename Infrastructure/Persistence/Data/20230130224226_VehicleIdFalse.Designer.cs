@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,31 +12,18 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230130224226_VehicleIdFalse")]
+    partial class VehicleIdFalse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.2")
+                .HasAnnotation("ProductVersion", "7.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("AppUserDepartaments", b =>
-                {
-                    b.Property<int>("AssignedDepartmentsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SupervisorsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AssignedDepartmentsId", "SupervisorsId");
-
-                    b.HasIndex("SupervisorsId");
-
-                    b.ToTable("AppUserDepartaments");
-                });
 
             modelBuilder.Entity("DepartamentsVehicle", b =>
                 {
@@ -1095,21 +1083,6 @@ namespace Infrastructure.Persistence.Data
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("AppUserDepartaments", b =>
-                {
-                    b.HasOne("Domain.Entities.Departament.Departaments", null)
-                        .WithMany()
-                        .HasForeignKey("AssignedDepartmentsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Identity.AppUser", null)
-                        .WithMany()
-                        .HasForeignKey("SupervisorsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("DepartamentsVehicle", b =>

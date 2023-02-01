@@ -2,6 +2,7 @@ using Domain.Entities.Departament;
 using Domain.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace Domain.Entities.Registered_Cars
             this.Expenses = new HashSet<Expenses>();
             this.VehicleMaintenances = new HashSet<VehicleMaintenance>();
             this.VehicleReports = new HashSet<VehicleReport>();
+            this.VehicleReportsUses = new HashSet<VehicleReportUse>();
         }
         public string Name { get; set; }
         public string Serial { get; set; }
@@ -46,5 +48,6 @@ namespace Domain.Entities.Registered_Cars
         public virtual ICollection<Expenses> Expenses { get; set; }
         public virtual ICollection<VehicleMaintenance> VehicleMaintenances { get; set; }
         public virtual ICollection<VehicleReport> VehicleReports { get; set; }
+        public virtual ICollection<VehicleReportUse> VehicleReportsUses { get; set;}
     }
 }

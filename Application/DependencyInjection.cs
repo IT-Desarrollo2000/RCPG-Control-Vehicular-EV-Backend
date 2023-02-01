@@ -27,6 +27,8 @@ namespace Application
             services.AddTransient<IMaintenanceWorkshopService, MaintenanceWorkshopServices>();
             services.AddTransient<IRegisteredVehiclesServices, RegisteredVehiclesServices>();
             services.AddTransient<IVehicleReportService, VehicleReportServices>();
+            services.AddTransient<IDestinationOfReportUseService, DestinationOfReportUseServices>();
+            services.AddTransient<IVehicleReportUseService, VehicleReportUseServices>();
 
             //Parametros para validación de tokens
             var tokenValidationParameters = new TokenValidationParameters
