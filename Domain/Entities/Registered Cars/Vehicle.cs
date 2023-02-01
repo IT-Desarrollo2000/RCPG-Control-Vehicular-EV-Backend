@@ -38,6 +38,8 @@ namespace Domain.Entities.Registered_Cars
         public OwnershipType OwnershipType { get; set; }
         public string? OwnersName { get; set; }
         public decimal DesiredPerformance { get; set; }
+        public string VehicleQRId { get; set; }
+        public string VehicleObservation { get ; set; }
         
         public virtual ICollection<Departaments> AssignedDepartments { get; set; }
         public virtual ICollection<VehicleImage> VehicleImages { get; set; }

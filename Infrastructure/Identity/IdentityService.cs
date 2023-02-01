@@ -1,5 +1,6 @@
 using Application.Interfaces;
 using AutoMapper;
+using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Identity;
@@ -8,6 +9,7 @@ using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 
 namespace Infrastructure.Identity
 {
@@ -301,7 +303,7 @@ namespace Infrastructure.Identity
 
         public async Task<AppUser> GetAppUserBydIdAsync(int UserId)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == UserId);
+            var user = await _userManager.Users.Include(x => x.AssignedDepartments).FirstOrDefaultAsync(u => u.Id == UserId);
 
             return user;
         }
@@ -605,6 +607,104 @@ namespace Infrastructure.Identity
             {
                 Result = result
             };
+        }
+
+        public async Task<GenericResponse<AppUser>> AssignDepartmentSupervisor(SupervisorAssignmentRequest request)
+        {
+            GenericResponse<AppUser> response = new GenericResponse<AppUser>();
+
+            try
+            {
+                //Revisar que el usuario exista y contenga el rol de supervisor
+                var user = await GetAppUserBydIdAsync(request.AppUserId);
+                var roles = await GetUserRoles(user);
+
+                if (user == null) return null;
+
+                if (!roles.Contains("Supervisor"))
+                {
+                    response.success = false;
+                    response.AddError("Unauthorized", "El usuario especificado no cuenta con el rol para ser asignado a los departamentos");
+
+                    return response;
+                }
+
+                //Buscar los departamentos y asignarlos al usuario
+                foreach(var id in request.DepartmentsToAssign)
+                {
+                    var department = await _unitOfWork.Departaments.GetById(id);
+                    if (department != null)
+                    {
+                        response.success = false;
+                        response.AddError("Not Found",$"El departamento con Id {id} no existe", 2);
+
+                        return response;
+                    }
+
+                    department.Supervisors.Add(user);
+
+                    await _unitOfWork.Departaments.Update(department);
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+
+                response.success = true;
+                response.Data = user;
+
+                return response;
+
+            } 
+            catch (Exception ex) 
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
+
+        }
+
+        public async Task<GenericResponse<AppUser>> RemoveDepartmentSupervisor(SupervisorRemovalRequest request)
+        {
+            GenericResponse<AppUser> response = new GenericResponse<AppUser>();
+
+            try
+            {
+                //Obtener los departamentos que contengan al usuario
+                var departments = await _unitOfWork.Departaments.Get(d => d.Supervisors.Any(x => x.Id == request.AppUserId), includeProperties: "Supervisors");
+                var user = await GetAppUserBydIdAsync(request.AppUserId);
+                if (user == null) return null;
+
+                //Buscar los departamentos y asignarlos al usuario
+                foreach (var department in request.DepartmentsToRemove)
+                {
+                    var exists = departments.Where(d => d.Id == department).FirstOrDefault();
+                    if (exists == null)
+                    {
+                        response.AddError("Not Found", $"No existe el departamento con Id {department}", 2);
+                        response.success = false;
+
+                        return response;
+                    }
+
+                    user.AssignedDepartments.Remove(exists);
+                }
+
+                await _userManager.UpdateAsync(user);
+
+                response.success = true;
+                response.Data = user;
+
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
         }
         #endregion
     }

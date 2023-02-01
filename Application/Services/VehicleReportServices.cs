@@ -59,15 +59,6 @@ namespace Application.Services
 
             }
 
-            if (!string.IsNullOrEmpty(filter.Commentary))
-            {
-                if (Query != null)
-                {
-                    Query = Query.And(p => p.Commentary.Contains(filter.Commentary));
-                }
-                else { Query = p => p.Commentary.Contains(filter.Commentary); }
-
-            }
 
             if (filter.UserProfileId.HasValue)
             {
@@ -112,16 +103,6 @@ namespace Application.Services
                     Query = Query.And(p => p.GasolineLoad >= filter.GasolineLoad.Value);
                 }
                 else { Query = p => p.GasolineLoad >= filter.GasolineLoad.Value; }
-            }
-
-            if (!string.IsNullOrEmpty(filter.ReportSolutionComment))
-            {
-                if (Query != null)
-                {
-                    Query = Query.And(p => p.Commentary.Contains(filter.ReportSolutionComment));
-                }
-                else { Query = p => p.ReportSolutionComment.Contains(filter.ReportSolutionComment); }
-
             }
 
             if (filter.ReportStatus.HasValue)

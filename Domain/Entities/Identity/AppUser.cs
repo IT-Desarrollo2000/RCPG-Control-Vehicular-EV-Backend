@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.Profiles;
 using Domain.Entities.Registered_Cars;
+using Domain.Entities.Departament;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities.Identity
@@ -22,5 +23,6 @@ namespace Domain.Entities.Identity
         public virtual ICollection<AppUserSocial> Socials { get; set; }
         public virtual ICollection<VehicleReport> VehicleReports { get; set; }
         public ICollection<VehicleReportUse> VehicleReportUses { get; set; }
+        public virtual ICollection<Departaments> AssignedDepartments { get; set; }
     }
 }

@@ -78,6 +78,11 @@ namespace Infrastructure.Mappings
             CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopDto>().ReverseMap();
 
 
+            //Graphics
+            CreateMap<GraphicsDto, Vehicle>().ReverseMap();
+            CreateMap<GraphicsDto, VehicleMaintenance>().ReverseMap();
+            CreateMap<GraphicsDto, VehicleService>().ReverseMap();
+
         }
     }
 }

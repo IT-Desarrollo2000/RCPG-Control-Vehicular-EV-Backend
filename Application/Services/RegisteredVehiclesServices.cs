@@ -37,7 +37,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "";
+            string properties = "VehicleImages";
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
 
@@ -232,13 +232,13 @@ namespace Application.Services
                 foreach (var image in vehicleRequest.Images)
                 {
                     //Validar imagenes y Guardar las imagenes en el blobstorage
-                    if (image.ImageFile.ContentType.Contains("image"))
+                    if (image.ContentType.Contains("image"))
                     {
                         //Manipular el nombre de archivo
                         var uploadDate = DateTime.UtcNow;
-                        string FileExtn = System.IO.Path.GetExtension(image.ImageFile.FileName);
+                        string FileExtn = System.IO.Path.GetExtension(image.FileName);
                         var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.Serial}{FileExtn}";
-                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image.ImageFile, _azureBlobContainers.Value.RegisteredCars, filePath);
+                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.RegisteredCars, filePath);
 
                         //Agregar la imagen en BD
                         var newImage = new VehicleImage()
@@ -283,7 +283,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehiclesDto>> GetVehicleById(int id)
         {
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
-            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id);
+            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages");
 
             var veh = entity.FirstOrDefault();
 
@@ -529,7 +529,10 @@ namespace Application.Services
             var entity = await _unitOfWork.VehicleRepo.GetById(performanceRequest.VehicleId);
             if (entity == null)
             {
-                return null;
+                response.success = false;
+                response.AddError("Not Found", $"No se encontro el vehiculo con el id {performanceRequest.VehicleId}", 2);
+
+                return response;
             }
             decimal fuelCapacity = Convert.ToDecimal(entity.FuelCapacity);
 
@@ -544,17 +547,20 @@ namespace Application.Services
             return response;
         }
 
-        public async Task<GenericResponse<PerformanceDto>> PerformanceList(List<PerformanceRequest> performanceRequests)
+        public async Task<GenericResponse<List<PerformanceDto>>> PerformanceList(List<PerformanceRequest> performanceRequests)
         {
-            GenericResponse<PerformanceDto> response = new GenericResponse<PerformanceDto>();
+            GenericResponse<List<PerformanceDto>> response = new GenericResponse<List<PerformanceDto>>();
 
-
+            var dtolist = new List<PerformanceDto>();
             foreach (var element in performanceRequests)
             {
                 var entity = await _unitOfWork.VehicleRepo.GetById(element.VehicleId);
                 if (entity == null)
                 {
-                    return null;
+                    response.success = false;
+                    response.AddError("Not Found", $"No se encontro el vehiculo con el id {element.VehicleId}", 2);
+
+                    return response;
                 }
 
                 decimal fuelCapacity = Convert.ToDecimal(entity.FuelCapacity);
@@ -564,11 +570,77 @@ namespace Application.Services
                 PerformanceDto performance = new PerformanceDto();
                 performance.PerformanceOfVehicle = PerformanceOfVehicle;
                 performance.Vehicle = entity;
-
-                response.Data = performance;
-                response.success = true;
+                dtolist.Add(performance);
             }
- 
+            response.Data = dtolist;
+            response.success = true;
+            return response;
+        }
+        public async Task<GenericResponse<GraphicsDto>> GetServicesAndWorkshop(int VehicleId)
+        {
+            GenericResponse<GraphicsDto> response = new GenericResponse<GraphicsDto>();
+            var vehicle = await _unitOfWork.VehicleRepo.Get(filter: x => x.Id == VehicleId, includeProperties: "VehicleMaintenances,VehicleServices"); 
+            var vehicleresult = vehicle.FirstOrDefault();
+            if (vehicle == null)
+            {
+                response.success = false;
+                response.AddError("Not Found", $"No se encontro el vehiculo con id {VehicleId}", 2);
+
+                return response;
+            }
+
+            var map = _mapper.Map<GraphicsDto>(vehicleresult);
+            response.success = true;
+            response.Data = map;
+            return response;
+        }
+
+        public async Task<GenericResponse<List<GraphicsDto>>> GetServicesAndMaintenanceList(List<int> VehicleId)
+        {
+            GenericResponse<List<GraphicsDto>> response = new GenericResponse<List<GraphicsDto>>();
+            var dtograph = new List<GraphicsDto>();
+
+            foreach (var element in VehicleId)
+            {
+                var services = await _unitOfWork.VehicleRepo.Get(filter: x => x.Id == element, includeProperties: "VehicleMaintenances,VehicleServices");
+                var servicesresult = services.FirstOrDefault();
+                if (servicesresult == null)
+                {
+                    response.success = false;
+                    response.AddError("Not Found", $"No se encontro el vehiculo con el id {element}", 2);
+
+                    return response;
+
+                }
+                GraphicsDto graphics = new GraphicsDto();
+                graphics.Vehicle = servicesresult;
+                graphics.VehicleMaintenances = servicesresult.VehicleMaintenances;
+                graphics.VehicleServices = servicesresult.VehicleServices;
+                dtograph.Add(graphics);     
+            }
+            
+            response.success = true;
+            response.Data = dtograph;
+
+            return response;
+        }
+
+        public async Task<GenericResponse<ExpensesDto>> GetExpenses(int VehicleId)
+        {
+            GenericResponse<ExpensesDto> response = new GenericResponse<ExpensesDto>();
+            var vehicle = await _unitOfWork.VehicleRepo.Get(filter: x => x.Id == VehicleId, includeProperties: "Expenses");
+            var vehicleresult = vehicle.FirstOrDefault();
+            if (vehicle == null)
+            {
+                response.success = false;
+                response.AddError("Not Found", $"No se encontro el vehiculo con id {VehicleId}", 2);
+
+                return response;
+            }
+
+            var map = _mapper.Map<ExpensesDto>(vehicleresult);
+            response.success = true;
+            response.Data = map;
             return response;
         }
     }
