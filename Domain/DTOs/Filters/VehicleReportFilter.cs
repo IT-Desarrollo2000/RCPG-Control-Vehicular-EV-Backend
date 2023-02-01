@@ -23,6 +23,7 @@ namespace Domain.DTOs.Filters
         public GasolineLoadType? GasolineLoad { get; set; }
         public string? ReportSolutionComment { get; set; }
         public ReportStatusType? ReportStatus { get; set; }
+        public int? VehicleReportUseId { get; set; }
         public int PageSize { get; set; }
         public int PageNumber { get; set; }
     }

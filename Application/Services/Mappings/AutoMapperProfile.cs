@@ -77,8 +77,6 @@ namespace Infrastructure.Mappings
             CreateMap<MaintenanceWorkshopRequest, MaintenanceWorkshopDto>().ReverseMap();
             CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopDto>().ReverseMap();
 
-            //Performance
-            CreateMap<PerformanceRequest, PerformanceDto>().ReverseMap();
 
         }
     }

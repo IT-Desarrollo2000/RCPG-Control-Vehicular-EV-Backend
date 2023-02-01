@@ -29,5 +29,6 @@ namespace Domain.DTOs.Reponses
         public GasolineLoadType? GasolineLoad { get; set; }
         public string ReportSolutionComment { get; set; }
         public ReportStatusType ReportStatus { get; set; }
+        public int? VehicleReportUseId { get; set; }
     }
 }

@@ -21,6 +21,10 @@ namespace Infrastructure.Persistence.Configurations
             builder.HasMany(pu => pu.VehicleReports)
                 .WithOne(p => p.AppUser)
                 .HasForeignKey(pu => pu.AppUserId);
+
+            builder.HasMany(vu => vu.VehicleReportUses)
+                    .WithOne(v => v.AppUser)
+                    .HasForeignKey(vu => vu.AppUserId);
         }
     }
 }
