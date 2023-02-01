@@ -24,6 +24,8 @@ namespace Application.Interfaces
         IRepository<VehicleImage> VehicleImageRepo { get; }
         IRepository<PhotosOfSpending> PhotosOfSpendingRepo { get; }
         IRepository<VehicleReport> VehicleReportRepo { get; }
+        IRepository<DestinationOfReportUse> DestinationOfReportUseRepo { get; }
+        IRepository<VehicleReportUse> VehicleReportUseRepo { get; }
 
         void Dispose();
         void SaveChanges();

@@ -57,6 +57,10 @@ namespace Infrastructure.Persistence
         public virtual DbSet<VehicleReport> VehicleReports { get; set; }
         public virtual DbSet<VehicleReportImage> VehicleReportImages { get; set; }
 
+        //VehicleReportUse and Destinations
+        public virtual DbSet<VehicleReportUse> VehicleReportUses { get; set; }
+        public virtual DbSet<DestinationOfReportUse> DestinationOfReportUses { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -70,6 +74,10 @@ namespace Infrastructure.Persistence
             builder.ApplyConfiguration(new ExpensesConfiguration());
             builder.ApplyConfiguration(new VehicleMaintenanceConfiguration());
             builder.ApplyConfiguration(new UserProfileConfiguration());
+            builder.ApplyConfiguration(new ChecklistConfiguration());
+            builder.ApplyConfiguration(new VehicleReportConfiguration());
+            builder.ApplyConfiguration(new VehicleReportUseConfiguration());
+            builder.ApplyConfiguration(new DestinationOfReportUseConfiguration());
             builder.ApplyConfiguration(new DepartmentConfiguration());
         }
     }

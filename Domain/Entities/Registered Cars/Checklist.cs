@@ -8,6 +8,11 @@ namespace Domain.Entities.Registered_Cars
 {
     public class Checklist: BaseEntity
     {
+        public Checklist() 
+        {
+            this.VehicleReportUses = new HashSet<VehicleReportUse>();
+        }
+
         public int VehicleId { get; set; }
         public bool CirculationCard { get; set; }
         public bool CarInsurancePolicy { get; set; }
@@ -23,6 +28,7 @@ namespace Domain.Entities.Registered_Cars
 
 
         public virtual Vehicle Vehicle { get; set; }
+        public ICollection<VehicleReportUse> VehicleReportUses { get; set; }
 
     }
 }
