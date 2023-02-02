@@ -124,7 +124,7 @@ namespace Application.Services
             }
             else
             {
-                userApprovals = await _unitOfWork.VehicleReportUseRepo.Get(includeProperties: "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations");
+                userApprovals = await _unitOfWork.VehicleReportUseRepo.Get(includeProperties: "Checklist,VehicleReport,UserProfile,AppUser,Destinations");
             }
 
             var pagedApprovals = PagedList<VehicleReportUse>.Create(userApprovals, filter.PageNumber, filter.PageSize);
@@ -134,11 +134,20 @@ namespace Application.Services
         }
 
         //GETBYID
-        public async Task<GenericResponse<VehicleReportUseDto>> GetVehicleReporUsetById(int Id)
+        public async Task<GenericResponse<VehicleReportUseDto>> GetVehicleReporUseById(int Id)
         {
             GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
-            var profile = await _unitOfWork.VehicleReportUseRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations");
+            var profile = await _unitOfWork.VehicleReportUseRepo.Get(filter: p => p.Id == Id, includeProperties:"Checklist,VehicleReport,UserProfile,AppUser,Destinations");
             var result = profile.FirstOrDefault();
+
+            if (result == null)
+            {
+                response.success = true;
+                response.AddError("No existe VehicleReportUse", $"No existe ReportUse con el Id {Id} solicitado ");
+                return response;
+            }
+    
+
             var VehicleReportUseDto = _mapper.Map<VehicleReportUseDto>(result);
             response.success = true;
             response.Data = VehicleReportUseDto;
@@ -149,6 +158,40 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleReportUseDto>> PostVehicleReporUse([FromBody] VehicleReportUseRequest vehicleReportUseRequest)
         {
             GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
+        
+
+            if(vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.ViajeRapido)
+            {
+                if(vehicleReportUseRequest.VehicleId == null)
+                {
+                    response.success = false;
+                    response.AddError("No puede ir vacio el campo IdVehiculo", "Se solicita el campo IdVehiculo", 1);
+                    return response;
+                }
+
+                if(vehicleReportUseRequest.UseDate == null)
+                {
+                    response.success = false;
+                    response.AddError("No puede ir vacio el campo UseDate", "Se solicita el campo UseDate", 1);
+                    return response;
+                }
+                if(vehicleReportUseRequest.FinalMileage == null)
+                {
+                    response.success = false;
+                    response.AddError("No puede ir vacio el campo FinalMileage", "Se solicita el campo Mileage", 1);
+                    return response;
+                }
+
+                var entidad = _mapper.Map<VehicleReportUse>(vehicleReportUseRequest);
+                await _unitOfWork.VehicleReportUseRepo.Add(entidad);
+                await _unitOfWork.SaveChangesAsync();
+                response.success = true;
+                var VehicleReportUseDTO = _mapper.Map<VehicleReportUseDto>(entidad);
+                response.Data = VehicleReportUseDTO;
+                return response;
+
+            }
+
             var existeVehicleMaintenance = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseRequest.VehicleId);
             var resultVehicleMaintenance = existeVehicleMaintenance.FirstOrDefault();
             if (resultVehicleMaintenance == null)

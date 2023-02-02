@@ -16,7 +16,7 @@ namespace Application.Interfaces
     {
         Task<GenericResponse<VehicleReportUseDto>> DeleteVehicleReportUse(int Id);
         Task<PagedList<VehicleReportUse>> GetVehicleReportUseAll(VehicleReportUseFilter filter);
-        Task<GenericResponse<VehicleReportUseDto>> GetVehicleReporUsetById(int Id);
+        Task<GenericResponse<VehicleReportUseDto>> GetVehicleReporUseById(int Id);
         Task<GenericResponse<VehicleReportUseDto>> PostVehicleReporUse([FromBody] VehicleReportUseRequest vehicleReportUseRequest);
         Task<GenericResponse<VehicleReportUseDto>> PutVehicleReportUse(int Id, [FromBody] VehicleReportUseRequest vehicleReportUseRequest);
     }

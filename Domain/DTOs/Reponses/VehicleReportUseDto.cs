@@ -21,11 +21,11 @@ namespace Domain.DTOs.Reponses
         public DateTime UseDate { get; set; }
         public int? UserProfileId { get; set; }
         public int? AppUserId { get; set; }
-        public virtual Vehicle Vehicle { get; set; }
-        public virtual Checklist Checklist { get; set; }
+        public Vehicle Vehicle { get; set; }
+        public Checklist? Checklist { get; set; }
         public ICollection<VehicleReport?> VehicleReport { get; set; }
-        public virtual UserProfile? UserProfile { get; set; }
-        public virtual AppUser? AppUser { get; set; }
-        public ICollection<DestinationOfReportUse> Destinations { get; set; }
+        public UserProfile? UserProfile { get; set; }
+        public AppUser? AppUser { get; set; }
+        public ICollection<DestinationOfReportUse?> Destinations { get; set; }
     }
 }
