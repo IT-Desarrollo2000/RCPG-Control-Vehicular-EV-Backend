@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230130222249_SupervisorDepartments")]
+    partial class SupervisorDepartments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -440,40 +443,6 @@ namespace Infrastructure.Persistence.Data
                     b.ToTable("Checklists");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.DestinationOfReportUse", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DestinationName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("Latitud")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("Longitude")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("VehicleReportUseId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VehicleReportUseId");
-
-                    b.ToTable("DestinationOfReportUses");
-                });
-
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Expenses", b =>
                 {
                     b.Property<int>("Id")
@@ -494,9 +463,6 @@ namespace Infrastructure.Persistence.Data
 
                     b.Property<DateTime>("ExpenseDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("Invoiced")
-                        .HasColumnType("bit");
 
                     b.Property<int>("TypesOfExpensesId")
                         .HasColumnType("int");
@@ -813,9 +779,6 @@ namespace Infrastructure.Persistence.Data
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VehicleReportUseId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
@@ -823,8 +786,6 @@ namespace Infrastructure.Persistence.Data
                     b.HasIndex("UserProfileId");
 
                     b.HasIndex("VehicleId");
-
-                    b.HasIndex("VehicleReportUseId");
 
                     b.ToTable("VehicleReports");
                 });
@@ -852,7 +813,6 @@ namespace Infrastructure.Persistence.Data
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("VehicleReportId")
-                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -860,58 +820,6 @@ namespace Infrastructure.Persistence.Data
                     b.HasIndex("VehicleReportId");
 
                     b.ToTable("VehicleReportImages");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleReportUse", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AppUserId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ChecklistId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal?>("FinalMileage")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Observations")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StatusReportUse")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("UseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("UserProfileId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("ChecklistId");
-
-                    b.HasIndex("UserProfileId");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("VehicleReportUses");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleService", b =>
@@ -1210,15 +1118,6 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.DestinationOfReportUse", b =>
-                {
-                    b.HasOne("Domain.Entities.Registered_Cars.VehicleReportUse", "VehicleReportUses")
-                        .WithMany("Destinations")
-                        .HasForeignKey("VehicleReportUseId");
-
-                    b.Navigation("VehicleReportUses");
-                });
-
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Expenses", b =>
                 {
                     b.HasOne("Domain.Entities.Registered_Cars.TypesOfExpenses", "TypesOfExpenses")
@@ -1307,58 +1206,20 @@ namespace Infrastructure.Persistence.Data
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Registered_Cars.VehicleReportUse", "VehicleReportUses")
-                        .WithMany("VehicleReport")
-                        .HasForeignKey("VehicleReportUseId");
-
                     b.Navigation("AppUser");
 
                     b.Navigation("UserProfile");
 
                     b.Navigation("Vehicle");
-
-                    b.Navigation("VehicleReportUses");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleReportImage", b =>
                 {
                     b.HasOne("Domain.Entities.Registered_Cars.VehicleReport", "VehicleReport")
                         .WithMany("VehicleReportImages")
-                        .HasForeignKey("VehicleReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VehicleReportId");
 
                     b.Navigation("VehicleReport");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleReportUse", b =>
-                {
-                    b.HasOne("Domain.Entities.Identity.AppUser", "AppUser")
-                        .WithMany("VehicleReportUses")
-                        .HasForeignKey("AppUserId");
-
-                    b.HasOne("Domain.Entities.Registered_Cars.Checklist", "Checklist")
-                        .WithMany("VehicleReportUses")
-                        .HasForeignKey("ChecklistId");
-
-                    b.HasOne("Domain.Entities.Profiles.UserProfile", "UserProfile")
-                        .WithMany("VehicleReportUses")
-                        .HasForeignKey("UserProfileId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Registered_Cars.Vehicle", "Vehicle")
-                        .WithMany("VehicleReportsUses")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-
-                    b.Navigation("Checklist");
-
-                    b.Navigation("UserProfile");
-
-                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleService", b =>
@@ -1438,8 +1299,6 @@ namespace Infrastructure.Persistence.Data
 
                     b.Navigation("UserRoles");
 
-                    b.Navigation("VehicleReportUses");
-
                     b.Navigation("VehicleReports");
                 });
 
@@ -1447,14 +1306,7 @@ namespace Infrastructure.Persistence.Data
                 {
                     b.Navigation("Approvals");
 
-                    b.Navigation("VehicleReportUses");
-
                     b.Navigation("VehicleReports");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.Checklist", b =>
-                {
-                    b.Navigation("VehicleReportUses");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Expenses", b =>
@@ -1479,8 +1331,6 @@ namespace Infrastructure.Persistence.Data
 
                     b.Navigation("VehicleReports");
 
-                    b.Navigation("VehicleReportsUses");
-
                     b.Navigation("VehicleServices");
                 });
 
@@ -1496,13 +1346,6 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("Expenses");
 
                     b.Navigation("VehicleReportImages");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleReportUse", b =>
-                {
-                    b.Navigation("Destinations");
-
-                    b.Navigation("VehicleReport");
                 });
 #pragma warning restore 612, 618
         }

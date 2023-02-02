@@ -11,6 +11,12 @@ namespace Domain.Entities.Registered_Cars
 {
     public class VehicleReport : BaseEntity
     {
+        public VehicleReport() 
+        {
+            this.Expenses = new HashSet<Expenses>();
+            this.VehicleReportImages = new HashSet<VehicleReportImage>();
+        }
+
         public ReportType ReportType { get; set; }
         public int VehicleId { get; set; }
         public virtual Vehicle Vehicle { get; set; }
@@ -27,6 +33,8 @@ namespace Domain.Entities.Registered_Cars
         public GasolineLoadType? GasolineLoad { get; set; } 
         public string ReportSolutionComment { get; set; }
         public ReportStatusType ReportStatus { get; set; }
-        
+        public int? VehicleReportUseId { get; set; }
+        public virtual VehicleReportUse? VehicleReportUses { get; set; }
+
     }
 }

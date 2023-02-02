@@ -19,7 +19,10 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(ur => ur.UserProfileId).
                  OnDelete(DeleteBehavior.Restrict);
 
-
+            builder.HasMany(vu => vu.VehicleReportUses)
+                    .WithOne(v => v.UserProfile)
+                    .HasForeignKey(vu => vu.UserProfileId).
+                    OnDelete(DeleteBehavior.Restrict);
         }
 
     }

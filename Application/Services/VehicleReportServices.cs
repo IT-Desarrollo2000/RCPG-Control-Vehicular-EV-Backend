@@ -114,6 +114,15 @@ namespace Application.Services
                 else { Query = p => p.ReportStatus >= filter.ReportStatus.Value; }
             }
 
+            if (filter.VehicleReportUseId.HasValue)
+            {
+                if(Query != null)
+                {
+                    Query = Query.And(p => p.VehicleReportUseId >= filter.VehicleReportUseId.Value);
+                }
+                else { Query = p => p.VehicleReportUseId >= filter.VehicleReportUseId.Value; }
+            }
+
 
             if (Query != null)
             {
@@ -198,24 +207,31 @@ namespace Application.Services
                     return response;
                 }
 
-                var entidad = _mapper.Map<VehicleReport>(vehicleReportRequest);
-                await _unitOfWork.VehicleReportRepo.Add(entidad);
-                await _unitOfWork.SaveChangesAsync();
-                response.success = true;
-                var VehicleReportDTO = _mapper.Map<VehicleReportDto>(entidad);
-                response.Data = VehicleReportDTO;
-                return response;
-
             } 
-            else if (vehicleReportRequest.AppUserId.HasValue)
+            if (vehicleReportRequest.AppUserId.HasValue)
             {
                 var existeAppUser = await _userManager.Users.SingleOrDefaultAsync(c => c.Id == vehicleReportRequest.AppUserId.Value);
                 if(existeAppUser == null)
                 {
                     response.success = false;
-                    response.AddError("No existe AppUser", $"No existe AppUserId {vehicleReportRequest.UserProfileId} para cargar", 1);
+                    response.AddError("No existe AppUser", $"No existe AppUserId {vehicleReportRequest.AppUserId} para cargar", 1);
                     return response;
                 }
+            
+            }
+
+           if ( vehicleReportRequest.VehicleReportUseId.HasValue)
+            {
+                var profileD = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == vehicleReportRequest.VehicleReportUseId);
+                var resultD = profileD.FirstOrDefault();
+
+                if (resultD == null)
+                {
+                    response.success = true;
+                    response.AddError("No existe VehicleReportUse", $"No existe ReportUse con el Id {vehicleReportRequest.VehicleReportUseId} solicitado ");
+                    return response;
+                }
+
 
                 var entidad = _mapper.Map<VehicleReport>(vehicleReportRequest);
                 await _unitOfWork.VehicleReportRepo.Add(entidad);
@@ -274,6 +290,7 @@ namespace Application.Services
                     result.GasolineLoad = vehicleReportRequest.GasolineLoad;
                     result.ReportSolutionComment = vehicleReportRequest.ReportSolutionComment;
                     result.ReportStatus = vehicleReportRequest.ReportStatus;
+                    result.VehicleReportUseId = vehicleReportRequest.VehicleReportUseId;
 
                     await _unitOfWork.VehicleReportRepo.Update(result);
                     await _unitOfWork.SaveChangesAsync();
@@ -318,28 +335,8 @@ namespace Application.Services
                     return response;
                 }
 
-                result.ReportType = vehicleReportRequest.ReportType;
-                result.VehicleId = vehicleReportRequest.VehicleId;
-                result.Commentary = vehicleReportRequest.Commentary;
-                result.UserProfileId = vehicleReportRequest.UserProfileId;
-                result.AppUserId = vehicleReportRequest.AppUserId;
-                result.ReportDate = vehicleReportRequest.ReportDate;
-                result.IsResolved = vehicleReportRequest.IsResolved;
-                result.GasolineLoad = vehicleReportRequest.GasolineLoad;
-                result.ReportSolutionComment = vehicleReportRequest.ReportSolutionComment;
-                result.ReportStatus = vehicleReportRequest.ReportStatus;
-
-                await _unitOfWork.VehicleReportRepo.Update(result);
-                await _unitOfWork.SaveChangesAsync();
-
-                var VehicleReportDto = _mapper.Map<VehicleReportDto>(result);
-                response.success = true;
-                response.Data = VehicleReportDto;
-
-                return response;
-
             }
-            else if (vehicleReportRequest.AppUserId.HasValue)
+            if (vehicleReportRequest.AppUserId.HasValue)
             {
                 var existeAppUser = await _userManager.Users.SingleOrDefaultAsync(c => c.Id == vehicleReportRequest.AppUserId.Value);
                 if (existeAppUser == null)
@@ -349,6 +346,20 @@ namespace Application.Services
                     return response;
                 }
 
+            }
+            if (vehicleReportRequest.VehicleReportUseId.HasValue)
+            {
+                var profileD = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == vehicleReportRequest.VehicleReportUseId);
+                var resultD = profileD.FirstOrDefault();
+
+                if (resultD == null)
+                {
+                    response.success = true;
+                    response.AddError("No existe VehicleReportUse", $"No existe ReportUse con el Id {vehicleReportRequest.VehicleReportUseId} solicitado ");
+                    return response;
+                }
+
+
                 result.ReportType = vehicleReportRequest.ReportType;
                 result.VehicleId = vehicleReportRequest.VehicleId;
                 result.Commentary = vehicleReportRequest.Commentary;
@@ -359,6 +370,7 @@ namespace Application.Services
                 result.GasolineLoad = vehicleReportRequest.GasolineLoad;
                 result.ReportSolutionComment = vehicleReportRequest.ReportSolutionComment;
                 result.ReportStatus = vehicleReportRequest.ReportStatus;
+                result.VehicleReportUseId = vehicleReportRequest.VehicleReportUseId;
 
                 await _unitOfWork.VehicleReportRepo.Update(result);
                 await _unitOfWork.SaveChangesAsync();
@@ -382,6 +394,7 @@ namespace Application.Services
                 result.GasolineLoad = vehicleReportRequest.GasolineLoad;
                 result.ReportSolutionComment = vehicleReportRequest.ReportSolutionComment;
                 result.ReportStatus = vehicleReportRequest.ReportStatus;
+                result.VehicleReportUseId = vehicleReportRequest.VehicleReportUseId;
 
                 await _unitOfWork.VehicleReportRepo.Update(result);
                 await _unitOfWork.SaveChangesAsync();

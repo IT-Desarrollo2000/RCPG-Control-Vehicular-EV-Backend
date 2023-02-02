@@ -31,6 +31,10 @@ namespace Infrastructure.Persistence.Configurations
 
             builder.HasMany(v => v.AssignedDepartments)
                 .WithMany(d => d.AssignedVehicles);
+
+            builder.HasMany(bu => bu.VehicleReportsUses)
+                   .WithOne(b => b.Vehicle)
+                   .HasForeignKey(bu => bu.VehicleId);
         }
     }
 }
