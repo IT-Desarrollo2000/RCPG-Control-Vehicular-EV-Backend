@@ -1,3 +1,4 @@
+using Domain.DTOs.Reponses;
 using Domain.Entities.Departament;
 using Domain.Enums;
 using System;

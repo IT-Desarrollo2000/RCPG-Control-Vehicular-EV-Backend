@@ -314,7 +314,7 @@ namespace Application.Services
                 }
 
                 //Borrar los gastos relacionados
-                var expenses  = await _unitOfWork.ExpensesRepo.Get(filter: e => e.VehicleId == id);
+                var expenses  = await _unitOfWork.ExpensesRepo.Get(filter: e => e.Vehicles.Any(v => v.Id == exp.Id));
 
                 foreach(var expense in expenses)
                 {
@@ -633,10 +633,10 @@ namespace Application.Services
             return response;
         }
 
-        public async Task<GenericResponse<ExpensesDto>> GetExpenses(int VehicleId)
+        public async Task<GenericResponse<List<GetExpensesDto>>> GetExpenses(int VehicleId)
         {
-            GenericResponse<ExpensesDto> response = new GenericResponse<ExpensesDto>();
-            var vehicle = await _unitOfWork.VehicleRepo.Get(filter: x => x.Id == VehicleId, includeProperties: "Expenses");
+            GenericResponse<List<GetExpensesDto>> response = new GenericResponse<List<GetExpensesDto>>();
+            var vehicle = await _unitOfWork.VehicleRepo.Get(filter: x => x.Id == VehicleId, includeProperties: "Expenses,Expenses.TypesOfExpenses,"); ///*,Expenses.TypesOfExpenses,Expenses.VehicleMaintenanceWorkshop*/
             var vehicleresult = vehicle.FirstOrDefault();
             if (vehicle == null)
             {
@@ -646,7 +646,7 @@ namespace Application.Services
                 return response;
             }
 
-            var map = _mapper.Map<ExpensesDto>(vehicleresult);
+            var map = _mapper.Map<List<GetExpensesDto>>(vehicleresult.Expenses);
             response.success = true;
             response.Data = map;
             return response;
