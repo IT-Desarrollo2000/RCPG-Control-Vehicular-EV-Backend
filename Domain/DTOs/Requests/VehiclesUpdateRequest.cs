@@ -25,5 +25,6 @@ namespace Domain.DTOs.Requests
         public OwnershipType? OwnershipType { get; set; }
         public string? OwnersName { get; set; }
         public decimal? DesiredPerformance { get; set; }
+        public string? VehicleObservation { get; set; }
     }
 }
