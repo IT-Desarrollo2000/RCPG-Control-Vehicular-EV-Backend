@@ -223,7 +223,10 @@ namespace Application.Services
                     entity.AssignedDepartments.Add(department);
                 }
 
-                //Guardar el Vehiculo
+                //Generar ID de QR
+                entity.VehicleQRId = new Guid().ToString() + $"-{entity.Id}";
+
+                //Guardar el Vehiculo 
                 await _unitOfWork.VehicleRepo.Add(entity);
 
                 //Guardar las fotos
@@ -432,6 +435,11 @@ namespace Application.Services
             if (vehiclesUpdateRequest.DesiredPerformance.HasValue)
             {
                 veh.DesiredPerformance = vehiclesUpdateRequest.DesiredPerformance.Value;
+            }
+
+            if(!string.IsNullOrEmpty(vehiclesUpdateRequest.VehicleObservation))
+            {
+                veh.VehicleObservation = vehiclesUpdateRequest.VehicleObservation;
             }
 
             await _unitOfWork.VehicleRepo.Update(veh);
