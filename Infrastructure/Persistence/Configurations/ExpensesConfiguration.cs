@@ -18,10 +18,8 @@ namespace Infrastructure.Persistence.Configurations
                     .HasForeignKey(ur => ur.TypesOfExpensesId)
                     .IsRequired();
 
-            builder.HasOne(x => x.Vehicle)
-                .WithMany(xr => xr.Expenses)
-                .HasForeignKey(x => x.VehicleId)
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasMany(x => x.Vehicles)
+                .WithMany(xr => xr.Expenses);
 
 
             builder.HasMany(p => p.PhotosOfSpending)

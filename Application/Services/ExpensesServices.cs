@@ -38,19 +38,26 @@ namespace Application.Services
         public async Task<GenericResponse<ExpensesDto>> PostExpenses(ExpensesRequest expensesRequest)
         {
             GenericResponse<ExpensesDto> response = new GenericResponse<ExpensesDto>();
-            var existevehicleid = await _unitOfWork.VehicleRepo.Get(v => v.Id == expensesRequest.VehicleId);
-            var resultExpenses = existevehicleid.FirstOrDefault();
+
+            var dtoexpens = new List<Vehicle>();
+            foreach ( var vehicleid in expensesRequest.VehicleIds ) 
+            {
+                var existevehicleid = await _unitOfWork.VehicleRepo.Get(v => v.Id == vehicleid);
+                var resultExpenses = existevehicleid.FirstOrDefault();
+
+                if (resultExpenses == null)
+                {
+                    response.success = false;
+                    response.AddError("No existe vehiculo", $"No existe vehiculo con ese id{vehicleid} solicitado", 1);
+                    return response;
+                }
+                dtoexpens.Add(resultExpenses);
+            }
+           
 
             var existetypeOfExpenses = await _unitOfWork.TypesOfExpensesRepo.Get(v => v.Id == expensesRequest.TypesOfExpensesId);
             var resultType = existetypeOfExpenses.FirstOrDefault();
 
-
-            if (resultExpenses == null)
-            {
-                response.success = false;
-                response.AddError("No existe vehiculo", $"No existe vehiculo con ese id{expensesRequest.VehicleId} solicitado", 1);
-                return response;
-            }
 
             if (resultType == null)
             {
@@ -60,6 +67,7 @@ namespace Application.Services
             }
 
             var entity = _mapper.Map<Expenses>(expensesRequest);
+            entity.Vehicles = dtoexpens;
 
             if(expensesRequest.VehicleMaintenanceWorkshopId.HasValue)
             {
@@ -91,7 +99,7 @@ namespace Application.Services
                     //Manipular el nombre de archivo
                     var uploadDate = DateTime.UtcNow;
                     string FileExtn = System.IO.Path.GetExtension(photo.FileName);
-                    var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.VehicleId}{entity.TypesOfExpensesId}{FileExtn}";
+                    var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.TypesOfExpensesId}{FileExtn}";
                     var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(photo, _azureBlobContainers.Value.ExpenseAttachments, filePath);
 
                     //Agregar la imagen en BD
@@ -141,10 +149,30 @@ namespace Application.Services
             var expenses = result.FirstOrDefault();
             if (expenses == null) return null;
 
-            expenses.TypesOfExpensesId = expensesRequest.TypesOfExpensesId;
-            expenses.Cost = expensesRequest.Cost;
-            expenses.ExpenseDate = expensesRequest.ExpenseDate;                      
-            expenses.VehicleMaintenanceWorkshopId = expensesRequest.VehicleMaintenanceWorkshopId;
+            if (expensesRequest.TypesOfExpensesId.HasValue)
+            {
+                expenses.TypesOfExpensesId = expensesRequest.TypesOfExpensesId.Value;
+            }
+
+            if (expensesRequest.Cost.HasValue)
+            {
+                expenses.Cost = expensesRequest.Cost.Value;
+            }
+
+            if (expensesRequest.Invoiced.HasValue)
+            {
+                expenses.Invoiced = expensesRequest.Invoiced.Value;
+            }
+            if (expensesRequest.ExpenseDate.HasValue)
+            {
+                expenses.ExpenseDate = expensesRequest.ExpenseDate.Value;
+            }
+
+            if (expensesRequest.VehicleMaintenanceWorkshopId.HasValue)
+            {
+                expenses.VehicleMaintenanceWorkshopId = expensesRequest.VehicleMaintenanceWorkshopId.Value;
+            }                    
+            
 
             await _unitOfWork.ExpensesRepo.Update(expenses);
             await _unitOfWork.SaveChangesAsync();
@@ -222,6 +250,15 @@ namespace Application.Services
                 else { Query = p => p.Cost == filter.Cost.Value; }
             }
 
+            if (filter.Invoiced.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.Invoiced == filter.Invoiced.Value);
+                }
+                else { Query = p => p.Invoiced == filter.Invoiced.Value; }
+            }
+
             if (filter.ExpenseDate.HasValue)
             {
                 if (Query != null)
@@ -235,9 +272,9 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.VehicleId <= filter.VehicleId.Value);
+                    Query = Query.And(p => p.Vehicles.Any(v  => v.Id == filter.VehicleId) );
                 }
-                else { Query = p => p.VehicleId <= filter.VehicleId.Value; }
+                else { Query = p => p.Vehicles.Any(v => v.Id == filter.VehicleId); }
             }        
 
             if (filter.VehicleMaintenanceWorkshopId.HasValue)
@@ -288,7 +325,7 @@ namespace Application.Services
                     //Manipular el nombre de archivo
                     var uploadDate = DateTime.UtcNow;
                     string FileExtn = System.IO.Path.GetExtension(request.ImageFile.FileName);
-                    var filePath = $"{expense.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{expense.VehicleId}{expense.TypesOfExpensesId}{FileExtn}";
+                    var filePath = $"{expense.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{expense.TypesOfExpensesId}{FileExtn}";
                     var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(request.ImageFile, _azureBlobContainers.Value.ExpenseAttachments, filePath);
 
                     //Agregar la imagen en BD

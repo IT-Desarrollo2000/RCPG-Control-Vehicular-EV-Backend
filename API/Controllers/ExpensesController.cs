@@ -81,9 +81,9 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<Expenses>))]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<Expenses>))]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("PutExpenses")]
         public async Task<IActionResult> PutExpenses(ExpenseUpdateRequest expensesRequest, int id)
@@ -93,9 +93,9 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete]
         [Route("DeleteExpenses")]
         public async Task<IActionResult> DeleteExpenses(int id)
@@ -109,9 +109,9 @@ namespace API.Controllers
             }
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PhotosOfSpending>))]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PhotosOfSpending>))]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("{expenseId:int}/AddAttachment")]
         public async Task<IActionResult> AddExpenseAttachment(int expenseId, [FromForm] ExpensePhotoRequest request)
@@ -121,7 +121,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete]

@@ -11,9 +11,14 @@ namespace Domain.DTOs.Requests
 {
     public class ExpensesRequest
     {
+        public ExpensesRequest()
+        {
+            VehicleIds = new List<int>();
+        }
 
         public decimal Cost { get; set; }
-        public int VehicleId { get; set; }
+        public bool Invoiced { get; set; }
+        public List<int> VehicleIds { get; set; }
         public int TypesOfExpensesId { get; set; }
         public int? VehicleMaintenanceWorkshopId { get; set; }
         public DateTime ExpenseDate { get; set; }      
