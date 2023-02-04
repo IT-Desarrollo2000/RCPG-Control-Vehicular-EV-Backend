@@ -24,7 +24,7 @@ namespace API.Controllers
             this._registeredVehiclesServices = registeredVehiclesServices;
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<Vehicle>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -55,9 +55,9 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetVehicleById/{id}")]
         public async Task<IActionResult> GetVehicleById(int id)
@@ -90,9 +90,9 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PerformanceDto>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PerformanceDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("PerformanceList")]
         public async Task<IActionResult> PerformanceList(List<PerformanceRequest> performanceRequests)
