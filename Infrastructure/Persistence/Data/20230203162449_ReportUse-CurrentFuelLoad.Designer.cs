@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230203162449_ReportUse-CurrentFuelLoad")]
+    partial class ReportUseCurrentFuelLoad
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -881,7 +884,7 @@ namespace Infrastructure.Persistence.Data
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CurrentFuelLoad")
+                    b.Property<int>("CurrentFuelLoad")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("FinalMileage")
@@ -905,9 +908,6 @@ namespace Infrastructure.Persistence.Data
 
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Verification")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

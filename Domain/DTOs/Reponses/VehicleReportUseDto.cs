@@ -21,6 +21,8 @@ namespace Domain.DTOs.Reponses
         public DateTime UseDate { get; set; }
         public int? UserProfileId { get; set; }
         public int? AppUserId { get; set; }
+        public CurrentFuel? CurrentFuelLoad { get; set; }
+        public bool Verification { get; set; }
         public Vehicle Vehicle { get; set; }
         public Checklist? Checklist { get; set; }
         public ICollection<VehicleReport?> VehicleReport { get; set; }

@@ -20,6 +20,8 @@ namespace Domain.DTOs.Requests
         public DateTime UseDate { get; set; }
         public int? UserProfileId { get; set; }
         public int? AppUserId { get; set; }
+        public CurrentFuel? CurrentFuelLoad { get; set; }
+        public bool Verification { get; set; }
 
     }
 }

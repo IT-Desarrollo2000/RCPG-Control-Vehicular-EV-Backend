@@ -119,8 +119,57 @@ namespace API.Controllers
             }
         }
 
+        //PUT
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportUseDto))]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPut]
+        [Route("Verification")]
+        public async Task<ActionResult<VehicleReportUseDto>> PutVehicleReportUseVerification(int id, [FromBody] VehicleReportUseVerificationRequest vehicleReportUseVerificationRequest)
+        {
+
+            var entidad = await _vehicleReportUseService.PutVehicleVerification(id, vehicleReportUseVerificationRequest);
+
+            if (entidad.success)
+            {
+                return Ok(entidad);
+
+            }
+            else
+            {
+                return BadRequest(entidad);
+            }
+        }
+
+        //PUT
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportUseDto))]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPut]
+        [Route("Status")]
+        public async Task<ActionResult<VehicleReportUseDto>> PutStatusVehicleReport(int id, int VehicleId ,[FromBody] ReportUseTypeRequest reportUseTypeRequest)
+        {
+
+            var entidad = await _vehicleReportUseService.PutVehicleStatusReport(id, VehicleId, reportUseTypeRequest);
+
+            if (entidad.success)
+            {
+                return Ok(entidad);
+
+            }
+            else
+            {
+                return BadRequest(entidad);
+            }
+        }
+
+
         //Delete
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        // [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportUseDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]

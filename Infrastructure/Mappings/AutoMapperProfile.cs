@@ -98,6 +98,9 @@ namespace Infrastructure.Mappings
             CreateMap<VehicleReportUse, VehicleReportUseRequest>().ReverseMap();
             CreateMap<VehicleReportUseRequest, VehicleReportUseDto>().ReverseMap();
             CreateMap<VehicleReportUse, VehicleReportUseDto>().ReverseMap();
+            CreateMap<VehicleReportUse, VehicleReportUseVerificationRequest>().ReverseMap();
+            CreateMap<VehicleReportUseDto, VehicleReportUseVerificationRequest>().ReverseMap();
+            CreateMap<VehicleReportUseDto, ReportUseTypeRequest>().ReverseMap();
 
             //Graphics
             CreateMap<GraphicsDto, Vehicle>().ReverseMap();

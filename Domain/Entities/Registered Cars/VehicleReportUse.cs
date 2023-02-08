@@ -25,6 +25,8 @@ namespace Domain.Entities.Registered_Cars
         public DateTime UseDate { get; set; }
         public int? UserProfileId { get; set; }
         public int? AppUserId { get; set; }
+        public CurrentFuel? CurrentFuelLoad { get; set; }
+        public bool Verification { get; set; }
         public virtual Vehicle Vehicle { get; set; }
         public virtual Checklist? Checklist { get; set; }
         public ICollection<VehicleReport?> VehicleReport { get; set;}
