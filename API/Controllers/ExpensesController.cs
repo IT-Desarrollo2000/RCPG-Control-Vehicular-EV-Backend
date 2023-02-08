@@ -27,9 +27,9 @@ namespace API.Controllers
             this._expensesServices = expensesServices;
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<Expenses>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<Expenses>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> GetExpenses([FromQuery] ExpensesFilter filter)
@@ -58,9 +58,9 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ExpensesDto>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetTypesOfExpensesId/{id}")]
         public async Task<IActionResult> GetExpensesById(int id)
@@ -70,32 +70,32 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return NotFound(result); }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ExpensesDto>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ExpensesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("PostExpenses")]
-        public async Task<IActionResult> PostExpenses([FromBody] ExpensesRequest expensesRequest)
+        public async Task<IActionResult> PostExpenses([FromForm] ExpensesRequest expensesRequest)
         {
             var result = await _expensesServices.PostExpenses( expensesRequest);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<Expenses>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<Expenses>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("PutExpenses")]
-        public async Task<IActionResult> PutExpenses(ExpenseUpdateRequest expensesRequest, int id)
+        public async Task<IActionResult> PutExpenses([FromBody]ExpenseUpdateRequest expensesRequest, int id)
         {
             var result = await _expensesServices.PutExpenses(expensesRequest, id);
             if (result.Data == null) { return NotFound($"No existe gasto con el Id {id}"); }
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete]
         [Route("DeleteExpenses")]
         public async Task<IActionResult> DeleteExpenses(int id)
@@ -109,9 +109,9 @@ namespace API.Controllers
             }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PhotosOfSpending>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PhotosOfSpending>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("{expenseId:int}/AddAttachment")]
         public async Task<IActionResult> AddExpenseAttachment(int expenseId, [FromForm] ExpensePhotoRequest request)
@@ -121,7 +121,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete]

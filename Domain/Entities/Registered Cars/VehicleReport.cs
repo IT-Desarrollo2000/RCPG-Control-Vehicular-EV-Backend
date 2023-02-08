@@ -26,8 +26,8 @@ namespace Domain.Entities.Registered_Cars
         public int? AppUserId { get; set; }
         public virtual AppUser? AppUser { get; set; }
         public DateTime ReportDate { get; set; }
-        public virtual ICollection<Expenses?> Expenses { get; set; }
-        public virtual ICollection<VehicleReportImage?> VehicleReportImages { get; set; }
+        public virtual ICollection<Expenses> Expenses { get; set; }
+        public virtual ICollection<VehicleReportImage> VehicleReportImages { get; set; }
         public bool IsResolved { get; set; }
         //Aquí va el Id del reporte de uso que aun no esta implementado
         public GasolineLoadType? GasolineLoad { get; set; } 

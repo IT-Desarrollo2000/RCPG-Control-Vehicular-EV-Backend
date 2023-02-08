@@ -14,6 +14,7 @@ namespace Domain.DTOs.Requests
         public ExpensesRequest()
         {
             VehicleIds = new List<int>();
+            Attachments = new List<IFormFile>();
         }
 
         public decimal Cost { get; set; }
@@ -21,8 +22,7 @@ namespace Domain.DTOs.Requests
         public List<int> VehicleIds { get; set; }
         public int TypesOfExpensesId { get; set; }
         public int? VehicleMaintenanceWorkshopId { get; set; }
-        public DateTime ExpenseDate { get; set; }      
-        public string ERPFolio { get; set; }
+        public DateTime ExpenseDate { get; set; }
         public List<IFormFile> Attachments { get; set; }
 
     }

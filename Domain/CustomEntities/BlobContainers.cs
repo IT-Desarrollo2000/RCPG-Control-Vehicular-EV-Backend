@@ -7,5 +7,6 @@
         public string CarPolicies { get; set; }
         public string DriverLicences { get; set; }
         public string ExpenseAttachments { get; set; }
+        public string VehicleReports { get; set; }
     }
 }
