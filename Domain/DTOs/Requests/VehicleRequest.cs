@@ -13,7 +13,7 @@ namespace Domain.DTOs.Requests
     {
         public VehicleRequest() 
         {
-            AssignedDepartments = new List<int>();
+            DepartmentsToAssign = new List<int>();
             Images = new List<IFormFile>();
         }
 
@@ -47,7 +47,7 @@ namespace Domain.DTOs.Requests
         [Required]
         public decimal DesiredPerformance { get; set; }
         public string VehicleObservation { get; set; }
-        public List<int> AssignedDepartments { get; set; }
+        public List<int> DepartmentsToAssign { get; set; }
         public List<IFormFile> Images { get; set; }
     }
 

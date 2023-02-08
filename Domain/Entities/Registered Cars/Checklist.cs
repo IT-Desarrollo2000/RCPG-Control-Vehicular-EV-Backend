@@ -28,7 +28,7 @@ namespace Domain.Entities.Registered_Cars
 
 
         public virtual Vehicle Vehicle { get; set; }
-        public ICollection<VehicleReportUse> VehicleReportUses { get; set; }
+        public virtual ICollection<VehicleReportUse> VehicleReportUses { get; set; }
 
     }
 }
