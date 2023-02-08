@@ -86,7 +86,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
-        public async Task<ActionResult<VehicleReportDto>> Post([FromBody] VehicleReportRequest vehicleReportRequest)
+        public async Task<ActionResult<VehicleReportDto>> Post([FromForm] VehicleReportRequest vehicleReportRequest)
         {
             var entidad = await _vehicleReportService.PostVehicleReport(vehicleReportRequest);
 
@@ -150,5 +150,33 @@ namespace API.Controllers
 
         }
 
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportImage>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPost]
+        [Route("{reportId:int}/AddImage")]
+        public async Task<IActionResult> AddReportImage(int reportId, [FromForm] VehicleImageRequest request)
+        {
+            var result = await _vehicleReportService.AddReportImage(request, reportId);
+            if (result == null) return NotFound("No se encontro el reporte especificado");
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpDelete]
+        [Route("{imageId:int}/DeleteImage")]
+        public async Task<IActionResult> DeleteReportImage(int imageId)
+        {
+            var result = await _vehicleReportService.DeleteReportImage(imageId);
+            if (result == null) { return NotFound($"No existe imagen con el Id {imageId}"); }
+            if (result.success) { return Ok(result); }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
     }
 }

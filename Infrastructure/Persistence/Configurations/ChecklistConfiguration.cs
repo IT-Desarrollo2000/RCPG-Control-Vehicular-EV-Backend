@@ -13,10 +13,6 @@ namespace Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Checklist> builder)
         {
-            builder.HasMany(ur => ur.VehicleReportUses)
-                    .WithOne(u => u.Checklist)
-                    .HasForeignKey(ur => ur.ChecklistId)
-                    .IsRequired(false);
                     
         }
     }

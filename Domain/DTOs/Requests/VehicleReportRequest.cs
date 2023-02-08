@@ -2,8 +2,10 @@
 using Domain.Entities.Profiles;
 using Domain.Entities.Registered_Cars;
 using Domain.Enums;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +14,13 @@ namespace Domain.DTOs.Requests
 {
     public class VehicleReportRequest
     {
+        public VehicleReportRequest()
+        {
+            ReportImages = new List<IFormFile>();
+        }
+        [Required]
         public ReportType ReportType { get; set; }
+        [Required]
         public int VehicleId { get; set; }
         public string Commentary { get; set; }
         public int? UserProfileId { get; set; }
@@ -24,5 +32,6 @@ namespace Domain.DTOs.Requests
         public string ReportSolutionComment { get; set; }
         public ReportStatusType ReportStatus { get; set; }
         public int? VehicleReportUseId { get; set; }
+        public List<IFormFile> ReportImages { get; set; }
     }
 }

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
+using System.Runtime.Intrinsics.Arm;
 
 namespace Application.Services
 {
@@ -21,13 +22,17 @@ namespace Application.Services
         private readonly IMapper _mapper;
         private readonly PaginationOptions _paginationOptions;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IOptions<BlobContainers> _azureBlobContainers;
+        private readonly IBlobStorageService _blobStorageService;
 
-        public VehicleReportServices( IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options, UserManager<AppUser> userManager) 
+        public VehicleReportServices( IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options, UserManager<AppUser> userManager, IOptions<BlobContainers> azureBlobContainers, IBlobStorageService blobStorageService) 
         {
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
             _paginationOptions = options.Value;
             _userManager = userManager;
+            _azureBlobContainers = azureBlobContainers;
+            _blobStorageService = blobStorageService;
         }
 
         //GetALL
@@ -151,7 +156,7 @@ namespace Application.Services
         }
 
         //Post 
-        public async Task<GenericResponse<VehicleReportDto>> PostVehicleReport([FromBody] VehicleReportRequest vehicleReportRequest)
+        public async Task<GenericResponse<VehicleReportDto>> PostVehicleReport(VehicleReportRequest vehicleReportRequest)
         {
             GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
             if (vehicleReportRequest.ReportType == Domain.Enums.ReportType.Carga_Gasolina)
@@ -165,12 +170,12 @@ namespace Application.Services
 
                 else if (vehicleReportRequest.GasolineLoad == Domain.Enums.GasolineLoadType.Kilometraje || vehicleReportRequest.GasolineLoad == Domain.Enums.GasolineLoadType.Litros)
                 {
-                    var entidad = _mapper.Map<VehicleReport>(vehicleReportRequest);
-                    await _unitOfWork.VehicleReportRepo.Add(entidad);
+                    var entidadR = _mapper.Map<VehicleReport>(vehicleReportRequest);
+                    await _unitOfWork.VehicleReportRepo.Add(entidadR);
                     await _unitOfWork.SaveChangesAsync();
                     response.success = true;
-                    var VehicleReportDTO = _mapper.Map<VehicleReportDto>(entidad);
-                    response.Data = VehicleReportDTO;
+                    var VehicleReportDTOCG = _mapper.Map<VehicleReportDto>(entidadR);
+                    response.Data = VehicleReportDTOCG;
                     return response;
 
                 }
@@ -231,32 +236,56 @@ namespace Application.Services
                     response.AddError("No existe VehicleReportUse", $"No existe ReportUse con el Id {vehicleReportRequest.VehicleReportUseId} solicitado ");
                     return response;
                 }
-
-
-                var entidad = _mapper.Map<VehicleReport>(vehicleReportRequest);
-                await _unitOfWork.VehicleReportRepo.Add(entidad);
-                await _unitOfWork.SaveChangesAsync();
-                response.success = true;
-                var VehicleReportDTO = _mapper.Map<VehicleReportDto>(entidad);
-                response.Data = VehicleReportDTO;
-                return response;
-
             }
-            else
+            var entidad = _mapper.Map<VehicleReport>(vehicleReportRequest);
+            await _unitOfWork.VehicleReportRepo.Add(entidad);
+
+            //Agregar imagenes al reporte
+            //Guardar las fotos
+            var images = new List<VehicleReportImage>();
+
+            foreach (var image in vehicleReportRequest.ReportImages)
             {
-                var entidad = _mapper.Map<VehicleReport>(vehicleReportRequest);
-                await _unitOfWork.VehicleReportRepo.Add(entidad);
-                await _unitOfWork.SaveChangesAsync();
-                response.success = true;
-                var VehicleReportDTO = _mapper.Map<VehicleReportDto>(entidad);
-                response.Data = VehicleReportDTO;
-                return response;
+                //Validar imagenes y Guardar las imagenes en el blobstorage
+                if (image.ContentType.Contains("image"))
+                {
+                    //Manipular el nombre de archivo
+                    var uploadDate = DateTime.UtcNow;
+                    Random rndm = new Random();
+                    string FileExtn = System.IO.Path.GetExtension(image.FileName);
+                    var filePath = $"{entidad.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{uploadDate.Hour}{uploadDate.Minute}{rndm.Next(1, 1000)}{FileExtn}";
+                    var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.VehicleReports, filePath);
+
+                    //Agregar la imagen en BD
+                    var newImage = new VehicleReportImage()
+                    {
+                        FilePath = filePath,
+                        FileUrl = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.VehicleReports, filePath),
+                        VehicleReport = entidad
+                    };
+
+                    await _unitOfWork.VehicleReportImage.Add(newImage);
+                    images.Add(newImage);
+                }
+                else
+                {
+                    response.success = false;
+                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+
+                    return response;
+                }
             }
+
+            await _unitOfWork.SaveChangesAsync();
+            response.success = true;
+            var VehicleReportDTO = _mapper.Map<VehicleReportDto>(entidad);
+            response.Data = VehicleReportDTO;
+            return response;
 
         }
 
         //Put
-        public async Task<GenericResponse<VehicleReportDto>> PutVehicleReport(int Id, [FromBody] VehicleReportRequest vehicleReportRequest)
+        public async Task<GenericResponse<VehicleReportDto>> PutVehicleReport(int Id, VehicleReportRequest vehicleReportRequest)
         {
             GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
             var profile = await _unitOfWork.VehicleReportRepo.Get(p => p.Id == Id);
@@ -429,5 +458,88 @@ namespace Application.Services
             return response;
         }
 
+        //Agregar imagen al reporte invidividualmente
+        public async Task<GenericResponse<VehicleReportImage>> AddReportImage(VehicleImageRequest request, int reportId)
+        {
+            GenericResponse<VehicleReportImage> response = new GenericResponse<VehicleReportImage>();
+
+            try
+            {
+                //Verificar que exista el vehiculo
+                var report = await _unitOfWork.VehicleReportRepo.GetById(reportId);
+                if (report == null) return null;
+
+                if (request.ImageFile.ContentType.Contains("image"))
+                {
+                    //Manipular el nombre de archivo
+                    var uploadDate = DateTime.UtcNow;
+                    Random rndm = new Random();
+                    string FileExtn = System.IO.Path.GetExtension(request.ImageFile.FileName);
+                    var filePath = $"{report.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{uploadDate.Hour}{uploadDate.Minute}{rndm.Next(1, 1000)}{FileExtn}";
+                    var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(request.ImageFile, _azureBlobContainers.Value.VehicleReports, filePath);
+
+                    //Agregar la imagen en BD
+                    var newImage = new VehicleReportImage()
+                    {
+                        FilePath = filePath,
+                        FileUrl = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.VehicleReports, filePath),
+                        VehicleReport = report
+                    };
+
+                    await _unitOfWork.VehicleReportImage.Add(newImage);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    response.success = true;
+                    response.Data = newImage;
+
+                    return response;
+                }
+                else
+                {
+                    response.success = false;
+                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+
+                    return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
+
+        }
+
+        //Eliminar imagen del reporte individualmente
+        public async Task<GenericResponse<bool>> DeleteReportImage(int reportImageId)
+        {
+            GenericResponse<bool> response = new GenericResponse<bool>();
+
+            try
+            {
+                //Borrar las fotos del blob
+                var photos = await _unitOfWork.VehicleImageRepo.GetById(reportImageId);
+                if (photos == null) return null;
+
+                await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.VehicleReports, photos.FilePath);
+                await _unitOfWork.VehicleReportImage.Delete(photos.Id);
+                await _unitOfWork.SaveChangesAsync();
+
+                response.success = true;
+                response.Data = true;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                response.AddError("Error", ex.Message, 1);
+                return response;
+
+            }
+        }
     }
 }

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
@@ -85,6 +86,7 @@ namespace Application.Services
             }
 
             //Agregar gasto a BD
+            entity.ERPFolio = Guid.NewGuid().ToString();
             await _unitOfWork.ExpensesRepo.Add(entity);
 
             //Verificar que contenga imagenes
@@ -98,8 +100,9 @@ namespace Application.Services
                 {
                     //Manipular el nombre de archivo
                     var uploadDate = DateTime.UtcNow;
+                    Random rndm = new Random();
                     string FileExtn = System.IO.Path.GetExtension(photo.FileName);
-                    var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.TypesOfExpensesId}{FileExtn}";
+                    var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.TypesOfExpensesId}{rndm.Next(1, 1000)}{FileExtn}";
                     var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(photo, _azureBlobContainers.Value.ExpenseAttachments, filePath);
 
                     //Agregar la imagen en BD
@@ -324,8 +327,9 @@ namespace Application.Services
                 {
                     //Manipular el nombre de archivo
                     var uploadDate = DateTime.UtcNow;
+                    Random rndm = new Random();
                     string FileExtn = System.IO.Path.GetExtension(request.ImageFile.FileName);
-                    var filePath = $"{expense.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{expense.TypesOfExpensesId}{FileExtn}";
+                    var filePath = $"{expense.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{expense.TypesOfExpensesId}{rndm.Next(1, 1000)}{FileExtn}";
                     var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(request.ImageFile, _azureBlobContainers.Value.ExpenseAttachments, filePath);
 
                     //Agregar la imagen en BD
