@@ -22,6 +22,12 @@ namespace Infrastructure.Persistence.Configurations
                     .WithOne(b => b.VehicleReportUses)
                     .HasForeignKey(bu => bu.VehicleReportUseId)
                     .IsRequired(false);
+
+            builder.HasOne(r => r.Checklist)
+                    .WithMany(c => c.VehicleReportUses)
+                    .HasForeignKey(r => r.ChecklistId)
+                    .IsRequired(false)
+                    .OnDelete(DeleteBehavior.Restrict);
         }
     }
 

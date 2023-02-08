@@ -26,7 +26,7 @@ namespace Domain.Entities.Registered_Cars
         public int? UserProfileId { get; set; }
         public int? AppUserId { get; set; }
         public virtual Vehicle Vehicle { get; set; }
-        public virtual Checklist Checklist { get; set; }
+        public virtual Checklist? Checklist { get; set; }
         public ICollection<VehicleReport?> VehicleReport { get; set;}
         public virtual UserProfile? UserProfile { get; set; }
         public virtual AppUser? AppUser { get; set; }

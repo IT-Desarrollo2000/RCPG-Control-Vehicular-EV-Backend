@@ -8,6 +8,7 @@ using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -37,7 +38,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "VehicleImages";
+            string properties = "VehicleImages,Checklists,AssignedDepartments";
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
 
@@ -210,7 +211,7 @@ namespace Application.Services
                 entity.VehicleStatus = Domain.Enums.VehicleStatus.ACTIVO;
 
                 //Revisar que existan los departamentos asociados
-                foreach (var id in vehicleRequest.AssignedDepartments)
+                foreach (var id in vehicleRequest.DepartmentsToAssign)
                 {
                     var department = await _unitOfWork.Departaments.GetById(id);
                     if (department == null)
@@ -239,8 +240,9 @@ namespace Application.Services
                     {
                         //Manipular el nombre de archivo
                         var uploadDate = DateTime.UtcNow;
+                        Random rndm = new Random();
                         string FileExtn = System.IO.Path.GetExtension(image.FileName);
-                        var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.Serial}{FileExtn}";
+                        var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.Serial}{rndm.Next(1,1000)}{FileExtn}";
                         var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.RegisteredCars, filePath);
 
                         //Agregar la imagen en BD
@@ -286,7 +288,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehiclesDto>> GetVehicleById(int id)
         {
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
-            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages");
+            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments");
 
             var veh = entity.FirstOrDefault();
 
@@ -313,21 +315,20 @@ namespace Application.Services
                     await _unitOfWork.VehicleImageRepo.Delete(photo.Id);
                 }
 
-                //Borrar los gastos relacionados
-                var expenses  = await _unitOfWork.ExpensesRepo.Get(filter: e => e.Vehicles.Any(v => v.Id == exp.Id));
-
-                foreach(var expense in expenses)
+                //Borrar Checklists 
+                var checklists = await _unitOfWork.ChecklistRepo.Get(x => x.VehicleId == id);
+                foreach (var checklist in checklists)
                 {
-                    //Borrar las fotos de los attachments
-                    var attachments = await _unitOfWork.PhotosOfSpendingRepo.Get(filter: v => v.ExpensesId == expense.Id);
-
-                    foreach (var attachment in attachments)
+                    //Buscar reportes de uso
+                    var query = await _unitOfWork.VehicleReportUseRepo.Get(x => x.ChecklistId == checklist.Id, includeProperties: "Checklist");
+                    
+                    foreach(var report in query)
                     {
-                        await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.ExpenseAttachments, attachment.FilePath);
-                        await _unitOfWork.PhotosOfSpendingRepo.Delete(attachment.Id);
+                        report.Checklist = null;
+                        await _unitOfWork.VehicleReportUseRepo.Update(report);
                     }
 
-                    await _unitOfWork.ExpensesRepo.Delete(expense.Id);
+                    await _unitOfWork.ChecklistRepo.Delete(checklist.Id);
                 }
 
                 await _unitOfWork.VehicleRepo.Delete(id);
@@ -464,8 +465,9 @@ namespace Application.Services
                 {
                     //Manipular el nombre de archivo
                     var uploadDate = DateTime.UtcNow;
+                    Random rndm = new Random();
                     string FileExtn = System.IO.Path.GetExtension(request.ImageFile.FileName);
-                    var filePath = $"{vehicleId}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{vehicle.Serial}{FileExtn}";
+                    var filePath = $"{vehicleId}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{vehicle.Serial}{rndm.Next(1, 1000)}{FileExtn}";
                     var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(request.ImageFile, _azureBlobContainers.Value.RegisteredCars, filePath);
 
                     //Agregar la imagen en BD
