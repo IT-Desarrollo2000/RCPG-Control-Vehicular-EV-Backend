@@ -443,6 +443,11 @@ namespace Application.Services
                 veh.VehicleObservation = vehiclesUpdateRequest.VehicleObservation;
             }
 
+            if (vehiclesUpdateRequest.CurrentKM.HasValue)
+            {
+                veh.CurrentKM = vehiclesUpdateRequest.CurrentKM.Value;
+            }
+
             await _unitOfWork.VehicleRepo.Update(veh);
             await _unitOfWork.SaveChangesAsync();
             response.success = true;
