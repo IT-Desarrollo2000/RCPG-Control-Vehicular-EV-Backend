@@ -448,6 +448,15 @@ namespace Application.Services
                 return null;
             }
 
+            //Borrar las fotos del blob
+            var photos = await _unitOfWork.VehicleReportImage.Get(filter: v => v.VehicleReportId == result.Id);
+
+            foreach (var photo in photos)
+            {
+                await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.RegisteredCars, photo.FilePath);
+                await _unitOfWork.VehicleImageRepo.Delete(photo.Id);
+            }
+
             var existe = await _unitOfWork.VehicleReportRepo.Delete(Id);
             await _unitOfWork.SaveChangesAsync();
 
