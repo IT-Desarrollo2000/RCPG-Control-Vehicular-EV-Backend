@@ -65,12 +65,15 @@ namespace Infrastructure.Mappings
             CreateMap<ExpensesRequest, ExpensesDto>().ReverseMap();
             CreateMap<Vehicle, GetExpensesDto>().ReverseMap();
             CreateMap<Expenses, GetExpensesDto>().ReverseMap();
+            CreateMap<GetExpensesDtoList, Expenses>().ReverseMap();
+            CreateMap<GetExpensesDtoList, Vehicle>().ReverseMap();
 
             //TypesOfExpenses
             CreateMap<TypesOfExpenses, TypesOfExpensesDto>().ReverseMap();
             CreateMap<TypesOfExpenses, TypesOfExpensesRequest>().ReverseMap();
-            CreateMap<TypesOfExpensesDto, TypesOfExpensesRequest>().ReverseMap();
-            
+            CreateMap<TypesOfExpensesDto, TypesOfExpensesRequest>().ReverseMap();           
+            CreateMap<GetTypesOfExpensesDto, TypesOfExpenses>().ReverseMap();
+
             //VehicleMaintenance
             CreateMap<VehicleMaintenance, VehicleMaintenanceRequest>().ReverseMap();
             CreateMap<VehicleMaintenanceRequest, VehicleMaintenanceDto>().ReverseMap();
@@ -80,6 +83,7 @@ namespace Infrastructure.Mappings
             CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopRequest>().ReverseMap();
             CreateMap<MaintenanceWorkshopRequest, MaintenanceWorkshopDto>().ReverseMap();
             CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopDto>().ReverseMap();
+            CreateMap<VehicleMaintenanceWorkshop,GetVehicleMaintenanceWorkshopDto>().ReverseMap();
 
             //VehicleReport
             CreateMap<VehicleReport, VehicleReportRequest>().ReverseMap();
@@ -98,6 +102,9 @@ namespace Infrastructure.Mappings
             CreateMap<VehicleReportUse, VehicleReportUseRequest>().ReverseMap();
             CreateMap<VehicleReportUseRequest, VehicleReportUseDto>().ReverseMap();
             CreateMap<VehicleReportUse, VehicleReportUseDto>().ReverseMap();
+            CreateMap<VehicleReportUse, VehicleReportUseVerificationRequest>().ReverseMap();
+            CreateMap<VehicleReportUseDto, VehicleReportUseVerificationRequest>().ReverseMap();
+            CreateMap<VehicleReportUseDto, ReportUseTypeRequest>().ReverseMap();
 
             //Graphics
             CreateMap<GraphicsDto, Vehicle>().ReverseMap();

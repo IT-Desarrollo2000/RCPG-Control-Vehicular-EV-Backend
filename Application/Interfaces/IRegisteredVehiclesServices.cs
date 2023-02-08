@@ -18,6 +18,7 @@ namespace Application.Interfaces
         Task<GenericResponse<bool>> DeleteVehicleImage(int VehicleImageId);
         Task<GenericResponse<bool>> DeleteVehicles(int id);
         Task<GenericResponse<List<GetExpensesDto>>> GetExpenses(int VehicleId);
+        Task<GenericResponse<List<GetExpensesDtoList>>> GetExpensesByCar(List<int> VehicleId);
         Task<GenericResponse<List<GraphicsDto>>> GetServicesAndMaintenanceList(List<int> VehicleId);
         Task<GenericResponse<GraphicsDto>> GetServicesAndWorkshop(int VehicleId);
         Task<GenericResponse<VehiclesDto>> GetVehicleById(int id);

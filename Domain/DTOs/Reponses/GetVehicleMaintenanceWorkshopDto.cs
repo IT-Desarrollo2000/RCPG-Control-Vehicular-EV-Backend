@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Domain.DTOs.Reponses
 {
-    public class GetTypesOfExpensesDto
+    public class GetVehicleMaintenanceWorkshopDto
     {
         public string Name { get; set; }
-        //public int Id { get; set; }
     }
 }

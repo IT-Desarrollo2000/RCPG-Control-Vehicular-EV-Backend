@@ -638,9 +638,10 @@ namespace Application.Services
         public async Task<GenericResponse<List<GetExpensesDto>>> GetExpenses(int VehicleId)
         {
             GenericResponse<List<GetExpensesDto>> response = new GenericResponse<List<GetExpensesDto>>();
-            var vehicle = await _unitOfWork.VehicleRepo.Get(filter: x => x.Id == VehicleId, includeProperties: "Expenses,Expenses.TypesOfExpenses,"); ///*,Expenses.TypesOfExpenses,Expenses.VehicleMaintenanceWorkshop*/
+
+            var vehicle = await _unitOfWork.VehicleRepo.Get(filter: x => x.Id == VehicleId, includeProperties: "Expenses,Expenses.TypesOfExpenses,Expenses.VehicleMaintenanceWorkshop"); ///*,Expenses.TypesOfExpenses,Expenses.VehicleMaintenanceWorkshop*/
             var vehicleresult = vehicle.FirstOrDefault();
-            if (vehicle == null)
+            if (vehicleresult == null)
             {
                 response.success = false;
                 response.AddError("Not Found", $"No se encontro el vehiculo con id {VehicleId}", 2);
@@ -651,6 +652,36 @@ namespace Application.Services
             var map = _mapper.Map<List<GetExpensesDto>>(vehicleresult.Expenses);
             response.success = true;
             response.Data = map;
+            return response;
+        }
+
+        public async Task<GenericResponse<List<GetExpensesDtoList>>> GetExpensesByCar(List<int> VehicleId)
+        {
+            GenericResponse<List<GetExpensesDtoList>> response = new GenericResponse<List<GetExpensesDtoList>>();
+
+            var dtolist = new List<GetExpensesDtoList>();
+            foreach (var element in VehicleId)
+            {
+                var vehicle = await _unitOfWork.VehicleRepo.Get(filter: x => x.Id == element, includeProperties: "Expenses,Expenses.TypesOfExpenses,Expenses.VehicleMaintenanceWorkshop");
+                var vehicleresult = vehicle.FirstOrDefault();
+                if (vehicleresult == null)
+                {
+                    response.success = false;
+                    response.AddError("Not Found", $"No se encontro el vehiculo con id {element}", 2);
+
+                    return response;
+                }
+                GetExpensesDtoList getExpensesDtoList = new GetExpensesDtoList();
+                getExpensesDtoList.Id = vehicleresult.Id;
+
+                var map = _mapper.Map<List<GetExpensesDto>>(vehicleresult.Expenses);
+                getExpensesDtoList.expensesDtos = map;
+
+
+                dtolist.Add(getExpensesDtoList);
+            }
+            response.success = true;
+            response.Data = dtolist;
             return response;
         }
     }

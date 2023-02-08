@@ -20,9 +20,9 @@ namespace API.Controllers
             this._registeredVehiclesServices = registeredVehiclesServices;
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PerformanceDto>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PerformanceDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("Performance")]
         public async Task<IActionResult> Performance(PerformanceRequest performanceRequest)
@@ -32,9 +32,9 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PerformanceDto>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PerformanceDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("PerformanceList")]
         public async Task<IActionResult> PerformanceList(List<PerformanceRequest> performanceRequests)
@@ -61,16 +61,32 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("GetServicesAndMaintenanceList")]
-        public async Task<IActionResult> GetServicesAndMaintenanceList([FromForm] List<int> VehicleId)
+        public async Task<IActionResult> GetServicesAndMaintenanceList( List<int> VehicleId)
         {
             var result = await _registeredVehiclesServices.GetServicesAndMaintenanceList(VehicleId);
             if (result.success) { return Ok(result); } else { return NotFound(result); }
         }
 
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<GetExpensesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
+        [Route("GetExpenses")]
         public async Task<IActionResult> GetExpenses(int VehicleId)
         {
             var result = await _registeredVehiclesServices.GetExpenses(VehicleId);
+
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<GetExpensesDtoList>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPost]
+        [Route("GetExpensesByCar")]
+        public async Task<IActionResult> GetExpensesByCar([FromBody]List<int> VehicleId)
+        {
+            var result = await _registeredVehiclesServices.GetExpensesByCar(VehicleId);
             if (result.success) { return Ok(result); } else { return NotFound(result); }
         }
     }

@@ -24,7 +24,7 @@ namespace API.Controllers
             this._registeredVehiclesServices = registeredVehiclesServices;
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<Vehicle>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
