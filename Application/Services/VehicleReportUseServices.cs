@@ -372,7 +372,7 @@ namespace Application.Services
         {
             GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
             GenericResponse<VehiclesDto> responseVehicle = new GenericResponse<VehiclesDto>();
-            var profile = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == Id);
+            var profile = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == Id, includeProperties:"Checklist");
             var result = profile.FirstOrDefault();
 
             if (result == null)
