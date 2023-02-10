@@ -23,7 +23,11 @@ namespace Infrastructure.Persistence.Configurations
                 .WithOne(x => x.VehicleReport)
                 .HasForeignKey(xu => xu.VehicleReportId)
                 .IsRequired();
-           
+
+            builder.HasOne(au => au.SolvedByAdminUser)
+                .WithMany(ad => ad.SolvedReports)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
     }

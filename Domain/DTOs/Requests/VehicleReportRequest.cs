@@ -17,21 +17,22 @@ namespace Domain.DTOs.Requests
         public VehicleReportRequest()
         {
             ReportImages = new List<IFormFile>();
+            Expenses = new List<int>();
         }
         [Required]
         public ReportType ReportType { get; set; }
         [Required]
         public int VehicleId { get; set; }
-        public string? Commentary { get; set; } = "";
-        public int? UserProfileId { get; set; }
-        public int? AppUserId { get; set; }
+        [Required]
+        public string Commentary { get; set; }
+        public int? AdminUserId { get; set; }
+        public int? MobileUserId { get; set; }
+        [Required]
         public DateTime ReportDate { get; set; }
-        public bool IsResolved { get; set; }
-        //Aquí va el Id del reporte de uso que aun no esta implementado
-        public GasolineLoadType? GasolineLoad { get; set; }
-        public string? ReportSolutionComment { get; set; } = "";
-        public ReportStatusType ReportStatus { get; set; }
+        public int? GasolineLoadAmount { get; set; }
+        public int? GasolineCurrentKM { get; set; }
         public int? VehicleReportUseId { get; set; }
+        public List<int> Expenses { get; set; }
         public List<IFormFile> ReportImages { get; set; }
     }
 }

@@ -15,8 +15,8 @@ namespace Infrastructure.Persistence.Configurations
         public void Configure(EntityTypeBuilder<UserProfile> builder)
         {
             builder.HasMany(ur => ur.VehicleReports)
-                .WithOne(u => u.UserProfile)
-                .HasForeignKey(ur => ur.UserProfileId).
+                .WithOne(u => u.MobileUser)
+                .HasForeignKey(ur => ur.MobileUserId).
                  OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(vu => vu.VehicleReportUses)

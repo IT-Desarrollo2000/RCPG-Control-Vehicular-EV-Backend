@@ -89,7 +89,11 @@ namespace Infrastructure.Mappings
             //VehicleReport
             CreateMap<VehicleReport, VehicleReportRequest>().ReverseMap();
             CreateMap<VehicleReportRequest, VehicleReportDto>().ReverseMap();
-            CreateMap<VehicleReport, VehicleReportDto>().ReverseMap();
+            CreateMap<VehicleReport, VehicleReportDto>()
+                .ForMember(x => x.AdminUserName, c => c.MapFrom(a => a.AdminUser.UserName))
+                .ForMember(x => x.MobileUserName, c => c.MapFrom(m => m.MobileUser.FullName))
+                .ForMember(x => x.SolvedByAdminUserName, c => c.MapFrom(ad => ad.SolvedByAdminUser.UserName));
+            CreateMap<VehicleReportImage, VehicleReportImageDto>();
 
             //Performance
             CreateMap<PerformanceRequest, PerformanceDto>().ReverseMap();
