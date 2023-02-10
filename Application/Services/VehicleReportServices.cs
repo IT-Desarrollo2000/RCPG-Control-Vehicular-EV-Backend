@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
 using System.Runtime.Intrinsics.Arm;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services
 {
@@ -24,8 +25,9 @@ namespace Application.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly IOptions<BlobContainers> _azureBlobContainers;
         private readonly IBlobStorageService _blobStorageService;
+        private readonly IExpensesServices _expensesServices;
 
-        public VehicleReportServices( IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options, UserManager<AppUser> userManager, IOptions<BlobContainers> azureBlobContainers, IBlobStorageService blobStorageService) 
+        public VehicleReportServices( IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options, UserManager<AppUser> userManager, IOptions<BlobContainers> azureBlobContainers, IBlobStorageService blobStorageService, IExpensesServices expensesServices) 
         {
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
@@ -33,6 +35,7 @@ namespace Application.Services
             _userManager = userManager;
             _azureBlobContainers = azureBlobContainers;
             _blobStorageService = blobStorageService;
+            _expensesServices = expensesServices;
         }
 
         //GetALL
@@ -41,7 +44,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "";
+            string properties = "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses";
             IEnumerable<VehicleReport> userApprovals = null;
             Expression<Func<VehicleReport, bool>> Query = null;
 
@@ -65,22 +68,22 @@ namespace Application.Services
             }
 
 
-            if (filter.UserProfileId.HasValue)
+            if (filter.MobileUserId.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.UserProfileId >= filter.UserProfileId.Value);
+                    Query = Query.And(p => p.MobileUserId >= filter.MobileUserId.Value);
                 }
-                else { Query = p => p.UserProfileId >= filter.UserProfileId.Value; }
+                else { Query = p => p.MobileUserId >= filter.MobileUserId.Value; }
             }
 
-            if (filter.AppUserId.HasValue)
+            if (filter.AdminUserId.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.AppUserId >= filter.AppUserId.Value);
+                    Query = Query.And(p => p.AdminUserId >= filter.AdminUserId.Value);
                 }
-                else { Query = p => p.AppUserId >= filter.AppUserId.Value; }
+                else { Query = p => p.AdminUserId >= filter.AdminUserId.Value; }
             }
 
             if (filter.ReportDate.HasValue)
@@ -98,16 +101,7 @@ namespace Application.Services
                 {
                     Query = Query.And(p => p.IsResolved == filter.IsResolved.Value);
                 }
-                else { Query = p => p.AppUserId == filter.AppUserId.Value; }
-            }
-
-            if (filter.GasolineLoad.HasValue)
-            {
-                if (Query != null)
-                {
-                    Query = Query.And(p => p.GasolineLoad >= filter.GasolineLoad.Value);
-                }
-                else { Query = p => p.GasolineLoad >= filter.GasolineLoad.Value; }
+                else { Query = p => p.IsResolved == filter.IsResolved.Value; }
             }
 
             if (filter.ReportStatus.HasValue)
@@ -131,11 +125,11 @@ namespace Application.Services
 
             if (Query != null)
             {
-                userApprovals = await _unitOfWork.VehicleReportRepo.Get(filter: Query, includeProperties: "Vehicle,UserProfile,AppUser,Expenses,VehicleReportImages");
+                userApprovals = await _unitOfWork.VehicleReportRepo.Get(filter: Query, includeProperties: properties);
             }
             else
             {
-                userApprovals = await _unitOfWork.VehicleReportRepo.Get(includeProperties: "Vehicle,UserProfile,AppUser,Expenses,VehicleReportImages");
+                userApprovals = await _unitOfWork.VehicleReportRepo.Get(includeProperties: properties);
             }
 
             var pagedApprovals = PagedList<VehicleReport>.Create(userApprovals, filter.PageNumber, filter.PageSize);
@@ -159,293 +153,308 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleReportDto>> PostVehicleReport(VehicleReportRequest vehicleReportRequest)
         {
             GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
-            if (vehicleReportRequest.ReportType == Domain.Enums.ReportType.Carga_Gasolina)
+            try
             {
-                if (vehicleReportRequest.GasolineLoad == null)
+                //Verificar que contenga los campos de usuarios 
+                if (!vehicleReportRequest.AdminUserId.HasValue && !vehicleReportRequest.MobileUserId.HasValue)
                 {
                     response.success = false;
-                    response.AddError("Es necesario un valor existente, Kilometraje o Litros", $"Para el tipo de Carga de Gasolina, es necesario un valor existe de la carga de gasolina {vehicleReportRequest.GasolineLoad} solicitado", 1);
+                    response.AddError("Usuario no especificado", $"Es necesario especificar un usuario para la creación del reporte", 4);
                     return response;
                 }
 
-                else if (vehicleReportRequest.GasolineLoad == Domain.Enums.GasolineLoadType.Kilometraje || vehicleReportRequest.GasolineLoad == Domain.Enums.GasolineLoadType.Litros)
+                //Verificar si el reporte es por carga de gasolina y si contiene los campos requeridos para ello
+                if (vehicleReportRequest.ReportType == Domain.Enums.ReportType.Carga_Gasolina)
                 {
-                    var entidadR = _mapper.Map<VehicleReport>(vehicleReportRequest);
-                    await _unitOfWork.VehicleReportRepo.Add(entidadR);
-                    await _unitOfWork.SaveChangesAsync();
-                    response.success = true;
-                    var VehicleReportDTOCG = _mapper.Map<VehicleReportDto>(entidadR);
-                    response.Data = VehicleReportDTOCG;
-                    return response;
+                    if (!vehicleReportRequest.GasolineLoadAmount.HasValue)
+                    {
+                        response.success = false;
+                        response.AddError("Es necesario un valor existente Litros", $"Para el tipo de Carga de Gasolina, es necesario un valor para la carga de Litros", 1);
+                        return response;
+                    }
+
+                    if (!vehicleReportRequest.GasolineCurrentKM.HasValue)
+                    {
+                        response.success = false;
+                        response.AddError("Es necesario un valor existente KM", $"Para el tipo de Carga de Gasolina, es necesario un valor para el KM actual ", 2);
+                        return response;
+                    }
+                }
+
+                //Verificar que el usuario que lo creo exista
+                if (vehicleReportRequest.MobileUserId.HasValue)
+                {
+                    var existeUserProfile = await _unitOfWork.UserProfileRepo.Get(c => c.Id == vehicleReportRequest.MobileUserId.Value);
+                    var resultUserProfile = existeUserProfile.FirstOrDefault();
+
+                    if (resultUserProfile == null)
+                    {
+                        response.success = false;
+                        response.AddError("No existe UserProfile", $"No existe UserProfileId {vehicleReportRequest.MobileUserId} para cargar", 1);
+                        return response;
+                    }
 
                 }
-                else
+
+                if (vehicleReportRequest.AdminUserId.HasValue)
+                {
+                    var existeAppUser = await _userManager.Users.SingleOrDefaultAsync(c => c.Id == vehicleReportRequest.AdminUserId.Value);
+                    if (existeAppUser == null)
+                    {
+                        response.success = false;
+                        response.AddError("No existe AppUser", $"No existe AppUserId {vehicleReportRequest.AdminUserId} para cargar", 1);
+                        return response;
+                    }
+
+                }
+
+                //Verificar que el vehiculo exista
+                var vehicleExistQuery = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportRequest.VehicleId);
+                var vehicleExists = vehicleExistQuery.FirstOrDefault();
+
+                if (vehicleExists == null)
                 {
                     response.success = false;
-                    response.AddError("No existe GasoLineLoad", $"No existe Gasolinead con el GasoLinead {vehicleReportRequest.GasolineLoad} solicitado", 1);
+                    response.AddError("Vehiculo no encontrado", $"No existe Vehiculo con el Id {vehicleReportRequest.VehicleId} solicitado", 5);
                     return response;
+
                 }
 
+                //Verificar si se agregara a un reporte de uso
+                if (vehicleReportRequest.VehicleReportUseId.HasValue)
+                {
+                    var profileD = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == vehicleReportRequest.VehicleReportUseId);
+                    var resultD = profileD.FirstOrDefault();
+
+                    if (resultD == null)
+                    {
+                        response.success = true;
+                        response.AddError("No existe reporte de uso", $"No existe reporte de uso con el Id {vehicleReportRequest.VehicleReportUseId} solicitado");
+                        return response;
+                    }
+                }
+
+                //Mappear la entidad
+                var entidadR = _mapper.Map<VehicleReport>(vehicleReportRequest);
+                //Modificar el status del reporte
+                entidadR.ReportStatus = Domain.Enums.ReportStatusType.Pendiente;
+                entidadR.IsResolved = false;
+
+                //Agregar los gastos al reporte
+                foreach(var expenseId in vehicleReportRequest.Expenses)
+                {
+                    var expense = await _unitOfWork.ExpensesRepo.GetById(expenseId);
+                    if(expense == null)
+                    {
+                        response.success = false;
+                        response.AddError("Gasto no existe", $"El Id de gasto {expenseId} no existe");
+                    }
+                    entidadR.Expenses.Add(expense);
+                }
+
+                //Mappear y guardar la entidad
+                await _unitOfWork.VehicleReportRepo.Add(entidadR);
+
+                //Agregar imagenes al reporte
+                //Guardar las fotos
+                var images = new List<VehicleReportImage>();
+
+                foreach (var image in vehicleReportRequest.ReportImages)
+                {
+                    //Validar imagenes y Guardar las imagenes en el blobstorage
+                    if (image.ContentType.Contains("image"))
+                    {
+                        //Manipular el nombre de archivo
+                        var uploadDate = DateTime.UtcNow;
+                        Random rndm = new Random();
+                        string FileExtn = System.IO.Path.GetExtension(image.FileName);
+                        var filePath = $"{entidadR.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{uploadDate.Hour}{uploadDate.Minute}{rndm.Next(1, 1000)}{FileExtn}";
+                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.VehicleReports, filePath);
+
+                        //Agregar la imagen en BD
+                        var newImage = new VehicleReportImage()
+                        {
+                            FilePath = filePath,
+                            FileUrl = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.VehicleReports, filePath),
+                            VehicleReport = entidadR
+                        };
+
+                        await _unitOfWork.VehicleReportImage.Add(newImage);
+                        images.Add(newImage);
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+
+                        return response;
+                    }
+                }
+
+                //Guardar los cambios
+                await _unitOfWork.SaveChangesAsync();
+                response.success = true;
+                var VehicleReportDTOCG = _mapper.Map<VehicleReportDto>(entidadR);
+                response.Data = VehicleReportDTOCG;
+                return response;
             }
-            else { vehicleReportRequest.GasolineLoad = null; }
-
-
-            var existeVehicleMaintenance = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportRequest.VehicleId);
-            var resultVehicleMaintenance = existeVehicleMaintenance.FirstOrDefault();
-            if (resultVehicleMaintenance == null)
+            catch( Exception ex)
             {
                 response.success = false;
-                response.AddError("No existe Vehicle", $"No existe Vehiculo con el VehicleId {vehicleReportRequest.VehicleId} solicitado", 1);
+                response.AddError("Error", ex.Message, 0);
+
                 return response;
-
             }
+        }
 
-            if (vehicleReportRequest.UserProfileId.HasValue)
+        //Marcar reporte como resuelto (Admin only)
+        public async Task<GenericResponse<VehicleReportDto>> ManageReportStatus(SolvedReportRequest request)
+        {
+            GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
+            try
             {
-                var existeUserProfile = await _unitOfWork.UserProfileRepo.Get(c => c.Id == vehicleReportRequest.UserProfileId.Value);
-                var resultUserProfile = existeUserProfile.FirstOrDefault();
-
-                if (resultUserProfile == null)
+                //Buscar el report especificado
+                var report = await _unitOfWork.VehicleReportRepo.GetById(request.ReportId);
+                if(report == null)
                 {
                     response.success = false;
-                    response.AddError("No existe UserProfile", $"No existe UserProfileId {vehicleReportRequest.UserProfileId} para cargar", 1);
+                    response.AddError("Reporte no encontrado", $"El Id {request.ReportId} de reporte especificado no existe", 2);
                     return response;
                 }
 
+                switch(report.ReportStatus)
+                {
+                    case Domain.Enums.ReportStatusType.Resuelto:
+                        response.success = false;
+                        response.AddError("Reporte resuelto", $"El Id {request.ReportId} de reporte ya esta marcado como resuelto", 3);
+                        break;
+                    case Domain.Enums.ReportStatusType.Cancelado:
+                        response.success = false;
+                        response.AddError("Reporte cancelado", $"El Id {request.ReportId} de reporte ya esta marcado como cancelado", 4);
+                        break;
+                    default:
+                        break;
+                }
+
+                //Buscar el usuario especificado
+                var adminUserExists = await _userManager.Users.SingleOrDefaultAsync(c => c.Id == request.AdminUserId);
+                if (adminUserExists == null)
+                {
+                    response.success = false;
+                    response.AddError("No existe AppUser", $"No existe AppUserId {request.AdminUserId} para cargar", 1);
+                    return response;
+                }
+
+                //Modificar el reporte y cambiar estatus
+                report.ReportStatus = request.Status;
+                report.SolvedByAdminUser = adminUserExists;
+                report.ReportSolutionComment = request.ResolutionComment;
+
+                response.success = true;
+                var VehicleReportDTOCG = _mapper.Map<VehicleReportDto>(report);
+                response.Data = VehicleReportDTOCG;
+                return response;
             } 
-            if (vehicleReportRequest.AppUserId.HasValue)
+            catch( Exception ex )
             {
-                var existeAppUser = await _userManager.Users.SingleOrDefaultAsync(c => c.Id == vehicleReportRequest.AppUserId.Value);
-                if(existeAppUser == null)
-                {
-                    response.success = false;
-                    response.AddError("No existe AppUser", $"No existe AppUserId {vehicleReportRequest.AppUserId} para cargar", 1);
-                    return response;
-                }
-            
+                response.success = false;
+                response.AddError("Reporte no encontrado", ex.Message, 1);
+
+                return response;
             }
-
-           if ( vehicleReportRequest.VehicleReportUseId.HasValue)
-            {
-                var profileD = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == vehicleReportRequest.VehicleReportUseId);
-                var resultD = profileD.FirstOrDefault();
-
-                if (resultD == null)
-                {
-                    response.success = true;
-                    response.AddError("No existe VehicleReportUse", $"No existe ReportUse con el Id {vehicleReportRequest.VehicleReportUseId} solicitado ");
-                    return response;
-                }
-            }
-            var entidad = _mapper.Map<VehicleReport>(vehicleReportRequest);
-            await _unitOfWork.VehicleReportRepo.Add(entidad);
-
-            //Agregar imagenes al reporte
-            //Guardar las fotos
-            var images = new List<VehicleReportImage>();
-
-            foreach (var image in vehicleReportRequest.ReportImages)
-            {
-                //Validar imagenes y Guardar las imagenes en el blobstorage
-                if (image.ContentType.Contains("image"))
-                {
-                    //Manipular el nombre de archivo
-                    var uploadDate = DateTime.UtcNow;
-                    Random rndm = new Random();
-                    string FileExtn = System.IO.Path.GetExtension(image.FileName);
-                    var filePath = $"{entidad.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{uploadDate.Hour}{uploadDate.Minute}{rndm.Next(1, 1000)}{FileExtn}";
-                    var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.VehicleReports, filePath);
-
-                    //Agregar la imagen en BD
-                    var newImage = new VehicleReportImage()
-                    {
-                        FilePath = filePath,
-                        FileUrl = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.VehicleReports, filePath),
-                        VehicleReport = entidad
-                    };
-
-                    await _unitOfWork.VehicleReportImage.Add(newImage);
-                    images.Add(newImage);
-                }
-                else
-                {
-                    response.success = false;
-                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
-
-                    return response;
-                }
-            }
-
-            await _unitOfWork.SaveChangesAsync();
-            response.success = true;
-            var VehicleReportDTO = _mapper.Map<VehicleReportDto>(entidad);
-            response.Data = VehicleReportDTO;
-            return response;
-
         }
 
         //Put
-        public async Task<GenericResponse<VehicleReportDto>> PutVehicleReport(int Id, VehicleReportRequest vehicleReportRequest)
+        public async Task<GenericResponse<VehicleReportDto>> PutVehicleReport(VehicleReportUpdateRequest request)
         {
             GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
-            var profile = await _unitOfWork.VehicleReportRepo.Get(p => p.Id == Id);
-            var result = profile.FirstOrDefault();
-
-            if (result == null)
+            try
             {
+                //Consultar que el reporte exista
+                var reportQuery = await _unitOfWork.VehicleReportRepo.Get(p => p.Id == request.ReportId);
+                var report = reportQuery.FirstOrDefault();
+                if (report == null)
+                {
+                    response.success = true;
+                    response.AddError("No existe reporte", $"No existe reporte con el Id {request.ReportId} solicitado", 2);
+                    return response;
+                }
+
+                //Verificar que el reporte sea modificable
+                switch (report.ReportStatus)
+                {
+                    case Domain.Enums.ReportStatusType.Resuelto:
+                        response.success = false;
+                        response.AddError("Reporte resuelto", $"El Id {request.ReportId} de reporte ya esta marcado como resuelto", 3);
+                        break;
+                    case Domain.Enums.ReportStatusType.Cancelado:
+                        response.success = false;
+                        response.AddError("Reporte cancelado", $"El Id {request.ReportId} de reporte ya esta marcado como cancelado", 4);
+                        break;
+                    default:
+                        break;
+                }
+
+                //Modificar datos dependiendo de si se enviaron los valores
+                report.ReportDate = request.ReportDate != null ? request.ReportDate.Value : report.ReportDate;
+                report.Commentary = !string.IsNullOrEmpty(request.Commentary) ? request.Commentary : report.Commentary;
+                report.ReportType = request.ReportType.HasValue ? request.ReportType.Value : report.ReportType;
+                report.GasolineLoadAmount = request.GasolineLoadAmount.HasValue ? request.GasolineLoadAmount.Value : report.GasolineLoadAmount;
+                report.GasolineCurrentKM = request.GasolineCurrentKM.HasValue ? request.GasolineCurrentKM.Value : report.GasolineCurrentKM;
+                
+                //Agregar los gastos especificados
+                foreach(var expenseId in request.ExpensesToAdd)
+                {
+                    var expense = await _unitOfWork.ExpensesRepo.GetById(expenseId);
+                    if (expense == null)
+                    {
+                        response.success = false;
+                        response.AddError("Gasto no existe", $"El Id de gasto {expenseId} no existe");
+                    }
+                    report.Expenses.Add(expense);
+                }
+
+                //Eliminar los gastos especificados
+                foreach (var expenseId in request.ExpensesToRemove)
+                {
+                    var expense = await _unitOfWork.ExpensesRepo.GetById(expenseId);
+                    if (expense == null)
+                    {
+                        response.success = false;
+                        response.AddError("Gasto no existe", $"El Id de gasto {expenseId} no existe");
+                    }
+                    report.Expenses.Remove(expense);
+                }
+
+                await _unitOfWork.VehicleReportRepo.Update(report);
+                await _unitOfWork.SaveChangesAsync();
+
                 response.success = true;
-                response.AddError("No existe VehicleReport",$"No existe Report con el Id { Id } solicitado ");
+                var VehicleReportDTOCG = _mapper.Map<VehicleReportDto>(report);
+                response.Data = VehicleReportDTOCG;
                 return response;
             }
-
-            if (vehicleReportRequest.ReportType == Domain.Enums.ReportType.Carga_Gasolina)
-            {
-                if (vehicleReportRequest.GasolineLoad == null)
-                {
-                    response.success = false;
-                    response.AddError("Es necesario un valor existente, Kilometraje o Litros", $"Para el tipo de Carga de Gasolina, es necesario un valor existe de la carga de gasolina {vehicleReportRequest.GasolineLoad} solicitado", 1);
-                    return response;
-                }
-
-                else if (vehicleReportRequest.GasolineLoad == Domain.Enums.GasolineLoadType.Kilometraje || vehicleReportRequest.GasolineLoad == Domain.Enums.GasolineLoadType.Litros)
-                {
-                    result.ReportType = vehicleReportRequest.ReportType;
-                    result.VehicleId = vehicleReportRequest.VehicleId;
-                    result.Commentary = vehicleReportRequest.Commentary;
-                    result.UserProfileId = vehicleReportRequest.UserProfileId;
-                    result.AppUserId = vehicleReportRequest.AppUserId;
-                    result.ReportDate = vehicleReportRequest.ReportDate;
-                    result.IsResolved = vehicleReportRequest.IsResolved;
-                    result.GasolineLoad = vehicleReportRequest.GasolineLoad;
-                    result.ReportSolutionComment = vehicleReportRequest.ReportSolutionComment;
-                    result.ReportStatus = vehicleReportRequest.ReportStatus;
-                    result.VehicleReportUseId = vehicleReportRequest.VehicleReportUseId;
-
-                    await _unitOfWork.VehicleReportRepo.Update(result);
-                    await _unitOfWork.SaveChangesAsync();
-
-                    var VehicleReportDto = _mapper.Map<VehicleReportDto>(result);
-                    response.success = true;
-                    response.Data = VehicleReportDto;
-
-                    return response;
-
-
-                }
-                else
-                {
-                    response.success = false;
-                    response.AddError("No existe GasoLineLoad", $"No existe Gasolinead con el GasoLinead {vehicleReportRequest.GasolineLoad} solicitado", 1);
-                    return response;
-                }
-
-            }
-            else { vehicleReportRequest.GasolineLoad = null; }
-
-            var existeVehicleMaintenance = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportRequest.VehicleId);
-            var resultVehicleMaintenance = existeVehicleMaintenance.FirstOrDefault();
-            if (resultVehicleMaintenance == null)
+            catch( Exception ex )
             {
                 response.success = false;
-                response.AddError("No existe Vehicle", $"No existe Vehiculo con el VehicleId {vehicleReportRequest.VehicleId} solicitado", 1);
-                return response;
-
-            }
-
-            if (vehicleReportRequest.UserProfileId.HasValue)
-            {
-                var existeUserProfile = await _unitOfWork.UserProfileRepo.Get(c => c.Id == vehicleReportRequest.UserProfileId.Value);
-                var resultUserProfile = existeUserProfile.FirstOrDefault();
-
-                if (resultUserProfile == null)
-                {
-                    response.success = false;
-                    response.AddError("No existe UserProfile", $"No existe UserProfileId {vehicleReportRequest.UserProfileId} para cargar", 1);
-                    return response;
-                }
-
-            }
-            if (vehicleReportRequest.AppUserId.HasValue)
-            {
-                var existeAppUser = await _userManager.Users.SingleOrDefaultAsync(c => c.Id == vehicleReportRequest.AppUserId.Value);
-                if (existeAppUser == null)
-                {
-                    response.success = false;
-                    response.AddError("No existe AppUser", $"No existe AppUserId {vehicleReportRequest.UserProfileId} para cargar", 1);
-                    return response;
-                }
-
-            }
-            if (vehicleReportRequest.VehicleReportUseId.HasValue)
-            {
-                var profileD = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == vehicleReportRequest.VehicleReportUseId);
-                var resultD = profileD.FirstOrDefault();
-
-                if (resultD == null)
-                {
-                    response.success = true;
-                    response.AddError("No existe VehicleReportUse", $"No existe ReportUse con el Id {vehicleReportRequest.VehicleReportUseId} solicitado ");
-                    return response;
-                }
-
-
-                result.ReportType = vehicleReportRequest.ReportType;
-                result.VehicleId = vehicleReportRequest.VehicleId;
-                result.Commentary = vehicleReportRequest.Commentary;
-                result.UserProfileId = vehicleReportRequest.UserProfileId;
-                result.AppUserId = vehicleReportRequest.AppUserId;
-                result.ReportDate = vehicleReportRequest.ReportDate;
-                result.IsResolved = vehicleReportRequest.IsResolved;
-                result.GasolineLoad = vehicleReportRequest.GasolineLoad;
-                result.ReportSolutionComment = vehicleReportRequest.ReportSolutionComment;
-                result.ReportStatus = vehicleReportRequest.ReportStatus;
-                result.VehicleReportUseId = vehicleReportRequest.VehicleReportUseId;
-
-                await _unitOfWork.VehicleReportRepo.Update(result);
-                await _unitOfWork.SaveChangesAsync();
-
-                var VehicleReportDto = _mapper.Map<VehicleReportDto>(result);
-                response.success = true;
-                response.Data = VehicleReportDto;
-
-                return response;
-
-            }
-            else
-            {
-                result.ReportType = vehicleReportRequest.ReportType;
-                result.VehicleId = vehicleReportRequest.VehicleId;
-                result.Commentary = vehicleReportRequest.Commentary;
-                result.UserProfileId = vehicleReportRequest.UserProfileId;
-                result.AppUserId = vehicleReportRequest.AppUserId;
-                result.ReportDate = vehicleReportRequest.ReportDate;
-                result.IsResolved = vehicleReportRequest.IsResolved;
-                result.GasolineLoad = vehicleReportRequest.GasolineLoad;
-                result.ReportSolutionComment = vehicleReportRequest.ReportSolutionComment;
-                result.ReportStatus = vehicleReportRequest.ReportStatus;
-                result.VehicleReportUseId = vehicleReportRequest.VehicleReportUseId;
-
-                await _unitOfWork.VehicleReportRepo.Update(result);
-                await _unitOfWork.SaveChangesAsync();
-
-                var VehicleReportDto = _mapper.Map<VehicleReportDto>(result);
-                response.success = true;
-                response.Data = VehicleReportDto;
-
+                response.AddError("Error", ex.Message, 1);
                 return response;
             }
-
         }
 
         //Delete
-        public async Task<GenericResponse<VehicleReportDto>> DeleteVehicleReport(int Id)
+        public async Task<GenericResponse<bool>> DeleteVehicleReport(int Id)
         {
-            GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
+            GenericResponse<bool> response = new GenericResponse<bool>();
             var entidad = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id);
             var result = entidad.FirstOrDefault();
             if (result == null)
             {
-                return null;
+                response.success = false;
+                response.Data = false;
+                response.AddError("Reporte no encontrado","El reporte especificado no existe",1);
+
+                return response;
             }
 
             //Borrar las fotos del blob
@@ -453,16 +462,15 @@ namespace Application.Services
 
             foreach (var photo in photos)
             {
-                await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.RegisteredCars, photo.FilePath);
-                await _unitOfWork.VehicleImageRepo.Delete(photo.Id);
+                await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.VehicleReports, photo.FilePath);
+                await _unitOfWork.VehicleReportImage.Delete(photo.Id);
             }
 
             var existe = await _unitOfWork.VehicleReportRepo.Delete(Id);
             await _unitOfWork.SaveChangesAsync();
 
-            var VehicleReportDTO = _mapper.Map<VehicleReportDto>(result);
             response.success = true;
-            response.Data = VehicleReportDTO;
+            response.Data = true;
 
             return response;
         }

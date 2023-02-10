@@ -407,11 +407,6 @@ namespace Application.Services
                 veh.VehicleType = vehiclesUpdateRequest.VehicleType.Value;
             }
 
-            if (vehiclesUpdateRequest.VehicleStatus.HasValue)
-            {
-                veh.VehicleStatus = vehiclesUpdateRequest.VehicleStatus.Value;
-            }
-
             if (vehiclesUpdateRequest.ServicePeriodMonths.HasValue)
             {
                 veh.ServicePeriodMonths = vehiclesUpdateRequest.ServicePeriodMonths.Value;
