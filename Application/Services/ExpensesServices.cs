@@ -188,24 +188,35 @@ namespace Application.Services
         public async Task<GenericResponse<Expenses>> DeleteExpenses(int id)
         {
             GenericResponse<Expenses> response = new GenericResponse<Expenses>();
-            var exp = await _unitOfWork.ExpensesRepo.GetById(id);
-            if (exp == null) return null;
 
-            //Borrar las fotos del blob
-            var photos = await _unitOfWork.PhotosOfSpendingRepo.Get(filter: v => v.ExpensesId == id);
-
-            foreach (var photo in photos)
+            try
             {
-                await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.ExpenseAttachments, photo.FilePath);
-                await _unitOfWork.PhotosOfSpendingRepo.Delete(photo.Id);
-            }
+                var exp = await _unitOfWork.ExpensesRepo.GetById(id);
+                if (exp == null) return null;
 
-            var exists = await _unitOfWork.ExpensesRepo.Delete(id);
-            await _unitOfWork.SaveChangesAsync();
-            var expensesdto = _mapper.Map<Expenses>(exp);
-            response.success = true;
-            response.Data = expensesdto;
-            return response;
+                //Borrar las fotos del blob
+                var photos = await _unitOfWork.PhotosOfSpendingRepo.Get(filter: v => v.ExpensesId == id);
+
+                foreach (var photo in photos)
+                {
+                    await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.ExpenseAttachments, photo.FilePath);
+                    await _unitOfWork.PhotosOfSpendingRepo.Delete(photo.Id);
+                }
+
+                var exists = await _unitOfWork.ExpensesRepo.Delete(id);
+                await _unitOfWork.SaveChangesAsync();
+                var expensesdto = _mapper.Map<Expenses>(exp);
+                response.success = true;
+                response.Data = expensesdto;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
         }
 
         public async Task<PagedList<Expenses>> GetExpenses(ExpensesFilter filter)
@@ -213,7 +224,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "";
+            string properties = "PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop";
             IEnumerable<Expenses> expenses = null;
             Expression<Func<Expenses, bool>> Query = null;
 
@@ -320,7 +331,8 @@ namespace Application.Services
             try
             {
                 //Verificar que exista el vehiculo
-                var expense = await _unitOfWork.ExpensesRepo.GetById(expenseId);
+                var expenseQuery = await _unitOfWork.ExpensesRepo.Get(e => e.Id == expenseId, includeProperties: "PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop");
+                var expense = expenseQuery.FirstOrDefault();
                 if (expense == null) return null;
 
                 if (request.ImageFile.ContentType.Contains("image"))
