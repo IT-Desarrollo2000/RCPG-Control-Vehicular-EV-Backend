@@ -228,7 +228,7 @@ namespace Application.Services
                     return response;
                 }
             }
-            if (vehicleReportUseRequest.AppUserId.HasValue)
+           /* if (vehicleReportUseRequest.AppUserId.HasValue)
             {
                 var existeAppUser = await _userManager.Users.SingleOrDefaultAsync(c => c.Id == vehicleReportUseRequest.AppUserId.Value);
                 if (existeAppUser == null)
@@ -239,11 +239,12 @@ namespace Application.Services
                 }
 
 
-            }
+            }*/
 
             ///prueba
             if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.ViajeRapido)
             {
+                vehicleReportUseRequest.AppUserId = null;
                 var existeVehicle = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseRequest.VehicleId);
                 var resultVehicle = existeVehicle.FirstOrDefault();
                 if (resultVehicle == null)
@@ -374,7 +375,7 @@ namespace Application.Services
             GenericResponse<VehiclesDto> responseVehicle = new GenericResponse<VehiclesDto>();
             var profile = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == Id, includeProperties:"Checklist");
             var result = profile.FirstOrDefault();
-
+            
             if (result == null)
             {
                 response.success = true;
@@ -429,6 +430,8 @@ namespace Application.Services
             {
                 if(reportUseTypeRequest.StatusReportUse == Domain.Enums.ReportUseType.Finalizado)
                 {
+                   
+
                     if (reportUseTypeRequest.CurrentFuelLoad == null)
                     {
                         response.success = false;
@@ -437,6 +440,72 @@ namespace Application.Services
 
                     }
 
+                    var check = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == Id);
+                    var resultcheck = profile.FirstOrDefault();
+
+                    if (reportUseTypeRequest.Checklist != null)
+                    {
+                        var entity = _mapper.Map<Checklist>(reportUseTypeRequest.Checklist);
+                        entity.VehicleId = VehicleId;
+                        await _unitOfWork.ChecklistRepo.Add(entity);
+                        await _unitOfWork.SaveChangesAsync();
+
+                        var lastCheck = await _unitOfWork.ChecklistRepo.Get(p => p.VehicleId == VehicleId);
+                        var resultLastCheck = lastCheck.OrderByDescending(pr => pr.VehicleId).LastOrDefault();
+
+                        result.ChecklistId = resultLastCheck.Id;
+                        await _unitOfWork.VehicleReportUseRepo.Update(result);
+
+                    } 
+                    else
+                    {
+                        
+                        var lastCheck = await _unitOfWork.ChecklistRepo.Get(p => p.VehicleId == VehicleId);
+                        var resultLastCheck = lastCheck.OrderByDescending(pr => pr.VehicleId ).LastOrDefault();
+
+
+                        if(resultLastCheck == null)
+                        {
+                            var entity = new Checklist()
+                            {
+                                VehicleId = VehicleId,
+                                CirculationCard = true,
+                                CarInsurancePolicy = true,
+                                HydraulicTires= true,
+                                TireRefurmishment= true,
+                                JumperCable= true,
+                                SecurityDice= true,
+                                Extinguisher = true,
+                                CarJack= true,
+                                CarJackKey= true,
+                                ToolBag= true,
+                                SafetyTriangle = true
+
+                            };
+                            await _unitOfWork.ChecklistRepo.Add(entity);
+                            await _unitOfWork.SaveChangesAsync();
+
+                            result.ChecklistId = entity.Id;
+                            await _unitOfWork.VehicleReportUseRepo.Update(result);
+
+                        }
+                        else
+                        {
+                            var entity = _mapper.Map<Checklist>(resultLastCheck);
+                            entity.Id = 0;
+                            await _unitOfWork.ChecklistRepo.Add(entity);
+                            await _unitOfWork.SaveChangesAsync();
+
+                            
+                            result.ChecklistId = resultLastCheck.Id;
+                            await _unitOfWork.VehicleReportUseRepo.Update(result);
+
+                        }  
+
+                    }
+
+
+                    result.FinalMileage = reportUseTypeRequest.FinalMileage;
                     result.CurrentFuelLoad = reportUseTypeRequest.CurrentFuelLoad;
                     await _unitOfWork.VehicleReportUseRepo.Update(result);
 
