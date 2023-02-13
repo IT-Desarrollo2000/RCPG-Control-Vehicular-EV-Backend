@@ -34,6 +34,7 @@ namespace Domain.DTOs.Reponses
         public string? OwnersName { get; set; }
         public decimal DesiredPerformance { get; set; }
         public int? CurrentKM { get; set; }
+        public int? InitialKM { get; set; }
         public List<VehicleImage> Images { get; set; }
         public List<Checklist> Checklists { get; set; }
         public List<Departaments> AssignedDepartments { get; set; }
