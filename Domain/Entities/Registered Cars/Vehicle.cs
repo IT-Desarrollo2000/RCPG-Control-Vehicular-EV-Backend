@@ -31,6 +31,7 @@ namespace Domain.Entities.Registered_Cars
         public int ModelYear { get; set; }
         public int FuelCapacity { get; set; }
         public int CurrentKM { get; set; }
+        public int InitialKM { get; set; }
         public CurrentFuel CurrentFuel { get; set; }
         public FuelType FuelType { get; set; }
         public VehicleType VehicleType { get; set; }

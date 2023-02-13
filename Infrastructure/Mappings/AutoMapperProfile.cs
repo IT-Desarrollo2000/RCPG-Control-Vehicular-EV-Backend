@@ -58,6 +58,7 @@ namespace Infrastructure.Mappings
             CreateMap<Checklist, ChecklistDto>().ReverseMap();
             CreateMap<ChecklistDto, CreationChecklistDto>().ReverseMap();
             CreateMap<Checklist, CreationChecklistDto>().ReverseMap();
+            CreateMap<Checklist, ReportUseTypeRequest.checklistdto>().ReverseMap();
             
             //Expenses
             CreateMap<Expenses, ExpensesDto>().ReverseMap();
@@ -88,7 +89,15 @@ namespace Infrastructure.Mappings
             //VehicleReport
             CreateMap<VehicleReport, VehicleReportRequest>().ReverseMap();
             CreateMap<VehicleReportRequest, VehicleReportDto>().ReverseMap();
-            CreateMap<VehicleReport, VehicleReportDto>().ReverseMap();
+            CreateMap<VehicleReport, VehicleReportDto>()
+                .ForMember(x => x.AdminUserName, c => c.MapFrom(a => a.AdminUser.Email))
+                .ForMember(x => x.MobileUserName, c => c.MapFrom(m => m.MobileUser.FullName))
+                .ForMember(x => x.SolvedByAdminUserName, c => c.MapFrom(ad => ad.SolvedByAdminUser.Email));
+            CreateMap<VehicleReport, VehicleReportSlimDto>()
+                .ForMember(x => x.AdminUserName, c => c.MapFrom(a => a.AdminUser.Email))
+                .ForMember(x => x.MobileUserName, c => c.MapFrom(m => m.MobileUser.FullName))
+                .ForMember(x => x.SolvedByAdminUserName, c => c.MapFrom(ad => ad.SolvedByAdminUser.Email));
+            CreateMap<VehicleReportImage, VehicleReportImageDto>();
 
             //Performance
             CreateMap<PerformanceRequest, PerformanceDto>().ReverseMap();
@@ -101,7 +110,12 @@ namespace Infrastructure.Mappings
             //VehicleReportUse
             CreateMap<VehicleReportUse, VehicleReportUseRequest>().ReverseMap();
             CreateMap<VehicleReportUseRequest, VehicleReportUseDto>().ReverseMap();
-            CreateMap<VehicleReportUse, VehicleReportUseDto>().ReverseMap();
+            CreateMap<VehicleReportUse, VehicleReportUseDto>()
+                .ForMember(ur => ur.VehicleName, o => o.MapFrom(v => v.Vehicle.Name))
+                .ForMember(ur => ur.ApprovedByAdminUserId, o => o.MapFrom(v => v.AppUserId))
+                .ForMember(ur => ur.DriverUserId, o => o.MapFrom(v => v.UserProfileId))
+                .ForMember(ur => ur.DriverName, o => o.MapFrom(v => v.UserProfile.FullName))
+                .ForMember(ur => ur.ApprovedByAdminName, o => o.MapFrom(v => v.AppUser.Email));
             CreateMap<VehicleReportUse, VehicleReportUseVerificationRequest>().ReverseMap();
             CreateMap<VehicleReportUseDto, VehicleReportUseVerificationRequest>().ReverseMap();
             CreateMap<VehicleReportUseDto, ReportUseTypeRequest>().ReverseMap();

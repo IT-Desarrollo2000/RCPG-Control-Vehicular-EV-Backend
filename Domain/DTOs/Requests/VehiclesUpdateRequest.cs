@@ -19,7 +19,6 @@ namespace Domain.DTOs.Requests
         public CurrentFuel? CurrentFuel { get; set; }
         public FuelType? FuelType { get; set; }
         public VehicleType? VehicleType { get; set; }
-        public VehicleStatus? VehicleStatus { get; set; }
         public int? ServicePeriodMonths { get; set; }
         public int? ServicePeriodKM { get; set; }
         public OwnershipType? OwnershipType { get; set; }
@@ -27,5 +26,6 @@ namespace Domain.DTOs.Requests
         public decimal? DesiredPerformance { get; set; }
         public string? VehicleObservation { get; set; }
         public int? CurrentKM { get; set; }
+        public int? InitialKM { get; set; }
     }
 }

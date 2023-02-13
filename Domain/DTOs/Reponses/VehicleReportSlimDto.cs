@@ -1,7 +1,4 @@
-﻿using Domain.Entities.Identity;
-using Domain.Entities.Profiles;
-using Domain.Entities.Registered_Cars;
-using Domain.Enums;
+﻿using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Domain.DTOs.Reponses
 {
-    public class VehicleReportDto
+    public class VehicleReportSlimDto
     {
-        public VehicleReportDto()
+        public VehicleReportSlimDto()
         {
             VehicleReportImages = new List<VehicleReportImageDto>();
             Expenses = new List<ExpensesDto>();
@@ -20,8 +17,6 @@ namespace Domain.DTOs.Reponses
 
         public int Id { get; set; }
         public ReportType ReportType { get; set; }
-        public int VehicleId { get; set; }
-        public VehiclesDto Vehicle { get; set; }
         public string? Commentary { get; set; }
         public int? AdminUserId { get; set; }
         public string? AdminUserName { get; set; }

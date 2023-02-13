@@ -226,6 +226,7 @@ namespace Application.Services
 
                 //Generar ID de QR
                 entity.VehicleQRId = new Guid().ToString() + $"-{entity.Id}";
+                entity.InitialKM = vehicleRequest.CurrentKM;
 
                 //Guardar el Vehiculo 
                 await _unitOfWork.VehicleRepo.Add(entity);
@@ -407,11 +408,6 @@ namespace Application.Services
                 veh.VehicleType = vehiclesUpdateRequest.VehicleType.Value;
             }
 
-            if (vehiclesUpdateRequest.VehicleStatus.HasValue)
-            {
-                veh.VehicleStatus = vehiclesUpdateRequest.VehicleStatus.Value;
-            }
-
             if (vehiclesUpdateRequest.ServicePeriodMonths.HasValue)
             {
                 veh.ServicePeriodMonths = vehiclesUpdateRequest.ServicePeriodMonths.Value;
@@ -446,6 +442,11 @@ namespace Application.Services
             if (vehiclesUpdateRequest.CurrentKM.HasValue)
             {
                 veh.CurrentKM = vehiclesUpdateRequest.CurrentKM.Value;
+            }
+
+            if (vehiclesUpdateRequest.InitialKM.HasValue)
+            {
+                veh.InitialKM = vehiclesUpdateRequest.InitialKM.Value;
             }
 
             await _unitOfWork.VehicleRepo.Update(veh);

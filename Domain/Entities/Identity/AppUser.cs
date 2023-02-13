@@ -22,7 +22,8 @@ namespace Domain.Entities.Identity
         public virtual UserProfile Profile { get; set; }
         public virtual ICollection<AppUserSocial> Socials { get; set; }
         public virtual ICollection<VehicleReport> VehicleReports { get; set; }
-        public ICollection<VehicleReportUse> VehicleReportUses { get; set; }
+        public virtual ICollection<VehicleReportUse> VehicleReportUses { get; set; }
         public virtual ICollection<Departaments> AssignedDepartments { get; set; }
+        public virtual ICollection<VehicleReport> SolvedReports { get; set; }
     }
 }

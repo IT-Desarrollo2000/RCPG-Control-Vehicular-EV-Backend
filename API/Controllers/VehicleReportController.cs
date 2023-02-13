@@ -85,6 +85,7 @@ namespace API.Controllers
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Route("Create")]
         [HttpPost]
         public async Task<ActionResult<VehicleReportDto>> Post([FromForm] VehicleReportRequest vehicleReportRequest)
         {
@@ -105,13 +106,40 @@ namespace API.Controllers
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Route("Update")]
         [HttpPut]
-        public async Task<ActionResult<VehicleReportDto>> PutVehicleReport(int id, [FromBody] VehicleReportRequest vehicleReportRequest)
+        public async Task<ActionResult<VehicleReportDto>> PutVehicleReport([FromBody] VehicleReportUpdateRequest vehicleReportRequest)
         {
 
-            var entidad = await _vehicleReportService.PutVehicleReport(id, vehicleReportRequest);
+            var entidad = await _vehicleReportService.PutVehicleReport(vehicleReportRequest);
+
+            if (entidad.success)
+            {
+                return Ok(entidad);
+
+            }
+            else
+            {
+                return BadRequest(entidad);
+            }
+        }
+
+        /// <summary>
+        /// Permite la administración del reporte de uso, solo se usa para marcar el reporte con otros estatus(Cancelado/En proceso/Resuelto) por parte de un Admin
+        /// </summary>
+        /// <param name="vehicleReportRequest"></param>
+        /// <returns>Devuelve el reporte</returns>
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportDto))]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Route("ManageReport")]
+        [HttpPut]
+        public async Task<ActionResult<VehicleReportDto>> ManageReport([FromBody] SolvedReportRequest vehicleReportRequest)
+        {
+
+            var entidad = await _vehicleReportService.ManageReportStatus(vehicleReportRequest);
 
             if (entidad.success)
             {
@@ -128,7 +156,6 @@ namespace API.Controllers
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete("{id}")]
         public async Task<ActionResult<VehicleReportDto>> DeleteVehicleReport(int id)

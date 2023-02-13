@@ -36,13 +36,13 @@ namespace Application.Services
         }
 
         //GetAll
-        public async Task<PagedList<VehicleReportUse>> GetVehicleReportUseAll(VehicleReportUseFilter filter)
+        public async Task<PagedList<VehicleReportUseDto>> GetVehicleReportUseAll(VehicleReportUseFilter filter)
         {
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "";
-            IEnumerable<VehicleReportUse> userApprovals = null;
+            string properties = "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations";
+            IEnumerable<VehicleReportUse> useReports = null;
             Expression<Func<VehicleReportUse, bool>> Query = null;
 
             if(filter.VehicleId.HasValue)
@@ -138,14 +138,17 @@ namespace Application.Services
 
             if (Query != null)
             {
-                userApprovals = await _unitOfWork.VehicleReportUseRepo.Get(filter: Query, includeProperties: "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations");
+                useReports = await _unitOfWork.VehicleReportUseRepo.Get(filter: Query, includeProperties: properties);
             }
             else
             {
-                userApprovals = await _unitOfWork.VehicleReportUseRepo.Get(includeProperties: "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations");
+                useReports = await _unitOfWork.VehicleReportUseRepo.Get(includeProperties: properties);
             }
 
-            var pagedApprovals = PagedList<VehicleReportUse>.Create(userApprovals, filter.PageNumber, filter.PageSize);
+            //Eliminar recursion usando DTOs
+            var dtos = _mapper.Map<IEnumerable<VehicleReportUseDto>>(useReports);
+
+            var pagedApprovals = PagedList<VehicleReportUseDto>.Create(dtos, filter.PageNumber, filter.PageSize);
 
             return pagedApprovals;
 
@@ -228,7 +231,7 @@ namespace Application.Services
                     return response;
                 }
             }
-            if (vehicleReportUseRequest.AppUserId.HasValue)
+           /* if (vehicleReportUseRequest.AppUserId.HasValue)
             {
                 var existeAppUser = await _userManager.Users.SingleOrDefaultAsync(c => c.Id == vehicleReportUseRequest.AppUserId.Value);
                 if (existeAppUser == null)
@@ -239,11 +242,12 @@ namespace Application.Services
                 }
 
 
-            }
+            }*/
 
             ///prueba
             if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.ViajeRapido)
             {
+                vehicleReportUseRequest.AppUserId = null;
                 var existeVehicle = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseRequest.VehicleId);
                 var resultVehicle = existeVehicle.FirstOrDefault();
                 if (resultVehicle == null)
@@ -313,6 +317,7 @@ namespace Application.Services
                 }
 
                 var entidad = _mapper.Map<VehicleReportUse>(vehicleReportUseRequest);
+                entidad.InitialMileage = Convert.ToInt32(resultVehicle.CurrentKM);
                 await _unitOfWork.VehicleReportUseRepo.Add(entidad);
                 await _unitOfWork.SaveChangesAsync();
                 response.success = true;
@@ -325,6 +330,7 @@ namespace Application.Services
             else
             {
                 var entidad = _mapper.Map<VehicleReportUse>(vehicleReportUseRequest);
+                entidad.InitialMileage = Convert.ToInt32(resultVehicleMaintenance.CurrentKM);
                 await _unitOfWork.VehicleReportUseRepo.Add(entidad);
                 await _unitOfWork.SaveChangesAsync();
                 response.success = true;
@@ -374,7 +380,7 @@ namespace Application.Services
             GenericResponse<VehiclesDto> responseVehicle = new GenericResponse<VehiclesDto>();
             var profile = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == Id, includeProperties:"Checklist");
             var result = profile.FirstOrDefault();
-
+            
             if (result == null)
             {
                 response.success = true;
@@ -420,6 +426,7 @@ namespace Application.Services
                 }
             
                 resultVehicle.VehicleStatus = Domain.Enums.VehicleStatus.EN_USO;
+                resultVehicle.CurrentKM = Convert.ToInt32(reportUseTypeRequest.FinalMileage);
                 await _unitOfWork.VehicleRepo.Update(resultVehicle);
                 response.success = true;
 
@@ -429,6 +436,8 @@ namespace Application.Services
             {
                 if(reportUseTypeRequest.StatusReportUse == Domain.Enums.ReportUseType.Finalizado)
                 {
+                   
+
                     if (reportUseTypeRequest.CurrentFuelLoad == null)
                     {
                         response.success = false;
@@ -437,6 +446,72 @@ namespace Application.Services
 
                     }
 
+                    var check = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == Id);
+                    var resultcheck = profile.FirstOrDefault();
+
+                    if (reportUseTypeRequest.Checklist != null)
+                    {
+                        var entity = _mapper.Map<Checklist>(reportUseTypeRequest.Checklist);
+                        entity.VehicleId = VehicleId;
+                        await _unitOfWork.ChecklistRepo.Add(entity);
+                        await _unitOfWork.SaveChangesAsync();
+
+                        var lastCheck = await _unitOfWork.ChecklistRepo.Get(p => p.VehicleId == VehicleId);
+                        var resultLastCheck = lastCheck.OrderByDescending(pr => pr.VehicleId).LastOrDefault();
+
+                        result.ChecklistId = resultLastCheck.Id;
+                        await _unitOfWork.VehicleReportUseRepo.Update(result);
+
+                    } 
+                    else
+                    {
+                        
+                        var lastCheck = await _unitOfWork.ChecklistRepo.Get(p => p.VehicleId == VehicleId);
+                        var resultLastCheck = lastCheck.OrderByDescending(pr => pr.VehicleId ).LastOrDefault();
+
+
+                        if(resultLastCheck == null)
+                        {
+                            var entity = new Checklist()
+                            {
+                                VehicleId = VehicleId,
+                                CirculationCard = true,
+                                CarInsurancePolicy = true,
+                                HydraulicTires= true,
+                                TireRefurmishment= true,
+                                JumperCable= true,
+                                SecurityDice= true,
+                                Extinguisher = true,
+                                CarJack= true,
+                                CarJackKey= true,
+                                ToolBag= true,
+                                SafetyTriangle = true
+
+                            };
+                            await _unitOfWork.ChecklistRepo.Add(entity);
+                            await _unitOfWork.SaveChangesAsync();
+
+                            result.ChecklistId = entity.Id;
+                            await _unitOfWork.VehicleReportUseRepo.Update(result);
+
+                        }
+                        else
+                        {
+                            var entity = _mapper.Map<Checklist>(resultLastCheck);
+                            entity.Id = 0;
+                            await _unitOfWork.ChecklistRepo.Add(entity);
+                            await _unitOfWork.SaveChangesAsync();
+
+                            
+                            result.ChecklistId = resultLastCheck.Id;
+                            await _unitOfWork.VehicleReportUseRepo.Update(result);
+
+                        }  
+
+                    }
+
+
+                    result.FinalMileage = reportUseTypeRequest.FinalMileage;
                     result.CurrentFuelLoad = reportUseTypeRequest.CurrentFuelLoad;
                     await _unitOfWork.VehicleReportUseRepo.Update(result);
 
