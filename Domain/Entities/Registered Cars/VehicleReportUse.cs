@@ -18,6 +18,7 @@ namespace Domain.Entities.Registered_Cars
         }
 
         public int VehicleId { get; set; }
+        public double? InitialMileage { get; set; }
         public double? FinalMileage { get; set; }
         public ReportUseType StatusReportUse { get; set; }
         public string Observations { get; set; }

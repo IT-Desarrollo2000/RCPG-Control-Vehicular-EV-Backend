@@ -26,7 +26,7 @@ namespace API.Controllers
 
         //GETALL
         [Authorize(Roles = "Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<VehicleReportUseDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("")]
@@ -44,7 +44,7 @@ namespace API.Controllers
                 HasPreviousPage = approval.HasPreviousPage
             };
 
-            var response = new GenericResponse<IEnumerable<VehicleReportUse>>(approval)
+            var response = new GenericResponse<IEnumerable<VehicleReportUseDto>>(approval)
             {
                 Meta = metadata,
                 success = true,
