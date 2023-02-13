@@ -226,6 +226,7 @@ namespace Application.Services
 
                 //Generar ID de QR
                 entity.VehicleQRId = new Guid().ToString() + $"-{entity.Id}";
+                entity.InitialKM = vehicleRequest.CurrentKM;
 
                 //Guardar el Vehiculo 
                 await _unitOfWork.VehicleRepo.Add(entity);
@@ -441,6 +442,11 @@ namespace Application.Services
             if (vehiclesUpdateRequest.CurrentKM.HasValue)
             {
                 veh.CurrentKM = vehiclesUpdateRequest.CurrentKM.Value;
+            }
+
+            if (vehiclesUpdateRequest.InitialKM.HasValue)
+            {
+                veh.InitialKM = vehiclesUpdateRequest.InitialKM.Value;
             }
 
             await _unitOfWork.VehicleRepo.Update(veh);

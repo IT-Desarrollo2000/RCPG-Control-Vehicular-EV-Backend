@@ -14,6 +14,5 @@ namespace Domain.DTOs.Reponses
         public double? Latitud { get; set; }
         public double? Longitude { get; set; }
         public int? VehicleReportUseId { get; set; }
-        public virtual VehicleReportUse VehicleReportUses { get; set; }
     }
 }
