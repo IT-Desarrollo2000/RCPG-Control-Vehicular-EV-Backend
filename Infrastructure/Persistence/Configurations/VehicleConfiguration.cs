@@ -35,6 +35,12 @@ namespace Infrastructure.Persistence.Configurations
             builder.HasMany(bu => bu.VehicleReportsUses)
                    .WithOne(b => b.Vehicle)
                    .HasForeignKey(bu => bu.VehicleId);
+
+            builder.HasOne(ru => ru.Policy)
+                    .WithOne(r => r.Vehicle)
+                    .HasForeignKey<Policy>(r => r.VehicleId)
+                    .IsRequired(false)
+                    .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
