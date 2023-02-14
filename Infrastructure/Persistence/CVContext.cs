@@ -61,6 +61,9 @@ namespace Infrastructure.Persistence
         public virtual DbSet<VehicleReportUse> VehicleReportUses { get; set; }
         public virtual DbSet<DestinationOfReportUse> DestinationOfReportUses { get; set; }
 
+        //Policy
+        public virtual DbSet<Policy> Policy { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

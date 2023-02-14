@@ -48,6 +48,7 @@ namespace Infrastructure.Mappings
             CreateMap<Vehicle, VehicleRequest>().ReverseMap();
             CreateMap<Vehicle, VehiclesDto>().ReverseMap();
             CreateMap<VehicleRequest, VehiclesDto>().ReverseMap();
+            CreateMap<Vehicle, UnrelatedVehiclesDto>().ReverseMap();
 
             //VehicleService
             CreateMap<VehicleService, VehicleServiceRequest>().ReverseMap();
@@ -124,6 +125,12 @@ namespace Infrastructure.Mappings
             CreateMap<GraphicsDto, Vehicle>().ReverseMap();
             CreateMap<GraphicsDto, VehicleMaintenance>().ReverseMap();
             CreateMap<GraphicsDto, VehicleService>().ReverseMap();
+
+            //Policy
+            CreateMap<Policy, PolicyDto>().ReverseMap();
+            CreateMap<PolicyRequest, PolicyDto>().ReverseMap();
+            CreateMap<Policy, PolicyRequest>().ReverseMap();
+            
         }
     }
 }
