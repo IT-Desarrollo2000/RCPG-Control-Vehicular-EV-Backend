@@ -21,7 +21,7 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        //public async Task<object> GetLicencesExpirations(LicenceExpStopLight request )
+        //public async Task<object> GetLicencesExpirations(LicenceExpStopLight request)
         //{
         //    GenericResponse<object> response = new GenericResponse<object>();
 
@@ -32,8 +32,8 @@ namespace Application.Services
         //        var licences = await _unitOfWork.UserProfileRepo.Get(l => l.LicenceExpirationDate != null);
 
         //        return null;
-        //    } 
-        //    catch(Exception ex)
+        //    }
+        //    catch (Exception ex)
         //    {
         //        response.success = true;
 

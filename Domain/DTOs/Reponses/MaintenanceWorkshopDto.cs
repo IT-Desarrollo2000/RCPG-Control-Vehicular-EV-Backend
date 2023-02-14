@@ -14,7 +14,8 @@ namespace Domain.DTOs.Reponses
         public string Ubication { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public virtual ICollection<VehicleMaintenance> VehicleMaintenances { get; set; }
-        public ICollection<Expenses> Expenses { get; set; }
+        public string Telephone { get; set; }
+        public virtual ICollection<VehicleMaintenanceDto> VehicleMaintenances { get; set; }
+        public ICollection<ExpensesDto> Expenses { get; set; }
     }
 }

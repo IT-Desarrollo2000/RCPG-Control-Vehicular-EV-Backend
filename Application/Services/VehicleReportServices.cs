@@ -141,7 +141,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleReportDto>> GetVehicleReportById(int Id)
         {
             GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
-            var profile = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,UserProfile,AppUser,Expenses,VehicleReportImages");
+            var profile = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,MobileUser,AdminUser,Expenses,VehicleReportImages");
             var result = profile.FirstOrDefault();
             var VehicleReportDto = _mapper.Map<VehicleReportDto>(result);
             response.success = true;
@@ -349,6 +349,9 @@ namespace Application.Services
                 report.ReportStatus = request.Status;
                 report.SolvedByAdminUser = adminUserExists;
                 report.ReportSolutionComment = request.ResolutionComment;
+
+                await _unitOfWork.VehicleReportRepo.Update(report);
+                await _unitOfWork.SaveChangesAsync();
 
                 response.success = true;
                 var VehicleReportDTOCG = _mapper.Map<VehicleReportDto>(report);
