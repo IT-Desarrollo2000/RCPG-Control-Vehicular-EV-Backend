@@ -43,6 +43,8 @@ namespace Domain.Entities.Registered_Cars
         public decimal DesiredPerformance { get; set; }
         public string VehicleQRId { get; set; }
         public string? VehicleObservation { get ; set; }
+
+        public virtual Policy? Policy { get; set; }
         
         public virtual ICollection<Departaments> AssignedDepartments { get; set; }
         public virtual ICollection<VehicleImage> VehicleImages { get; set; }
