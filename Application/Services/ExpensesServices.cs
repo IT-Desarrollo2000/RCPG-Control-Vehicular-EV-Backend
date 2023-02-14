@@ -39,98 +39,121 @@ namespace Application.Services
         public async Task<GenericResponse<ExpensesDto>> PostExpenses(ExpensesRequest expensesRequest)
         {
             GenericResponse<ExpensesDto> response = new GenericResponse<ExpensesDto>();
-
-            var dtoexpens = new List<Vehicle>();
-            foreach ( var vehicleid in expensesRequest.VehicleIds ) 
+            try
             {
-                var existevehicleid = await _unitOfWork.VehicleRepo.Get(v => v.Id == vehicleid);
-                var resultExpenses = existevehicleid.FirstOrDefault();
+                var dtoexpens = new List<Vehicle>();
+                foreach (var vehicleid in expensesRequest.VehicleIds)
+                {
+                    var existevehicleid = await _unitOfWork.VehicleRepo.Get(v => v.Id == vehicleid);
+                    var resultExpenses = existevehicleid.FirstOrDefault();
 
-                if (resultExpenses == null)
+                    if (resultExpenses == null)
+                    {
+                        response.success = false;
+                        response.AddError("No existe vehiculo", $"No existe vehiculo con ese id{vehicleid} solicitado", 2);
+                        return response;
+                    }
+                    dtoexpens.Add(resultExpenses);
+                }
+
+                //Verificar que exista el tipo de gasto
+                var existetypeOfExpenses = await _unitOfWork.TypesOfExpensesRepo.Get(v => v.Id == expensesRequest.TypesOfExpensesId);
+                var resultType = existetypeOfExpenses.FirstOrDefault();
+
+
+                if (resultType == null)
                 {
                     response.success = false;
-                    response.AddError("No existe vehiculo", $"No existe vehiculo con ese id{vehicleid} solicitado", 1);
+                    response.AddError("No existe el tipo de gastos", $"No existe tipo de gastos con el id{expensesRequest.TypesOfExpensesId} solicitado", 3);
                     return response;
                 }
-                dtoexpens.Add(resultExpenses);
-            }
-           
+                //Mapear entidad
+                var entity = _mapper.Map<Expenses>(expensesRequest);
+                entity.Vehicles = dtoexpens;
 
-            var existetypeOfExpenses = await _unitOfWork.TypesOfExpensesRepo.Get(v => v.Id == expensesRequest.TypesOfExpensesId);
-            var resultType = existetypeOfExpenses.FirstOrDefault();
+                //Verificar que exista el report
+                if (expensesRequest.VehicleReportId.HasValue)
+                {
+                    var report = await _unitOfWork.VehicleReportRepo.GetById(expensesRequest.VehicleReportId.Value);
 
+                    if(report == null)
+                    {
 
-            if (resultType == null)
+                        response.success = false;
+                        response.AddError("Reporte no encontrado", $"El reporte con ID {expensesRequest.VehicleReportId.Value} solicitado no existe", 4);
+                        return response;
+                    }
+                    entity.VehicleReport = report;
+                }
+
+                if (expensesRequest.VehicleMaintenanceWorkshopId.HasValue)
+                {
+                    var existeworkshops = await _unitOfWork.MaintenanceWorkshopRepo.Get(v => v.Id == expensesRequest.VehicleMaintenanceWorkshopId);
+                    var resultworkshop = existeworkshops.FirstOrDefault();
+
+                    if (resultworkshop == null)
+                    {
+                        response.success = false;
+                        response.AddError("No existe el taller", $"No existe taller con el id{expensesRequest.VehicleMaintenanceWorkshopId} solicitado", 1);
+                        return response;
+                    }
+
+                    entity.VehicleMaintenanceWorkshop = resultworkshop;
+                }
+
+                //Agregar gasto a BD
+                entity.ERPFolio = Guid.NewGuid().ToString();
+                await _unitOfWork.ExpensesRepo.Add(entity);
+
+                //Verificar que contenga imagenes
+                //Guardar las fotos
+                var images = new List<PhotosOfSpending>();
+
+                foreach (var photo in expensesRequest.Attachments)
+                {
+                    //Validar imagenes y Guardar las imagenes en el blobstorage
+                    if (photo.ContentType.Contains("image"))
+                    {
+                        //Manipular el nombre de archivo
+                        var uploadDate = DateTime.UtcNow;
+                        Random rndm = new Random();
+                        string FileExtn = System.IO.Path.GetExtension(photo.FileName);
+                        var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.TypesOfExpensesId}{rndm.Next(1, 1000)}{FileExtn}";
+                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(photo, _azureBlobContainers.Value.ExpenseAttachments, filePath);
+
+                        //Agregar la imagen en BD
+                        var newImage = new PhotosOfSpending()
+                        {
+                            FilePath = filePath,
+                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.ExpenseAttachments, filePath),
+                            Expenses = entity
+                        };
+
+                        await _unitOfWork.PhotosOfSpendingRepo.Add(newImage);
+                        images.Add(newImage);
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+
+                        return response;
+                    }
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+                response.success = true;
+                var expensesDto = _mapper.Map<ExpensesDto>(entity);
+                expensesDto.PhotosOfSpending.AddRange(images);
+                response.Data = expensesDto;
+                return response;
+            } 
+            catch (Exception ex)
             {
                 response.success = false;
-                response.AddError("No existe el tipo de gastos", $"No existe tipo de gastos con el id{expensesRequest.TypesOfExpensesId} solicitado", 1);
+                response.AddError("Error", ex.Message, 1);
                 return response;
             }
-
-            var entity = _mapper.Map<Expenses>(expensesRequest);
-            entity.Vehicles = dtoexpens;
-
-            if(expensesRequest.VehicleMaintenanceWorkshopId.HasValue)
-            {
-                var existeworkshops = await _unitOfWork.MaintenanceWorkshopRepo.Get(v => v.Id == expensesRequest.VehicleMaintenanceWorkshopId);
-                var resultworkshop = existeworkshops.FirstOrDefault();
-
-                if (resultworkshop == null)
-                {
-                    response.success = false;
-                    response.AddError("No existe el taller", $"No existe taller con el id{expensesRequest.VehicleMaintenanceWorkshopId} solicitado", 1);
-                    return response;
-                }
-
-                entity.VehicleMaintenanceWorkshop = resultworkshop;
-            }
-
-            //Agregar gasto a BD
-            entity.ERPFolio = Guid.NewGuid().ToString();
-            await _unitOfWork.ExpensesRepo.Add(entity);
-
-            //Verificar que contenga imagenes
-            //Guardar las fotos
-            var images = new List<PhotosOfSpending>();
-
-            foreach (var photo in expensesRequest.Attachments)
-            {
-                //Validar imagenes y Guardar las imagenes en el blobstorage
-                if (photo.ContentType.Contains("image"))
-                {
-                    //Manipular el nombre de archivo
-                    var uploadDate = DateTime.UtcNow;
-                    Random rndm = new Random();
-                    string FileExtn = System.IO.Path.GetExtension(photo.FileName);
-                    var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.TypesOfExpensesId}{rndm.Next(1, 1000)}{FileExtn}";
-                    var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(photo, _azureBlobContainers.Value.ExpenseAttachments, filePath);
-
-                    //Agregar la imagen en BD
-                    var newImage = new PhotosOfSpending()
-                    {
-                        FilePath = filePath,
-                        FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.ExpenseAttachments, filePath),
-                        Expenses = entity
-                    };
-
-                    await _unitOfWork.PhotosOfSpendingRepo.Add(newImage);
-                    images.Add(newImage);
-                }
-                else
-                {
-                    response.success = false;
-                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
-
-                    return response;
-                }
-            }
-
-            await _unitOfWork.SaveChangesAsync();
-            response.success = true;
-            var expensesDto = _mapper.Map<ExpensesDto>(entity);
-            expensesDto.PhotosOfSpending.AddRange(images);
-            response.Data = expensesDto;
-            return response;
         }
 
         public async Task<GenericResponse<ExpensesDto>> GetExpensesById(int id)
@@ -148,41 +171,77 @@ namespace Application.Services
         {
 
             GenericResponse<Expenses> response = new GenericResponse<Expenses>();
-            var result = await _unitOfWork.ExpensesRepo.Get(r => r.Id == id);
-            var expenses = result.FirstOrDefault();
-            if (expenses == null) return null;
 
-            if (expensesRequest.TypesOfExpensesId.HasValue)
+            try
             {
-                expenses.TypesOfExpensesId = expensesRequest.TypesOfExpensesId.Value;
+                var result = await _unitOfWork.ExpensesRepo.Get(r => r.Id == id);
+                var expenses = result.FirstOrDefault();
+                if (expenses == null) return null;
+
+                if (expensesRequest.TypesOfExpensesId.HasValue)
+                {
+                    var typeOfExpense = await _unitOfWork.MaintenanceWorkshopRepo.GetById(expensesRequest.TypesOfExpensesId.Value);
+                    if (typeOfExpense != null)
+                    {
+                        response.AddError("Tipo de gasto no encontrado", $"El tipo de gasto con Id {expensesRequest.TypesOfExpensesId.Value} no existe", 2);
+                        response.success = false;
+                        return response;
+                    }
+                    expenses.TypesOfExpensesId = expensesRequest.TypesOfExpensesId.Value;
+                }
+
+                if (expensesRequest.Cost.HasValue)
+                {
+                    expenses.Cost = expensesRequest.Cost.Value;
+                }
+
+                if (expensesRequest.Invoiced.HasValue)
+                {
+                    expenses.Invoiced = expensesRequest.Invoiced.Value;
+                }
+
+                if (expensesRequest.ExpenseDate.HasValue)
+                {
+                    expenses.ExpenseDate = expensesRequest.ExpenseDate.Value;
+                }
+
+                if (expensesRequest.VehicleMaintenanceWorkshopId.HasValue)
+                {
+                    var workshop = await _unitOfWork.MaintenanceWorkshopRepo.GetById(expensesRequest.VehicleMaintenanceWorkshopId.Value);
+                    if (workshop != null)
+                    {
+                        response.AddError("Taller no encontrado", $"El taller con Id {expensesRequest.VehicleMaintenanceWorkshopId.Value} no existe", 3);
+                        response.success = false;
+                        return response;
+                    }
+                    expenses.VehicleMaintenanceWorkshopId = expensesRequest.VehicleMaintenanceWorkshopId.Value;
+                }
+
+                if (expensesRequest.VehicleReportId.HasValue)
+                {
+                    var report = await _unitOfWork.DestinationOfReportUseRepo.GetById(expensesRequest.VehicleReportId.Value);
+                    if (report != null)
+                    {
+                        response.AddError("Reporte no encontrado", $"El reporte con Id {expensesRequest.VehicleReportId.Value} no existe", 4);
+                        response.success = false;
+                        return response;
+                    }
+
+                    expenses.VehicleReportId = report.Id;
+                }
+
+                await _unitOfWork.ExpensesRepo.Update(expenses);
+                await _unitOfWork.SaveChangesAsync();
+                response.success = true;
+                response.Data = expenses;
+                return response;
             }
-
-            if (expensesRequest.Cost.HasValue)
+            catch (Exception ex)
             {
-                expenses.Cost = expensesRequest.Cost.Value;
+                response.AddError("Error", ex.Message, 1);
+                response.success = false;
+                return response;
             }
-
-            if (expensesRequest.Invoiced.HasValue)
-            {
-                expenses.Invoiced = expensesRequest.Invoiced.Value;
-            }
-            if (expensesRequest.ExpenseDate.HasValue)
-            {
-                expenses.ExpenseDate = expensesRequest.ExpenseDate.Value;
-            }
-
-            if (expensesRequest.VehicleMaintenanceWorkshopId.HasValue)
-            {
-                expenses.VehicleMaintenanceWorkshopId = expensesRequest.VehicleMaintenanceWorkshopId.Value;
-            }                    
-            
-
-            await _unitOfWork.ExpensesRepo.Update(expenses);
-            await _unitOfWork.SaveChangesAsync();
-            response.success = true;
-            response.Data = expenses;
-            return response;
-
         }
 
         public async Task<GenericResponse<Expenses>> DeleteExpenses(int id)
@@ -219,12 +278,12 @@ namespace Application.Services
             }
         }
 
-        public async Task<PagedList<Expenses>> GetExpenses(ExpensesFilter filter)
+        public async Task<PagedList<ExpensesDto>> GetExpenses(ExpensesFilter filter)
         {
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop";
+            string properties = "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop";
             IEnumerable<Expenses> expenses = null;
             Expression<Func<Expenses, bool>> Query = null;
 
@@ -319,7 +378,10 @@ namespace Application.Services
                 expenses = await _unitOfWork.ExpensesRepo.Get(includeProperties: properties);
             }
 
-            var pagedExpenses = PagedList<Expenses>.Create(expenses, filter.PageNumber, filter.PageSize);
+            //Eliminar recursión usando DTOs
+            var dtos = _mapper.Map<IEnumerable<ExpensesDto>>(expenses);
+
+            var pagedExpenses = PagedList<ExpensesDto>.Create(dtos, filter.PageNumber, filter.PageSize);
 
             return pagedExpenses;
         }

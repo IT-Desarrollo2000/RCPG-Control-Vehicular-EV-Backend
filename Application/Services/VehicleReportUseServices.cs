@@ -176,7 +176,7 @@ namespace Application.Services
         }
 
         //Post 
-        public async Task<GenericResponse<VehicleReportUseDto>> PostVehicleReporUse([FromBody] VehicleReportUseRequest vehicleReportUseRequest)
+        public async Task<GenericResponse<VehicleReportUseDto>> PostVehicleReporUse(VehicleReportUseRequest vehicleReportUseRequest)
         {
             GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
             GenericResponse<VehiclesDto> responseVehicle = new GenericResponse<VehiclesDto>();
@@ -204,8 +204,6 @@ namespace Application.Services
                 }
 
             }
-
-
 
             if (vehicleReportUseRequest.ChecklistId.HasValue)
             {
@@ -274,7 +272,7 @@ namespace Application.Services
 
             if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.enProceso || vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.Cancelado)
             {
-                vehicleReportUseRequest.CurrentFuelLoad = null;
+                //vehicleReportUseRequest.CurrentFuelLoad = null;
                 vehicleReportUseRequest.Verification = false;
                 vehicleReportUseRequest.AppUserId = null;
 
