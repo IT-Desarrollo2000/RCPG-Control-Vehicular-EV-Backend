@@ -24,6 +24,7 @@ namespace Domain.DTOs.Requests
         public int? VehicleMaintenanceWorkshopId { get; set; }
         public DateTime ExpenseDate { get; set; }
         public List<IFormFile> Attachments { get; set; }
+        public int? VehicleReportId { get; set; }
 
     }
 

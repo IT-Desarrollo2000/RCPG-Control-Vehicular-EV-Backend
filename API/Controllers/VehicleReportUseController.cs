@@ -77,7 +77,7 @@ namespace API.Controllers
         }
 
         //POST
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportUseDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]

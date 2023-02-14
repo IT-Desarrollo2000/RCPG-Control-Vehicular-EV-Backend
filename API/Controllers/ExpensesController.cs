@@ -28,7 +28,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<Expenses>))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<ExpensesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("")]
@@ -46,7 +46,7 @@ namespace API.Controllers
                 HasPreviousPage = expenses.HasPreviousPage
             };
 
-            var response = new GenericResponse<IEnumerable<Expenses>>(expenses)
+            var response = new GenericResponse<IEnumerable<ExpensesDto>>(expenses)
             {
                 Meta = metadata,
                 success = true,
