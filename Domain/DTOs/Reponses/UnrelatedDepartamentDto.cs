@@ -1,14 +1,16 @@
-﻿using Domain.Entities.Company;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Domain.DTOs.Reponses
 {
-    public class DepartamentDto
+    public class UnrelatedDepartamentDto
     {
         public int Id { get; set; }
-        [Required]
         public string Name { get; set; }
         public int CompanyId { get; set; }
-        public virtual UnrelatedCompanyDto Company { get; set; }
     }
 }
