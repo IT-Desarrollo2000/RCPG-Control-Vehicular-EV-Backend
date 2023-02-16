@@ -33,16 +33,18 @@ namespace Infrastructure.Mappings
             CreateMap<ApprovalCreationRequest, UserApproval>();
             
             //Company
-            CreateMap<Companies, CompanyRequest>();
-            CreateMap<CompanyRequest, Companies>();
+            CreateMap<Companies, CompanyRequest>().ReverseMap();
             CreateMap<CompanyRequest, CompanyDto>().ReverseMap();
             CreateMap<Companies, CompanyDto>().ReverseMap();
+            CreateMap<Companies,UnrelatedCompanyDto>().ReverseMap();
 
             //Departament
-            CreateMap<Departaments, DepartamentRequest>();
-            CreateMap<DepartamentRequest, Departaments>();
+            CreateMap<Departaments, DepartamentRequest>().ReverseMap();
             CreateMap<DepartamentRequest, DepartamentDto>().ReverseMap();
             CreateMap<Departaments, DepartamentDto>().ReverseMap();
+            CreateMap<Departaments, UnrelatedDepartamentDto>().ReverseMap();
+  
+
 
             //Vehicle
             CreateMap<Vehicle, VehicleRequest>().ReverseMap();
