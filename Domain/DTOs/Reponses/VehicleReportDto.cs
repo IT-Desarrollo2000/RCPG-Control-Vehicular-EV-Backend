@@ -38,5 +38,6 @@ namespace Domain.DTOs.Reponses
         public string SolvedByAdminUserName { get; set; }
         public int? GasolineLoadAmount { get; set; }
         public int? GasolineCurrentKM { get; set; }
+        public double? AmountGasoline { get; set; }
     }
 }
