@@ -51,6 +51,7 @@ namespace Infrastructure.Mappings
             CreateMap<Vehicle, VehiclesDto>().ReverseMap();
             CreateMap<VehicleRequest, VehiclesDto>().ReverseMap();
             CreateMap<Vehicle, UnrelatedVehiclesDto>().ReverseMap();
+            CreateMap<VehicleImage, VehicleImageDto>().ReverseMap();
 
             //VehicleService
             CreateMap<VehicleService, VehicleServiceRequest>().ReverseMap();
