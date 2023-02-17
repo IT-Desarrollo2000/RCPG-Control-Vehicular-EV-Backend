@@ -274,7 +274,7 @@ namespace API.Controllers
         #endregion
 
         #region ..::Administración de usuarios AdminWeb::..
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, AdminUser")]
         [HttpGet]
         [Route("WebAdm/GetAdminUsers")]
         public async Task<ActionResult> GetWebAdmUsers(AdminRoleType? roleType = null)

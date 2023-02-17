@@ -31,6 +31,7 @@ namespace Domain.DTOs.Requests
         public DateTime ReportDate { get; set; }
         public int? GasolineLoadAmount { get; set; }
         public int? GasolineCurrentKM { get; set; }
+        public double? AmountGasoline { get; set; }
         public int? VehicleReportUseId { get; set; }
         public List<int> Expenses { get; set; }
         public List<IFormFile> ReportImages { get; set; }
