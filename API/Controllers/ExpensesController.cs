@@ -27,8 +27,8 @@ namespace API.Controllers
             this._expensesServices = expensesServices;
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<Expenses>))]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<ExpensesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("")]
@@ -46,7 +46,7 @@ namespace API.Controllers
                 HasPreviousPage = expenses.HasPreviousPage
             };
 
-            var response = new GenericResponse<IEnumerable<Expenses>>(expenses)
+            var response = new GenericResponse<IEnumerable<ExpensesDto>>(expenses)
             {
                 Meta = metadata,
                 success = true,
@@ -93,7 +93,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete]

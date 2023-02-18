@@ -35,6 +35,7 @@ namespace Domain.Entities.Registered_Cars
         public virtual VehicleReportUse? VehicleReportUses { get; set; }
         public int? SolvedByAdminUserId { get; set; }
         public virtual AppUser? SolvedByAdminUser { get; set; }
+        public double? AmountGasoline { get; set; } 
 
         //Collections
         public virtual ICollection<Expenses> Expenses { get; set; }

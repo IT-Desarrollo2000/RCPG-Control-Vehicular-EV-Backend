@@ -1,6 +1,4 @@
-﻿using Domain.Entities.Departament;
-using Domain.Entities.Registered_Cars;
-using Domain.Enums;
+﻿using Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +7,8 @@ using System.Threading.Tasks;
 
 namespace Domain.DTOs.Reponses
 {
-    public class VehiclesDto
+    public class UnrelatedVehiclesDto
     {
-        public VehiclesDto()
-        {
-            VehicleImages = new List<VehicleImageDto>();
-        }
-
         public int Id { get; set; }
         public string Name { get; set; }
         public string Serial { get; set; }
@@ -24,6 +17,8 @@ namespace Domain.DTOs.Reponses
         public string Brand { get; set; }
         public int ModelYear { get; set; }
         public int FuelCapacity { get; set; }
+        public int CurrentKM { get; set; }
+        public int InitialKM { get; set; }
         public CurrentFuel CurrentFuel { get; set; }
         public FuelType FuelType { get; set; }
         public VehicleType VehicleType { get; set; }
@@ -33,11 +28,6 @@ namespace Domain.DTOs.Reponses
         public OwnershipType OwnershipType { get; set; }
         public string? OwnersName { get; set; }
         public decimal DesiredPerformance { get; set; }
-        public int? CurrentKM { get; set; }
-        public int? InitialKM { get; set; }
-        public List<VehicleImageDto> VehicleImages { get; set; }
-        public List<Checklist> Checklists { get; set; }
-        public List<Departaments> AssignedDepartments { get; set; }
         public string VehicleQRId { get; set; }
         public string? VehicleObservation { get; set; }
     }

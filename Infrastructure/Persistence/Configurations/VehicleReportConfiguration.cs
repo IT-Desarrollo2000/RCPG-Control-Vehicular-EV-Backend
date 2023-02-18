@@ -28,6 +28,8 @@ namespace Infrastructure.Persistence.Configurations
                 .WithMany(ad => ad.SolvedReports)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(v => v.AmountGasoline).HasColumnType("decimal(18,2)");
         }
 
     }

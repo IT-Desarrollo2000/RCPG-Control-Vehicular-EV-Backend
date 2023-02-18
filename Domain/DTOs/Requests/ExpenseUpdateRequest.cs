@@ -15,5 +15,6 @@ namespace Domain.DTOs.Requests
         public int? VehicleMaintenanceWorkshopId { get; set; }
         public DateTime? ExpenseDate { get; set; }
         public string? ERPFolio { get; set; }
+        public int? VehicleReportId { get; set; }
     }
 }

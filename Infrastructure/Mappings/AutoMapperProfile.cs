@@ -33,21 +33,25 @@ namespace Infrastructure.Mappings
             CreateMap<ApprovalCreationRequest, UserApproval>();
             
             //Company
-            CreateMap<Companies, CompanyRequest>();
-            CreateMap<CompanyRequest, Companies>();
+            CreateMap<Companies, CompanyRequest>().ReverseMap();
             CreateMap<CompanyRequest, CompanyDto>().ReverseMap();
             CreateMap<Companies, CompanyDto>().ReverseMap();
+            CreateMap<Companies,UnrelatedCompanyDto>().ReverseMap();
 
             //Departament
-            CreateMap<Departaments, DepartamentRequest>();
-            CreateMap<DepartamentRequest, Departaments>();
+            CreateMap<Departaments, DepartamentRequest>().ReverseMap();
             CreateMap<DepartamentRequest, DepartamentDto>().ReverseMap();
             CreateMap<Departaments, DepartamentDto>().ReverseMap();
+            CreateMap<Departaments, UnrelatedDepartamentDto>().ReverseMap();
+  
+
 
             //Vehicle
             CreateMap<Vehicle, VehicleRequest>().ReverseMap();
             CreateMap<Vehicle, VehiclesDto>().ReverseMap();
             CreateMap<VehicleRequest, VehiclesDto>().ReverseMap();
+            CreateMap<Vehicle, UnrelatedVehiclesDto>().ReverseMap();
+            CreateMap<VehicleImage, VehicleImageDto>().ReverseMap();
 
             //VehicleService
             CreateMap<VehicleService, VehicleServiceRequest>().ReverseMap();
@@ -99,6 +103,7 @@ namespace Infrastructure.Mappings
                 .ForMember(x => x.SolvedByAdminUserName, c => c.MapFrom(ad => ad.SolvedByAdminUser.Email));
             CreateMap<VehicleReportImage, VehicleReportImageDto>();
 
+
             //Performance
             CreateMap<PerformanceRequest, PerformanceDto>().ReverseMap();
 
@@ -124,6 +129,12 @@ namespace Infrastructure.Mappings
             CreateMap<GraphicsDto, Vehicle>().ReverseMap();
             CreateMap<GraphicsDto, VehicleMaintenance>().ReverseMap();
             CreateMap<GraphicsDto, VehicleService>().ReverseMap();
+
+            //Policy
+            CreateMap<Policy, PolicyDto>().ReverseMap();
+            CreateMap<PolicyRequest, PolicyDto>().ReverseMap();
+            CreateMap<Policy, PolicyRequest>().ReverseMap();
+            
         }
     }
 }

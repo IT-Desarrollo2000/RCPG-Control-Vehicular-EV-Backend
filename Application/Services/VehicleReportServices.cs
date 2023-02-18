@@ -141,7 +141,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleReportDto>> GetVehicleReportById(int Id)
         {
             GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
-            var profile = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,UserProfile,AppUser,Expenses,VehicleReportImages");
+            var profile = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,MobileUser,AdminUser,Expenses,VehicleReportImages");
             var result = profile.FirstOrDefault();
             var VehicleReportDto = _mapper.Map<VehicleReportDto>(result);
             response.success = true;
@@ -163,6 +163,8 @@ namespace Application.Services
                     return response;
                 }
 
+                Expenses expensesRequest = null;
+
                 //Verificar si el reporte es por carga de gasolina y si contiene los campos requeridos para ello
                 if (vehicleReportRequest.ReportType == Domain.Enums.ReportType.Carga_Gasolina)
                 {
@@ -179,6 +181,42 @@ namespace Application.Services
                         response.AddError("Es necesario un valor existente KM", $"Para el tipo de Carga de Gasolina, es necesario un valor para el KM actual ", 2);
                         return response;
                     }
+
+                    if(!vehicleReportRequest.AmountGasoline.HasValue)
+                    {
+                        response.success = false;
+                        response.AddError("Es necesario el monto de carga de gasolina", $"Para el tipo de Carga de Gasolina, es necesario el monto que se gasto ", 2);
+                        return response;
+                    }
+
+                    //Verificar que exista el tipo de gasto
+                    var existetypeOfExpenses = await _unitOfWork.TypesOfExpensesRepo.Get(v => v.Name == "Carga_Gasolina" );
+                    var resultType = existetypeOfExpenses.FirstOrDefault();
+                    TypesOfExpenses expenseFuel = null;
+
+                    if (resultType == null)
+                    {
+                        var typesOfExpensesRequest = new TypesOfExpenses()
+                        {
+                            Name = "Carga_Gasolina",
+                            Description = "Gasto Creado Por Reporte de Gasolina"
+                        };
+
+
+                        expenseFuel = _mapper.Map<TypesOfExpenses>(typesOfExpensesRequest);
+                        await _unitOfWork.TypesOfExpensesRepo.Add(expenseFuel);
+                    }
+
+                    //se crea gastos
+                    expensesRequest = new Expenses()
+                    {
+                        TypesOfExpensesId = resultType.Id,
+                        Cost = (decimal)vehicleReportRequest.AmountGasoline,
+                        ExpenseDate = DateTime.Now,
+                        ERPFolio = Guid.NewGuid().ToString()
+
+                    };
+
                 }
 
                 //Verificar que el usuario que lo creo exista
@@ -239,6 +277,11 @@ namespace Application.Services
                 //Modificar el status del reporte
                 entidadR.ReportStatus = Domain.Enums.ReportStatusType.Pendiente;
                 entidadR.IsResolved = false;
+
+                if(expensesRequest != null)
+                {
+                    entidadR.Expenses.Add(expensesRequest);
+                }
 
                 //Agregar los gastos al reporte
                 foreach(var expenseId in vehicleReportRequest.Expenses)
@@ -349,6 +392,9 @@ namespace Application.Services
                 report.ReportStatus = request.Status;
                 report.SolvedByAdminUser = adminUserExists;
                 report.ReportSolutionComment = request.ResolutionComment;
+
+                await _unitOfWork.VehicleReportRepo.Update(report);
+                await _unitOfWork.SaveChangesAsync();
 
                 response.success = true;
                 var VehicleReportDTOCG = _mapper.Map<VehicleReportDto>(report);
