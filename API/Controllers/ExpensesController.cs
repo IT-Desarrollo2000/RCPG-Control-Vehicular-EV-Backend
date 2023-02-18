@@ -75,7 +75,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("PostExpenses")]
-        public async Task<IActionResult> PostExpenses([FromForm] ExpensesRequest expensesRequest)
+        public async Task<IActionResult> PostExpenses([FromForm] ExpensesRequest expensesRequest) 
         {
             var result = await _expensesServices.PostExpenses( expensesRequest);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
@@ -86,10 +86,9 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("PutExpenses")]
-        public async Task<IActionResult> PutExpenses([FromBody]ExpenseUpdateRequest expensesRequest, int id)
+        public async Task<IActionResult> PutExpenses([FromBody] ExpenseUpdateRequest expensesRequest, int id)
         {
             var result = await _expensesServices.PutExpenses(expensesRequest, id);
-            if (result.Data == null) { return NotFound($"No existe gasto con el Id {id}"); }
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
