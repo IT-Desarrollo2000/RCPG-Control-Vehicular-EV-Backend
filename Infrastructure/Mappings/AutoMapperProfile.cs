@@ -103,6 +103,7 @@ namespace Infrastructure.Mappings
                 .ForMember(x => x.SolvedByAdminUserName, c => c.MapFrom(ad => ad.SolvedByAdminUser.Email));
             CreateMap<VehicleReportImage, VehicleReportImageDto>();
 
+
             //Performance
             CreateMap<PerformanceRequest, PerformanceDto>().ReverseMap();
 
