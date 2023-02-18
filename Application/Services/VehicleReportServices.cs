@@ -39,22 +39,22 @@ namespace Application.Services
         }
 
         //GetALL
-        public async Task<PagedList<VehicleReport>> GetVehicleReportAll(VehicleReportFilter filter)
+        public async Task<PagedList<VehicleReportDto>> GetVehicleReportAll(VehicleReportFilter filter)
         {
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses";
+            string properties = "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses";
             IEnumerable<VehicleReport> userApprovals = null;
             Expression<Func<VehicleReport, bool>> Query = null;
 
             if(filter.ReportType.HasValue)
             {
-                if(Query != null )
+                if (Query != null)
                 {
                     Query = Query.And(p => p.ReportType >= filter.ReportType.Value);
                 }
-                else { Query = p => p.ReportType >= filter.ReportType.Value;}
+                else { Query = p => p.ReportType >= filter.ReportType.Value; }
             }
 
             if (filter.VehicleId.HasValue)
@@ -64,9 +64,17 @@ namespace Application.Services
                     Query = Query.And(p => p.VehicleId >= filter.VehicleId.Value);
                 }
                 else { Query = p => p.VehicleId >= filter.VehicleId.Value; }
-
             }
 
+
+            if (!string.IsNullOrEmpty(filter.Commentary))
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.Commentary.Contains(filter.Commentary));
+                }
+                else { Query = p => p.Commentary.Contains(filter.Commentary); }
+            }
 
             if (filter.MobileUserId.HasValue)
             {
@@ -104,6 +112,33 @@ namespace Application.Services
                 else { Query = p => p.IsResolved == filter.IsResolved.Value; }
             }
 
+            if (filter.GasolineLoadAmount.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.VehicleId >= filter.VehicleId.Value);
+                }
+                else { Query = p => p.VehicleId >= filter.VehicleId.Value; }
+            }
+
+            if (filter.GasolineCurrentKM.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.GasolineCurrentKM >= filter.GasolineCurrentKM.Value);
+                }
+                else { Query = p => p.GasolineCurrentKM >= filter.GasolineCurrentKM.Value; }
+            }
+
+            if (!string.IsNullOrEmpty(filter.ReportSolutionComment))
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.ReportSolutionComment.Contains(filter.ReportSolutionComment));
+                }
+                else { Query = p => p.ReportSolutionComment.Contains(filter.ReportSolutionComment); }
+            }
+
             if (filter.ReportStatus.HasValue)
             {
                 if (Query != null)
@@ -115,11 +150,29 @@ namespace Application.Services
 
             if (filter.VehicleReportUseId.HasValue)
             {
-                if(Query != null)
+                if (Query != null)
                 {
                     Query = Query.And(p => p.VehicleReportUseId >= filter.VehicleReportUseId.Value);
                 }
                 else { Query = p => p.VehicleReportUseId >= filter.VehicleReportUseId.Value; }
+            }
+
+            if (filter.SolvedByAdminUserId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.SolvedByAdminUserId >= filter.SolvedByAdminUserId.Value);
+                }
+                else { Query = p => p.SolvedByAdminUserId >= filter.SolvedByAdminUserId.Value; }
+            }
+
+            if (filter.AmountGasoline.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.AmountGasoline >= filter.AmountGasoline.Value);
+                }
+                else { Query = p => p.AmountGasoline >= filter.AmountGasoline.Value; }
             }
 
 
@@ -132,7 +185,9 @@ namespace Application.Services
                 userApprovals = await _unitOfWork.VehicleReportRepo.Get(includeProperties: properties);
             }
 
-            var pagedApprovals = PagedList<VehicleReport>.Create(userApprovals, filter.PageNumber, filter.PageSize);
+            var dtos = _mapper.Map<IEnumerable<VehicleReportDto>>(userApprovals);
+
+            var pagedApprovals = PagedList<VehicleReportDto>.Create(dtos, filter.PageNumber, filter.PageSize);
 
             return pagedApprovals;
         }
@@ -141,7 +196,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleReportDto>> GetVehicleReportById(int Id)
         {
             GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
-            var profile = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,MobileUser,AdminUser,Expenses,VehicleReportImages");
+            var profile = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,MobileUser,AdminUser,Expenses,VehicleReportImages,VehicleReportUses");
             var result = profile.FirstOrDefault();
             var VehicleReportDto = _mapper.Map<VehicleReportDto>(result);
             response.success = true;
