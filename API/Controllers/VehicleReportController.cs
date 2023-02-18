@@ -45,7 +45,7 @@ namespace API.Controllers
                 HasPreviousPage = approval.HasPreviousPage
             };
 
-            var response = new GenericResponse<IEnumerable<VehicleReport>>(approval)
+            var response = new GenericResponse<IEnumerable<VehicleReportDto>>(approval)
             {
                 Meta = metadata,
                 success = true,

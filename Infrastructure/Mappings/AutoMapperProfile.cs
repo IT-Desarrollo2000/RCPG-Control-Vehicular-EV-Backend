@@ -31,6 +31,7 @@ namespace Infrastructure.Mappings
             CreateMap<UserApproval, UserProfile>().ForMember(a => a.Id, opt => opt.Ignore());
             CreateMap<AppUserRegistrationRequest, ApprovalCreationRequest>();
             CreateMap<ApprovalCreationRequest, UserApproval>();
+            CreateMap<UserProfile, UnrelatedUserProfileDto>().ReverseMap();
             
             //Company
             CreateMap<Companies, CompanyRequest>().ReverseMap();
@@ -72,6 +73,7 @@ namespace Infrastructure.Mappings
             CreateMap<Expenses, GetExpensesDto>().ReverseMap();
             CreateMap<GetExpensesDtoList, Expenses>().ReverseMap();
             CreateMap<GetExpensesDtoList, Vehicle>().ReverseMap();
+            CreateMap<Expenses, UnrelatedExpensesDto>().ReverseMap();
 
             //TypesOfExpenses
             CreateMap<TypesOfExpenses, TypesOfExpensesDto>().ReverseMap();
@@ -124,6 +126,7 @@ namespace Infrastructure.Mappings
             CreateMap<VehicleReportUse, VehicleReportUseVerificationRequest>().ReverseMap();
             CreateMap<VehicleReportUseDto, VehicleReportUseVerificationRequest>().ReverseMap();
             CreateMap<VehicleReportUseDto, ReportUseTypeRequest>().ReverseMap();
+            CreateMap<VehicleReportUse, UnrelatedVehicleReportUseDto>().ReverseMap();
 
             //Graphics
             CreateMap<GraphicsDto, Vehicle>().ReverseMap();
