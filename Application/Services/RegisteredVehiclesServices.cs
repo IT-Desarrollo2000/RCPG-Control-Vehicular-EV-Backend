@@ -271,7 +271,8 @@ namespace Application.Services
 
                 response.success = true;
                 var vDto = _mapper.Map<VehiclesDto>(entity);
-                vDto.Images.AddRange(images);
+                var imagesDto = _mapper.Map<List<VehicleImageDto>>(images);
+                vDto.VehicleImages.AddRange(imagesDto);
                 response.Data = vDto;
                 return response;
 

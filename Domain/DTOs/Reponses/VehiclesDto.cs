@@ -13,7 +13,7 @@ namespace Domain.DTOs.Reponses
     {
         public VehiclesDto()
         {
-            Images = new List<VehicleImage>();
+            VehicleImages = new List<VehicleImageDto>();
         }
 
         public int Id { get; set; }
@@ -35,8 +35,10 @@ namespace Domain.DTOs.Reponses
         public decimal DesiredPerformance { get; set; }
         public int? CurrentKM { get; set; }
         public int? InitialKM { get; set; }
-        public List<VehicleImage> Images { get; set; }
+        public List<VehicleImageDto> VehicleImages { get; set; }
         public List<Checklist> Checklists { get; set; }
         public List<Departaments> AssignedDepartments { get; set; }
+        public string VehicleQRId { get; set; }
+        public string? VehicleObservation { get; set; }
     }
 }
