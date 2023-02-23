@@ -24,9 +24,9 @@ namespace API.Controllers
             this._registeredVehiclesServices = registeredVehiclesServices;
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<Vehicle>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<Vehicle>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> GetVehicles([FromQuery] VehicleFilter filter)
@@ -67,9 +67,9 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return NotFound(result); }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("AddVehicles")]
         public async Task<IActionResult> AddVehicles([FromForm] VehicleRequest vehicleRequest)
@@ -102,9 +102,9 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<Vehicle>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<Vehicle>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("PutVehicles")]
         public async Task<IActionResult> PutVehicles(VehiclesUpdateRequest vehiclesUpdateRequest, int id)
@@ -114,9 +114,9 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete]
         [Route("DeleteVehicles")]
         public async Task<IActionResult> DeleteVehicles(int id)
