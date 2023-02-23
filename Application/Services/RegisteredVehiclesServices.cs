@@ -67,7 +67,7 @@ namespace Application.Services
                     Query = Query.And(p => p.Name.Contains(filter.Name));
                 }
                 else { Query = p => p.Name.Contains(filter.Name); }
-            }
+            }          
 
             if (filter.IsUtilitary.HasValue)
             {
@@ -159,6 +159,15 @@ namespace Application.Services
                 else { Query = p => p.Color.Contains(filter.OwnersName); }
             }
 
+            if (!string.IsNullOrEmpty(filter.CarRegistrationPlate))
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.CarRegistrationPlate.Contains(filter.CarRegistrationPlate));
+                }
+                else { Query = p => p.CarRegistrationPlate.Contains(filter.CarRegistrationPlate); }
+            }
+
             if (!string.IsNullOrEmpty(filter.Serial))
             {
                 if (Query != null)
@@ -168,6 +177,7 @@ namespace Application.Services
                 else { Query = p => p.Serial == filter.Serial; }
             }
 
+            
             if (filter.MinDesiredPerformance.HasValue)
             {
                 if (Query != null)
@@ -438,6 +448,11 @@ namespace Application.Services
             if(!string.IsNullOrEmpty(vehiclesUpdateRequest.VehicleObservation))
             {
                 veh.VehicleObservation = vehiclesUpdateRequest.VehicleObservation;
+            }
+
+            if(!string.IsNullOrEmpty(vehiclesUpdateRequest.CarRegistrationPlate))
+            {
+                veh.CarRegistrationPlate = vehiclesUpdateRequest.CarRegistrationPlate;
             }
 
             if (vehiclesUpdateRequest.CurrentKM.HasValue)

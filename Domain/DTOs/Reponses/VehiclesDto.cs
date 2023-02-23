@@ -40,5 +40,6 @@ namespace Domain.DTOs.Reponses
         public List<Departaments> AssignedDepartments { get; set; }
         public string VehicleQRId { get; set; }
         public string? VehicleObservation { get; set; }
+        public string? CarRegistrationPlate { get; set; }
     }
 }
