@@ -10,9 +10,11 @@ namespace Application.Interfaces
     public interface IVehicleServiService
     {
         Task<GenericResponse<VehicleServiceDto>> DeleteVehicleService(int Id);
-        Task<PagedList<VehicleService>> GetVehicleServiceAll(VehicleServiceFilter filter);
+        Task<PagedList<VehicleServiceDto>> GetVehicleServiceAll(VehicleServiceFilter filter);
         Task<GenericResponse<VehicleServiceDto>> GetVehicleServiceById(int Id);
-        Task<GenericResponse<VehicleServiceDto>> PostVehicleService([FromBody] VehicleServiceRequest vehicleServiceRequest);
-        Task<GenericResponse<VehicleServiceDto>> PutVehicleService(int Id, [FromBody] VehicleServiceRequest vehicleServiceRequest);
+        Task<GenericResponse<VehicleServiceDto>> MarkAsCanceled(VehicleServiceCanceledRequest request);
+        Task<GenericResponse<VehicleServiceDto>> MarkAsResolved(VehicleServiceFinishRequest request);
+        Task<GenericResponse<VehicleServiceDto>> PostVehicleService(VehicleServiceRequest vehicleServiceRequest);
+        Task<GenericResponse<VehicleServiceDto>> PutVehicleService(VehicleServiceUpdateRequest vehicleServiceRequest);
     }
 }
