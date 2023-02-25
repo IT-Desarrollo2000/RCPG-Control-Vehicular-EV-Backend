@@ -41,5 +41,6 @@ namespace Domain.DTOs.Reponses
         public string VehicleQRId { get; set; }
         public string? VehicleObservation { get; set; }
         public string? CarRegistrationPlate { get; set; }
+        public bool IsClean { get; set; }
     }
 }

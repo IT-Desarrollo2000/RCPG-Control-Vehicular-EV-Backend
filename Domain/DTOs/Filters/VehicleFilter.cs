@@ -23,6 +23,7 @@ namespace Domain.DTOs.Filters
         public OwnershipType? OwnershipType { get; set; }
         public string? OwnersName { get; set; }
         public string? CarRegistrationPlate { get; set; }
+        public bool? IsClean { get; set; }
         public decimal? MinDesiredPerformance { get; set; }
         public decimal? MaxDesiredPerformance { get; set; }
         public DateTime? CreatedBefore { get; set; }

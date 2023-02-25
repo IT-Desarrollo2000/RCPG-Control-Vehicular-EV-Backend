@@ -168,6 +168,15 @@ namespace Application.Services
                 else { Query = p => p.CarRegistrationPlate.Contains(filter.CarRegistrationPlate); }
             }
 
+            if (filter.IsClean.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.IsClean == filter.IsClean.Value);
+                }
+                else { Query = p => p.IsClean == filter.IsClean.Value; }
+            }
+
             if (!string.IsNullOrEmpty(filter.Serial))
             {
                 if (Query != null)
@@ -453,6 +462,11 @@ namespace Application.Services
             if(!string.IsNullOrEmpty(vehiclesUpdateRequest.CarRegistrationPlate))
             {
                 veh.CarRegistrationPlate = vehiclesUpdateRequest.CarRegistrationPlate;
+            }
+
+            if (vehiclesUpdateRequest.IsClean.HasValue)
+            {
+                veh.IsClean = vehiclesUpdateRequest.IsClean.Value;
             }
 
             if (vehiclesUpdateRequest.CurrentKM.HasValue)
