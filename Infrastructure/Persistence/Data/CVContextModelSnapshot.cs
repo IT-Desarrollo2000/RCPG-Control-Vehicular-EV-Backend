@@ -943,8 +943,10 @@ namespace Infrastructure.Persistence.Data
                     b.Property<double?>("InitialMileage")
                         .HasColumnType("float");
 
+                    b.Property<int?>("LastFuelLoad")
+                        .HasColumnType("int");
+
                     b.Property<string>("Observations")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StatusReportUse")
@@ -953,7 +955,7 @@ namespace Infrastructure.Persistence.Data
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("UseDate")
+                    b.Property<DateTime?>("UseDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("UserProfileId")
@@ -962,7 +964,7 @@ namespace Infrastructure.Persistence.Data
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Verification")
+                    b.Property<bool?>("Verification")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
@@ -986,14 +988,35 @@ namespace Infrastructure.Persistence.Data
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CarryPerson")
+                    b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("NextService")
+                    b.Property<int?>("FinalFuel")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("FinalMileage")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("InitialFuel")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("InitialMileage")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("NextService")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("NextServiceKM")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ServiceUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<int>("TypeService")
                         .HasColumnType("int");
@@ -1004,15 +1027,23 @@ namespace Infrastructure.Persistence.Data
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
-                    b.Property<string>("WhereService")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("VehicleMaintenanceWorkshopId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WorkShopId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ServiceUserId");
+
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("VehicleServices", (string)null);
+                    b.HasIndex("VehicleMaintenanceWorkshopId");
+
+                    b.HasIndex("WorkShopId");
+
+                    b.ToTable("VehicleServices");
                 });
 
             modelBuilder.Entity("Domain.Entities.User_Approvals.UserApproval", b =>
@@ -1453,13 +1484,31 @@ namespace Infrastructure.Persistence.Data
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleService", b =>
                 {
+                    b.HasOne("Domain.Entities.Identity.AppUser", "ServiceUser")
+                        .WithMany()
+                        .HasForeignKey("ServiceUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.Registered_Cars.Vehicle", "Vehicle")
                         .WithMany("VehicleServices")
                         .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Registered_Cars.VehicleMaintenanceWorkshop", null)
+                        .WithMany("VehicleService")
+                        .HasForeignKey("VehicleMaintenanceWorkshopId");
+
+                    b.HasOne("Domain.Entities.Registered_Cars.VehicleMaintenanceWorkshop", "Workshop")
+                        .WithMany()
+                        .HasForeignKey("WorkShopId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ServiceUser");
+
                     b.Navigation("Vehicle");
+
+                    b.Navigation("Workshop");
                 });
 
             modelBuilder.Entity("Domain.Entities.User_Approvals.UserApproval", b =>
@@ -1596,6 +1645,8 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("Expenses");
 
                     b.Navigation("VehicleMaintenances");
+
+                    b.Navigation("VehicleService");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleReport", b =>

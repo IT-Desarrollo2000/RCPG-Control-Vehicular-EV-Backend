@@ -1,5 +1,4 @@
 ﻿using Application.Interfaces;
-using Application.Services;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
@@ -7,7 +6,6 @@ using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using System.Net;
 using System.Text.Json;
 
@@ -20,13 +18,13 @@ namespace API.Controllers
     {
         private readonly IVehicleReportService _vehicleReportService;
 
-        public VehicleReportController(IVehicleReportService vehicleReportService) 
+        public VehicleReportController(IVehicleReportService vehicleReportService)
         {
             this._vehicleReportService = vehicleReportService;
         }
 
         //GETALL
-        //[Authorize(Roles = "Administrator, AdminUser")]
+        [Authorize(Roles = "Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -58,7 +56,7 @@ namespace API.Controllers
         }
 
         //GETBYID
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet("{id:int}")]
@@ -82,7 +80,7 @@ namespace API.Controllers
         }
 
         //POST
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [Route("Create")]
@@ -103,7 +101,7 @@ namespace API.Controllers
         }
 
         //PUT
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -153,7 +151,7 @@ namespace API.Controllers
         }
 
         //Delete
-       // [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

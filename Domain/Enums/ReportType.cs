@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Enums
+﻿namespace Domain.Enums
 {
     public enum ReportType
     {
@@ -17,6 +11,7 @@ namespace Domain.Enums
         Problema_Electrico = 7,
         Problema_Fisico = 8,
         Poliza = 9,
-        Carga_Gasolina = 10
+        Carga_Gasolina = 10,
+        Datos_Incorrectos = 11
     }
 }

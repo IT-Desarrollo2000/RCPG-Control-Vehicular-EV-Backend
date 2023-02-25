@@ -1,10 +1,8 @@
 ﻿using Application.Interfaces;
-using Application.Services;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using System.Net;
 
 namespace API.Controllers
@@ -90,7 +88,7 @@ namespace API.Controllers
         public async Task<ActionResult<PolicyDto>> PutDestinationOfResultUse(int id, [FromBody] PolicyRequest policyRequest)
         {
 
-            var entidad = await _policyService.PutPolicy(id,policyRequest);
+            var entidad = await _policyService.PutPolicy(id, policyRequest);
 
             if (entidad.success)
             {

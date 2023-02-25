@@ -1,19 +1,19 @@
-﻿using Domain.Entities.Profiles;
+﻿using Domain.Entities.Departament;
+using Domain.Entities.Profiles;
 using Domain.Entities.Registered_Cars;
-using Domain.Entities.Departament;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.Entities.Identity
 {
     public class AppUser : IdentityUser<int>
     {
-        public AppUser() 
+        public AppUser()
         {
             this.UserRoles = new HashSet<AppUserRole>();
             this.Socials = new HashSet<AppUserSocial>();
             this.VehicleReports = new HashSet<VehicleReport>();
             this.VehicleReportUses = new HashSet<VehicleReportUse>();
-        
+
         }
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;

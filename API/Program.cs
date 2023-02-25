@@ -42,7 +42,6 @@ builder.Services.AddSwaggerGen(c =>
                             new string[] {}
                         }
                     });
-    c.SchemaGeneratorOptions.CustomTypeMappings.Add(typeof(IFormFile), () => new OpenApiSchema { Type = "file", Format = "binary"});
 });
 
 var app = builder.Build();
@@ -73,7 +72,9 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
+    app.UseSwaggerUI(c => {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+    }); 
 }
 
 //ELIMINAR AL RELEASE Y CONFIGURAR 

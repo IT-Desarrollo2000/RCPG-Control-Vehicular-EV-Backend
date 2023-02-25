@@ -1,14 +1,6 @@
-﻿using Domain.Entities.Identity;
-using Domain.Entities.Profiles;
-using Domain.Entities.Registered_Cars;
-using Domain.Enums;
+﻿using Domain.Enums;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.DTOs.Requests
 {

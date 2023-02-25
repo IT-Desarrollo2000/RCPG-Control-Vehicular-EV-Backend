@@ -1,5 +1,7 @@
 using Application.Interfaces;
 using AutoMapper;
+using Azure.Core;
+using Azure;
 using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
@@ -9,7 +11,6 @@ using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Principal;
 
 namespace Infrastructure.Identity
 {
@@ -190,7 +191,7 @@ namespace Infrastructure.Identity
         public async Task<AppUserRegistrationResponse> CreateAppUserAsync(AppUserRegistrationRequest user)
         {
             //Validar archivos
-            if(!user.DriversLicenceFrontFile.ContentType.Contains("image") || !user.DriversLicenceBackFile.ContentType.Contains("image"))
+            if (!user.DriversLicenceFrontFile.ContentType.Contains("image") || !user.DriversLicenceBackFile.ContentType.Contains("image"))
             {
                 return null;
             }
@@ -388,6 +389,20 @@ namespace Infrastructure.Identity
                         break;
                     case AdminRoleType.Supervisor:
                         await _userManager.AddToRoleAsync(adminUser, "Supervisor");
+
+                        //Agregar a los departamentos como supervisor
+                        //Buscar los departamentos y asignarlos al usuario
+                        foreach (var id in user.SupervisingDepartments)
+                        {
+                            var department = await _unitOfWork.Departaments.GetById(id);
+                            if (department != null)
+                            {
+                                department.Supervisors.Add(adminUser);
+                                await _unitOfWork.Departaments.Update(department);
+                            }
+                        }
+
+                        await _unitOfWork.SaveChangesAsync();
                         break;
                     default:
                         break;
@@ -476,36 +491,42 @@ namespace Infrastructure.Identity
             if (adminRole == null)
             {
                 var users = await _userManager.Users
-                .Include(r => r.UserRoles)
-                .ThenInclude(r => r.Role)
-                .Where(r => r.UserRoles
-                .Any(x => x.Role != superAdmin && x.Role != appUser))
-                .Select(u => new
-                {
-                    u.Id,
-                    Username = u.UserName,
-                    Email = u.Email,
-                    Roles = u.UserRoles.Select(r => r.Role.Name).ToList()
-                })
-                .ToListAsync();
+                    .Include(u => u.AssignedDepartments)
+                    .ThenInclude(d => d.Company)
+                    .Include(r => r.UserRoles)
+                    .ThenInclude(r => r.Role)
+                    .Where(r => r.UserRoles
+                    .Any(x => x.Role != superAdmin && x.Role != appUser))
+                    .Select(u => new
+                    {
+                        u.Id,
+                        Username = u.UserName,
+                        Email = u.Email,
+                        Roles = u.UserRoles.Select(r => r.Role.Name).ToList(),
+                        SupervisingDepartments = u.AssignedDepartments
+                    })
+                    .ToListAsync();
 
                 return users;
             }
             else
             {
                 var users = await _userManager.Users
-                .Include(r => r.UserRoles)
-                .ThenInclude(r => r.Role)
-                .Where(r => r.UserRoles
-                .Any(x => x.Role == adminRole))
-                .Select(u => new
-                {
-                    u.Id,
-                    Username = u.UserName,
-                    Email = u.Email,
-                    Roles = u.UserRoles.Select(r => r.Role.Name).ToList()
-                })
-                .ToListAsync();
+                    .Include(u => u.AssignedDepartments)
+                    .ThenInclude(d => d.Company)
+                    .Include(r => r.UserRoles)
+                    .ThenInclude(r => r.Role)
+                    .Where(r => r.UserRoles
+                    .Any(x => x.Role == adminRole))
+                    .Select(u => new
+                    {
+                        u.Id,
+                        Username = u.UserName,
+                        Email = u.Email,
+                        Roles = u.UserRoles.Select(r => r.Role.Name).ToList(),
+                        SupervisingDepartments = u.AssignedDepartments
+                    })
+                    .ToListAsync();
 
                 return users;
             }
@@ -630,13 +651,13 @@ namespace Infrastructure.Identity
                 }
 
                 //Buscar los departamentos y asignarlos al usuario
-                foreach(var id in request.DepartmentsToAssign)
+                foreach (var id in request.DepartmentsToAssign)
                 {
                     var department = await _unitOfWork.Departaments.GetById(id);
-                    if (department != null)
+                    if (department == null)
                     {
                         response.success = false;
-                        response.AddError("Not Found",$"El departamento con Id {id} no existe", 2);
+                        response.AddError("Not Found", $"El departamento con Id {id} no existe", 2);
 
                         return response;
                     }
@@ -653,8 +674,8 @@ namespace Infrastructure.Identity
 
                 return response;
 
-            } 
-            catch (Exception ex) 
+            }
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);

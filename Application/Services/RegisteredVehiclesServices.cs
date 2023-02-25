@@ -6,13 +6,9 @@ using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
+using Domain.Entities.User_Approvals;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Application.Services
 {
@@ -33,12 +29,12 @@ namespace Application.Services
             _blobStorageService = blobStorageService;
         }
 
-        public async Task<PagedList<Vehicle>> GetVehicles(VehicleFilter filter)
+        public async Task<PagedList<VehiclesDto>> GetVehicles(VehicleFilter filter)
         {
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "VehicleImages,Checklists,AssignedDepartments";
+            string properties = "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy";
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
 
@@ -214,9 +210,11 @@ namespace Application.Services
                 vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: properties);
             }
 
-            var pagedApprovals = PagedList<Vehicle>.Create(vehicles, filter.PageNumber, filter.PageSize);
+            var dtos = _mapper.Map<IEnumerable<VehiclesDto>>(vehicles);
 
-            return pagedApprovals;
+            var result = PagedList<VehiclesDto>.Create(dtos, filter.PageNumber, filter.PageSize);
+
+            return result;
         }
 
         public async Task<GenericResponse<VehiclesDto>> AddVehicles(VehicleRequest vehicleRequest)
@@ -262,7 +260,7 @@ namespace Application.Services
                         var uploadDate = DateTime.UtcNow;
                         Random rndm = new Random();
                         string FileExtn = System.IO.Path.GetExtension(image.FileName);
-                        var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.Serial}{rndm.Next(1,1000)}{FileExtn}";
+                        var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.Serial}{rndm.Next(1, 1000)}{FileExtn}";
                         var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.RegisteredCars, filePath);
 
                         //Agregar la imagen en BD
@@ -306,10 +304,39 @@ namespace Application.Services
 
         }
 
+        public async Task<GenericResponse<VehiclesDto>> GetVehicleByQRId(string qrId)
+        {
+            GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
+            try
+            {
+                var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.VehicleQRId == qrId, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company");
+                var veh = entity.FirstOrDefault();
+
+                if(veh == null)
+                {
+                    response.success = false;
+                    response.AddError("Vehiculo no encontrado", $"El vehiculo con Id {qrId} no se encuentra registrado", 2);
+                    return response;
+                }
+
+                var map = _mapper.Map<VehiclesDto>(veh);
+                response.success = true;
+                response.Data = map;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
+        }
+
         public async Task<GenericResponse<VehiclesDto>> GetVehicleById(int id)
         {
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
-            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments");
+            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company");
 
             var veh = entity.FirstOrDefault();
 
@@ -342,14 +369,21 @@ namespace Application.Services
                 {
                     //Buscar reportes de uso
                     var query = await _unitOfWork.VehicleReportUseRepo.Get(x => x.ChecklistId == checklist.Id, includeProperties: "Checklist");
-                    
-                    foreach(var report in query)
+
+                    foreach (var report in query)
                     {
                         report.Checklist = null;
                         await _unitOfWork.VehicleReportUseRepo.Update(report);
                     }
 
                     await _unitOfWork.ChecklistRepo.Delete(checklist.Id);
+                }
+
+                //Borrar polizas
+                var policies = await _unitOfWork.PolicyRepo.Get(p => p.VehicleId == id);
+                foreach(var policy in policies)
+                {
+                    await _unitOfWork.PolicyRepo.Delete(policy.Id);
                 }
 
                 await _unitOfWork.VehicleRepo.Delete(id);
@@ -454,7 +488,7 @@ namespace Application.Services
                 veh.DesiredPerformance = vehiclesUpdateRequest.DesiredPerformance.Value;
             }
 
-            if(!string.IsNullOrEmpty(vehiclesUpdateRequest.VehicleObservation))
+            if (!string.IsNullOrEmpty(vehiclesUpdateRequest.VehicleObservation))
             {
                 veh.VehicleObservation = vehiclesUpdateRequest.VehicleObservation;
             }
@@ -622,10 +656,11 @@ namespace Application.Services
             response.success = true;
             return response;
         }
+        
         public async Task<GenericResponse<GraphicsDto>> GetServicesAndWorkshop(int VehicleId)
         {
             GenericResponse<GraphicsDto> response = new GenericResponse<GraphicsDto>();
-            var vehicle = await _unitOfWork.VehicleRepo.Get(filter: x => x.Id == VehicleId, includeProperties: "VehicleMaintenances,VehicleServices"); 
+            var vehicle = await _unitOfWork.VehicleRepo.Get(filter: x => x.Id == VehicleId, includeProperties: "VehicleMaintenances,VehicleServices");
             var vehicleresult = vehicle.FirstOrDefault();
             if (vehicle == null)
             {
@@ -662,9 +697,9 @@ namespace Application.Services
                 graphics.Vehicle = servicesresult;
                 graphics.VehicleMaintenances = servicesresult.VehicleMaintenances;
                 graphics.VehicleServices = servicesresult.VehicleServices;
-                dtograph.Add(graphics);     
+                dtograph.Add(graphics);
             }
-            
+
             response.success = true;
             response.Data = dtograph;
 

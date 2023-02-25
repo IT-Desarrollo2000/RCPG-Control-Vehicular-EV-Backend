@@ -36,13 +36,13 @@ namespace Application.Services
             IEnumerable<VehicleMaintenance> userApprovals = null;
             Expression<Func<VehicleMaintenance, bool>> Query = null;
 
-            if(!string.IsNullOrEmpty(filter.WhereServiceMaintenance))
+            if (!string.IsNullOrEmpty(filter.WhereServiceMaintenance))
             {
-                if(Query != null)
+                if (Query != null)
                 {
                     Query = Query.And(p => p.WhereServiceMaintenance.Contains(filter.WhereServiceMaintenance));
                 }
-                else { Query = p => p.WhereServiceMaintenance.Contains(filter.WhereServiceMaintenance);}
+                else { Query = p => p.WhereServiceMaintenance.Contains(filter.WhereServiceMaintenance); }
 
             }
 
@@ -52,19 +52,19 @@ namespace Application.Services
                 {
                     Query = Query.And(p => p.CarryPerson.Contains(filter.CarryPerson));
                 }
-                else { Query = p => p.CarryPerson.Contains(filter.CarryPerson);}
+                else { Query = p => p.CarryPerson.Contains(filter.CarryPerson); }
             }
 
-            if(!string.IsNullOrEmpty(filter.CauseServiceMaintenance))
+            if (!string.IsNullOrEmpty(filter.CauseServiceMaintenance))
             {
                 if (Query != null)
                 {
                     Query = Query.And(p => p.CauseServiceMaintenance.Contains(filter.CauseServiceMaintenance));
                 }
-                else { Query = p => p.CauseServiceMaintenance.Contains(filter.CauseServiceMaintenance);}
+                else { Query = p => p.CauseServiceMaintenance.Contains(filter.CauseServiceMaintenance); }
             }
 
-            if(filter.VehicleId.HasValue)
+            if (filter.VehicleId.HasValue)
             {
                 if (Query != null)
                 {
@@ -75,7 +75,7 @@ namespace Application.Services
 
             if (filter.NextServiceMaintenance.HasValue)
             {
-                if(Query!= null)
+                if (Query != null)
                 {
                     Query = Query.And(p => p.NextServiceMaintenance >= filter.NextServiceMaintenance.Value);
                 }
@@ -128,14 +128,14 @@ namespace Application.Services
                 response.success = false;
                 response.AddError("No existe Vehicle", $"No existe Vehiculo con el VehicleId {vehicleMaintenanceRequest.VehicleId} solicitado", 1);
                 return response;
-                
+
             }
 
             if (vehicleMaintenanceRequest.VehicleMaintenanceWorkshopId.HasValue)
             {
                 var existeMaintenenceWorkshop = await _unitOfWork.MaintenanceWorkshopRepo.Get(c => c.Id == vehicleMaintenanceRequest.VehicleMaintenanceWorkshopId.Value);
                 var resultMaintenenceWorkshop = existeMaintenenceWorkshop.FirstOrDefault();
-                
+
                 if (resultMaintenenceWorkshop == null)
                 {
                     response.success = false;
@@ -162,8 +162,8 @@ namespace Application.Services
                 return response;
             }
 
-            
-            
+
+
         }
 
         //Pull
@@ -172,10 +172,10 @@ namespace Application.Services
             GenericResponse<VehicleMaintenanceDto> response = new GenericResponse<VehicleMaintenanceDto>();
             var profile = await _unitOfWork.VehicleMaintenanceRepo.Get(p => p.Id == Id);
             var result = profile.FirstOrDefault();
-            if(result == null) 
+            if (result == null)
             {
                 response.success = false;
-                response.AddError("No existe VehicleMaintenance", $"No existe Maintenance con el VehicleMaintenanceId { Id } solicitado", 1);
+                response.AddError("No existe VehicleMaintenance", $"No existe Maintenance con el VehicleMaintenanceId {Id} solicitado", 1);
                 return response;
             }
 
@@ -244,7 +244,7 @@ namespace Application.Services
         //Delete
         public async Task<GenericResponse<VehicleMaintenanceDto>> DeleteVehicleManintenance(int Id)
         {
-            GenericResponse<VehicleMaintenanceDto> response= new GenericResponse<VehicleMaintenanceDto>();
+            GenericResponse<VehicleMaintenanceDto> response = new GenericResponse<VehicleMaintenanceDto>();
             var entidad = await _unitOfWork.VehicleMaintenanceRepo.Get(filter: p => p.Id == Id);
             var result = entidad.FirstOrDefault();
             if (result == null)
