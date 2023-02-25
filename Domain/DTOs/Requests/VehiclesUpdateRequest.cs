@@ -20,6 +20,8 @@ namespace Domain.DTOs.Requests
         public string? OwnersName { get; set; }
         public decimal? DesiredPerformance { get; set; }
         public string? VehicleObservation { get; set; }
+        public string? CarRegistrationPlate { get; set; }
+        public bool? IsClean { get; set; }
         public int? CurrentKM { get; set; }
         public int? InitialKM { get; set; }
     }

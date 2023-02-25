@@ -171,8 +171,8 @@ namespace Application.Services
 
                 if (expensesRequest.TypesOfExpensesId.HasValue)
                 {
-                    var typeOfExpense = await _unitOfWork.MaintenanceWorkshopRepo.GetById(expensesRequest.TypesOfExpensesId.Value);
-                    if (typeOfExpense != null)
+                    var typeOfExpense = await _unitOfWork.TypesOfExpensesRepo.GetById(expensesRequest.TypesOfExpensesId.Value);
+                    if (typeOfExpense == null)
                     {
                         response.AddError("Tipo de gasto no encontrado", $"El tipo de gasto con Id {expensesRequest.TypesOfExpensesId.Value} no existe", 2);
                         response.success = false;
@@ -199,7 +199,7 @@ namespace Application.Services
                 if (expensesRequest.VehicleMaintenanceWorkshopId.HasValue)
                 {
                     var workshop = await _unitOfWork.MaintenanceWorkshopRepo.GetById(expensesRequest.VehicleMaintenanceWorkshopId.Value);
-                    if (workshop != null)
+                    if (workshop == null)
                     {
                         response.AddError("Taller no encontrado", $"El taller con Id {expensesRequest.VehicleMaintenanceWorkshopId.Value} no existe", 3);
                         response.success = false;
@@ -210,8 +210,8 @@ namespace Application.Services
 
                 if (expensesRequest.VehicleReportId.HasValue)
                 {
-                    var report = await _unitOfWork.DestinationOfReportUseRepo.GetById(expensesRequest.VehicleReportId.Value);
-                    if (report != null)
+                    var report = await _unitOfWork.VehicleReportRepo.GetById(expensesRequest.VehicleReportId.Value);
+                    if (report == null)
                     {
                         response.AddError("Reporte no encontrado", $"El reporte con Id {expensesRequest.VehicleReportId.Value} no existe", 4);
                         response.success = false;
