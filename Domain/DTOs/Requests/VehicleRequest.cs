@@ -49,8 +49,12 @@ namespace Domain.DTOs.Requests
         [Required]
         public int CurrentKM { get; set; }
         public string? VehicleObservation { get; set; } = "";
+        public string? CarRegistrationPlate { get; set; }
+        [Required]
+        public bool IsClean { get; set; } 
         public List<int> DepartmentsToAssign { get; set; }
         public List<IFormFile> Images { get; set; }
+
     }
 
     public class VehicleImageRequest
