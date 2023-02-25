@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Domain.CustomEntities;
+using Domain.DTOs.Reponses;
+using Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +11,8 @@ namespace Application.Interfaces
 {
     public interface IToolsServices
     {
-
+        Task<GenericResponse<List<LicenceExpiredDto>>> GetLicencesExpirations(LicenceExpStopLight request);
+        Task<GenericResponse<List<MaintenanceSpotlightDto>>> GetMaintenanceSpotlight();
+        Task<GenericResponse<List<PolicyExpiredDto>>> GetPoliciesExpiration(LicenceExpStopLight request);
     }
 }

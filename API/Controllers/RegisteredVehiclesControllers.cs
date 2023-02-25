@@ -25,7 +25,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<Vehicle>))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<VehiclesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("")]
@@ -43,7 +43,7 @@ namespace API.Controllers
                 HasPreviousPage = vehicles.HasPreviousPage
             };
 
-            var response = new GenericResponse<IEnumerable<Vehicle>>(vehicles)
+            var response = new GenericResponse<IEnumerable<VehiclesDto>>(vehicles)
             {
                 Meta = metadata,
                 success = true,
@@ -64,6 +64,17 @@ namespace API.Controllers
         {
             var result = await _registeredVehiclesServices.GetVehicleById(id);
             if (result.Data == null) { return NotFound($"No existe vehiculo con el Id {id}"); }
+            if (result.success) { return Ok(result); } else { return NotFound(result); }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetByQR/{QRId}")]
+        public async Task<IActionResult> GetVehicleByQRId(string QRId)
+        {
+            var result = await _registeredVehiclesServices.GetVehicleByQRId(QRId);
             if (result.success) { return Ok(result); } else { return NotFound(result); }
         }
 

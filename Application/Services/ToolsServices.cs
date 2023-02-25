@@ -3,11 +3,6 @@ using AutoMapper;
 using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
 using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -22,35 +17,336 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-       /* //GETALL
-        public async Task<GenericResponse<List<VehicleReportUseDto>>> GetAll()
+        public async Task<GenericResponse<List<LicenceExpiredDto>>> GetLicencesExpirations(LicenceExpStopLight request)
         {
-            GenericResponse<List<PolicyDto>> response = new GenericResponse<List<PolicyDto>>();
-            var entidades = await _unitOfWork.PolicyRepo.Get(includeProperties: "Vehicle");
-            //if(entidades == null) return null;
-            var dtos = _mapper.Map<List<PolicyDto>>(entidades);
-            response.success = true;
-            response.Data = dtos;
-            return response;
-        }*/
+            GenericResponse<List<LicenceExpiredDto>> response = new GenericResponse<List<LicenceExpiredDto>>();
 
-        //public async Task<object> GetLicencesExpirations(LicenceExpStopLight request)
-        //{
-        //    GenericResponse<object> response = new GenericResponse<object>();
+            try
+            {
+                switch (request)
+                {
+                    case LicenceExpStopLight.EXPIRADOS: 
+                        var explicences = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate <= DateTime.UtcNow);
+                        var dtos = new List<LicenceExpiredDto>();
+                        foreach(var licence in explicences)
+                        {
+                            var dto = _mapper.Map<LicenceExpiredDto>(licence);
+                            dto.StatusName = "Expirado";
+                            dto.StatusMessage = "La Licencia se encuentra expirada";
+                            dto.StatusColor = "#e41212";
+                            dto.ExpirationType = LicenceExpStopLight.EXPIRADOS;
 
-        //    try
-        //    {
-        //        //Consultar la lista de licencias
-        //        //
-        //        var licences = await _unitOfWork.UserProfileRepo.Get(l => l.LicenceExpirationDate != null);
+                            dtos.Add(dto);
+                        }
 
-        //        return null;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response.success = true;
+                        response.Data = dtos;
+                        response.success = true;
 
-        //    }
-        //}
+                        return response;
+                    case LicenceExpStopLight.TRES_MESES:
+                        var licences3m = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate >= DateTime.UtcNow.AddMonths(3) && u.LicenceExpirationDate <= DateTime.UtcNow.AddMonths(6));
+
+                        var dtos1 = new List<LicenceExpiredDto>();
+                        foreach (var licence in licences3m)
+                        {
+                            var dto = _mapper.Map<LicenceExpiredDto>(licence);
+                            dto.StatusName = "3 MESES";
+                            dto.StatusMessage = "Licencia con 3 a 6 meses de vigencia";
+                            dto.StatusColor = "#efbc38";
+                            dto.ExpirationType = LicenceExpStopLight.TRES_MESES;
+
+                            dtos1.Add(dto);
+                        }
+
+                        response.Data = dtos1;
+                        response.success = true;
+
+                        return response;
+                    case LicenceExpStopLight.SEIS_MESES:
+                        var licences6m = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate >= DateTime.UtcNow.AddMonths(6) && u.LicenceExpirationDate <= DateTime.UtcNow.AddMonths(12));
+
+                        var dtos2 = new List<LicenceExpiredDto>();
+                        foreach (var licence in licences6m)
+                        {
+                            var dto = _mapper.Map<LicenceExpiredDto>(licence);
+                            dto.StatusName = "6 MESES";
+                            dto.StatusMessage = "Licencia con 6 a 12 meses de vigencia";
+                            dto.StatusColor = "#f3d132";
+                            dto.ExpirationType = LicenceExpStopLight.SEIS_MESES;
+
+                            dtos2.Add(dto);
+                        }
+
+                        response.Data = dtos2;
+                        response.success = true;
+
+                        return response;
+                    case LicenceExpStopLight.DOCE_MESES:
+                        var licences12m = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate >= DateTime.UtcNow.AddMonths(12));
+
+                        var dtos3 = new List<LicenceExpiredDto>();
+                        foreach (var licence in licences12m)
+                        {
+                            var dto = _mapper.Map<LicenceExpiredDto>(licence);
+                            dto.StatusName = "12 MESES";
+                            dto.StatusMessage = "Licencia con 12 meses o mas de vigencia";
+                            dto.StatusColor = "#3ee80b";
+                            dto.ExpirationType = LicenceExpStopLight.DOCE_MESES;
+
+                            dtos3.Add(dto);
+                        }
+
+                        response.Data = dtos3;
+                        response.success = true;
+
+                        return response;
+                    default:
+                        response.success = false;
+                        return response;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<List<PolicyExpiredDto>>> GetPoliciesExpiration(LicenceExpStopLight request)
+        {
+            GenericResponse<List<PolicyExpiredDto>> response = new GenericResponse<List<PolicyExpiredDto>>();
+
+            try
+            {
+                switch (request)
+                {
+                    case LicenceExpStopLight.EXPIRADOS:
+                        var expPolicies = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate <= DateTime.UtcNow, includeProperties: "Vehicle");
+                        var dtos = new List<PolicyExpiredDto>();
+                        foreach (var policy in expPolicies)
+                        {
+                            var dto = _mapper.Map<PolicyExpiredDto>(policy);
+                            dto.StatusName = "Expirado";
+                            dto.StatusMessage = "La poliza se encuentra expirada";
+                            dto.StatusColor = "#e41212";
+                            dto.ExpirationType = LicenceExpStopLight.EXPIRADOS;
+
+                            dtos.Add(dto);
+                        }
+
+                        response.Data = dtos;
+                        response.success = true;
+
+                        return response;
+                    case LicenceExpStopLight.TRES_MESES:
+                        var policy3m = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate >= DateTime.UtcNow.AddMonths(3) && u.ExpirationDate <= DateTime.UtcNow.AddMonths(6), includeProperties: "Vehicle");
+
+                        var dtos1 = new List<PolicyExpiredDto>();
+                        foreach (var policy in policy3m)
+                        {
+                            var dto = _mapper.Map<PolicyExpiredDto>(policy);
+                            dto.StatusName = "3 MESES";
+                            dto.StatusMessage = "Poliza con 3 a 6 meses de vigencia";
+                            dto.StatusColor = "#efbc38";
+                            dto.ExpirationType = LicenceExpStopLight.TRES_MESES;
+
+                            dtos1.Add(dto);
+                        }
+
+                        response.Data = dtos1;
+                        response.success = true;
+
+                        return response;
+                    case LicenceExpStopLight.SEIS_MESES:
+                        var policy6m = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate >= DateTime.UtcNow.AddMonths(6) && u.ExpirationDate <= DateTime.UtcNow.AddMonths(12), includeProperties: "Vehicle");
+
+                        var dtos2 = new List<PolicyExpiredDto>();
+                        foreach (var policy in policy6m)
+                        {
+                            var dto = _mapper.Map<PolicyExpiredDto>(policy);
+                            dto.StatusName = "6 MESES";
+                            dto.StatusMessage = "Poliza con 6 a 12 meses de vigencia";
+                            dto.StatusColor = "#f3d132";
+                            dto.ExpirationType = LicenceExpStopLight.SEIS_MESES;
+
+                            dtos2.Add(dto);
+                        }
+
+                        response.Data = dtos2;
+                        response.success = true;
+
+                        return response;
+                    case LicenceExpStopLight.DOCE_MESES:
+                        var policy12m = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate   >= DateTime.UtcNow.AddMonths(12), includeProperties: "Vehicle");
+
+                        var dtos3 = new List<PolicyExpiredDto>();
+                        foreach (var policy in policy12m)
+                        {
+                            var dto = _mapper.Map<PolicyExpiredDto>(policy);
+                            dto.StatusName = "12 MESES";
+                            dto.StatusMessage = "Poliza con 12 meses o mas de vigencia";
+                            dto.StatusColor = "#3ee80b";
+                            dto.ExpirationType = LicenceExpStopLight.DOCE_MESES;
+
+                            dtos3.Add(dto);
+                        }
+
+                        response.Data = dtos3;
+                        response.success = true;
+
+                        return response;
+                    default:
+                        response.success = false;
+                        return response;
+                }
+            }
+            catch(Exception ex) 
+            {
+                response.success = false;
+                response.AddError("Error",ex.Message, 1);
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<List<MaintenanceSpotlightDto>>> GetMaintenanceSpotlight()
+        {
+            GenericResponse<List<MaintenanceSpotlightDto>> response = new GenericResponse<List<MaintenanceSpotlightDto>>();
+
+            try
+            {
+                //Lista de vehiculos de pronto servicio
+                List<MaintenanceSpotlightDto> dtos = new List<MaintenanceSpotlightDto>();
+
+                //Obtener los autos
+                var vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: "VehicleServices");
+                
+                foreach(var vehicle in vehicles)
+                {
+                    var lastServicesQuery = await _unitOfWork.VehicleServiceRepo.Get(filter: s => s.Status == VehicleServiceStatus.FINALIZADO && s.VehicleId == vehicle.Id, includeProperties: "Vehicle");
+                    var lastServices = lastServicesQuery.FirstOrDefault();
+                    
+                    //Verificar si ya cuenta con un servicio previo
+                    if(lastServices != null)
+                    {
+                        //Revisar por fecha
+                        TimeSpan timespan = lastServices.NextService.Value - DateTime.UtcNow;
+                        switch (timespan.TotalDays)
+                        {
+                            case double d when d > 30:
+                                MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(lastServices);
+                                dto.StatusMessage = "No requiere de servicio";
+                                dto.StatusName = "OK";
+                                dto.StatusColor = "#3ee80b";
+                                dto.AlertType = StopLightAlert.VERDE;
+                                dtos.Add(dto);
+                                break;
+                            case double d when d >= 15 && d <= 30:
+                                MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(lastServices);
+                                dtoyellow.StatusMessage = "El vehiculo requiere de servicio pronto";
+                                dtoyellow.StatusName = "ATENCIÓN";
+                                dtoyellow.StatusColor = "#f3d132";
+                                dtoyellow.AlertType = StopLightAlert.AMARILLO;
+                                dtos.Add(dtoyellow);
+                                break;
+                            case double d when d >= 5 && d < 15:
+                                MaintenanceSpotlightDto dtogreen = _mapper.Map<MaintenanceSpotlightDto>(lastServices);
+                                dtogreen.StatusMessage = "El vehiculo requiere de servicio";
+                                dtogreen.StatusName = "ATENCIÓN!!";
+                                dtogreen.StatusColor = "#efbc38";
+                                dtogreen.AlertType= StopLightAlert.NARANJA;
+                                dtos.Add(dtogreen);
+                                break;
+                            case double d when d < 5:
+                                MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(lastServices);
+                                dtored.StatusMessage = "Es requerido llevar el vehiculo a servicio";
+                                dtored.StatusName = "SERVICIO NECESARIO!!";
+                                dtored.StatusColor = "#e41212";
+                                dtored.AlertType = StopLightAlert.ROJO;
+                                dtos.Add(dtored);
+                                break;
+                        }
+
+                        //Revisar por odometro
+                        if (lastServices.NextServiceKM <= vehicle.CurrentKM)
+                        {
+                            MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(lastServices);
+                            dtored.StatusMessage = "Es requerido llevar el vehiculo a servicio";
+                            dtored.StatusName = "SERVICIO NECESARIO!!";
+                            dtored.StatusColor = "#e41212";
+                            dtored.AlertType = StopLightAlert.ROJO;
+                            dtos.Add(dtored);
+                        }
+                    }
+                    else
+                    {
+                        if(vehicle.CurrentKM >= vehicle.ServicePeriodKM)
+                        {
+                            MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                            dtored.Type = VehicleServiceType.Kilometraje;
+                            dtored.StatusMessage = "Es requerido llevar el vehiculo a servicio";
+                            dtored.StatusName = "SERVICIO NECESARIO!!";
+                            dtored.StatusColor = "#e41212";
+                            dtored.AlertType = StopLightAlert.ROJO;
+                            dtos.Add(dtored);
+                        }
+
+                        var timespan = vehicle.CreatedDate.Value.AddMonths(vehicle.ServicePeriodMonths) - DateTime.UtcNow;
+                        switch (timespan.TotalDays)
+                        {
+                            case double d when d > 30:
+                                MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                dto.Type = VehicleServiceType.Fecha;
+                                dto.StatusMessage = "No requiere de servicio";
+                                dto.StatusName = "OK";
+                                dto.StatusColor = "#3ee80b";
+                                dto.AlertType = StopLightAlert.VERDE;
+                                dtos.Add(dto);
+                                break;
+                            case double d when d >= 15 && d <= 30:
+                                MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                dtoyellow.Type = VehicleServiceType.Fecha;
+                                dtoyellow.StatusMessage = "El vehiculo requiere de servicio pronto";
+                                dtoyellow.StatusName = "ATENCIÓN";
+                                dtoyellow.StatusColor = "#f3d132";
+                                dtoyellow.AlertType = StopLightAlert.AMARILLO;
+                                dtos.Add(dtoyellow);
+                                break;
+                            case double d when d >= 5 && d < 15:
+                                MaintenanceSpotlightDto dtogreen = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                dtogreen.Type = VehicleServiceType.Fecha;
+                                dtogreen.StatusMessage = "El vehiculo requiere de servicio";
+                                dtogreen.StatusName = "ATENCIÓN!!";
+                                dtogreen.StatusColor = "#efbc38";
+                                dtogreen.AlertType = StopLightAlert.NARANJA;
+                                dtos.Add(dtogreen);
+                                break;
+                            case double d when d < 5:
+                                MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                dtored.Type = VehicleServiceType.Fecha;
+                                dtored.StatusMessage = "Es requerido llevar el vehiculo a servicio";
+                                dtored.StatusName = "SERVICIO NECESARIO!!";
+                                dtored.StatusColor = "#e41212";
+                                dtored.AlertType = StopLightAlert.ROJO;
+                                dtos.Add(dtored);
+                                break;
+                        }
+                    }
+                }
+
+                response.success = true;
+                response.Data = dtos;
+
+                return response;
+            }
+            catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
+        }
     }
 }

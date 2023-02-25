@@ -113,18 +113,11 @@ namespace API.Controllers
         //Delete
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(CompanyDto))]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete("{id}")]
         public async Task<ActionResult<CompanyDto>> DeleteCompany(int id)
         {
             var existe = await _companyServices.DeleteCompany(id);
-
-            if (existe == null)
-            {
-                return NotFound($"No existe company con el Id {id} para borrar");
-            }
 
             if (existe.success)
             {
@@ -132,11 +125,8 @@ namespace API.Controllers
             }
             else
             {
-                return NotFound();
+                return BadRequest(existe);
             }
-
         }
-
-
     }
 }

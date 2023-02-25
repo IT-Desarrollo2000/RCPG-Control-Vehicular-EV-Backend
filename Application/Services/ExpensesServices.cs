@@ -144,7 +144,8 @@ namespace Application.Services
                 await _unitOfWork.SaveChangesAsync();
                 response.success = true;
                 var expensesDto = _mapper.Map<ExpensesDto>(entity);
-                expensesDto.PhotosOfSpending.AddRange(images);
+                var imagesDto = _mapper.Map<List<PhotosOfSpendingDto>>(images);
+                expensesDto.PhotosOfSpending.AddRange(imagesDto);
                 response.Data = expensesDto;
                 return response;
             } 

@@ -12,6 +12,7 @@ namespace Domain.DTOs.Reponses
         public ExpensesDto()
         {
             Vehicles = new List<VehiclesDto>();
+            PhotosOfSpending= new List<PhotosOfSpendingDto>();
         }
         public int Id { get; set; }
         public TypesOfExpensesDto TypesOfExpenses { get; set; }
@@ -23,7 +24,7 @@ namespace Domain.DTOs.Reponses
         public string ERPFolio { get; set; }
         public int? VehicleMaintenanceWorkshopId { get; set; }
         public MaintenanceWorkshopDto? VehicleMaintenanceWorkshop { get; set; }
-        public List<PhotosOfSpending> PhotosOfSpending { get; set; }
+        public List<PhotosOfSpendingDto> PhotosOfSpending { get; set; }
         public VehicleReportDto VehicleReport { get; set; }
 
     }

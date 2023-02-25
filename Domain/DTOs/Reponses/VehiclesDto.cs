@@ -36,9 +36,10 @@ namespace Domain.DTOs.Reponses
         public int? CurrentKM { get; set; }
         public int? InitialKM { get; set; }
         public List<VehicleImageDto> VehicleImages { get; set; }
-        public List<Checklist> Checklists { get; set; }
-        public List<Departaments> AssignedDepartments { get; set; }
+        public List<ChecklistDto> Checklists { get; set; }
+        public List<DepartamentDto> AssignedDepartments { get; set; }
         public string VehicleQRId { get; set; }
         public string? VehicleObservation { get; set; }
+        public ShortPolicyDto? Policy { get; set; }
     }
 }
