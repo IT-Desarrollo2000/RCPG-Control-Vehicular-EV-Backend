@@ -23,13 +23,14 @@ namespace Application
             services.AddTransient<IChecklistServices, ChecklistServices>();
             services.AddTransient<IExpensesServices, ExpensesServices>();
             services.AddTransient<ITypeOfExpensesServices, TypeOfExpensesServices>();
-            services.AddTransient<IVehicleMaintenanceService, VehicleMaintenanceServices >();
+            services.AddTransient<IVehicleMaintenanceService, VehicleMaintenanceServices>();
             services.AddTransient<IMaintenanceWorkshopService, MaintenanceWorkshopServices>();
             services.AddTransient<IRegisteredVehiclesServices, RegisteredVehiclesServices>();
             services.AddTransient<IVehicleReportService, VehicleReportServices>();
             services.AddTransient<IDestinationOfReportUseService, DestinationOfReportUseServices>();
             services.AddTransient<IVehicleReportUseService, VehicleReportUseServices>();
             services.AddTransient<IPolicyService, PolicyServices>();
+            services.AddTransient<IToolsServices, ToolsServices>();
 
             //Parametros para validación de tokens
             var tokenValidationParameters = new TokenValidationParameters

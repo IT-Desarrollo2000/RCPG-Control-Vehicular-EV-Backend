@@ -8,11 +8,6 @@ using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Application.Services
 {
@@ -243,7 +238,7 @@ namespace Application.Services
                         var uploadDate = DateTime.UtcNow;
                         Random rndm = new Random();
                         string FileExtn = System.IO.Path.GetExtension(image.FileName);
-                        var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.Serial}{rndm.Next(1,1000)}{FileExtn}";
+                        var filePath = $"{entity.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.Serial}{rndm.Next(1, 1000)}{FileExtn}";
                         var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.RegisteredCars, filePath);
 
                         //Agregar la imagen en BD
@@ -323,8 +318,8 @@ namespace Application.Services
                 {
                     //Buscar reportes de uso
                     var query = await _unitOfWork.VehicleReportUseRepo.Get(x => x.ChecklistId == checklist.Id, includeProperties: "Checklist");
-                    
-                    foreach(var report in query)
+
+                    foreach (var report in query)
                     {
                         report.Checklist = null;
                         await _unitOfWork.VehicleReportUseRepo.Update(report);
@@ -435,7 +430,7 @@ namespace Application.Services
                 veh.DesiredPerformance = vehiclesUpdateRequest.DesiredPerformance.Value;
             }
 
-            if(!string.IsNullOrEmpty(vehiclesUpdateRequest.VehicleObservation))
+            if (!string.IsNullOrEmpty(vehiclesUpdateRequest.VehicleObservation))
             {
                 veh.VehicleObservation = vehiclesUpdateRequest.VehicleObservation;
             }
@@ -596,7 +591,7 @@ namespace Application.Services
         public async Task<GenericResponse<GraphicsDto>> GetServicesAndWorkshop(int VehicleId)
         {
             GenericResponse<GraphicsDto> response = new GenericResponse<GraphicsDto>();
-            var vehicle = await _unitOfWork.VehicleRepo.Get(filter: x => x.Id == VehicleId, includeProperties: "VehicleMaintenances,VehicleServices"); 
+            var vehicle = await _unitOfWork.VehicleRepo.Get(filter: x => x.Id == VehicleId, includeProperties: "VehicleMaintenances,VehicleServices");
             var vehicleresult = vehicle.FirstOrDefault();
             if (vehicle == null)
             {
@@ -633,9 +628,9 @@ namespace Application.Services
                 graphics.Vehicle = servicesresult;
                 graphics.VehicleMaintenances = servicesresult.VehicleMaintenances;
                 graphics.VehicleServices = servicesresult.VehicleServices;
-                dtograph.Add(graphics);     
+                dtograph.Add(graphics);
             }
-            
+
             response.success = true;
             response.Data = dtograph;
 

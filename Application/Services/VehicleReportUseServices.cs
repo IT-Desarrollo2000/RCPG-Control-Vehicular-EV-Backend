@@ -11,12 +11,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Application.Services
 {
@@ -26,8 +22,9 @@ namespace Application.Services
         private readonly IMapper _mapper;
         private readonly PaginationOptions _paginationOptions;
         private readonly UserManager<AppUser> _userManager;
+        private readonly VehicleReportUseProceso _vehicleReportUseProceso;
 
-        public VehicleReportUseServices( IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options, UserManager<AppUser> userManager) 
+        public VehicleReportUseServices(IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options, UserManager<AppUser> userManager)
         {
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
@@ -45,7 +42,7 @@ namespace Application.Services
             IEnumerable<VehicleReportUse> useReports = null;
             Expression<Func<VehicleReportUse, bool>> Query = null;
 
-            if(filter.VehicleId.HasValue)
+            if (filter.VehicleId.HasValue)
             {
                 if (Query != null)
                 {
@@ -63,7 +60,7 @@ namespace Application.Services
                 else { Query = p => p.FinalMileage >= filter.FinalMileage.Value; }
             }
 
-            if(filter.StatusReportUse.HasValue)
+            if (filter.StatusReportUse.HasValue)
             {
                 if (Query != null)
                 {
@@ -117,7 +114,7 @@ namespace Application.Services
                 else { Query = p => p.AppUserId >= filter.AppUserId.Value; }
             }
 
-            if(filter.CurrentFuelLoad.HasValue)
+            if (filter.CurrentFuelLoad.HasValue)
             {
                 if (Query != null)
                 {
@@ -126,9 +123,9 @@ namespace Application.Services
                 else { Query = p => p.CurrentFuelLoad >= filter.CurrentFuelLoad.Value; }
             }
 
-            if(filter.Verification.HasValue)
+            if (filter.Verification.HasValue)
             {
-                if (Query != null) 
+                if (Query != null)
                 {
                     Query = Query.And(p => p.Verification == filter.Verification.Value);
                 }
@@ -158,7 +155,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleReportUseDto>> GetVehicleReporUseById(int Id)
         {
             GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
-            var profile = await _unitOfWork.VehicleReportUseRepo.Get(filter: p => p.Id == Id, includeProperties:"Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations");
+            var profile = await _unitOfWork.VehicleReportUseRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations");
             var result = profile.FirstOrDefault();
 
             if (result == null)
@@ -167,7 +164,7 @@ namespace Application.Services
                 response.AddError("No existe VehicleReportUse", $"No existe ReportUse con el Id {Id} solicitado ");
                 return response;
             }
-    
+
 
             var VehicleReportUseDto = _mapper.Map<VehicleReportUseDto>(result);
             response.success = true;
@@ -175,170 +172,292 @@ namespace Application.Services
             return response;
         }
 
-        //Post 
-        public async Task<GenericResponse<VehicleReportUseDto>> PostVehicleReporUse(VehicleReportUseRequest vehicleReportUseRequest)
+        //PostProceso
+        public async Task<GenericResponse<VehicleReportUseDto>> PostEnProceso(VehicleReportUseProceso vehicleReportUseProceso)
         {
             GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
             GenericResponse<VehiclesDto> responseVehicle = new GenericResponse<VehiclesDto>();
 
+            try
+            {
+                if (vehicleReportUseProceso.StatusReportUse == Domain.Enums.ReportUseType.Cancelado || vehicleReportUseProceso.StatusReportUse == Domain.Enums.ReportUseType.Finalizado)
+                {
+                    response.success = false;
+                    response.AddError("No puedes crear reporte con la siguiente caracteristicas ->", $"No puedes crear reporte con el status {vehicleReportUseProceso.StatusReportUse} solicitado", 1);
+                    return response;
+                }
 
-            var existeVehicleMaintenance = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseRequest.VehicleId);
-            var resultVehicleMaintenance = existeVehicleMaintenance.FirstOrDefault();
-            if (resultVehicleMaintenance == null)
+                var existeVehicleMaintenance = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseProceso.VehicleId);
+                var resultVehicleMaintenance = existeVehicleMaintenance.FirstOrDefault();
+                if (resultVehicleMaintenance == null)
+                {
+                    response.success = false;
+                    response.AddError("No existe Vehicle", $"No existe Vehiculo con el VehicleId {vehicleReportUseProceso.VehicleId} solicitado", 1);
+                    return response;
+
+                }
+
+
+                if (vehicleReportUseProceso.VehicleId == resultVehicleMaintenance.Id)
+                {
+                    if (resultVehicleMaintenance.VehicleStatus == Domain.Enums.VehicleStatus.EN_USO)
+                    {
+                        response.success = false;
+                        response.AddError("No pudes crear otro reporte de uso con este VehicleId, esta en uso actualmente", $"No puedes usar VehicleId {vehicleReportUseProceso.VehicleId} solicitado", 1);
+                        return response;
+                    }
+
+                }
+
+                if (vehicleReportUseProceso.UserProfileId.HasValue)
+                {
+                    var existeUserProfile = await _unitOfWork.UserProfileRepo.Get(c => c.Id == vehicleReportUseProceso.UserProfileId.Value);
+                    var resultUserProfile = existeUserProfile.FirstOrDefault();
+
+                    if (resultUserProfile == null)
+                    {
+                        response.success = false;
+                        response.AddError("No existe UserProfile", $"No existe UserProfileId {vehicleReportUseProceso.UserProfileId} para cargar", 1);
+                        return response;
+                    }
+                }
+
+                if (vehicleReportUseProceso.StatusReportUse == Domain.Enums.ReportUseType.enProceso)//AQUI IBA CANCELADO ESTATUS
+                {
+                    vehicleReportUseProceso.StatusReportUse = Domain.Enums.ReportUseType.enProceso;
+                    var existeVehicle = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseProceso.VehicleId);
+                    var resultVehicle = existeVehicle.FirstOrDefault();
+
+                    if (vehicleReportUseProceso.StatusReportUse == Domain.Enums.ReportUseType.enProceso)
+                    {
+                        resultVehicle.VehicleStatus = Domain.Enums.VehicleStatus.EN_USO;
+                        await _unitOfWork.VehicleRepo.Update(resultVehicle);
+                        response.success = true;
+                    }
+
+                    var entidad = _mapper.Map<VehicleReportUse>(vehicleReportUseProceso);
+                    entidad.InitialMileage = Convert.ToInt32(resultVehicle.CurrentKM);
+                    await _unitOfWork.VehicleReportUseRepo.Add(entidad);
+                    await _unitOfWork.SaveChangesAsync();
+
+
+                    //Guardar destinos
+
+                    var lastReportUse = await _unitOfWork.VehicleReportUseRepo.Get();
+                    var resultLastCheck = lastReportUse.LastOrDefault();
+
+                    var destination = new DestinationOfReportUse()
+                    {
+                        DestinationName = vehicleReportUseProceso.Destination.DestinationName,
+                        Latitud = vehicleReportUseProceso.Destination.Latitud,
+                        Longitude = vehicleReportUseProceso.Destination.Longitude,
+                        VehicleReportUseId = resultLastCheck.Id
+                    };
+
+                    await _unitOfWork.DestinationOfReportUseRepo.Add(destination);
+                    await _unitOfWork.SaveChangesAsync();
+
+                   response.success = true;
+                    var VehicleReportUseDTO = _mapper.Map<VehicleReportUseDto>(entidad);
+                    response.Data = VehicleReportUseDTO;
+                    return response;
+
+                }
+                else
+                {
+                    var existeVehicle = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseProceso.VehicleId);
+                    var resultVehicle = existeVehicle.FirstOrDefault();
+
+                    var entidad = _mapper.Map<VehicleReportUse>(vehicleReportUseProceso);
+                    entidad.InitialMileage = Convert.ToInt32(resultVehicleMaintenance.CurrentKM);
+                    await _unitOfWork.VehicleReportUseRepo.Add(entidad);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    var lastReportUse = await _unitOfWork.VehicleReportUseRepo.Get();
+                    var resultLastCheck = lastReportUse.OrderByDescending(pr => pr.Id).LastOrDefault();
+
+
+                    var destination = new DestinationOfReportUse()
+                    {
+                        DestinationName = vehicleReportUseProceso.Destination.DestinationName,
+                        Latitud = vehicleReportUseProceso.Destination.Latitud,
+                        Longitude = vehicleReportUseProceso.Destination.Longitude,
+                        VehicleReportUseId = resultLastCheck.Id
+                    };
+
+                    await _unitOfWork.DestinationOfReportUseRepo.Add(destination);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    response.success = true;
+                    var VehicleReportUseDTO = _mapper.Map<VehicleReportUseDto>(entidad);
+                    response.Data = VehicleReportUseDTO;
+                    return response;
+
+                }
+            }
+
+            catch (Exception ex)
             {
                 response.success = false;
-                response.AddError("No existe Vehicle", $"No existe Vehiculo con el VehicleId {vehicleReportUseRequest.VehicleId} solicitado", 1);
+                response.AddError("Error", ex.Message, 1);
                 return response;
 
             }
 
-            var existeV = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseRequest.VehicleId);
-            var resultV = existeV.FirstOrDefault();
-            if (vehicleReportUseRequest.VehicleId == resultV.Id)
+
+        }
+
+        //PostViajeRapido
+        public async Task<GenericResponse<VehicleReportUseDto>> PostViajeRapido(VehicleReportUseFastTravel vehicleReportUseFastTravel)
+        {
+            GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
+            GenericResponse<VehiclesDto> responseVehicle = new GenericResponse<VehiclesDto>();
+
+            try
             {
-                if (resultV.VehicleStatus == Domain.Enums.VehicleStatus.EN_USO)
+                if (vehicleReportUseFastTravel.StatusReportUse == Domain.Enums.ReportUseType.Cancelado || vehicleReportUseFastTravel.StatusReportUse == Domain.Enums.ReportUseType.Finalizado)
                 {
                     response.success = false;
-                    response.AddError("No pudes crear otro reporte de uso con este VehicleId, esta en uso actualmente", $"No puedes usar VehicleId {vehicleReportUseRequest.VehicleId} solicitado", 1);
-                    return response;
-                }
-
-            }
-
-            if (vehicleReportUseRequest.ChecklistId.HasValue)
-            {
-                var existeCheckList = await _unitOfWork.ChecklistRepo.Get(c => c.Id == vehicleReportUseRequest.ChecklistId.Value);
-                var resultCheckList = existeCheckList.FirstOrDefault();
-
-                if(resultCheckList == null)
-                {
-                    response.success = false;
-                    response.AddError("No existe CheckList", $"No existe CheckListId {vehicleReportUseRequest.ChecklistId} para cargar", 1);
-                    return response;
-                }
-            }
-            if (vehicleReportUseRequest.UserProfileId.HasValue)
-            {
-                var existeUserProfile = await _unitOfWork.UserProfileRepo.Get(c => c.Id == vehicleReportUseRequest.UserProfileId.Value);
-                var resultUserProfile = existeUserProfile.FirstOrDefault();
-
-                if (resultUserProfile == null)
-                {
-                    response.success = false;
-                    response.AddError("No existe UserProfile", $"No existe UserProfileId {vehicleReportUseRequest.UserProfileId} para cargar", 1);
-                    return response;
-                }
-            }
-           /* if (vehicleReportUseRequest.AppUserId.HasValue)
-            {
-                var existeAppUser = await _userManager.Users.SingleOrDefaultAsync(c => c.Id == vehicleReportUseRequest.AppUserId.Value);
-                if (existeAppUser == null)
-                {
-                    response.success = false;
-                    response.AddError("No existe AppUser", $"No existe AppUserId {vehicleReportUseRequest.AppUserId} para cargar", 1);
+                    response.AddError("No puedes crear reporte con la siguiente caracteristicas ->", $"No puedes crear reporte con el status {vehicleReportUseFastTravel.StatusReportUse} solicitado", 1);
                     return response;
                 }
 
 
-            }*/
-
-            ///prueba
-            if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.ViajeRapido)
-            {
-                vehicleReportUseRequest.AppUserId = null;
-                var existeVehicle = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseRequest.VehicleId);
-                var resultVehicle = existeVehicle.FirstOrDefault();
-                if (resultVehicle == null)
+                var existeVehicleMaintenance = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseFastTravel.VehicleId);
+                var resultVehicleMaintenance = existeVehicleMaintenance.FirstOrDefault();
+                if (resultVehicleMaintenance == null)
                 {
                     response.success = false;
-                    response.AddError("No existe Vehicle, no puede ir vacio este campo para Viaje Rapido", $"No existe Vehiculo con el VehicleId {vehicleReportUseRequest.VehicleId} solicitado", 1);
+                    response.AddError("No existe Vehicle", $"No existe Vehiculo con el VehicleId {vehicleReportUseFastTravel.VehicleId} solicitado", 1);
                     return response;
 
                 }
 
-                if (vehicleReportUseRequest.FinalMileage == null)
+                if (vehicleReportUseFastTravel.VehicleId == resultVehicleMaintenance.Id)
                 {
-                    response.success = false;
-                    response.AddError("No puede ir Vacio(Null este campo)", $"Insertar Valor para FinalMinage del tipo de reporte viaje rapido solicitado", 1);
-                    return response;
+                    if (resultVehicleMaintenance.VehicleStatus == Domain.Enums.VehicleStatus.EN_USO)
+                    {
+                        response.success = false;
+                        response.AddError("No pudes crear otro reporte de uso con este VehicleId, esta en uso actualmente", $"No puedes usar VehicleId {vehicleReportUseFastTravel.VehicleId} solicitado", 1);
+                        return response;
+                    }
 
                 }
 
-                resultVehicle.VehicleStatus = Domain.Enums.VehicleStatus.EN_USO;
-                await _unitOfWork.VehicleRepo.Update(resultVehicle);
-                response.success = true;
-
-            }
-
-            if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.enProceso || vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.Cancelado)
-            {
-                //vehicleReportUseRequest.CurrentFuelLoad = null;
-                vehicleReportUseRequest.Verification = false;
-                vehicleReportUseRequest.AppUserId = null;
-
-                var existeVehicle = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseRequest.VehicleId);
-                var resultVehicle = existeVehicle.FirstOrDefault();
-                if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.enProceso)
+                if (vehicleReportUseFastTravel.UserProfileId.HasValue)
                 {
-                    resultVehicle.VehicleStatus = Domain.Enums.VehicleStatus.EN_USO;
-                    await _unitOfWork.VehicleRepo.Update(resultVehicle);
+                    var existeUserProfile = await _unitOfWork.UserProfileRepo.Get(c => c.Id == vehicleReportUseFastTravel.UserProfileId.Value);
+                    var resultUserProfile = existeUserProfile.FirstOrDefault();
+
+                    if (resultUserProfile == null)
+                    {
+                        response.success = false;
+                        response.AddError("No existe UserProfile", $"No existe UserProfileId {vehicleReportUseFastTravel.UserProfileId} para cargar", 1);
+                        return response;
+                    }
+                }
+
+                if (vehicleReportUseFastTravel.StatusReportUse == Domain.Enums.ReportUseType.ViajeRapido) //AQUI IBA FINALIZADO ESTATUS
+                {
+
+                    vehicleReportUseFastTravel.StatusReportUse = Domain.Enums.ReportUseType.ViajeRapido;
+                    var existeVehicle = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseFastTravel.VehicleId);
+                    var resultVehicle = existeVehicle.FirstOrDefault();
+
+                    if (resultVehicle == null)
+                    {
+                        response.success = false;
+                        response.AddError("No existe Vehicle, no puede ir vacio este campo para Viaje Rapido", $"No existe Vehiculo con el VehicleId {vehicleReportUseFastTravel.VehicleId} solicitado", 1);
+                        return response;
+
+                    }
+
+                    if (vehicleReportUseFastTravel.UserProfileId == null)
+                    {
+                        response.success = false;
+                        response.AddError("No puede ir vacio este campo, no puede ir vacio este campo para Viaje Rapido", $"Se necesita Usuario solicitado", 1);
+                        return response;
+                    }
+
+                    if (vehicleReportUseFastTravel.StatusReportUse == Domain.Enums.ReportUseType.ViajeRapido)
+                    {
+                        resultVehicle.VehicleStatus = Domain.Enums.VehicleStatus.EN_USO;
+                        await _unitOfWork.VehicleRepo.Update(resultVehicle);
+                        response.success = true;
+                    }
+
+                    var entidad = _mapper.Map<VehicleReportUse>(vehicleReportUseFastTravel);
+                    entidad.InitialMileage = Convert.ToInt32(resultVehicle.CurrentKM);
+                    await _unitOfWork.VehicleReportUseRepo.Add(entidad);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    var lastReportUse = await _unitOfWork.VehicleReportUseRepo.Get();
+                    var resultLastCheck = lastReportUse.LastOrDefault();
+
+                    var destination = new DestinationOfReportUse()
+                     {
+                         DestinationName = vehicleReportUseFastTravel.Destination.DestinationName,
+                         Latitud = vehicleReportUseFastTravel.Destination.Latitud,
+                         Longitude = vehicleReportUseFastTravel.Destination.Longitude,
+                         VehicleReportUseId = resultLastCheck.Id
+
+                     };
+
+                     await _unitOfWork.DestinationOfReportUseRepo.Add(destination);
+                     await _unitOfWork.SaveChangesAsync();
+
                     response.success = true;
+                    var VehicleReportUseDTO = _mapper.Map<VehicleReportUseDto>(entidad);
+                    response.Data = VehicleReportUseDTO;
+                    return response;
+
+
                 }
 
-                if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.Cancelado)
+                else
                 {
-                    resultVehicle.VehicleStatus = Domain.Enums.VehicleStatus.ACTIVO;
-                    await _unitOfWork.VehicleRepo.Update(resultVehicle);
+                    var existeVehicle = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseFastTravel.VehicleId);
+                    var resultVehicle = existeVehicle.FirstOrDefault();
+
+                    var entidad = _mapper.Map<VehicleReportUse>(vehicleReportUseFastTravel);
+                    entidad.InitialMileage = Convert.ToInt32(resultVehicleMaintenance.CurrentKM);
+                    await _unitOfWork.VehicleReportUseRepo.Add(entidad);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    var lastReportUse = await _unitOfWork.VehicleReportUseRepo.Get();
+                    var resultLastCheck = lastReportUse.OrderByDescending(pr => pr.Id).LastOrDefault();
+
+                    var destination = new DestinationOfReportUse()
+                     {
+                         Id = 0,
+                         DestinationName = vehicleReportUseFastTravel.Destination.DestinationName,
+                         Latitud = vehicleReportUseFastTravel.Destination.Latitud,
+                         Longitude = vehicleReportUseFastTravel.Destination.Longitude,
+                         VehicleReportUseId = resultVehicle.Id
+
+                     };
+
+                     await _unitOfWork.DestinationOfReportUseRepo.Add(destination);
+                     await _unitOfWork.SaveChangesAsync();
+
                     response.success = true;
-                }
-
-            }
-
-            if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.Finalizado || vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.ViajeRapido)
-            {
-                vehicleReportUseRequest.Verification = false;
-                vehicleReportUseRequest.AppUserId = null;
-                if (vehicleReportUseRequest.CurrentFuelLoad == null)
-                {
-                    response.success = false;
-                    response.AddError("No puede ir Vacio(Null este campo)", $"Insertar Valor para Carga actual del tipo de reporte {vehicleReportUseRequest.StatusReportUse} solicitado", 1);
+                    var VehicleReportUseDTO = _mapper.Map<VehicleReportUseDto>(entidad);
+                    response.Data = VehicleReportUseDTO;
                     return response;
                 }
 
-                var existeVehicle = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseRequest.VehicleId);
-                var resultVehicle = existeVehicle.FirstOrDefault();
-                if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.Finalizado)
-                {
-                    resultVehicle.VehicleStatus = Domain.Enums.VehicleStatus.ACTIVO;
-                    await _unitOfWork.VehicleRepo.Update(resultVehicle);
-                    response.success = true;
-                }
-
-                var entidad = _mapper.Map<VehicleReportUse>(vehicleReportUseRequest);
-                entidad.InitialMileage = Convert.ToInt32(resultVehicle.CurrentKM);
-                await _unitOfWork.VehicleReportUseRepo.Add(entidad);
-                await _unitOfWork.SaveChangesAsync();
-                response.success = true;
-                var VehicleReportUseDTO = _mapper.Map<VehicleReportUseDto>(entidad);
-                response.Data = VehicleReportUseDTO;
-                return response;
-
-
             }
-            else
+
+            catch (Exception ex)
             {
-                var entidad = _mapper.Map<VehicleReportUse>(vehicleReportUseRequest);
-                entidad.InitialMileage = Convert.ToInt32(resultVehicleMaintenance.CurrentKM);
-                await _unitOfWork.VehicleReportUseRepo.Add(entidad);
-                await _unitOfWork.SaveChangesAsync();
-                response.success = true;
-                var VehicleReportUseDTO = _mapper.Map<VehicleReportUseDto>(entidad);
-                response.Data = VehicleReportUseDTO;
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
                 return response;
             }
         }
 
-        public async Task<GenericResponse<VehicleReportUseDto>> PutVehicleVerification (int Id, [FromBody] VehicleReportUseVerificationRequest vehicleReportUseVerificationRequest)
+
+        public async Task<GenericResponse<VehicleReportUseDto>> PutVehicleVerification(int Id, [FromBody] VehicleReportUseVerificationRequest vehicleReportUseVerificationRequest)
         {
             GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
             var profile = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == Id);
@@ -359,7 +478,7 @@ namespace Application.Services
                 return response;
             }
 
-           
+
             result.AppUserId = vehicleReportUseVerificationRequest.AppUserId;
             result.Verification = vehicleReportUseVerificationRequest.Verification;
 
@@ -376,9 +495,9 @@ namespace Application.Services
         {
             GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
             GenericResponse<VehiclesDto> responseVehicle = new GenericResponse<VehiclesDto>();
-            var profile = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == Id, includeProperties:"Checklist");
+            var profile = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == Id, includeProperties: "Checklist");
             var result = profile.FirstOrDefault();
-            
+
             if (result == null)
             {
                 response.success = true;
@@ -397,44 +516,18 @@ namespace Application.Services
 
             }
 
-            if (reportUseTypeRequest.StatusReportUse == Domain.Enums.ReportUseType.enProceso || reportUseTypeRequest.StatusReportUse == Domain.Enums.ReportUseType.ViajeRapido)
+            if(reportUseTypeRequest.StatusReportUse == Domain.Enums.ReportUseType.enProceso || reportUseTypeRequest.StatusReportUse == Domain.Enums.ReportUseType.ViajeRapido)
             {
-                if (reportUseTypeRequest.StatusReportUse == Domain.Enums.ReportUseType.ViajeRapido)
-                {
-                    if (reportUseTypeRequest.FinalMileage == null)
-                    {
-                        response.success = false;
-                        response.AddError("No puede ir Vacio(Null este campo)", $"Insertar Valor para FinalMinage del tipo de reporte viaje rapido solicitado", 1);
-                        return response;
-
-                    }
-
-                    if (reportUseTypeRequest.CurrentFuelLoad == null)
-                    {
-                        response.success = false;
-                        response.AddError("No puede ir Vacio(Null este campo)", $"Insertar Valor para CurrentFueLoad del tipo de reporte viaje rapido solicitado", 1);
-                        return response;
-
-                    }
-
-                    result.FinalMileage = reportUseTypeRequest.FinalMileage;
-                    result.CurrentFuelLoad = reportUseTypeRequest.CurrentFuelLoad;
-                    await _unitOfWork.VehicleReportUseRepo.Update(result);
-
-                }
-            
-                resultVehicle.VehicleStatus = Domain.Enums.VehicleStatus.EN_USO;
-                resultVehicle.CurrentKM = Convert.ToInt32(reportUseTypeRequest.FinalMileage);
-                await _unitOfWork.VehicleRepo.Update(resultVehicle);
                 response.success = true;
-
+                response.AddError("No puedes actualizar este campo", $"no puedes actualizar el status en proceso o finalizar, solo se puede finalizar y cancelar");
+                return response;
             }
 
-            if (reportUseTypeRequest.StatusReportUse == Domain.Enums.ReportUseType.Finalizado || reportUseTypeRequest.StatusReportUse == Domain.Enums.ReportUseType.Cancelado)
+            if (reportUseTypeRequest.StatusReportUse == Domain.Enums.ReportUseType.Finalizado)
             {
-                if(reportUseTypeRequest.StatusReportUse == Domain.Enums.ReportUseType.Finalizado)
+                if (reportUseTypeRequest.StatusReportUse == Domain.Enums.ReportUseType.Finalizado)
                 {
-                   
+
 
                     if (reportUseTypeRequest.CurrentFuelLoad == null)
                     {
@@ -460,30 +553,30 @@ namespace Application.Services
                         result.ChecklistId = resultLastCheck.Id;
                         await _unitOfWork.VehicleReportUseRepo.Update(result);
 
-                    } 
+                    }
                     else
                     {
-                        
+
                         var lastCheck = await _unitOfWork.ChecklistRepo.Get(p => p.VehicleId == VehicleId);
-                        var resultLastCheck = lastCheck.OrderByDescending(pr => pr.VehicleId ).LastOrDefault();
+                        var resultLastCheck = lastCheck.OrderByDescending(pr => pr.VehicleId).LastOrDefault();
 
 
-                        if(resultLastCheck == null)
+                        if (resultLastCheck == null)
                         {
                             var entity = new Checklist()
                             {
                                 VehicleId = VehicleId,
-                                CirculationCard = true,
-                                CarInsurancePolicy = true,
-                                HydraulicTires= true,
-                                TireRefurmishment= true,
-                                JumperCable= true,
-                                SecurityDice= true,
-                                Extinguisher = true,
-                                CarJack= true,
-                                CarJackKey= true,
-                                ToolBag= true,
-                                SafetyTriangle = true
+                                CirculationCard = false,
+                                CarInsurancePolicy = false,
+                                HydraulicTires = false,
+                                TireRefurmishment = false,
+                                JumperCable = false,
+                                SecurityDice = false,
+                                Extinguisher = false,
+                                CarJack = false,
+                                CarJackKey = false,
+                                ToolBag = false,
+                                SafetyTriangle = false
 
                             };
                             await _unitOfWork.ChecklistRepo.Add(entity);
@@ -500,11 +593,11 @@ namespace Application.Services
                             await _unitOfWork.ChecklistRepo.Add(entity);
                             await _unitOfWork.SaveChangesAsync();
 
-                            
+
                             result.ChecklistId = resultLastCheck.Id;
                             await _unitOfWork.VehicleReportUseRepo.Update(result);
 
-                        }  
+                        }
 
                     }
 
@@ -515,6 +608,7 @@ namespace Application.Services
 
                 }
                 resultVehicle.VehicleStatus = Domain.Enums.VehicleStatus.ACTIVO;
+                resultVehicle.CurrentKM = (int)reportUseTypeRequest.FinalMileage;
                 await _unitOfWork.VehicleRepo.Update(resultVehicle);
                 response.success = true;
             }
@@ -530,186 +624,13 @@ namespace Application.Services
 
         }
 
-        //Put
-        public async Task<GenericResponse<VehicleReportUseDto>> PutVehicleReportUse (int Id, [FromBody] VehicleReportUseRequest vehicleReportUseRequest)
-        {
-            GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
-            GenericResponse<VehiclesDto> responseVehicle = new GenericResponse<VehiclesDto>();
-
-            var profile = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == Id);
-            var result = profile.FirstOrDefault();
-
-            if (result == null)
-            {
-                response.success = true;
-                response.AddError("No existe VehicleReportUse", $"No existe ReportUse con el Id {Id} solicitado ");
-                return response;
-            }
-
-            var existeVehicleMaintenance = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseRequest.VehicleId);
-            var resultVehicleMaintenance = existeVehicleMaintenance.FirstOrDefault();
-            if (resultVehicleMaintenance == null)
-            {
-                response.success = false;
-                response.AddError("No existe Vehicle", $"No existe Vehiculo con el VehicleId {vehicleReportUseRequest.VehicleId} solicitado", 1);
-                return response;
-
-            }
-
-            if (vehicleReportUseRequest.ChecklistId.HasValue)
-            {
-                var existeCheckList = await _unitOfWork.ChecklistRepo.Get(c => c.Id == vehicleReportUseRequest.ChecklistId.Value);
-                var resultCheckList = existeCheckList.FirstOrDefault();
-
-                if (resultCheckList == null)
-                {
-                    response.success = false;
-                    response.AddError("No existe CheckList", $"No existe CheckListId {vehicleReportUseRequest.ChecklistId} para cargar", 1);
-                    return response;
-                }
-      
-            }
-            if (vehicleReportUseRequest.UserProfileId.HasValue)
-            {
-                var existeUserProfile = await _unitOfWork.UserProfileRepo.Get(c => c.Id == vehicleReportUseRequest.UserProfileId.Value);
-                var resultUserProfile = existeUserProfile.FirstOrDefault();
-
-                if (resultUserProfile == null)
-                {
-                    response.success = false;
-                    response.AddError("No existe UserProfile", $"No existe UserProfileId {vehicleReportUseRequest.ChecklistId} para cargar", 1);
-                    return response;
-                }
-            }
-            if (vehicleReportUseRequest.AppUserId.HasValue)
-            {
-                var existeAppUser = await _userManager.Users.SingleOrDefaultAsync(c => c.Id == vehicleReportUseRequest.AppUserId.Value);
-                if (existeAppUser == null)
-                {
-                    response.success = false;
-                    response.AddError("No existe AppUser", $"No existe AppUserId {vehicleReportUseRequest.UserProfileId} para cargar", 1);
-                    return response;
-                }
-
-            }
-
-            //prueba update
-            if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.ViajeRapido)
-            {
-                var existeVehicle = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseRequest.VehicleId);
-                var resultVehicle = existeVehicle.FirstOrDefault();
-                if (resultVehicle == null)
-                {
-                    response.success = false;
-                    response.AddError("No existe Vehicle, no puede ir vacio este campo para Viaje Rapido", $"No existe Vehiculo con el VehicleId {vehicleReportUseRequest.VehicleId} solicitado", 1);
-                    return response;
-
-                }
-
-                if (vehicleReportUseRequest.FinalMileage == null)
-                {
-                    response.success = false;
-                    response.AddError("No puede ir Vacio(Null este campo)", $"Insertar Valor para FinalMinage del tipo de reporte viaje rapido solicitado", 1);
-                    return response;
-
-                }
-
-                resultVehicle.VehicleStatus = Domain.Enums.VehicleStatus.EN_USO;
-                await _unitOfWork.VehicleRepo.Update(resultVehicle);
-                response.success = true;
-
-            }
-
-
-            if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.enProceso || vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.Cancelado)
-            {
-                vehicleReportUseRequest.CurrentFuelLoad = null;
-                vehicleReportUseRequest.Verification = false;
-                vehicleReportUseRequest.AppUserId = null;
-
-                var existeVehicle = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseRequest.VehicleId);
-                var resultVehicle = existeVehicle.FirstOrDefault();
-                if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.enProceso)
-                {
-                    resultVehicle.VehicleStatus = Domain.Enums.VehicleStatus.EN_USO;
-                    await _unitOfWork.VehicleRepo.Update(resultVehicle);
-                    response.success = true;
-                }
-
-                if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.Cancelado)
-                {
-                    resultVehicle.VehicleStatus = Domain.Enums.VehicleStatus.ACTIVO;
-                    await _unitOfWork.VehicleRepo.Update(resultVehicle);
-                    response.success = true;
-                }
-
-            }
-
-            if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.Finalizado || vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.ViajeRapido)
-            {
-                vehicleReportUseRequest.Verification = false;
-                vehicleReportUseRequest.AppUserId = null;
-                if (vehicleReportUseRequest.CurrentFuelLoad == null)
-                {
-                    response.success = false;
-                    response.AddError("No puede ir Vacio(Null este campo)", $"Insertar Valor para Carga actual del tipo de reporte {vehicleReportUseRequest.StatusReportUse} solicitado", 1);
-                    return response;
-                }
-
-                var existeVehicle = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportUseRequest.VehicleId);
-                var resultVehicle = existeVehicle.FirstOrDefault();
-                if (vehicleReportUseRequest.StatusReportUse == Domain.Enums.ReportUseType.Finalizado)
-                {
-                    resultVehicle.VehicleStatus = Domain.Enums.VehicleStatus.ACTIVO;
-                    await _unitOfWork.VehicleRepo.Update(resultVehicle);
-                    response.success = true;
-                }
-
-                result.VehicleId = vehicleReportUseRequest.VehicleId;
-                result.FinalMileage = vehicleReportUseRequest.FinalMileage;
-                result.StatusReportUse = vehicleReportUseRequest.StatusReportUse;
-                result.Observations = vehicleReportUseRequest.Observations;
-                result.ChecklistId = vehicleReportUseRequest.ChecklistId;
-                result.UseDate = vehicleReportUseRequest.UseDate;
-                result.UserProfileId = vehicleReportUseRequest.UserProfileId;
-                result.AppUserId = vehicleReportUseRequest.AppUserId;
-
-                var VehicleReportUseDto = _mapper.Map<VehicleReportUseDto>(result);
-                await _unitOfWork.VehicleReportUseRepo.Update(result);
-                response.success = true;
-                response.Data = VehicleReportUseDto;
-                return response;
-
-
-            }
-
-            else
-            {
-                result.VehicleId = vehicleReportUseRequest.VehicleId;
-                result.FinalMileage = vehicleReportUseRequest.FinalMileage;
-                result.StatusReportUse = vehicleReportUseRequest.StatusReportUse;
-                result.Observations = vehicleReportUseRequest.Observations;
-                result.ChecklistId = vehicleReportUseRequest.ChecklistId;
-                result.UseDate = vehicleReportUseRequest.UseDate;
-                result.UserProfileId = vehicleReportUseRequest.UserProfileId;
-                result.AppUserId = vehicleReportUseRequest.AppUserId;
-
-                var VehicleReportUseDto = _mapper.Map<VehicleReportUseDto>(result);
-                await _unitOfWork.VehicleReportUseRepo.Update(result);
-                response.success = true;
-                response.Data = VehicleReportUseDto;
-                return response;
-            }
-
-        }
-
         //Delete
-        public async Task<GenericResponse<VehicleReportUseDto>> DeleteVehicleReportUse (int Id)
+        public async Task<GenericResponse<VehicleReportUseDto>> DeleteVehicleReportUse(int Id)
         {
             GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
             var entidad = await _unitOfWork.VehicleReportUseRepo.Get(filter: p => p.Id == Id);
             var result = entidad.FirstOrDefault();
-            if(result == null)
+            if (result == null)
             {
                 return null;
             }

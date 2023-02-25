@@ -5,11 +5,6 @@ using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -18,7 +13,7 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public DestinationOfReportUseServices(IUnitOfWork unitOfWork, IMapper mapper) 
+        public DestinationOfReportUseServices(IUnitOfWork unitOfWork, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
@@ -43,7 +38,7 @@ namespace Application.Services
             var entidades = await _unitOfWork.DestinationOfReportUseRepo.Get(filter: p => p.Id == Id, includeProperties: "VehicleReportUses");
             var result = entidades.FirstOrDefault();
 
-            if(result == null)
+            if (result == null)
             {
                 response.success = false;
                 response.AddError("No existe DestinationOfResultReportUse", $"No existe DestinationOfResultReportUse con el Id {Id} solicitado", 1);
@@ -68,7 +63,7 @@ namespace Application.Services
                 var existeVehicleReportUse = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == destinationOfReportUseRequest.VehicleReportUseId.Value);
                 var resultVehicleReportUse = existeVehicleReportUse.FirstOrDefault();
 
-                if(resultVehicleReportUse == null)
+                if (resultVehicleReportUse == null)
                 {
                     response.success = false;
                     response.AddError("No existe VehicleReportUse", $"No existe VehicleReportUseId {destinationOfReportUseRequest.VehicleReportUseId} para cargar", 1);
@@ -105,10 +100,10 @@ namespace Application.Services
             var existeDestinationOfReportUse = await _unitOfWork.DestinationOfReportUseRepo.Get(p => p.Id == Id);
             var result = existeDestinationOfReportUse.FirstOrDefault();
 
-            if(result == null)
+            if (result == null)
             {
                 response.success = false;
-                response.AddError("No existe registro de DestinationOfReportUse", $"No existe registro de DestinationOfReportUse con el Id { Id } solicitado", 1);
+                response.AddError("No existe registro de DestinationOfReportUse", $"No existe registro de DestinationOfReportUse con el Id {Id} solicitado", 1);
                 return response;
             }
 
@@ -138,7 +133,7 @@ namespace Application.Services
 
                 return response;
 
-                
+
             }
             else
             {

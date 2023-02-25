@@ -13,46 +13,46 @@ namespace API.Controllers
 {
     [Route("api/vehicleService")]
     [ApiController]
-    public class VehicleServiceController: ControllerBase
+    public class VehicleServiceController : ControllerBase
     {
         private readonly IVehicleServiService _vehicleServiService;
 
-        public VehicleServiceController( IVehicleServiService vehicleServiService)
+        public VehicleServiceController(IVehicleServiService vehicleServiService)
         {
             this._vehicleServiService = vehicleServiService;
         }
 
         //GETALL
-         [Authorize(Roles = "Administrator, AdminUser")]
-         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleServiceDto>))]
-         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-         [HttpGet]
-         [Route("")]
-         public async Task<IActionResult> GetVehicleService([FromQuery] VehicleServiceFilter filter)
-         {
-             var approval = await _vehicleServiService.GetVehicleServiceAll(filter);
+        [Authorize(Roles = "Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleServiceDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("")]
+        public async Task<IActionResult> GetVehicleService([FromQuery] VehicleServiceFilter filter)
+        {
+            var approval = await _vehicleServiService.GetVehicleServiceAll(filter);
 
-             var metadata = new Metadata()
-             {
-                 TotalCount = approval.TotalCount,
-                 PageSize = approval.PageSize,
-                 CurrentPage = approval.CurrentPage,
-                 TotalPages = approval.TotalPages,
-                 HasNextPage = approval.HasNextPage,
-                 HasPreviousPage = approval.HasPreviousPage
-             };
+            var metadata = new Metadata()
+            {
+                TotalCount = approval.TotalCount,
+                PageSize = approval.PageSize,
+                CurrentPage = approval.CurrentPage,
+                TotalPages = approval.TotalPages,
+                HasNextPage = approval.HasNextPage,
+                HasPreviousPage = approval.HasPreviousPage
+            };
 
-             var response = new GenericResponse<IEnumerable<VehicleService>>(approval)
-             {
-                 Meta = metadata,
-                 success = true,
-                 Data = approval
-             };
+            var response = new GenericResponse<IEnumerable<VehicleService>>(approval)
+            {
+                Meta = metadata,
+                success = true,
+                Data = approval
+            };
 
-             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
 
-             return Ok(response);
-         }
+            return Ok(response);
+        }
 
         //GETBYID
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]

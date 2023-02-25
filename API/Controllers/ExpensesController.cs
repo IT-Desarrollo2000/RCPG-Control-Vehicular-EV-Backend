@@ -1,5 +1,4 @@
 ﻿using Application.Interfaces;
-using Application.Services;
 using AutoMapper;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
@@ -8,7 +7,6 @@ using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using System.Net;
 using System.Text.Json;
 
@@ -66,7 +64,7 @@ namespace API.Controllers
         public async Task<IActionResult> GetExpensesById(int id)
         {
             var result = await _expensesServices.GetExpensesById(id);
-            if(result.Data== null) { return NotFound($"No existe gasto con el Id {id}"); }
+            if (result.Data == null) { return NotFound($"No existe gasto con el Id {id}"); }
             if (result.success) { return Ok(result); } else { return NotFound(result); }
         }
 
@@ -77,7 +75,7 @@ namespace API.Controllers
         [Route("PostExpenses")]
         public async Task<IActionResult> PostExpenses([FromForm] ExpensesRequest expensesRequest)
         {
-            var result = await _expensesServices.PostExpenses( expensesRequest);
+            var result = await _expensesServices.PostExpenses(expensesRequest);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
@@ -86,7 +84,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("PutExpenses")]
-        public async Task<IActionResult> PutExpenses([FromBody]ExpenseUpdateRequest expensesRequest, int id)
+        public async Task<IActionResult> PutExpenses([FromBody] ExpenseUpdateRequest expensesRequest, int id)
         {
             var result = await _expensesServices.PutExpenses(expensesRequest, id);
             if (result.Data == null) { return NotFound($"No existe gasto con el Id {id}"); }

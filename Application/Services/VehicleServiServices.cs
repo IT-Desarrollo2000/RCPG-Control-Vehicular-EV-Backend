@@ -6,11 +6,9 @@ using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
-using Domain.Entities.User_Approvals;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Application.Services
 {
@@ -84,7 +82,7 @@ namespace Application.Services
 
             if (Query != null)
             {
-                userApprovals = await _unitOfWork.VehicleServiceRepo.Get(filter: Query, includeProperties:"Vehicle");
+                userApprovals = await _unitOfWork.VehicleServiceRepo.Get(filter: Query, includeProperties: "Vehicle");
             }
             else
             {
@@ -100,7 +98,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleServiceDto>> GetVehicleServiceById(int Id)
         {
             GenericResponse<VehicleServiceDto> response = new GenericResponse<VehicleServiceDto>();
-            var profile = await _unitOfWork.VehicleServiceRepo.Get(filter: p => p.Id == Id,includeProperties: "Vehicle");
+            var profile = await _unitOfWork.VehicleServiceRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle");
             var result = profile.FirstOrDefault();
             var VehicleServiceDTO = _mapper.Map<VehicleServiceDto>(result);
             response.success = true;

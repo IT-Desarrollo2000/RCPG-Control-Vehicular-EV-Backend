@@ -1,10 +1,8 @@
 ﻿using Application.Interfaces;
-using Application.Services;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using System.Net;
 
 namespace API.Controllers
@@ -15,7 +13,7 @@ namespace API.Controllers
     {
         private readonly IDestinationOfReportUseService _destinationOfReportUseService;
 
-        public DestinationOfReportUseController(IDestinationOfReportUseService destinationOfReportUseService) 
+        public DestinationOfReportUseController(IDestinationOfReportUseService destinationOfReportUseService)
         {
             this._destinationOfReportUseService = destinationOfReportUseService;
         }

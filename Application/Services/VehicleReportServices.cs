@@ -8,12 +8,9 @@ using Domain.DTOs.Requests;
 using Domain.Entities.Identity;
 using Domain.Entities.Registered_Cars;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
-using System.Runtime.Intrinsics.Arm;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services
 {
@@ -27,7 +24,7 @@ namespace Application.Services
         private readonly IBlobStorageService _blobStorageService;
         private readonly IExpensesServices _expensesServices;
 
-        public VehicleReportServices( IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options, UserManager<AppUser> userManager, IOptions<BlobContainers> azureBlobContainers, IBlobStorageService blobStorageService, IExpensesServices expensesServices) 
+        public VehicleReportServices(IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options, UserManager<AppUser> userManager, IOptions<BlobContainers> azureBlobContainers, IBlobStorageService blobStorageService, IExpensesServices expensesServices)
         {
             this._unitOfWork = unitOfWork;
             this._mapper = mapper;
@@ -48,7 +45,7 @@ namespace Application.Services
             IEnumerable<VehicleReport> userApprovals = null;
             Expression<Func<VehicleReport, bool>> Query = null;
 
-            if(filter.ReportType.HasValue)
+            if (filter.ReportType.HasValue)
             {
                 if (Query != null)
                 {
@@ -237,7 +234,7 @@ namespace Application.Services
                         return response;
                     }
 
-                    if(!vehicleReportRequest.AmountGasoline.HasValue)
+                    if (!vehicleReportRequest.AmountGasoline.HasValue)
                     {
                         response.success = false;
                         response.AddError("Es necesario el monto de carga de gasolina", $"Para el tipo de Carga de Gasolina, es necesario el monto que se gasto ", 2);
@@ -245,7 +242,7 @@ namespace Application.Services
                     }
 
                     //Verificar que exista el tipo de gasto
-                    var existetypeOfExpenses = await _unitOfWork.TypesOfExpensesRepo.Get(v => v.Name == "Carga_Gasolina" );
+                    var existetypeOfExpenses = await _unitOfWork.TypesOfExpensesRepo.Get(v => v.Name == "Carga_Gasolina");
                     var resultType = existetypeOfExpenses.FirstOrDefault();
                     TypesOfExpenses expenseFuel = null;
 
@@ -333,16 +330,16 @@ namespace Application.Services
                 entidadR.ReportStatus = Domain.Enums.ReportStatusType.Pendiente;
                 entidadR.IsResolved = false;
 
-                if(expensesRequest != null)
+                if (expensesRequest != null)
                 {
                     entidadR.Expenses.Add(expensesRequest);
                 }
 
                 //Agregar los gastos al reporte
-                foreach(var expenseId in vehicleReportRequest.Expenses)
+                foreach (var expenseId in vehicleReportRequest.Expenses)
                 {
                     var expense = await _unitOfWork.ExpensesRepo.GetById(expenseId);
-                    if(expense == null)
+                    if (expense == null)
                     {
                         response.success = false;
                         response.AddError("Gasto no existe", $"El Id de gasto {expenseId} no existe");
@@ -396,7 +393,7 @@ namespace Application.Services
                 response.Data = VehicleReportDTOCG;
                 return response;
             }
-            catch( Exception ex)
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 0);
@@ -413,14 +410,14 @@ namespace Application.Services
             {
                 //Buscar el report especificado
                 var report = await _unitOfWork.VehicleReportRepo.GetById(request.ReportId);
-                if(report == null)
+                if (report == null)
                 {
                     response.success = false;
                     response.AddError("Reporte no encontrado", $"El Id {request.ReportId} de reporte especificado no existe", 2);
                     return response;
                 }
 
-                switch(report.ReportStatus)
+                switch (report.ReportStatus)
                 {
                     case Domain.Enums.ReportStatusType.Resuelto:
                         response.success = false;
@@ -455,8 +452,8 @@ namespace Application.Services
                 var VehicleReportDTOCG = _mapper.Map<VehicleReportDto>(report);
                 response.Data = VehicleReportDTOCG;
                 return response;
-            } 
-            catch( Exception ex )
+            }
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Reporte no encontrado", ex.Message, 1);
@@ -502,9 +499,9 @@ namespace Application.Services
                 report.ReportType = request.ReportType.HasValue ? request.ReportType.Value : report.ReportType;
                 report.GasolineLoadAmount = request.GasolineLoadAmount.HasValue ? request.GasolineLoadAmount.Value : report.GasolineLoadAmount;
                 report.GasolineCurrentKM = request.GasolineCurrentKM.HasValue ? request.GasolineCurrentKM.Value : report.GasolineCurrentKM;
-                
+
                 //Agregar los gastos especificados
-                foreach(var expenseId in request.ExpensesToAdd)
+                foreach (var expenseId in request.ExpensesToAdd)
                 {
                     var expense = await _unitOfWork.ExpensesRepo.GetById(expenseId);
                     if (expense == null)
@@ -535,7 +532,7 @@ namespace Application.Services
                 response.Data = VehicleReportDTOCG;
                 return response;
             }
-            catch( Exception ex )
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
@@ -553,7 +550,7 @@ namespace Application.Services
             {
                 response.success = false;
                 response.Data = false;
-                response.AddError("Reporte no encontrado","El reporte especificado no existe",1);
+                response.AddError("Reporte no encontrado", "El reporte especificado no existe", 1);
 
                 return response;
             }

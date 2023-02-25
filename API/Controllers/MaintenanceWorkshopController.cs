@@ -1,5 +1,4 @@
 ﻿using Application.Interfaces;
-using Application.Services;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
@@ -18,7 +17,7 @@ namespace API.Controllers
     {
         private readonly IMaintenanceWorkshopService _maintenanceWorkshopService;
 
-        public MaintenanceWorkshopController (IMaintenanceWorkshopService maintenanceWorkshopService)
+        public MaintenanceWorkshopController(IMaintenanceWorkshopService maintenanceWorkshopService)
         {
             this._maintenanceWorkshopService = maintenanceWorkshopService;
         }

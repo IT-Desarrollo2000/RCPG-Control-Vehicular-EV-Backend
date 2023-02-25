@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Entities.Registered_Cars
+﻿namespace Domain.Entities.Registered_Cars
 {
     public class VehicleMaintenance : BaseEntity
     {
-    
+
 
         public string WhereServiceMaintenance { get; set; }
         public string? CarryPerson { get; set; }

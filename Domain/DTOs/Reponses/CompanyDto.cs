@@ -1,5 +1,4 @@
-﻿using Domain.Entities.Departament;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Domain.DTOs.Reponses
 {
