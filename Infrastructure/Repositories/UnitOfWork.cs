@@ -6,7 +6,6 @@ using Domain.Entities.Profiles;
 using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
 using Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Infrastructure.Repositories
 {
@@ -32,7 +31,8 @@ namespace Infrastructure.Repositories
         private readonly IRepository<VehicleReportUse> _VehicleReportUseRepo;
         private readonly IRepository<DestinationOfReportUse> _DestinationOfReportUseRepo;
         private readonly IRepository<Policy> _PolicyRepo;
-        
+
+
         public UnitOfWork(CVContext context)
         {
             _context = context;
@@ -52,7 +52,7 @@ namespace Infrastructure.Repositories
         public IRepository<TypesOfExpenses> TypesOfExpensesRepo => _TypesOfExpensesRepo ?? new BaseRepository<TypesOfExpenses>(_context);
         public IRepository<PhotosOfSpending> PhotosOfSpendingRepo => _PhotosOfSpendingRepo ?? new BaseRepository<PhotosOfSpending>(_context);
         public IRepository<VehicleMaintenance> VehicleMaintenanceRepo => _VehicleMaintenanceRepo ?? new BaseRepository<VehicleMaintenance>(_context);
-        public IRepository<VehicleMaintenanceWorkshop> MaintenanceWorkshopRepo => _MaintenanceWorkshopRepo ?? new BaseRepository<VehicleMaintenanceWorkshop>(_context); 
+        public IRepository<VehicleMaintenanceWorkshop> MaintenanceWorkshopRepo => _MaintenanceWorkshopRepo ?? new BaseRepository<VehicleMaintenanceWorkshop>(_context);
         public IRepository<VehicleReport> VehicleReportRepo => _VehicleReportRepo ?? new BaseRepository<VehicleReport>(_context);
         public IRepository<VehicleReportImage> VehicleReportImage => _VehicleReportImageRepo ?? new BaseRepository<VehicleReportImage>(_context);
         public IRepository<VehicleReportUse> VehicleReportUseRepo => _VehicleReportUseRepo ?? new BaseRepository<VehicleReportUse>(_context);

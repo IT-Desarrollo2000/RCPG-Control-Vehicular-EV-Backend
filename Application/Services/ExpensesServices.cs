@@ -6,21 +6,12 @@ using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Application.Services
 {
-    public class ExpensesServices: IExpensesServices
+    public class ExpensesServices : IExpensesServices
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -76,7 +67,7 @@ namespace Application.Services
                 {
                     var report = await _unitOfWork.VehicleReportRepo.GetById(expensesRequest.VehicleReportId.Value);
 
-                    if(report == null)
+                    if (report == null)
                     {
 
                         response.success = false;
@@ -147,7 +138,7 @@ namespace Application.Services
                 expensesDto.PhotosOfSpending.AddRange(images);
                 response.Data = expensesDto;
                 return response;
-            } 
+            }
             catch (Exception ex)
             {
                 response.success = false;
@@ -345,10 +336,10 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.Vehicles.Any(v  => v.Id == filter.VehicleId) );
+                    Query = Query.And(p => p.Vehicles.Any(v => v.Id == filter.VehicleId));
                 }
                 else { Query = p => p.Vehicles.Any(v => v.Id == filter.VehicleId); }
-            }        
+            }
 
             if (filter.VehicleMaintenanceWorkshopId.HasValue)
             {
@@ -385,7 +376,7 @@ namespace Application.Services
 
             return pagedExpenses;
         }
-        
+
         public async Task<GenericResponse<PhotosOfSpending>> AddExpenseAttachment(ExpensePhotoRequest request, int expenseId)
         {
             GenericResponse<PhotosOfSpending> response = new GenericResponse<PhotosOfSpending>();
@@ -465,5 +456,5 @@ namespace Application.Services
                 return response;
             }
         }
-    }   
+    }
 }

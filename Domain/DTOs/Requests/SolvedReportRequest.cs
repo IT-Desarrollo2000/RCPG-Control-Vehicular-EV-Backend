@@ -1,10 +1,5 @@
 ﻿using Domain.Enums;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.DTOs.Requests
 {
@@ -12,7 +7,7 @@ namespace Domain.DTOs.Requests
     {
         [Required]
         public int ReportId { get; set; }
-        
+
         [Required]
         public int AdminUserId { get; set; }
 

@@ -943,8 +943,10 @@ namespace Infrastructure.Persistence.Data
                     b.Property<double?>("InitialMileage")
                         .HasColumnType("float");
 
+                    b.Property<int?>("LastFuelLoad")
+                        .HasColumnType("int");
+
                     b.Property<string>("Observations")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StatusReportUse")
@@ -953,7 +955,7 @@ namespace Infrastructure.Persistence.Data
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("UseDate")
+                    b.Property<DateTime?>("UseDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("UserProfileId")
@@ -962,7 +964,7 @@ namespace Infrastructure.Persistence.Data
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Verification")
+                    b.Property<bool?>("Verification")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");

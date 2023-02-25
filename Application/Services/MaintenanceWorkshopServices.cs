@@ -8,12 +8,7 @@ using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -31,7 +26,7 @@ namespace Application.Services
         }
 
         //GETALL
-        public async Task<PagedList<VehicleMaintenanceWorkshop>> GetMaintenanceWorkshopAll( MaintenanceWorkshopFilter filter)
+        public async Task<PagedList<VehicleMaintenanceWorkshop>> GetMaintenanceWorkshopAll(MaintenanceWorkshopFilter filter)
         {
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
@@ -40,7 +35,7 @@ namespace Application.Services
             IEnumerable<VehicleMaintenanceWorkshop> userApprovals = null;
             Expression<Func<VehicleMaintenanceWorkshop, bool>> Query = null;
 
-            if(!string.IsNullOrEmpty(filter.Name))
+            if (!string.IsNullOrEmpty(filter.Name))
             {
                 if (Query != null)
                 {
@@ -58,9 +53,9 @@ namespace Application.Services
                 else { Query = p => p.Ubication.Contains(filter.Ubication); }
             }
 
-            if(filter.Latitude.HasValue)
+            if (filter.Latitude.HasValue)
             {
-                if(Query != null)
+                if (Query != null)
                 {
                     Query = Query.And(p => p.Latitude >= filter.Latitude.Value);
                 }
@@ -104,7 +99,7 @@ namespace Application.Services
         public async Task<GenericResponse<MaintenanceWorkshopDto>> GetMaintenanceWorkshopById(int Id)
         {
             GenericResponse<MaintenanceWorkshopDto> response = new GenericResponse<MaintenanceWorkshopDto>();
-            var profile = await _unitOfWork.MaintenanceWorkshopRepo.Get(filter: p => p.Id == Id, includeProperties:"VehicleMaintenances,Expenses");
+            var profile = await _unitOfWork.MaintenanceWorkshopRepo.Get(filter: p => p.Id == Id, includeProperties: "VehicleMaintenances,Expenses");
             var result = profile.FirstOrDefault();
             var VehicleMaintenanceDTO = _mapper.Map<MaintenanceWorkshopDto>(result);
             response.success = true;

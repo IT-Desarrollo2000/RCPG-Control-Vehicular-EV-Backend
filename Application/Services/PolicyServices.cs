@@ -5,11 +5,6 @@ using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -81,7 +76,7 @@ namespace Application.Services
                 var existePolicyVehicle = await _unitOfWork.PolicyRepo.Get(filter: p => p.VehicleId == policyRequest.VehicleId);
                 var resultPolicyVehicle = existePolicyVehicle.FirstOrDefault();
 
-               if (resultPolicyVehicle == null)
+                if (resultPolicyVehicle == null)
                 {
                     var entidad = _mapper.Map<Policy>(policyRequest);
                     await _unitOfWork.PolicyRepo.Add(entidad);

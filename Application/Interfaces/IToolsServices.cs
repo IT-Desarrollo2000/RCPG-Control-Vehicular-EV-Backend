@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.CustomEntities;
+using Domain.DTOs.Reponses;
 
 namespace Application.Interfaces
 {
     public interface IToolsServices
     {
-
+        Task<GenericResponse<List<GetVehicleActiveDto>>> GetAllVehiclesActive();
     }
 }

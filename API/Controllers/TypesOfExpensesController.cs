@@ -1,19 +1,16 @@
 ﻿using Application.Interfaces;
-using Application.Services;
 using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
-using Domain.Entities.Registered_Cars;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using System.Net;
 
 namespace API.Controllers
 {
     [Route("api/typesOfExpenses")]
     [ApiController]
-    public class TypesOfExpensesController:ControllerBase
+    public class TypesOfExpensesController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITypeOfExpensesServices _typeOfExpensesServices;
@@ -39,7 +36,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<TypesOfExpensesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
-        [Route ("GetTypesOfExpensesId/{id}")]
+        [Route("GetTypesOfExpensesId/{id}")]
         public async Task<IActionResult> GetTypesOfExpensesId(int id)
         {
             var result = await _typeOfExpensesServices.GetTypesOfExpensesId(id);

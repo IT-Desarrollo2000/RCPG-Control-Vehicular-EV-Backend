@@ -2,12 +2,6 @@
 using AutoMapper;
 using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
-using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -22,17 +16,38 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-       /* //GETALL
-        public async Task<GenericResponse<List<VehicleReportUseDto>>> GetAll()
+        //GetAllVehicleStatus
+        public async Task<GenericResponse<List<GetVehicleActiveDto>>> GetAllVehiclesActive()
         {
-            GenericResponse<List<PolicyDto>> response = new GenericResponse<List<PolicyDto>>();
-            var entidades = await _unitOfWork.PolicyRepo.Get(includeProperties: "Vehicle");
-            //if(entidades == null) return null;
-            var dtos = _mapper.Map<List<PolicyDto>>(entidades);
+            GenericResponse<List<GetVehicleActiveDto>> response = new GenericResponse<List<GetVehicleActiveDto>>();
+            var VehicleA = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == Domain.Enums.ReportUseType.enProceso, includeProperties: "Vehicle,UserProfile,Destinations");
+            if (VehicleA == null)
+            {
+                response.success = false;
+                response.AddError("f", "f", 1);
+                return response;
+            }
+
+            var dtos = _mapper.Map<List<GetVehicleActiveDto>>(VehicleA);
             response.success = true;
             response.Data = dtos;
             return response;
-        }*/
+        }
+
+
+
+
+        /* //GETALL
+         public async Task<GenericResponse<List<VehicleReportUseDto>>> GetAll()
+         {
+             GenericResponse<List<PolicyDto>> response = new GenericResponse<List<PolicyDto>>();
+             var entidades = await _unitOfWork.PolicyRepo.Get(includeProperties: "Vehicle");
+             //if(entidades == null) return null;
+             var dtos = _mapper.Map<List<PolicyDto>>(entidades);
+             response.success = true;
+             response.Data = dtos;
+             return response;
+         }*/
 
         //public async Task<object> GetLicencesExpirations(LicenceExpStopLight request)
         //{

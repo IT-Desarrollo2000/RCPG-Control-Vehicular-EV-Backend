@@ -1,12 +1,4 @@
-﻿using Domain.Entities.Identity;
-using Domain.Entities.Profiles;
-using Domain.Entities.Registered_Cars;
-using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Enums;
 
 namespace Domain.DTOs.Filters
 {
