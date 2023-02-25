@@ -5,6 +5,7 @@
         public VehicleMaintenanceWorkshop()
         {
             this.VehicleMaintenances = new HashSet<VehicleMaintenance>();
+            this.VehicleService = new HashSet<VehicleService>();
         }
 
         public string Name { get; set; }
@@ -13,6 +14,7 @@
         public double? Longitude { get; set; }
         public string? Telephone { get; set; }
         public virtual ICollection<VehicleMaintenance> VehicleMaintenances { get; set; }
+        public virtual ICollection<VehicleService> VehicleService { get; set; }
         public ICollection<Expenses> Expenses { get; set; }
     }
 }

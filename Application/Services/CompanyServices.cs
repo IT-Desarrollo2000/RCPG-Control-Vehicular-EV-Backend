@@ -79,22 +79,32 @@ namespace Application.Services
         }
 
         //DELETE
-        public async Task<GenericResponse<CompanyDto>> DeleteCompany(int id)
+        public async Task<GenericResponse<bool>> DeleteCompany(int id)
         {
-            GenericResponse<CompanyDto> response = new GenericResponse<CompanyDto>();
-            //  var entidad = await _unitOfWork.Companies.GetById(id);
-            var entidad = await _unitOfWork.Companies.Get(filter: p => p.Id == id);
-            var result = entidad.FirstOrDefault();
-            if (result == null)
+            GenericResponse<bool> response = new GenericResponse<bool>();
+            try
             {
-                return null;
+                var entidad = await _unitOfWork.Companies.GetById(id);
+                if (entidad == null)
+                {
+                    response.AddError("Not Found", $"No se encontro la compañia con el Id {id}", 2);
+                    response.success = false;
+                    return response;
+                }
+                var existe = await _unitOfWork.Companies.Delete(id);
+                await _unitOfWork.SaveChangesAsync();
+                response.success = true;
+                response.Data = true;
+                return response;
             }
-            var existe = await _unitOfWork.Companies.Delete(id);
-            await _unitOfWork.SaveChangesAsync();
-            var CompanyDTO = _mapper.Map<CompanyDto>(entidad);
-            response.success = true;
-            response.Data = CompanyDTO;
-            return response;
+            catch(Exception ex)
+            {
+                response.success = false;
+                response.Data = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
         }
 
 

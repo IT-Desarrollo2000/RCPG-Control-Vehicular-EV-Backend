@@ -57,7 +57,7 @@ namespace API.Controllers
             {
                 existingUser = await _userManager.FindByNameAsync(user.UserName);
 
-                return Ok(await _tokenService.CreateToken(existingUser));
+                return Ok(existingUser);
             }
             else
             {
@@ -274,7 +274,7 @@ namespace API.Controllers
         #endregion
 
         #region ..::Administración de usuarios AdminWeb::..
-        [Authorize(Roles = "Administrator, AdminUser")]
+        //[Authorize(Roles = "Administrator, AdminUser")]
         [HttpGet]
         [Route("WebAdm/GetAdminUsers")]
         public async Task<ActionResult> GetWebAdmUsers(AdminRoleType? roleType = null)

@@ -9,6 +9,7 @@ namespace Domain.Entities.Departament
         public Departaments()
         {
             this.AssignedVehicles = new HashSet<Vehicle>();
+            this.Supervisors = new HashSet<AppUser>();
         }
 
         public string Name { get; set; }

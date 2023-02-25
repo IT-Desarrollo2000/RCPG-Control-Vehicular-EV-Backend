@@ -444,6 +444,11 @@ namespace Application.Services
                 report.ReportStatus = request.Status;
                 report.SolvedByAdminUser = adminUserExists;
                 report.ReportSolutionComment = request.ResolutionComment;
+                
+                if(request.Status == Domain.Enums.ReportStatusType.Resuelto || request.Status == Domain.Enums.ReportStatusType.Cancelado)
+                {
+                    report.IsResolved = true;
+                }
 
                 await _unitOfWork.VehicleReportRepo.Update(report);
                 await _unitOfWork.SaveChangesAsync();
@@ -484,10 +489,12 @@ namespace Application.Services
                     case Domain.Enums.ReportStatusType.Resuelto:
                         response.success = false;
                         response.AddError("Reporte resuelto", $"El Id {request.ReportId} de reporte ya esta marcado como resuelto", 3);
+                        return response;
                         break;
                     case Domain.Enums.ReportStatusType.Cancelado:
                         response.success = false;
                         response.AddError("Reporte cancelado", $"El Id {request.ReportId} de reporte ya esta marcado como cancelado", 4);
+                        return response;
                         break;
                     default:
                         break;
