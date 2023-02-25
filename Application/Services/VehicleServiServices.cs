@@ -1,4 +1,4 @@
-﻿using Application.Extensions;
+using Application.Extensions;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.CustomEntities;
@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Application.Services
 {

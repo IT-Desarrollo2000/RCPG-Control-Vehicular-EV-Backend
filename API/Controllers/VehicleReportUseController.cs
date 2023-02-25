@@ -1,13 +1,10 @@
 ﻿using Application.Interfaces;
-using Application.Services;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
-using Domain.Entities.Registered_Cars;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using System.Net;
 using System.Text.Json;
 
@@ -19,7 +16,7 @@ namespace API.Controllers
     {
         private readonly IVehicleReportUseService _vehicleReportUseService;
 
-        public VehicleReportUseController(IVehicleReportUseService vehicleReportUseService) 
+        public VehicleReportUseController(IVehicleReportUseService vehicleReportUseService)
         {
             this._vehicleReportUseService = vehicleReportUseService;
         }
@@ -76,48 +73,28 @@ namespace API.Controllers
 
         }
 
-        //POST
         //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportUseDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
-        public async Task<ActionResult<VehicleReportUseDto>> Post([FromBody] VehicleReportUseRequest vehicleReportUseRequest)
+        [Route("AddProceso")]
+        public async Task<IActionResult> AddReportUsEProceso([FromForm] VehicleReportUseProceso vehicleReportUseProceso)
         {
-            var entidad = await _vehicleReportUseService.PostVehicleReporUse(vehicleReportUseRequest);
-
-            if (entidad.success)
-            {
-                return Ok(entidad);
-            }
-            else
-            {
-                return BadRequest(entidad);
-            }
-
+            var result = await _vehicleReportUseService.PostEnProceso(vehicleReportUseProceso);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        //PUT
         //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportUseDto))]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [HttpPut]
-        public async Task<ActionResult<VehicleReportUseDto>> PutVehicleReportUse(int id, [FromBody] VehicleReportUseRequest vehicleReportUseRequest)
+        [HttpPost]
+        [Route("AddViajeRapido")]
+        public async Task<IActionResult> AddReportUseViajeRapido([FromForm] VehicleReportUseFastTravel vehicleReportUseFastTravel)
         {
-
-            var entidad = await _vehicleReportUseService.PutVehicleReportUse(id,vehicleReportUseRequest);
-
-            if (entidad.success)
-            {
-                return Ok(entidad);
-
-            }
-            else
-            {
-                return BadRequest(entidad);
-            }
+            var result = await _vehicleReportUseService.PostViajeRapido(vehicleReportUseFastTravel);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
+
 
         //PUT
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
@@ -127,7 +104,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("Verification")]
-        public async Task<ActionResult<VehicleReportUseDto>> PutVehicleReportUseVerification(int id, [FromBody] VehicleReportUseVerificationRequest vehicleReportUseVerificationRequest)
+        public async Task<ActionResult<VehicleReportUseDto>> PutVehicleReportUseVerification(int id, [FromForm] VehicleReportUseVerificationRequest vehicleReportUseVerificationRequest)
         {
 
             var entidad = await _vehicleReportUseService.PutVehicleVerification(id, vehicleReportUseVerificationRequest);
@@ -151,7 +128,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("Status")]
-        public async Task<ActionResult<VehicleReportUseDto>> PutStatusVehicleReport(int id, int VehicleId ,[FromBody] ReportUseTypeRequest reportUseTypeRequest)
+        public async Task<ActionResult<VehicleReportUseDto>> PutStatusVehicleReport(int id, int VehicleId, [FromForm] ReportUseTypeRequest reportUseTypeRequest)
         {
 
             var entidad = await _vehicleReportUseService.PutVehicleStatusReport(id, VehicleId, reportUseTypeRequest);

@@ -6,16 +6,8 @@ using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
-using Domain.Entities.User_Approvals;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -83,7 +75,7 @@ namespace Application.Services
                 else { Query = p => p.CreatedDate <= filter.CreatedBeforeDate.Value; }
             }
 
-            if(filter.VehicleId.HasValue)
+            if (filter.VehicleId.HasValue)
             {
                 if (Query != null)
                 {
@@ -114,7 +106,7 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.HydraulicTires== filter.HydraulicTires.Value);
+                    Query = Query.And(p => p.HydraulicTires == filter.HydraulicTires.Value);
                 }
                 else { Query = p => p.HydraulicTires == filter.HydraulicTires.Value; }
             }
@@ -186,7 +178,7 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.SafetyTriangle== filter.SafetyTriangle.Value);
+                    Query = Query.And(p => p.SafetyTriangle == filter.SafetyTriangle.Value);
                 }
                 else { Query = p => p.SafetyTriangle == filter.SafetyTriangle.Value; }
             }

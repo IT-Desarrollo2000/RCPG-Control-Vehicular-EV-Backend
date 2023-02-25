@@ -1,18 +1,11 @@
-using Domain.DTOs.Reponses;
 using Domain.Entities.Departament;
 using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Entities.Registered_Cars
 {
     public class Vehicle : BaseEntity
     {
-        public Vehicle() 
+        public Vehicle()
         {
             this.VehicleServices = new HashSet<VehicleService>();
             this.VehicleImages = new HashSet<VehicleImage>();
@@ -43,9 +36,10 @@ namespace Domain.Entities.Registered_Cars
         public decimal DesiredPerformance { get; set; }
         public string VehicleQRId { get; set; }
         public string? VehicleObservation { get ; set; }
-
+        public string? CarRegistrationPlate { get; set; }
+        public bool IsClean { get; set; } 
         public virtual Policy? Policy { get; set; }
-        
+
         public virtual ICollection<Departaments> AssignedDepartments { get; set; }
         public virtual ICollection<VehicleImage> VehicleImages { get; set; }
         public virtual ICollection<VehicleService> VehicleServices { get; set; }
@@ -53,6 +47,6 @@ namespace Domain.Entities.Registered_Cars
         public virtual ICollection<Expenses> Expenses { get; set; }
         public virtual ICollection<VehicleMaintenance> VehicleMaintenances { get; set; }
         public virtual ICollection<VehicleReport> VehicleReports { get; set; }
-        public virtual ICollection<VehicleReportUse> VehicleReportsUses { get; set;}
+        public virtual ICollection<VehicleReportUse> VehicleReportsUses { get; set; }
     }
 }

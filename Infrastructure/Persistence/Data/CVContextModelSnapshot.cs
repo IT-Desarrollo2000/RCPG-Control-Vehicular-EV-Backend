@@ -34,7 +34,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("SupervisorsId");
 
-                    b.ToTable("AppUserDepartaments");
+                    b.ToTable("AppUserDepartaments", (string)null);
                 });
 
             modelBuilder.Entity("DepartamentsVehicle", b =>
@@ -49,7 +49,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("AssignedVehiclesId");
 
-                    b.ToTable("DepartamentsVehicle");
+                    b.ToTable("DepartamentsVehicle", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Company.Companies", b =>
@@ -76,7 +76,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Companies", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Departament.Departaments", b =>
@@ -104,7 +104,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Departaments");
+                    b.ToTable("Departaments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Identity.AppRole", b =>
@@ -254,7 +254,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AppUserSocials");
+                    b.ToTable("AppUserSocials", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Identity.RefreshToken", b =>
@@ -298,7 +298,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Profiles.UserProfile", b =>
@@ -380,7 +380,7 @@ namespace Infrastructure.Persistence.Data
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserProfiles");
+                    b.ToTable("UserProfiles", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Checklist", b =>
@@ -437,7 +437,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("Checklists");
+                    b.ToTable("Checklists", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.DestinationOfReportUse", b =>
@@ -471,7 +471,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("VehicleReportUseId");
 
-                    b.ToTable("DestinationOfReportUses");
+                    b.ToTable("DestinationOfReportUses", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Expenses", b =>
@@ -518,7 +518,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("VehicleReportId");
 
-                    b.ToTable("Expenses");
+                    b.ToTable("Expenses", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.PhotosOfSpending", b =>
@@ -550,7 +550,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("ExpensesId");
 
-                    b.ToTable("PhotosOfSpendings");
+                    b.ToTable("PhotosOfSpendings", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Policy", b =>
@@ -583,7 +583,7 @@ namespace Infrastructure.Persistence.Data
                         .IsUnique()
                         .HasFilter("[VehicleId] IS NOT NULL");
 
-                    b.ToTable("Policy");
+                    b.ToTable("Policy", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.TypesOfExpenses", b =>
@@ -610,7 +610,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasKey("Id");
 
-                    b.ToTable("TypesOfExpenses");
+                    b.ToTable("TypesOfExpenses", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Vehicle", b =>
@@ -623,6 +623,9 @@ namespace Infrastructure.Persistence.Data
 
                     b.Property<string>("Brand")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CarRegistrationPlate")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Color")
@@ -649,6 +652,9 @@ namespace Infrastructure.Persistence.Data
 
                     b.Property<int>("InitialKM")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsClean")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsUtilitary")
                         .HasColumnType("bit");
@@ -694,7 +700,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasKey("Id");
 
-                    b.ToTable("Vehicles");
+                    b.ToTable("Vehicles", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleImage", b =>
@@ -726,7 +732,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("VehicleImages");
+                    b.ToTable("VehicleImages", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleMaintenance", b =>
@@ -769,7 +775,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("VehicleMaintenanceWorkshopId");
 
-                    b.ToTable("VehicleMaintenances");
+                    b.ToTable("VehicleMaintenances", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleMaintenanceWorkshop", b =>
@@ -805,7 +811,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasKey("Id");
 
-                    b.ToTable("VehicleMaintenanceWorkshops");
+                    b.ToTable("VehicleMaintenanceWorkshops", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleReport", b =>
@@ -876,7 +882,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("VehicleReportUseId");
 
-                    b.ToTable("VehicleReports");
+                    b.ToTable("VehicleReports", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleReportImage", b =>
@@ -908,7 +914,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("VehicleReportId");
 
-                    b.ToTable("VehicleReportImages");
+                    b.ToTable("VehicleReportImages", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleReportUse", b =>
@@ -937,8 +943,10 @@ namespace Infrastructure.Persistence.Data
                     b.Property<double?>("InitialMileage")
                         .HasColumnType("float");
 
+                    b.Property<int?>("LastFuelLoad")
+                        .HasColumnType("int");
+
                     b.Property<string>("Observations")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StatusReportUse")
@@ -947,7 +955,7 @@ namespace Infrastructure.Persistence.Data
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("UseDate")
+                    b.Property<DateTime?>("UseDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("UserProfileId")
@@ -956,7 +964,7 @@ namespace Infrastructure.Persistence.Data
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Verification")
+                    b.Property<bool?>("Verification")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
@@ -969,7 +977,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("VehicleReportUses");
+                    b.ToTable("VehicleReportUses", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleService", b =>
@@ -1096,7 +1104,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("ProfileId");
 
-                    b.ToTable("UserApprovals");
+                    b.ToTable("UserApprovals", (string)null);
                 });
 
             modelBuilder.Entity("ExpensesVehicle", b =>
@@ -1111,7 +1119,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasIndex("VehiclesId");
 
-                    b.ToTable("ExpensesVehicle");
+                    b.ToTable("ExpensesVehicle", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

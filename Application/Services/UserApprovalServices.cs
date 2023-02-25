@@ -5,7 +5,6 @@ using Domain.CustomEntities;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Requests;
 using Domain.Entities.Departament;
-using Domain.Entities.Profiles;
 using Domain.Entities.User_Approvals;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
@@ -28,7 +27,7 @@ namespace Application.Services
             _mapper = mapper;
             _paginationOptions = options.Value;
         }
-        
+
         public async Task<PagedList<UserApproval>> GetApprovals(UserApprovalFilter filter)
         {
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
@@ -248,7 +247,7 @@ namespace Application.Services
 
                 Departaments department = null;
 
-                if(request.DepartmentId.HasValue)
+                if (request.DepartmentId.HasValue)
                 {
                     //Revisar que el departamento especificado exista
                     department = await _unitOfWork.Departaments.GetById(request.DepartmentId.Value);
@@ -260,7 +259,7 @@ namespace Application.Services
                         return response;
                     }
                 }
-                
+
                 if (request.IsApproved)
                 {
                     //obtener el perfil a aprobar

@@ -1,5 +1,4 @@
 ﻿using Application.Interfaces;
-using Application.Services;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
@@ -7,7 +6,6 @@ using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using System.Net;
 using System.Text.Json;
 
@@ -20,7 +18,7 @@ namespace API.Controllers
     {
         private readonly IVehicleReportService _vehicleReportService;
 
-        public VehicleReportController(IVehicleReportService vehicleReportService) 
+        public VehicleReportController(IVehicleReportService vehicleReportService)
         {
             this._vehicleReportService = vehicleReportService;
         }

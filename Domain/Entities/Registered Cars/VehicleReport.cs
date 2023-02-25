@@ -1,17 +1,12 @@
 ﻿using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
 using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Entities.Registered_Cars
 {
     public class VehicleReport : BaseEntity
     {
-        public VehicleReport() 
+        public VehicleReport()
         {
             this.Expenses = new HashSet<Expenses>();
             this.VehicleReportImages = new HashSet<VehicleReportImage>();
@@ -35,7 +30,7 @@ namespace Domain.Entities.Registered_Cars
         public virtual VehicleReportUse? VehicleReportUses { get; set; }
         public int? SolvedByAdminUserId { get; set; }
         public virtual AppUser? SolvedByAdminUser { get; set; }
-        public double? AmountGasoline { get; set; } 
+        public double? AmountGasoline { get; set; }
 
         //Collections
         public virtual ICollection<Expenses> Expenses { get; set; }

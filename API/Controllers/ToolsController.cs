@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+using Application.Interfaces;
 using Application.Services;
 using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
@@ -54,6 +54,25 @@ namespace API.Controllers
         {
             var result = await _utilitesService.GetMaintenanceSpotlight();
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+        
+        //GETALL
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetVehicleActiveDto))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetAllVehicleActive")]
+        public async Task<ActionResult<List<GetVehicleActiveDto>>> GetAll()
+        {
+            var users = await _toolsServices.GetAllVehiclesActive();
+            if (users.success)
+            {
+                return Ok(users);
+            }
+            else
+            {
+                return BadRequest(users);
+            }
         }
     }
 }

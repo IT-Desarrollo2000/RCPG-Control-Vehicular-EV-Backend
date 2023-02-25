@@ -1,11 +1,6 @@
-﻿using Domain.Entities.Departament;
+using Domain.Entities.Departament;
 using Domain.Entities.Registered_Cars;
 using Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.DTOs.Reponses
 {
@@ -41,5 +36,7 @@ namespace Domain.DTOs.Reponses
         public string VehicleQRId { get; set; }
         public string? VehicleObservation { get; set; }
         public ShortPolicyDto? Policy { get; set; }
+        public string? CarRegistrationPlate { get; set; }
+        public bool IsClean { get; set; }
     }
 }

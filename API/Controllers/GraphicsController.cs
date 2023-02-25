@@ -4,14 +4,13 @@ using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using System.Net;
 
 namespace API.Controllers
 {
     [Route("api/graphics")]
     [ApiController]
-    public class GraphicsController: ControllerBase
+    public class GraphicsController : ControllerBase
     {
         private readonly IRegisteredVehiclesServices _registeredVehiclesServices;
 
@@ -61,7 +60,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("GetServicesAndMaintenanceList")]
-        public async Task<IActionResult> GetServicesAndMaintenanceList( List<int> VehicleId)
+        public async Task<IActionResult> GetServicesAndMaintenanceList(List<int> VehicleId)
         {
             var result = await _registeredVehiclesServices.GetServicesAndMaintenanceList(VehicleId);
             if (result.success) { return Ok(result); } else { return NotFound(result); }
@@ -84,7 +83,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("GetExpensesByCar")]
-        public async Task<IActionResult> GetExpensesByCar([FromBody]List<int> VehicleId)
+        public async Task<IActionResult> GetExpensesByCar([FromBody] List<int> VehicleId)
         {
             var result = await _registeredVehiclesServices.GetExpensesByCar(VehicleId);
             if (result.success) { return Ok(result); } else { return NotFound(result); }

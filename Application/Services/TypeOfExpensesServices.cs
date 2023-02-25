@@ -4,16 +4,10 @@ using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
-using Microsoft.AspNetCore.Http.HttpResults;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    public class TypeOfExpensesServices: ITypeOfExpensesServices
+    public class TypeOfExpensesServices : ITypeOfExpensesServices
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -49,7 +43,7 @@ namespace Application.Services
         {
             GenericResponse<TypesOfExpensesDto> response = new GenericResponse<TypesOfExpensesDto>();
             var entity = await _unitOfWork.TypesOfExpensesRepo.Get(filter: a => a.Id == id);
-     
+
             var check = entity.FirstOrDefault();
             var map = _mapper.Map<TypesOfExpensesDto>(check);
             response.success = true;

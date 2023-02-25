@@ -11,7 +11,6 @@ using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Principal;
 
 namespace Infrastructure.Identity
 {
@@ -192,7 +191,7 @@ namespace Infrastructure.Identity
         public async Task<AppUserRegistrationResponse> CreateAppUserAsync(AppUserRegistrationRequest user)
         {
             //Validar archivos
-            if(!user.DriversLicenceFrontFile.ContentType.Contains("image") || !user.DriversLicenceBackFile.ContentType.Contains("image"))
+            if (!user.DriversLicenceFrontFile.ContentType.Contains("image") || !user.DriversLicenceBackFile.ContentType.Contains("image"))
             {
                 return null;
             }
@@ -652,13 +651,13 @@ namespace Infrastructure.Identity
                 }
 
                 //Buscar los departamentos y asignarlos al usuario
-                foreach(var id in request.DepartmentsToAssign)
+                foreach (var id in request.DepartmentsToAssign)
                 {
                     var department = await _unitOfWork.Departaments.GetById(id);
                     if (department == null)
                     {
                         response.success = false;
-                        response.AddError("Not Found",$"El departamento con Id {id} no existe", 2);
+                        response.AddError("Not Found", $"El departamento con Id {id} no existe", 2);
 
                         return response;
                     }
@@ -675,8 +674,8 @@ namespace Infrastructure.Identity
 
                 return response;
 
-            } 
-            catch (Exception ex) 
+            }
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);

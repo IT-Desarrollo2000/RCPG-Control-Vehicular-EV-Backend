@@ -1,17 +1,12 @@
 ﻿using Domain.Enums;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.DTOs.Requests
 {
     public class VehicleRequest
     {
-        public VehicleRequest() 
+        public VehicleRequest()
         {
             DepartmentsToAssign = new List<int>();
             Images = new List<IFormFile>();
@@ -49,8 +44,12 @@ namespace Domain.DTOs.Requests
         [Required]
         public int CurrentKM { get; set; }
         public string? VehicleObservation { get; set; } = "";
+        public string? CarRegistrationPlate { get; set; }
+        [Required]
+        public bool IsClean { get; set; } 
         public List<int> DepartmentsToAssign { get; set; }
         public List<IFormFile> Images { get; set; }
+
     }
 
     public class VehicleImageRequest

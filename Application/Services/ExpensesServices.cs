@@ -6,21 +6,12 @@ using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Application.Services
 {
-    public class ExpensesServices: IExpensesServices
+    public class ExpensesServices : IExpensesServices
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -76,7 +67,7 @@ namespace Application.Services
                 {
                     var report = await _unitOfWork.VehicleReportRepo.GetById(expensesRequest.VehicleReportId.Value);
 
-                    if(report == null)
+                    if (report == null)
                     {
 
                         response.success = false;
@@ -148,7 +139,7 @@ namespace Application.Services
                 expensesDto.PhotosOfSpending.AddRange(imagesDto);
                 response.Data = expensesDto;
                 return response;
-            } 
+            }
             catch (Exception ex)
             {
                 response.success = false;
@@ -181,8 +172,8 @@ namespace Application.Services
 
                 if (expensesRequest.TypesOfExpensesId.HasValue)
                 {
-                    var typeOfExpense = await _unitOfWork.MaintenanceWorkshopRepo.GetById(expensesRequest.TypesOfExpensesId.Value);
-                    if (typeOfExpense != null)
+                    var typeOfExpense = await _unitOfWork.TypesOfExpensesRepo.GetById(expensesRequest.TypesOfExpensesId.Value);
+                    if (typeOfExpense == null)
                     {
                         response.AddError("Tipo de gasto no encontrado", $"El tipo de gasto con Id {expensesRequest.TypesOfExpensesId.Value} no existe", 2);
                         response.success = false;
@@ -209,7 +200,7 @@ namespace Application.Services
                 if (expensesRequest.VehicleMaintenanceWorkshopId.HasValue)
                 {
                     var workshop = await _unitOfWork.MaintenanceWorkshopRepo.GetById(expensesRequest.VehicleMaintenanceWorkshopId.Value);
-                    if (workshop != null)
+                    if (workshop == null)
                     {
                         response.AddError("Taller no encontrado", $"El taller con Id {expensesRequest.VehicleMaintenanceWorkshopId.Value} no existe", 3);
                         response.success = false;
@@ -220,8 +211,8 @@ namespace Application.Services
 
                 if (expensesRequest.VehicleReportId.HasValue)
                 {
-                    var report = await _unitOfWork.DestinationOfReportUseRepo.GetById(expensesRequest.VehicleReportId.Value);
-                    if (report != null)
+                    var report = await _unitOfWork.VehicleReportRepo.GetById(expensesRequest.VehicleReportId.Value);
+                    if (report == null)
                     {
                         response.AddError("Reporte no encontrado", $"El reporte con Id {expensesRequest.VehicleReportId.Value} no existe", 4);
                         response.success = false;
@@ -346,10 +337,10 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.Vehicles.Any(v  => v.Id == filter.VehicleId) );
+                    Query = Query.And(p => p.Vehicles.Any(v => v.Id == filter.VehicleId));
                 }
                 else { Query = p => p.Vehicles.Any(v => v.Id == filter.VehicleId); }
-            }        
+            }
 
             if (filter.VehicleMaintenanceWorkshopId.HasValue)
             {
@@ -386,7 +377,7 @@ namespace Application.Services
 
             return pagedExpenses;
         }
-        
+
         public async Task<GenericResponse<PhotosOfSpending>> AddExpenseAttachment(ExpensePhotoRequest request, int expenseId)
         {
             GenericResponse<PhotosOfSpending> response = new GenericResponse<PhotosOfSpending>();
@@ -466,5 +457,5 @@ namespace Application.Services
                 return response;
             }
         }
-    }   
+    }
 }

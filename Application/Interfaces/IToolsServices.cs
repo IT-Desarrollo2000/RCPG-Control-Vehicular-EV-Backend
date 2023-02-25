@@ -1,4 +1,4 @@
-﻿using Domain.CustomEntities;
+using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
 using Domain.Enums;
 using System;
@@ -14,5 +14,6 @@ namespace Application.Interfaces
         Task<GenericResponse<List<LicenceExpiredDto>>> GetLicencesExpirations(LicenceExpStopLight request);
         Task<GenericResponse<List<MaintenanceSpotlightDto>>> GetMaintenanceSpotlight();
         Task<GenericResponse<List<PolicyExpiredDto>>> GetPoliciesExpiration(LicenceExpStopLight request);
+        Task<GenericResponse<List<GetVehicleActiveDto>>> GetAllVehiclesActive();
     }
 }

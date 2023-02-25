@@ -12,11 +12,11 @@ namespace API.Controllers
 {
     [Route("api/vehicleService")]
     [ApiController]
-    public class VehicleServiceController: ControllerBase
+    public class VehicleServiceController : ControllerBase
     {
         private readonly IVehicleServiService _vehicleServiService;
 
-        public VehicleServiceController( IVehicleServiService vehicleServiService)
+        public VehicleServiceController(IVehicleServiService vehicleServiService)
         {
             this._vehicleServiService = vehicleServiService;
         }
@@ -48,10 +48,10 @@ namespace API.Controllers
                  Data = approval
              };
 
-             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
 
-             return Ok(response);
-         }
+            return Ok(response);
+        }
 
         //GETBYID
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
