@@ -8,12 +8,16 @@ namespace Application.Interfaces
 {
     public interface IVehicleReportUseService
     {
-        Task<GenericResponse<VehicleReportUseDto>> DeleteVehicleReportUse(int Id);
-        Task<PagedList<VehicleReportUseDto>> GetVehicleReportUseAll(VehicleReportUseFilter filter);
-        Task<GenericResponse<VehicleReportUseDto>> GetVehicleReporUseById(int Id);
-        Task<GenericResponse<VehicleReportUseDto>> PostEnProceso(VehicleReportUseProceso vehicleReportUseProceso);
-        Task<GenericResponse<VehicleReportUseDto>> PostViajeRapido(VehicleReportUseFastTravel vehicleReportUseFastTravel);
-        Task<GenericResponse<VehicleReportUseDto>> PutVehicleStatusReport(int Id, int VehicleId, [FromBody] ReportUseTypeRequest reportUseTypeRequest);
-        Task<GenericResponse<VehicleReportUseDto>> PutVehicleVerification(int Id, [FromBody] VehicleReportUseVerificationRequest vehicleReportUseVerificationRequest);
+        Task<GenericResponse<bool>> DeleteVehicleReportUse(int Id);
+        Task<GenericResponse<VehicleReportUseDto>> GetUseReportById(int Id);
+        Task<PagedList<VehicleReportUseDto>> GetUseReports(VehicleReportUseFilter filter);
+        Task<GenericResponse<VehicleReportUseDto>> MarkFastTravelAsFinished(UseReportFastTravelFinishRequest request);
+        Task<GenericResponse<VehicleReportUseDto>> MarkNormalTravelAsFinished(UseReportFinishRequest request);
+        Task<GenericResponse<VehicleReportUseDto>> MarkTravelAsCanceled(UseReportCancelRequest request);
+        Task<GenericResponse<VehicleReportUseDto>> UpdateUseReport(UseReportUpdateRequest request);
+        Task<GenericResponse<VehicleReportUseDto>> UseAdminTravel(UseReportAdminRequest request);
+        Task<GenericResponse<VehicleReportUseDto>> UseFastTravel(UseReportFastTravelRequest request);
+        Task<GenericResponse<VehicleReportUseDto>> UseNormalTravel(VehicleReportUseProceso request);
+        Task<GenericResponse<VehicleReportUseDto>> VerifyVehicleUse(VehicleReportUseVerificationRequest request);
     }
 }

@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace API.Controllers
 {
-    [Route("api/vehicleReportUse")]
+    [Route("api/vehicleUseReport")]
     [ApiController]
     public class VehicleReportUseController : ControllerBase
     {
@@ -26,10 +26,10 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<VehicleReportUseDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
-        [Route("")]
-        public async Task<IActionResult> GetVehicleReport([FromQuery] VehicleReportUseFilter filter)
+        [Route("GetAll")]
+        public async Task<IActionResult> GetUseReports([FromQuery] VehicleReportUseFilter filter)
         {
-            var approval = await _vehicleReportUseService.GetVehicleReportUseAll(filter);
+            var approval = await _vehicleReportUseService.GetUseReports(filter);
 
             var metadata = new Metadata()
             {
@@ -55,122 +55,130 @@ namespace API.Controllers
 
         //GETBYID
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportUseDto))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<VehicleReportUseDto>> Get(int id)
+        [HttpGet("GetById/{id:int}")]
+        public async Task<ActionResult<VehicleReportUseDto>> GetById(int id)
         {
-            var entidad = await _vehicleReportUseService.GetVehicleReporUseById(id);
+            var entidad = await _vehicleReportUseService.GetUseReportById(id);
             if (entidad.success)
             {
                 return Ok(entidad);
-            }
-            else
-            {
-                return NotFound(entidad);
-
-            }
-
-        }
-
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportUseDto))]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [HttpPost]
-        [Route("AddProceso")]
-        public async Task<IActionResult> AddReportUsEProceso([FromForm] VehicleReportUseProceso vehicleReportUseProceso)
-        {
-            var result = await _vehicleReportUseService.PostEnProceso(vehicleReportUseProceso);
-            if (result.success) { return Ok(result); } else { return BadRequest(result); }
-        }
-
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportUseDto))]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [HttpPost]
-        [Route("AddViajeRapido")]
-        public async Task<IActionResult> AddReportUseViajeRapido([FromForm] VehicleReportUseFastTravel vehicleReportUseFastTravel)
-        {
-            var result = await _vehicleReportUseService.PostViajeRapido(vehicleReportUseFastTravel);
-            if (result.success) { return Ok(result); } else { return BadRequest(result); }
-        }
-
-
-        //PUT
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportUseDto))]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [HttpPut]
-        [Route("Verification")]
-        public async Task<ActionResult<VehicleReportUseDto>> PutVehicleReportUseVerification(int id, [FromForm] VehicleReportUseVerificationRequest vehicleReportUseVerificationRequest)
-        {
-
-            var entidad = await _vehicleReportUseService.PutVehicleVerification(id, vehicleReportUseVerificationRequest);
-
-            if (entidad.success)
-            {
-                return Ok(entidad);
-
             }
             else
             {
                 return BadRequest(entidad);
+
             }
+
         }
 
-        //PUT
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportUseDto))]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        //VIAJE NORMAL
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPost]
+        [Route("InitiateNormalTravel")]
+        public async Task<IActionResult> InitiateNormalTravel([FromBody] VehicleReportUseProceso request)
+        {
+            var result = await _vehicleReportUseService.UseNormalTravel(request);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+
+        //VIAJE RAPIDO
+        [Authorize(Roles = "Administrator, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPost]
+        [Route("InitiateFastTravel")]
+        public async Task<IActionResult> InitiateFastTravel([FromBody] UseReportFastTravelRequest request)
+        {
+            var result = await _vehicleReportUseService.UseFastTravel(request);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        //VIAJE NORMAL ADMIN
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPost]
+        [Route("InitiateAdminTravel")]
+        public async Task<IActionResult> InitiateAdminTravel([FromBody] UseReportAdminRequest request)
+        {
+            var result = await _vehicleReportUseService.UseAdminTravel(request);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        //FINALIZAR VIAJE NORMAL
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
-        [Route("Status")]
-        public async Task<ActionResult<VehicleReportUseDto>> PutStatusVehicleReport(int id, int VehicleId, [FromForm] ReportUseTypeRequest reportUseTypeRequest)
+        [Route("FinishNormalTravel")]
+        public async Task<ActionResult<IActionResult>> FinishNormalUse(UseReportFinishRequest request)
         {
-
-            var entidad = await _vehicleReportUseService.PutVehicleStatusReport(id, VehicleId, reportUseTypeRequest);
-
-            if (entidad.success)
-            {
-                return Ok(entidad);
-
-            }
-            else
-            {
-                return BadRequest(entidad);
-            }
+            var result = await _vehicleReportUseService.MarkNormalTravelAsFinished(request);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
+        //FINALIZAR VIAJE RAPIDO
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPut]
+        [Route("FinishFastTravel")]
+        public async Task<ActionResult<IActionResult>> FinishFastUse(UseReportFastTravelFinishRequest request)
+        {
+            var result = await _vehicleReportUseService.MarkFastTravelAsFinished(request);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
 
-        //Delete
+        //VERIFICAR EL VIAJE
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportUseDto))]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPut]
+        [Route("VerifyByAdmin")]
+        public async Task<ActionResult<IActionResult>> VerifyUseReport(VehicleReportUseVerificationRequest request)
+        {
+            var result = await _vehicleReportUseService.VerifyVehicleUse(request);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        //VERIFICAR EL VIAJE
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPut]
+        [Route("Cancel")]
+        public async Task<ActionResult<IActionResult>> CancelUseReport(UseReportCancelRequest request)
+        {
+            var result = await _vehicleReportUseService.MarkTravelAsCanceled(request);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        //ACTUALIZAR REPORT DE USO
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPut]
+        [Route("Update")]
+        public async Task<ActionResult<IActionResult>> UpdateUseReport(UseReportUpdateRequest request)
+        {
+            var result = await _vehicleReportUseService.UpdateUseReport(request);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        //ELIMINAR
+        [Authorize(Roles = "Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete("{id}")]
         public async Task<ActionResult<VehicleReportDto>> DeleteVehicleReportUse(int id)
         {
-            var existe = await _vehicleReportUseService.DeleteVehicleReportUse(id);
-            if (existe == null)
-            {
-                return NotFound($"No existe VehicleReport con el Id {id} para borrar");
-            }
-
-            if (existe.success)
-            {
-                return Ok(existe);
-            }
-            else
-            {
-                return NotFound();
-            }
-
+            var result = await _vehicleReportUseService.DeleteVehicleReportUse(id);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
-
-
     }
 }

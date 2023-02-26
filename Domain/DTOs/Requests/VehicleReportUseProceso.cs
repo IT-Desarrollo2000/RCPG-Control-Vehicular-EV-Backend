@@ -1,24 +1,59 @@
 ﻿using Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.DTOs.Requests
 {
     public class VehicleReportUseProceso
     {
+        public VehicleReportUseProceso()
+        {
+            Destinations = new List<DestinationRequest>();
+        }
 
+        [Required]
         public int VehicleId { get; set; }
-        public ReportUseType StatusReportUse { get; set; }
-        public string Observations { get; set; }
+
+        [Required]
         public DateTime UseDate { get; set; }
-        public int? UserProfileId { get; set; }
+
+        [Required]
+        public int UserProfileId { get; set; }
+
+        public List<DestinationRequest> Destinations { get; set; }
+
+        public CreationChecklistDto? CheckList { get; set; }
+
+        public bool? IsVehicleClean { get; set; }
+
         public CurrentFuel? CurrentFuelLoad { get; set; }
-        public virtual destinolistdtoo Destination { get; set; }
+
+        public double? InitialMileage { get; set; }
     }
 
-    public class destinolistdtoo
+    public class UseReportAdminRequest
     {
-        public string DestinationName { get; set; }
-        public double? Latitud { get; set; }
-        public double? Longitude { get; set; }
-    }
+        public UseReportAdminRequest()
+        {
+            Destinations = new List<DestinationRequest>();
+        }
 
+        [Required]
+        public int VehicleId { get; set; }
+
+        [Required]
+        public DateTime UseDate { get; set; }
+
+        [Required]
+        public int AdminUserId { get; set; }
+
+        public List<DestinationRequest> Destinations { get; set; }
+
+        public CreationChecklistDto? CheckList { get; set; }
+
+        public bool? IsVehicleClean { get; set; }
+
+        public CurrentFuel? CurrentFuelLoad { get; set; }
+
+        public double? InitialMileage { get; set; }
+    }
 }
