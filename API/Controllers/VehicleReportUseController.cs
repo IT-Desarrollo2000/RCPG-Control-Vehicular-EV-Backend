@@ -22,7 +22,7 @@ namespace API.Controllers
         }
 
         //GETALL
-        //[Authorize(Roles = "Administrator, AdminUser")]
+        [Authorize(Roles = "Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -54,7 +54,7 @@ namespace API.Controllers
         }
 
         //GETBYID
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet("GetById/{id:int}")]
@@ -74,7 +74,7 @@ namespace API.Controllers
         }
 
         //VIAJE NORMAL
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
@@ -87,7 +87,7 @@ namespace API.Controllers
 
 
         //VIAJE RAPIDO
-        //[Authorize(Roles = "Administrator, AppUser")]
+        [Authorize(Roles = "Administrator, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
@@ -99,7 +99,7 @@ namespace API.Controllers
         }
 
         //VIAJE NORMAL ADMIN
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
@@ -111,7 +111,7 @@ namespace API.Controllers
         }
 
         //FINALIZAR VIAJE NORMAL
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
@@ -123,7 +123,7 @@ namespace API.Controllers
         }
 
         //FINALIZAR VIAJE RAPIDO
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
@@ -135,7 +135,7 @@ namespace API.Controllers
         }
 
         //VERIFICAR EL VIAJE
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
@@ -147,7 +147,7 @@ namespace API.Controllers
         }
 
         //VERIFICAR EL VIAJE
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
@@ -159,7 +159,7 @@ namespace API.Controllers
         }
 
         //ACTUALIZAR REPORT DE USO
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
@@ -171,7 +171,7 @@ namespace API.Controllers
         }
 
         //ELIMINAR
-        //[Authorize(Roles = "Administrator, AdminUser")]
+        [Authorize(Roles = "Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete("{id}")]
