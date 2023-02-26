@@ -238,23 +238,14 @@ namespace Application.Services
                 newUseReport.UseDate = request.UseDate;
                 newUseReport.Verification = false;
 
-                //Asignar los destinos
-                foreach(var destination in request.Destinations)
-                {
-                    var newDestination = _mapper.Map<DestinationOfReportUse>(destination);
-                    newUseReport.Destinations.Add(newDestination);
-                }
-
                 //Modificar el estatus del vehiculo
                 vehicleExists.VehicleStatus = VehicleStatus.EN_USO;
                 vehicleExists.IsClean = request.IsVehicleClean ?? vehicleExists.IsClean;
 
                 //Agregar el checklist al vehiculo
-                if(request.CheckList != null)
+                if(request.InitialCheckList != null)
                 {
-                    var newCheckList = _mapper.Map<Checklist>(request.CheckList);
-                    newCheckList.Vehicle = vehicleExists;
-                    newUseReport.InitialCheckList = newCheckList;
+                    newUseReport.InitialCheckList.VehicleId = vehicleExists.Id;
                 } else
                 {
                     //Consultar el checklist del ultimo reporte de uso disponible
@@ -463,23 +454,14 @@ namespace Application.Services
                 newUseReport.UseDate = request.UseDate;
                 newUseReport.Verification = true;
 
-                //Asignar los destinos
-                foreach (var destination in request.Destinations)
-                {
-                    var newDestination = _mapper.Map<DestinationOfReportUse>(destination);
-                    newUseReport.Destinations.Add(newDestination);
-                }
-
                 //Modificar el estatus del vehiculo
                 vehicleExists.VehicleStatus = VehicleStatus.EN_USO;
                 vehicleExists.IsClean = request.IsVehicleClean ?? vehicleExists.IsClean;
 
                 //Agregar el checklist al vehiculo
-                if (request.CheckList != null)
+                if (request.InitialCheckList != null)
                 {
-                    var newCheckList = _mapper.Map<Checklist>(request.CheckList);
-                    newCheckList.Vehicle = vehicleExists;
-                    newUseReport.InitialCheckList = newCheckList;
+                    newUseReport.InitialCheckList.VehicleId = vehicleExists.Id;
                 }
                 else
                 {

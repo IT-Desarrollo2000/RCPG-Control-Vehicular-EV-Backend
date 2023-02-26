@@ -5,6 +5,7 @@
         public Checklist()
         {
             this.VehicleReportUses = new HashSet<VehicleReportUse>();
+            this.InitialCheckListForUseReport = new HashSet<VehicleReportUse>();
         }
 
         public int VehicleId { get; set; } 

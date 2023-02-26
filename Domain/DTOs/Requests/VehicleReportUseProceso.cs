@@ -21,7 +21,7 @@ namespace Domain.DTOs.Requests
 
         public List<DestinationRequest> Destinations { get; set; }
 
-        public CreationChecklistDto? CheckList { get; set; }
+        public CreationChecklistDto? InitialCheckList { get; set; }
 
         public bool? IsVehicleClean { get; set; }
 
@@ -48,7 +48,7 @@ namespace Domain.DTOs.Requests
 
         public List<DestinationRequest> Destinations { get; set; }
 
-        public CreationChecklistDto? CheckList { get; set; }
+        public CreationChecklistDto? InitialCheckList { get; set; }
 
         public bool? IsVehicleClean { get; set; }
 

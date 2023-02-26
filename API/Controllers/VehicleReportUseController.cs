@@ -22,8 +22,8 @@ namespace API.Controllers
         }
 
         //GETALL
-        [Authorize(Roles = "Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<VehicleReportUseDto>))]
+        //[Authorize(Roles = "Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetAll")]
@@ -54,11 +54,11 @@ namespace API.Controllers
         }
 
         //GETBYID
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet("GetById/{id:int}")]
-        public async Task<ActionResult<VehicleReportUseDto>> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var entidad = await _vehicleReportUseService.GetUseReportById(id);
             if (entidad.success)
@@ -74,8 +74,8 @@ namespace API.Controllers
         }
 
         //VIAJE NORMAL
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("InitiateNormalTravel")]
@@ -87,8 +87,8 @@ namespace API.Controllers
 
 
         //VIAJE RAPIDO
-        [Authorize(Roles = "Administrator, AppUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        //[Authorize(Roles = "Administrator, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("InitiateFastTravel")]
@@ -99,8 +99,8 @@ namespace API.Controllers
         }
 
         //VIAJE NORMAL ADMIN
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("InitiateAdminTravel")]
@@ -111,44 +111,44 @@ namespace API.Controllers
         }
 
         //FINALIZAR VIAJE NORMAL
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("FinishNormalTravel")]
-        public async Task<ActionResult<IActionResult>> FinishNormalUse(UseReportFinishRequest request)
+        public async Task<IActionResult> FinishNormalUse(UseReportFinishRequest request)
         {
             var result = await _vehicleReportUseService.MarkNormalTravelAsFinished(request);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
         //FINALIZAR VIAJE RAPIDO
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("FinishFastTravel")]
-        public async Task<ActionResult<IActionResult>> FinishFastUse(UseReportFastTravelFinishRequest request)
+        public async Task<IActionResult> FinishFastUse(UseReportFastTravelFinishRequest request)
         {
             var result = await _vehicleReportUseService.MarkFastTravelAsFinished(request);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
         //VERIFICAR EL VIAJE
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("VerifyByAdmin")]
-        public async Task<ActionResult<IActionResult>> VerifyUseReport(VehicleReportUseVerificationRequest request)
+        public async Task<IActionResult> VerifyUseReport(VehicleReportUseVerificationRequest request)
         {
             var result = await _vehicleReportUseService.VerifyVehicleUse(request);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
         //VERIFICAR EL VIAJE
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("Cancel")]
@@ -159,23 +159,23 @@ namespace API.Controllers
         }
 
         //ACTUALIZAR REPORT DE USO
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("Update")]
-        public async Task<ActionResult<IActionResult>> UpdateUseReport(UseReportUpdateRequest request)
+        public async Task<IActionResult> UpdateUseReport(UseReportUpdateRequest request)
         {
             var result = await _vehicleReportUseService.UpdateUseReport(request);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
         //ELIMINAR
-        [Authorize(Roles = "Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportUseDto>))]
+        //[Authorize(Roles = "Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<VehicleReportDto>> DeleteVehicleReportUse(int id)
+        public async Task<IActionResult> DeleteVehicleReportUse(int id)
         {
             var result = await _vehicleReportUseService.DeleteVehicleReportUse(id);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
