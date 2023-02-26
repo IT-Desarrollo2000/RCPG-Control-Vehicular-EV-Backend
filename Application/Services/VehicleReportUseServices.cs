@@ -456,7 +456,7 @@ namespace Application.Services
             }
         }
 
-
+        //Confirmación de viaje por Admin
         public async Task<GenericResponse<VehicleReportUseDto>> PutVehicleVerification(int Id, [FromBody] VehicleReportUseVerificationRequest vehicleReportUseVerificationRequest)
         {
             GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
@@ -491,6 +491,7 @@ namespace Application.Services
 
         }
 
+        //Finalización del viaje
         public async Task<GenericResponse<VehicleReportUseDto>> PutVehicleStatusReport(int Id, int VehicleId, [FromBody] ReportUseTypeRequest reportUseTypeRequest)
         {
             GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
