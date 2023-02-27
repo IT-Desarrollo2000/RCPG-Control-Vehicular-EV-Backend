@@ -242,7 +242,7 @@ namespace Application.Services
                 }
 
                 //Generar ID de QR
-                entity.VehicleQRId = new Guid().ToString() + $"-{entity.Id}";
+                entity.VehicleQRId = System.Guid.NewGuid().ToString();
                 entity.InitialKM = vehicleRequest.CurrentKM;
 
                 //Guardar el Vehiculo 
@@ -336,7 +336,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehiclesDto>> GetVehicleById(int id)
         {
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
-            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company");
+            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy");
 
             var veh = entity.FirstOrDefault();
 
@@ -379,10 +379,38 @@ namespace Application.Services
                     await _unitOfWork.ChecklistRepo.Delete(checklist.Id);
                 }
 
+                //Borrar los reportes
+                var reports = await _unitOfWork.VehicleReportRepo.Get(r => r.VehicleId == id, includeProperties: "Expenses");
+                {
+                    foreach(var report in reports)
+                    {
+                        //Vaciar los gastos
+                        foreach(var expense in report.Expenses)
+                        {
+                            expense.VehicleReport = null;
+                            await _unitOfWork.ExpensesRepo.Update(expense);
+                        }
+                        await _unitOfWork.VehicleReportRepo.Delete(report.Id);
+                    }
+
+                }
+
+                //Borrar Reportes de Uso
+                var useReports = await _unitOfWork.VehicleReportUseRepo.Get(r => r.VehicleId == id, includeProperties: "Destinations");
+                foreach (var report in useReports)
+                {
+                    foreach(var destination in report.Destinations)
+                    {
+                        await _unitOfWork.DestinationOfReportUseRepo.Delete(destination.Id);
+                    }
+                    await _unitOfWork.VehicleReportUseRepo.Delete(report.Id);
+                }
+
                 //Borrar polizas
                 var policies = await _unitOfWork.PolicyRepo.Get(p => p.VehicleId == id);
                 foreach(var policy in policies)
                 {
+
                     await _unitOfWork.PolicyRepo.Delete(policy.Id);
                 }
 
