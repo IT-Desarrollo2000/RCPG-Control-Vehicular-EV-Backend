@@ -4,8 +4,10 @@ namespace Domain.DTOs.Reponses
 {
     public class PerformanceDto
     {
-        public Vehicle Vehicle { get; set; }
-        public decimal PerformanceOfVehicle { get; set; }
+        public int VehicleId { get; set; }
+        public double CurrentKm { get; set; }
+        public double LastKm { get; set; }
+        public double GasolineLoadAmount { get; set; }
 
     }
 }

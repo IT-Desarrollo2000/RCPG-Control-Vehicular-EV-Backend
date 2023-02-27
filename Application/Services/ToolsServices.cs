@@ -353,18 +353,50 @@ namespace Application.Services
         public async Task<GenericResponse<List<GetVehicleActiveDto>>> GetAllVehiclesActive()
         {
             GenericResponse<List<GetVehicleActiveDto>> response = new GenericResponse<List<GetVehicleActiveDto>>();
-            var VehicleA = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == Domain.Enums.ReportUseType.ViajeNormal, includeProperties: "Vehicle,UserProfile,Destinations");
-            if (VehicleA == null)
+            try
+            {
+                var VehicleA = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == Domain.Enums.ReportUseType.ViajeNormal, includeProperties: "Vehicle,UserProfile,Destinations");
+                if (VehicleA == null)
+                {
+                    response.success = false;
+                    response.AddError("No existe Vehiculos Por Mostrar", "No Hay Vehiculos en Viaje actualmente", 1);
+                    return response;
+                }
+
+                var dtos = _mapper.Map<List<GetVehicleActiveDto>>(VehicleA);
+                response.success = true;
+                response.Data = dtos;
+                return response;
+
+            }
+            catch(Exception ex)
             {
                 response.success = false;
-                response.AddError("f", "f", 1);
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+
+            }
+            
+        }
+
+        public async Task<GenericResponse<List<PerformanceDto>>> GetAllRendimiento()
+        {
+            GenericResponse<List<PerformanceDto>> response = new GenericResponse<List<PerformanceDto>>();
+
+            try 
+            {
+
+            } 
+            catch(Exception ex) 
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
                 return response;
             }
 
-            var dtos = _mapper.Map<List<GetVehicleActiveDto>>(VehicleA);
-            response.success = true;
-            response.Data = dtos;
-            return response;
         }
+
     }
 }

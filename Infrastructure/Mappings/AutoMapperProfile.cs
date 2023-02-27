@@ -120,6 +120,7 @@ namespace Infrastructure.Mappings
                 .ForMember(x => x.MobileUserName, c => c.MapFrom(m => m.MobileUser.FullName))
                 .ForMember(x => x.SolvedByAdminUserName, c => c.MapFrom(ad => ad.SolvedByAdminUser.UserName));
             CreateMap<VehicleReportImage, VehicleReportImageDto>();
+            CreateMap<VehicleReport, PerformanceDto>();
 
 
             //Performance
@@ -152,6 +153,7 @@ namespace Infrastructure.Mappings
                 .ForMember(ur => ur.VehicleStatus, o => o.MapFrom(v => v.Vehicle.VehicleStatus))
                 .ReverseMap();
             CreateMap<UseReportAdminRequest, VehicleReportUse>();
+            
 
 
             //Graphics
