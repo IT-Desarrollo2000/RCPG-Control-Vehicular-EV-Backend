@@ -45,7 +45,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<List<MaintenanceSpotlightDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -64,7 +64,7 @@ namespace API.Controllers
         [Route("GetAllVehicleActive")]
         public async Task<ActionResult<List<GetVehicleActiveDto>>> GetAll()
         {
-            var users = await _toolsServices.GetAllVehiclesActive();
+            var users = await _utilitesService.GetAllVehiclesActive();
             if (users.success)
             {
                 return Ok(users);

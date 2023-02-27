@@ -83,6 +83,7 @@ namespace Infrastructure.Persistence
             builder.ApplyConfiguration(new DestinationOfReportUseConfiguration());
             builder.ApplyConfiguration(new DepartmentConfiguration());
             builder.ApplyConfiguration(new VehicleServiceConfiguration());
+            builder.ApplyConfiguration(new MaintenanceConfiguration());
         }
     }
 }

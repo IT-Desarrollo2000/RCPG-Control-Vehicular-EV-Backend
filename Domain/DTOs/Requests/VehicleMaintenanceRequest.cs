@@ -1,12 +1,22 @@
-﻿namespace Domain.DTOs.Requests
+﻿using Domain.DTOs.Reponses;
+using Domain.Enums;
+using System.ComponentModel.DataAnnotations;
+
+namespace Domain.DTOs.Requests
 {
     public class VehicleMaintenanceRequest
     {
-        public string WhereServiceMaintenance { get; set; }
-        public string? CarryPerson { get; set; }
-        public string CauseServiceMaintenance { get; set; }
+        [Required]
+        public string ReasonForMaintenance { get; set; }
+        [Required]
         public int VehicleId { get; set; }
-        public DateTime? NextServiceMaintenance { get; set; }
-        public int? VehicleMaintenanceWorkshopId { get; set; }
+
+        public DateTime? MaintenanceDate { get; set; }
+        public int? InitialMileage { get; set; }
+        public CurrentFuel? InitialFuel { get; set; }
+
+        public int? WorkShopId { get; set; }
+        public int? AdminUserId { get; set; }
+        public int? ReportId { get; set; }
     }
 }
