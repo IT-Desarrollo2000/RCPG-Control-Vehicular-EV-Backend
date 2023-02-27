@@ -50,10 +50,11 @@ namespace Infrastructure.Repositories
             _entities.Add(entity);
         }
 
-        public async Task Delete(int Id)
+        public async Task<bool> Delete(int Id)
         {
             T entity = await GetById(Id);
-            _entities.Remove(entity);
+            var result = _entities.Remove(entity);
+            if (result.State == EntityState.Deleted) { return true; } else { return false; };
         }
 
         public async Task<IEnumerable<T>> GetAll()
@@ -71,11 +72,6 @@ namespace Infrastructure.Repositories
             entity.UpdatedDate = DateTime.UtcNow;
 
             _entities.Update(entity);
-        }
-
-        Task<bool> IRepository<T>.Delete(int Id)
-        {
-            throw new NotImplementedException();
         }
 
         public Task ToListAsync()

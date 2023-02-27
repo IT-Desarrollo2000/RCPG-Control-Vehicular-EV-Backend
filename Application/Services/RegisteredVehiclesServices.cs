@@ -596,8 +596,6 @@ namespace Application.Services
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
-
-                response.AddError("Error", ex.Message, 1);
                 return response;
 
             }
