@@ -41,7 +41,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses";
+            string properties = "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser";
             IEnumerable<VehicleReport> userApprovals = null;
             Expression<Func<VehicleReport, bool>> Query = null;
 
@@ -193,7 +193,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleReportDto>> GetVehicleReportById(int Id)
         {
             GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
-            var profile = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,MobileUser,AdminUser,Expenses,VehicleReportImages,VehicleReportUses");
+            var profile = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser");
             var result = profile.FirstOrDefault();
             var VehicleReportDto = _mapper.Map<VehicleReportDto>(result);
             response.success = true;
@@ -201,7 +201,7 @@ namespace Application.Services
             return response;
         }
 
-        //Post 
+        //POST 
         public async Task<GenericResponse<VehicleReportDto>> PostVehicleReport(VehicleReportRequest vehicleReportRequest)
         {
             GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
@@ -436,7 +436,7 @@ namespace Application.Services
                 if (adminUserExists == null)
                 {
                     response.success = false;
-                    response.AddError("No existe AppUser", $"No existe AppUserId {request.AdminUserId} para cargar", 1);
+                    response.AddError("No existe AppUser", $"No existe AppUserId {request.AdminUserId} para cargar", 5);
                     return response;
                 }
 

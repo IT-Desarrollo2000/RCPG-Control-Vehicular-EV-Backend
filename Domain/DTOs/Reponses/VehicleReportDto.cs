@@ -17,9 +17,7 @@ namespace Domain.DTOs.Reponses
         public string? Commentary { get; set; }
         public int? MobileUserId { get; set; }
         public string? MobileUserName { get; set; }
-        //public UnrelatedUserProfileDto? MobileUser { get; set; }
         public int? AdminUserId { get; set; }
-        //public AppUser? AdminUser { get; set; }
         public string? AdminUserName { get; set; }
         public DateTime ReportDate { get; set; }
         public List<UnrelatedExpensesDto> Expenses { get; set; }
@@ -32,8 +30,7 @@ namespace Domain.DTOs.Reponses
         public int? VehicleReportUseId { get; set; }
         public virtual UnrelatedVehicleReportUseDto? VehicleReportUses { get; set; }
         public int? SolvedByAdminUserId { get; set; }
-        //public AppUser? SolvedByAdminUser { get; set; }
-        public string SolvedByAdminUserName { get; set; }
+        public string? SolvedByAdminUserName { get; set; }
         public double? AmountGasoline { get; set; }
     }
 }
