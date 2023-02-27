@@ -111,13 +111,23 @@ namespace Application.Services
         public async Task<GenericResponse<MaintenanceWorkshopDto>> PostMaintenanceWorkshop([FromBody] MaintenanceWorkshopRequest maintenanceWorkshopRequest)
         {
             GenericResponse<MaintenanceWorkshopDto> response = new GenericResponse<MaintenanceWorkshopDto>();
-            var entidad = _mapper.Map<VehicleMaintenanceWorkshop>(maintenanceWorkshopRequest);
-            await _unitOfWork.MaintenanceWorkshopRepo.Add(entidad);
-            await _unitOfWork.SaveChangesAsync();
-            response.success = true;
-            var MaintenanceWorkshopDTO = _mapper.Map<MaintenanceWorkshopDto>(entidad);
-            response.Data = MaintenanceWorkshopDTO;
-            return response;
+            try 
+            {
+                var entidad = _mapper.Map<VehicleMaintenanceWorkshop>(maintenanceWorkshopRequest);
+                await _unitOfWork.MaintenanceWorkshopRepo.Add(entidad);
+                await _unitOfWork.SaveChangesAsync();
+                response.success = true;
+                var MaintenanceWorkshopDTO = _mapper.Map<MaintenanceWorkshopDto>(entidad);
+                response.Data = MaintenanceWorkshopDTO;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+               
 
         }
 
@@ -125,22 +135,30 @@ namespace Application.Services
         public async Task<GenericResponse<MaintenanceWorkshopDto>> PutMaintenanceWorkshop(int Id, [FromBody] MaintenanceWorkshopRequest maintenanceWorkshopRequest)
         {
             GenericResponse<MaintenanceWorkshopDto> response = new GenericResponse<MaintenanceWorkshopDto>();
-            var profile = await _unitOfWork.MaintenanceWorkshopRepo.Get(p => p.Id == Id);
-            var result = profile.FirstOrDefault();
-            if (result == null) { return null; }
-            result.Name = maintenanceWorkshopRequest.Name;
-            result.Ubication = maintenanceWorkshopRequest.Ubication;
-            result.Latitude = maintenanceWorkshopRequest.Latitude;
-            result.Longitude = maintenanceWorkshopRequest.Longitude;
-            result.Telephone = maintenanceWorkshopRequest.Telephone;
+            try
+            {
+                var profile = await _unitOfWork.MaintenanceWorkshopRepo.Get(p => p.Id == Id);
+                var result = profile.FirstOrDefault();
+                if (result == null) { return null; }
+                result.Name = maintenanceWorkshopRequest.Name ?? result.Name;
+                result.Ubication = maintenanceWorkshopRequest.Ubication ?? result.Ubication;
+                result.Latitude = maintenanceWorkshopRequest.Latitude ?? result.Latitude;
+                result.Longitude = maintenanceWorkshopRequest.Longitude ?? result.Longitude;
+                result.Telephone = maintenanceWorkshopRequest.Telephone ?? result.Telephone;
 
-            await _unitOfWork.MaintenanceWorkshopRepo.Update(result);
-            await _unitOfWork.SaveChangesAsync();
-            var MaintenanceWorkshopDTO = _mapper.Map<MaintenanceWorkshopDto>(result);
-            response.success = true;
-            response.Data = MaintenanceWorkshopDTO;
-            return response;
-
+                await _unitOfWork.MaintenanceWorkshopRepo.Update(result);
+                await _unitOfWork.SaveChangesAsync();
+                var dto = _mapper.Map<MaintenanceWorkshopDto>(result);
+                response.success = true;
+                response.Data = dto;
+                return response;
+            }
+            catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
         }
 
         //Delete
