@@ -13,7 +13,7 @@ namespace Application.Interfaces
         Task<T> GetById(int Id);
         Task Add(T entity);
         Task Update(T entity);
-        Task<bool> Delete(int Id);
         Task ToListAsync();
+        Task<bool> Delete(int Id);
     }
 }
