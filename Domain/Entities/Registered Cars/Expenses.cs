@@ -11,12 +11,14 @@
         public decimal Cost { get; set; }
         public bool Invoiced { get; set; }
         public DateTime ExpenseDate { get; set; }
-        public virtual ICollection<Vehicle> Vehicles { get; set; }
-        public int? VehicleMaintenanceWorkshopId { get; set; }
-        public virtual VehicleMaintenanceWorkshop? VehicleMaintenanceWorkshop { get; set; }
         public string ERPFolio { get; set; }
-        public virtual ICollection<PhotosOfSpending> PhotosOfSpending { get; set; }
+
         public int? VehicleReportId { get; set; }
+        public int? VehicleMaintenanceWorkshopId { get; set; }
+
         public virtual VehicleReport? VehicleReport { get; set; }
+        public virtual VehicleMaintenanceWorkshop? VehicleMaintenanceWorkshop { get; set; }
+        public virtual ICollection<Vehicle> Vehicles { get; set; }
+        public virtual ICollection<PhotosOfSpending> PhotosOfSpending { get; set; }
     }
 }

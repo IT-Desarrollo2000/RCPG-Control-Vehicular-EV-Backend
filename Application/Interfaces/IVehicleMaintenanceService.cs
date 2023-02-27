@@ -9,10 +9,12 @@ namespace Application.Interfaces
 {
     public interface IVehicleMaintenanceService
     {
+        Task<GenericResponse<VehicleMaintenanceDto>> CancelMaintenance(CancelMaintenanceRequest request);
         Task<GenericResponse<VehicleMaintenanceDto>> DeleteVehicleManintenance(int Id);
-        Task<PagedList<VehicleMaintenance>> GetVehicleMaintenanceAll(VehicleMaintenanceFilter filter);
+        Task<GenericResponse<VehicleMaintenanceDto>> FinalizeMaintenance(FinalizeMaintenanceRequest request);
+        Task<PagedList<VehicleMaintenanceDto>> GetVehicleMaintenanceAll(VehicleMaintenanceFilter filter);
         Task<GenericResponse<VehicleMaintenanceDto>> GetVehicleMaintenanceById(int Id);
-        Task<GenericResponse<VehicleMaintenanceDto>> PostVehicleMaintenance([FromBody] VehicleMaintenanceRequest vehicleMaintenanceRequest);
-        Task<GenericResponse<VehicleMaintenanceDto>> PutVehicleMaintenance(int Id, [FromBody] VehicleMaintenanceRequest vehicleMaintenanceRequest);
+        Task<GenericResponse<VehicleMaintenanceDto>> InitiateMaintenance(VehicleMaintenanceRequest request);
+        Task<GenericResponse<VehicleMaintenanceDto>> UpdateMaintenance(MaintenanceUpdateRequest request);
     }
 }

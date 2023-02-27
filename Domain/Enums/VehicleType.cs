@@ -14,6 +14,7 @@
         VAGONETA = 10,
         PICKUP = 11,
         CAMION = 12,
-        MULTIPROPOSITO = 13
+        MULTIPROPOSITO = 13,
+        MOTOCICLETA = 14
     }
 }

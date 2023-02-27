@@ -10,6 +10,7 @@ namespace Domain.Entities.Registered_Cars
         {
             this.Expenses = new HashSet<Expenses>();
             this.VehicleReportImages = new HashSet<VehicleReportImage>();
+            this.Maintenances = new HashSet<VehicleMaintenance>();
         }
 
         public ReportType ReportType { get; set; }
@@ -34,6 +35,7 @@ namespace Domain.Entities.Registered_Cars
 
         //Collections
         public virtual ICollection<Expenses> Expenses { get; set; }
+        public virtual ICollection<VehicleMaintenance> Maintenances { get; set; }
         public virtual ICollection<VehicleReportImage> VehicleReportImages { get; set; }
 
     }

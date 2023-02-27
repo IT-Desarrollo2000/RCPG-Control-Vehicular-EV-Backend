@@ -9,11 +9,10 @@ namespace Infrastructure.Persistence.Configurations
         public void Configure(EntityTypeBuilder<VehicleMaintenanceWorkshop> builder)
         {
             builder.HasMany(ur => ur.VehicleMaintenances)
-                   .WithOne(u => u.VehicleMaintenanceWorkshop)
-                   .HasForeignKey(x => x.VehicleMaintenanceWorkshopId)
+                   .WithOne(u => u.WorkShop)
+                   .HasForeignKey(x => x.WorkShopId)
                    .IsRequired(false)
                    .OnDelete(DeleteBehavior.Restrict);
-
         }
 
     }

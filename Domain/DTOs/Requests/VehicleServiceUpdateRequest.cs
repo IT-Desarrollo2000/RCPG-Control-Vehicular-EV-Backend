@@ -20,5 +20,6 @@ namespace Domain.DTOs.Requests
         public int? FinalMileage { get; set; }
         public CurrentFuel? FinalFuel { get; set; }
         public string? Comment { get; set; }
+        public int? ExpenseId { get; set; }
     }
 }
