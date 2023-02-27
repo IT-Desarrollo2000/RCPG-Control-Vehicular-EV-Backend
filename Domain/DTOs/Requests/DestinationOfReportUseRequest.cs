@@ -1,9 +1,14 @@
-﻿namespace Domain.DTOs.Requests
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Domain.DTOs.Requests
 {
     public class DestinationOfReportUseRequest
     {
-        public string? DestinationName { get; set; }
+        [Required]
+        public string DestinationName { get; set; }
         public double? Latitud { get; set; }
         public double? Longitude { get; set; }
+        [Required]
+        public int VehicleReportUseId { get; set; }
     }
 }

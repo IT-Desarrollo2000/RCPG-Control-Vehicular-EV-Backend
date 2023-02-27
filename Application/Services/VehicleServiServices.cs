@@ -141,7 +141,7 @@ namespace Application.Services
                 }
 
                 //Verificar que el vehiculo se encuentre disponible
-                switch (existeVehicle.VehicleStatus)
+                switch (resultVehicle.VehicleStatus)
                 {
                     case VehicleStatus.INACTIVO:
                     case VehicleStatus.MANTENIMIENTO:

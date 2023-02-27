@@ -87,10 +87,10 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
-        public async Task<ActionResult<DestinationOfReportUseDto>> PutDestinationOfResultUse(int id, [FromBody] DestinationOfReportUseRequest destinationOfReportUseRequest)
+        public async Task<ActionResult<DestinationOfReportUseDto>> PutDestinationOfResultUse(int id, [FromBody] UseReportDestinantionUpdateRequest request)
         {
 
-            var entidad = await _destinationOfReportUseService.PutDestinationOfReportUse(id, destinationOfReportUseRequest);
+            var entidad = await _destinationOfReportUseService.PutDestinationOfReportUse(id, request);
 
             if (entidad.success)
             {
