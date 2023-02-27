@@ -141,9 +141,9 @@ namespace Application.Services
 
                 if (resultPolicyVehicle == null)
                 {
-                    result.PolicyNumber = policyRequest.PolicyNumber;
-                    result.ExpirationDate = policyRequest.ExpirationDate;
-                    result.VehicleId = policyRequest.VehicleId;
+                    result.PolicyNumber = policyRequest.PolicyNumber ?? result.PolicyNumber;
+                    result.ExpirationDate = policyRequest.ExpirationDate ?? result.ExpirationDate;
+                    result.VehicleId = policyRequest.VehicleId ?? result.VehicleId;
 
                     await _unitOfWork.PolicyRepo.Update(result);
                     await _unitOfWork.SaveChangesAsync();
@@ -161,15 +161,13 @@ namespace Application.Services
                     response.AddError("No se puede asignar la misma poliza a otro vehiculo", $"No se puede poner {policyRequest.VehicleId} para cargar", 1);
                     return response;
                 }
-
-
             }
             else
             {
 
-                result.PolicyNumber = policyRequest.PolicyNumber;
-                result.ExpirationDate = policyRequest.ExpirationDate;
-                result.VehicleId = policyRequest.VehicleId;
+                result.PolicyNumber = policyRequest.PolicyNumber ?? result.PolicyNumber;
+                result.ExpirationDate = policyRequest.ExpirationDate ?? result.ExpirationDate;
+                result.VehicleId = policyRequest.VehicleId ?? result.VehicleId;
 
                 await _unitOfWork.PolicyRepo.Update(result);
                 await _unitOfWork.SaveChangesAsync();

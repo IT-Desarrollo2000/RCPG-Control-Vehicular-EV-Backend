@@ -94,35 +94,24 @@ namespace Application.Services
         }
 
         //Put
-        public async Task<GenericResponse<DestinationOfReportUseDto>> PutDestinationOfReportUse(int Id, [FromBody] DestinationOfReportUseRequest destinationOfReportUseRequest)
+        public async Task<GenericResponse<DestinationOfReportUseDto>> PutDestinationOfReportUse(int Id, [FromBody] DestinationOfReportUseRequest request)
         {
             GenericResponse<DestinationOfReportUseDto> response = new GenericResponse<DestinationOfReportUseDto>();
-            var existeDestinationOfReportUse = await _unitOfWork.DestinationOfReportUseRepo.Get(p => p.Id == Id);
-            var result = existeDestinationOfReportUse.FirstOrDefault();
-
-            if (result == null)
+            try
             {
-                response.success = false;
-                response.AddError("No existe registro de DestinationOfReportUse", $"No existe registro de DestinationOfReportUse con el Id {Id} solicitado", 1);
-                return response;
-            }
+                var existeDestinationOfReportUse = await _unitOfWork.DestinationOfReportUseRepo.Get(p => p.Id == Id);
+                var result = existeDestinationOfReportUse.FirstOrDefault();
 
-            if (destinationOfReportUseRequest.VehicleReportUseId.HasValue)
-            {
-                var existeVehicleReportUse = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == destinationOfReportUseRequest.VehicleReportUseId.Value);
-                var resultVehicleReportUse = existeVehicleReportUse.FirstOrDefault();
-
-                if (resultVehicleReportUse == null)
+                if (result == null)
                 {
                     response.success = false;
-                    response.AddError("No existe VehicleReportUse", $"No existe VehicleReportUseId {destinationOfReportUseRequest.VehicleReportUseId} para cargar", 1);
+                    response.AddError("No existe registro de DestinationOfReportUse", $"No existe registro de DestinationOfReportUse con el Id {Id} solicitado", 2);
                     return response;
                 }
 
-                result.DestinationName = destinationOfReportUseRequest.DestinationName;
-                result.Latitud = destinationOfReportUseRequest.Latitud;
-                result.Longitude = destinationOfReportUseRequest.Longitude;
-                result.VehicleReportUseId = destinationOfReportUseRequest.VehicleReportUseId;
+                result.DestinationName = request.DestinationName ?? result.DestinationName;
+                result.Latitud = request.Latitud ?? result.Latitud;
+                result.Longitude = request.Longitude ?? result.Longitude;
 
                 await _unitOfWork.DestinationOfReportUseRepo.Update(result);
                 await _unitOfWork.SaveChangesAsync();
@@ -132,28 +121,13 @@ namespace Application.Services
                 response.Data = VehicleReportUseDTO;
 
                 return response;
-
-
             }
-            else
+            catch (Exception ex)
             {
-
-                result.Latitud = destinationOfReportUseRequest.Latitud;
-                result.Longitude = destinationOfReportUseRequest.Longitude;
-                result.VehicleReportUseId = destinationOfReportUseRequest.VehicleReportUseId;
-
-                await _unitOfWork.DestinationOfReportUseRepo.Update(result);
-                await _unitOfWork.SaveChangesAsync();
-
-                var VehicleReportUseDTO = _mapper.Map<DestinationOfReportUseDto>(result);
-                response.success = true;
-                response.Data = VehicleReportUseDTO;
-
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
                 return response;
-
-
             }
-
         }
 
         //Delete
