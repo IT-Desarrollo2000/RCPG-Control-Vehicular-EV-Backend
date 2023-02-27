@@ -98,13 +98,15 @@ namespace Infrastructure.Mappings
             //VehicleMaintenance
             CreateMap<VehicleMaintenance, VehicleMaintenanceRequest>().ReverseMap();
             CreateMap<VehicleMaintenanceRequest, VehicleMaintenanceDto>().ReverseMap();
-            CreateMap<VehicleMaintenance, VehicleMaintenanceDto>().ReverseMap();
+            CreateMap<VehicleMaintenance, VehicleMaintenanceDto>()
+                .ForMember(m => m.ApprovedByAdminName, o => o.MapFrom(m => m.ApprovedByUser.UserName));
 
             //MaintenanceWorkshops
             CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopRequest>().ReverseMap();
             CreateMap<MaintenanceWorkshopRequest, MaintenanceWorkshopDto>().ReverseMap();
             CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopDto>().ReverseMap();
             CreateMap<VehicleMaintenanceWorkshop, GetVehicleMaintenanceWorkshopDto>().ReverseMap();
+            CreateMap<MaintenanceWorkShopSlimDto, VehicleMaintenanceWorkshop>();
 
             //VehicleReport
             CreateMap<VehicleReport, VehicleReportRequest>().ReverseMap();

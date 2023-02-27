@@ -15,22 +15,22 @@ namespace API.Controllers
     [ApiController]
     public class VehicleMaintenanceController : ControllerBase
     {
-        private readonly IVehicleMaintenanceService _vehicleMaintenanceService;
+        private readonly IVehicleMaintenanceService _maintenanceService;
 
         public VehicleMaintenanceController(IVehicleMaintenanceService vehicleMaintenanceService)
         {
-            this._vehicleMaintenanceService = vehicleMaintenanceService;
+            this._maintenanceService = vehicleMaintenanceService;
         }
 
         //GETALL
-        [Authorize(Roles = "Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleMaintenanceDto>))]
+        [Authorize(Roles = "Administrator, AdminUser, Supervisor")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
-        [Route("")]
+        [Route("GetAll")]
         public async Task<IActionResult> GetVehicleMaintenance([FromQuery] VehicleMaintenanceFilter filter)
         {
-            var approval = await _vehicleMaintenanceService.GetVehicleMaintenanceAll(filter);
+            var approval = await _maintenanceService.GetVehicleMaintenanceAll(filter);
 
             var metadata = new Metadata()
             {
@@ -42,7 +42,7 @@ namespace API.Controllers
                 HasPreviousPage = approval.HasPreviousPage
             };
 
-            var response = new GenericResponse<IEnumerable<VehicleMaintenance>>(approval)
+            var response = new GenericResponse<IEnumerable<VehicleMaintenanceDto>>(approval)
             {
                 Meta = metadata,
                 success = true,
@@ -58,103 +58,72 @@ namespace API.Controllers
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleMaintenanceDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [HttpGet("{id:int}")]
+        [HttpGet]
+        [Route("GetById/{id:int}")]
         public async Task<ActionResult<VehicleMaintenanceDto>> Get(int id)
         {
-            var entidad = await _vehicleMaintenanceService.GetVehicleMaintenanceById(id);
-            if (entidad.Data == null)
-            {
-                return NotFound($"No existe registro del Mantenimiento con este Id {id}");
-            }
-            if (entidad.success)
-            {
-                return Ok(entidad);
-            }
-            else
-            {
-                return NotFound(entidad);
-
-            }
-
+            var entidad = await _maintenanceService.GetVehicleMaintenanceById(id);
+            if (entidad.success) { return Ok(entidad); } else { return BadRequest(entidad); }
         }
 
         //POST
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleMaintenanceDto))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
-        public async Task<ActionResult<VehicleMaintenanceDto>> Post([FromBody] VehicleMaintenanceRequest vehicleMaintenanceRequest)
+        [Route("InitiateMaintenance")]
+        public async Task<IActionResult> InitiateMaintenance(VehicleMaintenanceRequest request)
         {
-            var entidad = await _vehicleMaintenanceService.PostVehicleMaintenance(vehicleMaintenanceRequest);
-
-            if (entidad.success)
-            {
-                return Ok(entidad);
-            }
-            else
-            {
-                return BadRequest(entidad);
-            }
-
+            var entity = await _maintenanceService.InitiateMaintenance(request);
+            if (entity.success) { return Ok(entity); } else { return BadRequest(entity); }
         }
 
-        //PUT
+        //FINALIZE
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleMaintenanceDto))]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
-        public async Task<ActionResult<VehicleMaintenanceDto>> PutVehicleMaintenance(int id, [FromBody] VehicleMaintenanceRequest vehicleMaintenanceRequest)
+        [Route("FinalizeMaintenance")]
+        public async Task<IActionResult> FinalizeMaintenance(FinalizeMaintenanceRequest request)
         {
-
-            var entidad = await _vehicleMaintenanceService.PutVehicleMaintenance(id, vehicleMaintenanceRequest);
-
-            /* if (entidad == null)
-             {
-                 return NotFound($"No existe Maintenance con el Id {id} para Actualizar VehicleMaintenance");
-             }
-
-             if (entidad.Data == null)
-             {
-                 return NotFound($"No existe vehicle con el vehicleId {vehicleMaintenanceRequest.VehicleId} para Actualizar VehicleService");
-             }*/
-
-            if (entidad.success)
-            {
-                return Ok(entidad);
-
-            }
-            else
-            {
-                return BadRequest(entidad);
-            }
+            var entity = await _maintenanceService.FinalizeMaintenance(request);
+            if (entity.success) { return Ok(entity); } else { return BadRequest(entity); }
         }
 
-        //Delete
+        //CANCEL
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleMaintenanceDto))]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<VehicleMaintenanceDto>> DeleteVehicleMaintenance(int id)
+        [HttpPut]
+        [Route("CancelMaintenance")]
+        public async Task<IActionResult> CancelMaintenance(CancelMaintenanceRequest request)
         {
-            var existe = await _vehicleMaintenanceService.DeleteVehicleManintenance(id);
-            if (existe == null)
-            {
-                return NotFound($"No existe VehicleMaintenance con el Id {id} para borrar");
-            }
+            var entity = await _maintenanceService.CancelMaintenance(request);
+            if (entity.success) { return Ok(entity); } else { return BadRequest(entity); }
+        }
 
-            if (existe.success)
-            {
-                return Ok(existe);
-            }
-            else
-            {
-                return NotFound();
-            }
+        //UPDATE
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPut]
+        [Route("Update")]
+        public async Task<IActionResult> UpdateMaintenance(MaintenanceUpdateRequest request)
+        {
+            var entity = await _maintenanceService.UpdateMaintenance(request);
+            if (entity.success) { return Ok(entity); } else { return BadRequest(entity); }
+        }
 
+        //DELETE
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpDelete]
+        [Route("Delete")]
+        public async Task<IActionResult> DeleteMaintenance(int Id)
+        {
+            var entity = await _maintenanceService.DeleteVehicleManintenance(Id);
+            if (entity.success) { return Ok(entity); } else { return BadRequest(entity); }
         }
     }
 }
