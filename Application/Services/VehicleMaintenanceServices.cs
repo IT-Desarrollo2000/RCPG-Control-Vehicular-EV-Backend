@@ -147,15 +147,20 @@ namespace Application.Services
 
                 }
 
-                //Verificar que el vehiculo pueda no se encuentre en uso
-                if(vehicleExists.VehicleStatus == VehicleStatus.EN_USO)
+                //Verificar que el vehiculo se encuentre disponible
+                switch (vehicleExists.VehicleStatus)
                 {
-                    response.success = false;
-                    response.AddError("Vehiculo en Uso", "No se puede crear la orden de mantenimiento con un vehiculo en viaje activo", 6);
+                    case VehicleStatus.MANTENIMIENTO:
+                    case VehicleStatus.EN_USO:
+                        response.success = false;
+                        response.AddError("Vehiculo no disponible", "El estatus del vehiculo no permite su mantenimiento por el momento", 4);
+                        return response;
+                    default:
+                        break;
                 }
 
                 //Verificar que exista el taller
-                if(request.WorkShopId.HasValue)
+                if (request.WorkShopId.HasValue)
                 {
                     var workshop = await _unitOfWork.MaintenanceWorkshopRepo.GetById(request.WorkShopId.Value);
                     if (workshop == null)

@@ -8,6 +8,7 @@ using Domain.DTOs.Requests;
 using Domain.Entities.Identity;
 using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
+using Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -137,6 +138,19 @@ namespace Application.Services
                     response.success = false;
                     response.AddError("No existe Vehicle", $"No existe Vehiculo con el VehicleId {vehicleServiceRequest.VehicleId} solicitado", 2);
                     return response;
+                }
+
+                //Verificar que el vehiculo se encuentre disponible
+                switch (existeVehicle.VehicleStatus)
+                {
+                    case VehicleStatus.INACTIVO:
+                    case VehicleStatus.MANTENIMIENTO:
+                    case VehicleStatus.EN_USO:
+                        response.success = false;
+                        response.AddError("Vehiculo no disponible", "El estatus del vehiculo no permite su uso para viajes por el momento", 4);
+                        return response;
+                    default:
+                        break;
                 }
 
                 //Verificar existencia del taller
