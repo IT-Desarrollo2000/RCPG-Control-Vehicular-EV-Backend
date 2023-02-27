@@ -120,7 +120,9 @@ namespace Infrastructure.Mappings
                 .ForMember(x => x.MobileUserName, c => c.MapFrom(m => m.MobileUser.FullName))
                 .ForMember(x => x.SolvedByAdminUserName, c => c.MapFrom(ad => ad.SolvedByAdminUser.UserName));
             CreateMap<VehicleReportImage, VehicleReportImageDto>();
-            CreateMap<VehicleReport, PerformanceDto>();
+            CreateMap<VehicleReport, PerformanceDto>()
+                .ForMember(x => x.VehicleId, c => c.MapFrom(a => a.VehicleId))
+                .
 
 
             //Performance

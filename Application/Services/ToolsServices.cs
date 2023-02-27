@@ -386,6 +386,7 @@ namespace Application.Services
 
             try 
             {
+                var Rendimiento = await _unitOfWork.VehicleReportRepo.Get();
 
             } 
             catch(Exception ex) 
