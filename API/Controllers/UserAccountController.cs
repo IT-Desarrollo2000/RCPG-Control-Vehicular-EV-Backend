@@ -37,7 +37,7 @@ namespace API.Controllers
         }
 
         #region ..::Registro y Autenticación::..
-        [Authorize(Roles = "Administrator")]
+        //[Authorize(Roles = "Administrator")]
         [HttpPost]
         [Route("WebAdm/Register")]
         public async Task<ActionResult> RegisterWebAdmUser([FromBody] WebAdmUserRegistrationRequest user)
