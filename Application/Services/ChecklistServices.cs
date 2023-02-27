@@ -208,7 +208,7 @@ namespace Application.Services
             return response;
         }
 
-        public async Task<GenericResponse<ChecklistDto>> PutChecklists(CreationChecklistDto creationChecklistDto, int id)
+        public async Task<GenericResponse<ChecklistDto>> PutChecklists(ChecklistUpdateDto creationChecklistDto, int id)
         {
 
             GenericResponse<ChecklistDto> response = new GenericResponse<ChecklistDto>();
@@ -216,17 +216,17 @@ namespace Application.Services
             var check = result.FirstOrDefault();
             if (check == null) return null;
 
-            check.CirculationCard = creationChecklistDto.CirculationCard;
-            check.CarInsurancePolicy = creationChecklistDto.CarInsurancePolicy;
-            check.HydraulicTires = creationChecklistDto.HydraulicTires;
-            check.TireRefurmishment = creationChecklistDto.TireRefurmishment;
-            check.JumperCable = creationChecklistDto.JumperCable;
-            check.SecurityDice = creationChecklistDto.SecurityDice;
-            check.Extinguisher = creationChecklistDto.Extinguisher;
-            check.CarJack = creationChecklistDto.CarJack;
-            check.CarJackKey = creationChecklistDto.CarJackKey;
-            check.ToolBag = creationChecklistDto.ToolBag;
-            check.SafetyTriangle = creationChecklistDto.SafetyTriangle;
+            check.CirculationCard = creationChecklistDto.CirculationCard ?? check.CirculationCard;
+            check.CarInsurancePolicy = creationChecklistDto.CarInsurancePolicy ?? check.CarInsurancePolicy; 
+            check.HydraulicTires = creationChecklistDto.HydraulicTires ?? check.HydraulicTires;
+            check.TireRefurmishment = creationChecklistDto.TireRefurmishment ?? check.TireRefurmishment;
+            check.JumperCable = creationChecklistDto.JumperCable ?? check.JumperCable;
+            check.SecurityDice = creationChecklistDto.SecurityDice ?? check.SecurityDice;
+            check.Extinguisher = creationChecklistDto.Extinguisher ?? check.Extinguisher;
+            check.CarJack = creationChecklistDto.CarJack ?? check.CarJack;
+            check.CarJackKey = creationChecklistDto.CarJackKey ?? check.CarJackKey;
+            check.ToolBag = creationChecklistDto.ToolBag ?? check.ToolBag;
+            check.SafetyTriangle = creationChecklistDto.SafetyTriangle ?? check.SafetyTriangle;
 
 
             await _unitOfWork.ChecklistRepo.Update(check);
