@@ -83,11 +83,11 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<CreationChecklistDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ChecklistDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("PutChecklists")]
-        public async Task<IActionResult> PutChecklists([FromBody]CreationChecklistDto creationChecklistDto, int id)
+        public async Task<IActionResult> PutChecklists([FromBody] ChecklistUpdateDto creationChecklistDto, int id)
         {
             var result = await _checklistServices.PutChecklists(creationChecklistDto, id);
             if (result.Data == null) { return NotFound($"No existe checklist con el Id {id}"); }
