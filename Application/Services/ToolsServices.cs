@@ -353,7 +353,7 @@ namespace Application.Services
         public async Task<GenericResponse<List<GetVehicleActiveDto>>> GetAllVehiclesActive()
         {
             GenericResponse<List<GetVehicleActiveDto>> response = new GenericResponse<List<GetVehicleActiveDto>>();
-            var VehicleA = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == Domain.Enums.ReportUseType.enProceso, includeProperties: "Vehicle,UserProfile,Destinations");
+            var VehicleA = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == Domain.Enums.ReportUseType.ViajeNormal, includeProperties: "Vehicle,UserProfile,Destinations");
             if (VehicleA == null)
             {
                 response.success = false;

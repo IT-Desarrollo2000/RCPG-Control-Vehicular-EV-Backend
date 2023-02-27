@@ -20,6 +20,8 @@ namespace Domain.DTOs.Reponses
         public int VehicleId { get; set; }
         public VehiclesDto Vehicle { get; set; }
         public string? Comment { get; set; }
+        public int? ExpenseId { get; set; }
+        public ExpensesDto Expense { get; set; }
 
     }
 }

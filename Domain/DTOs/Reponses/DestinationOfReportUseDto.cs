@@ -7,6 +7,5 @@
         public double? Latitud { get; set; }
         public double? Longitude { get; set; }
         public int? VehicleReportUseId { get; set; }
-        public virtual UnrelatedVehicleReportUseDto VehicleReportUses { get; set; }
     }
 }

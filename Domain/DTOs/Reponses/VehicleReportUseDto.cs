@@ -1,4 +1,5 @@
-﻿using Domain.Enums;
+﻿using Domain.Entities.Registered_Cars;
+using Domain.Enums;
 
 namespace Domain.DTOs.Reponses
 {
@@ -30,5 +31,7 @@ namespace Domain.DTOs.Reponses
         public int ApprovedByAdminUserId { get; set; }
         public string ApprovedByAdminName { get; set; }
         public List<DestinationOfReportUseDto> Destinations { get; set; }
+        public int? InitialCheckListId { get; set; }
+        public ChecklistDto? InitialCheckList { get; set; }
     }
 }

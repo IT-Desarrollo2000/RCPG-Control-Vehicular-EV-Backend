@@ -24,11 +24,14 @@ namespace Domain.Entities.Registered_Cars
         public CurrentFuel? CurrentFuelLoad { get; set; }
         public CurrentFuel? LastFuelLoad { get; set; }
         public bool? Verification { get; set; }
+        public int? InitialCheckListId { get; set; }
+        
+        public virtual Checklist? InitialCheckList { get; set; }
         public virtual Vehicle Vehicle { get; set; }
         public virtual Checklist? Checklist { get; set; }
-        public ICollection<VehicleReport?> VehicleReport { get; set; }
         public virtual UserProfile? UserProfile { get; set; }
         public virtual AppUser? AppUser { get; set; }
-        public ICollection<DestinationOfReportUse?> Destinations { get; set; } //ojo
+        public virtual ICollection<DestinationOfReportUse> Destinations { get; set; }
+        public virtual ICollection<VehicleReport> VehicleReport { get; set; }
     }
 }

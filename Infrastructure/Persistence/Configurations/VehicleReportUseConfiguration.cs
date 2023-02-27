@@ -23,6 +23,12 @@ namespace Infrastructure.Persistence.Configurations
                     .HasForeignKey(r => r.ChecklistId)
                     .IsRequired(false)
                     .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(r => r.InitialCheckList)
+                .WithMany(c => c.InitialCheckListForUseReport)
+                .HasForeignKey(r => r.InitialCheckListId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 

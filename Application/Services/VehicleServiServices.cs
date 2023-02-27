@@ -36,7 +36,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "ServiceUser,Vehicle";
+            string properties = "ServiceUser,Vehicle,Expense";
             IEnumerable<VehicleService> userApprovals = null;
             Expression<Func<VehicleService, bool>> Query = null;
 
@@ -114,7 +114,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleServiceDto>> GetVehicleServiceById(int Id)
         {
             GenericResponse<VehicleServiceDto> response = new GenericResponse<VehicleServiceDto>();
-            var profile = await _unitOfWork.VehicleServiceRepo.Get(filter: p => p.Id == Id,includeProperties: "Vehicle,Workshop,ServiceUser");
+            var profile = await _unitOfWork.VehicleServiceRepo.Get(filter: p => p.Id == Id,includeProperties: "Vehicle,Workshop,ServiceUser,Expense");
             var result = profile.FirstOrDefault();
             var VehicleServiceDTO = _mapper.Map<VehicleServiceDto>(result);
             response.success = true;
@@ -233,6 +233,19 @@ namespace Application.Services
                     }
 
                     result.Workshop = workshopExists;
+                }
+
+                if(request.ExpenseId.HasValue)
+                {
+                    var expense = await _unitOfWork.ExpensesRepo.GetById(request.ExpenseId.Value);
+                    if(expense == null)
+                    {
+                        response.success = false;
+                        response.AddError("Gasto no encontrado", $"El gasto con Id {request.ExpenseId.Value}", 4);
+
+                        return response;
+                    }
+                    result.Expense = expense;
                 }
 
                 if(request.TypeService.HasValue) { result.TypeService = request.TypeService.Value; }
