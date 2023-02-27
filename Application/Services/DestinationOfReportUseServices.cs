@@ -53,20 +53,20 @@ namespace Application.Services
         }
 
         //POST
-        public async Task<GenericResponse<DestinationOfReportUseDto>> PostDestinationOfReportUse([FromBody] DestinationOfReportUseRequest destinationOfReportUseRequest)
+        public async Task<GenericResponse<DestinationOfReportUseDto>> PostDestinationOfReportUse(DestinationOfReportUseRequest destinationOfReportUseRequest)
         {
 
             GenericResponse<DestinationOfReportUseDto> response = new GenericResponse<DestinationOfReportUseDto>();
 
-            if (destinationOfReportUseRequest.VehicleReportUseId.HasValue)
+            try
             {
-                var existeVehicleReportUse = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == destinationOfReportUseRequest.VehicleReportUseId.Value);
+                var existeVehicleReportUse = await _unitOfWork.VehicleReportUseRepo.Get(p => p.Id == destinationOfReportUseRequest.VehicleReportUseId);
                 var resultVehicleReportUse = existeVehicleReportUse.FirstOrDefault();
 
                 if (resultVehicleReportUse == null)
                 {
                     response.success = false;
-                    response.AddError("No existe VehicleReportUse", $"No existe VehicleReportUseId {destinationOfReportUseRequest.VehicleReportUseId} para cargar", 1);
+                    response.AddError("No existe VehicleReportUse", $"No existe VehicleReportUseId {destinationOfReportUseRequest.VehicleReportUseId} para cargar", 2);
                     return response;
                 }
 
@@ -78,23 +78,16 @@ namespace Application.Services
                 response.Data = DestinatioDto;
                 return response;
             }
-            else
+            catch(Exception ex)
             {
-
-                var entidad = _mapper.Map<DestinationOfReportUse>(destinationOfReportUseRequest);
-                await _unitOfWork.DestinationOfReportUseRepo.Add(entidad);
-                await _unitOfWork.SaveChangesAsync();
-                response.success = true;
-                var DestinatioDto = _mapper.Map<DestinationOfReportUseDto>(entidad);
-                response.Data = DestinatioDto;
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
                 return response;
             }
-
-
         }
 
         //Put
-        public async Task<GenericResponse<DestinationOfReportUseDto>> PutDestinationOfReportUse(int Id, [FromBody] DestinationOfReportUseRequest request)
+        public async Task<GenericResponse<DestinationOfReportUseDto>> PutDestinationOfReportUse(int Id, UseReportDestinantionUpdateRequest request)
         {
             GenericResponse<DestinationOfReportUseDto> response = new GenericResponse<DestinationOfReportUseDto>();
             try
