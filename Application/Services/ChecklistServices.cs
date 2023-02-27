@@ -208,10 +208,10 @@ namespace Application.Services
             return response;
         }
 
-        public async Task<GenericResponse<Checklist>> PutChecklists(CreationChecklistDto creationChecklistDto, int id)
+        public async Task<GenericResponse<ChecklistDto>> PutChecklists(CreationChecklistDto creationChecklistDto, int id)
         {
 
-            GenericResponse<Checklist> response = new GenericResponse<Checklist>();
+            GenericResponse<ChecklistDto> response = new GenericResponse<ChecklistDto>();
             var result = await _unitOfWork.ChecklistRepo.Get(r => r.Id == id);
             var check = result.FirstOrDefault();
             if (check == null) return null;
@@ -231,8 +231,9 @@ namespace Application.Services
 
             await _unitOfWork.ChecklistRepo.Update(check);
             await _unitOfWork.SaveChangesAsync();
+            var map = _mapper.Map<ChecklistDto>(check);
             response.success = true;
-            response.Data = check;
+            response.Data = map;
             return response;
 
         }

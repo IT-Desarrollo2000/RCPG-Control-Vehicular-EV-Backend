@@ -38,5 +38,7 @@ namespace Domain.DTOs.Reponses
         public ShortPolicyDto? Policy { get; set; }
         public string? CarRegistrationPlate { get; set; }
         public bool IsClean { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
     }
 }
