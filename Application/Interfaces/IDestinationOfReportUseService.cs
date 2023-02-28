@@ -11,6 +11,6 @@ namespace Application.Interfaces
         Task<GenericResponse<List<DestinationOfReportUseDto>>> GetDestinationOfReportUseAll();
         Task<GenericResponse<DestinationOfReportUseDto>> GetDestinationOfReportUseById(int Id);
         Task<GenericResponse<DestinationOfReportUseDto>> PostDestinationOfReportUse([FromBody] DestinationOfReportUseRequest destinationOfReportUseRequest);
-        Task<GenericResponse<DestinationOfReportUseDto>> PutDestinationOfReportUse(int Id, [FromBody] DestinationOfReportUseRequest destinationOfReportUseRequest);
+        Task<GenericResponse<DestinationOfReportUseDto>> PutDestinationOfReportUse(int Id, UseReportDestinantionUpdateRequest destinationOfReportUseRequest);
     }
 }

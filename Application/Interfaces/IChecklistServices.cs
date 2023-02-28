@@ -12,6 +12,6 @@ namespace Application.Interfaces
         Task<PagedList<Checklist>> GetChecklist(ChecklistFilter filter);
         Task<GenericResponse<ChecklistDto>> GetChecklistById(int id);
         Task<GenericResponse<ChecklistDto>> PostChecklist(int vehicleId, CreationChecklistDto creationChecklistDto);
-        Task<GenericResponse<Checklist>> PutChecklists(CreationChecklistDto creationChecklistDto, int id);
+        Task<GenericResponse<ChecklistDto>> PutChecklists(ChecklistUpdateDto creationChecklistDto, int id);
     }
 }

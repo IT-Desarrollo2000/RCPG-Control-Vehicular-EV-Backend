@@ -11,6 +11,6 @@ namespace Application.Interfaces
         Task<GenericResponse<List<PolicyDto>>> GetPolicyAll();
         Task<GenericResponse<PolicyDto>> GetPolicyById(int Id);
         Task<GenericResponse<PolicyDto>> PostPolicy([FromBody] PolicyRequest policyRequest);
-        Task<GenericResponse<PolicyDto>> PutPolicy(int Id, [FromBody] PolicyRequest policyRequest);
+        Task<GenericResponse<PolicyDto>> PutPolicy(PolicyUpdateRequest request);
     }
 }

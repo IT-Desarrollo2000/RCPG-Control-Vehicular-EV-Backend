@@ -111,78 +111,50 @@ namespace Application.Services
         }
 
         //Put
-        public async Task<GenericResponse<PolicyDto>> PutPolicy(int Id, [FromBody] PolicyRequest policyRequest)
+        public async Task<GenericResponse<PolicyDto>> PutPolicy(PolicyUpdateRequest request)
         {
             GenericResponse<PolicyDto> response = new GenericResponse<PolicyDto>();
-            var existePolicy = await _unitOfWork.PolicyRepo.Get(p => p.Id == Id);
-            var result = existePolicy.FirstOrDefault();
-
-            if (result == null)
+            try
             {
-                response.success = false;
-                response.AddError("No existe registro de Policy", $"No existe registro de Policy con el Id {Id} solicitado", 1);
-                return response;
-            }
-
-            if (policyRequest.VehicleId.HasValue)
-            {
-                var existeVehicle = await _unitOfWork.VehicleRepo.Get(p => p.Id == policyRequest.VehicleId.Value);
-                var resultVehicle = existeVehicle.FirstOrDefault();
-
-                if (resultVehicle == null)
+                var policy = await _unitOfWork.PolicyRepo.GetById(request.PolicyId);
+                //Verificar que la poliza existe
+                if (policy == null)
                 {
                     response.success = false;
-                    response.AddError("No existe Vehicle", $"No existe Vehicle {policyRequest.VehicleId} para cargar", 1);
+                    response.AddError("No existe registro de Policy", $"No existe registro de Policy con el Id {request.PolicyId} solicitado", 1);
                     return response;
                 }
 
-                var existePolicyVehicle = await _unitOfWork.PolicyRepo.Get(filter: p => p.VehicleId == policyRequest.VehicleId);
-                var resultPolicyVehicle = existePolicyVehicle.FirstOrDefault();
-
-                if (resultPolicyVehicle == null)
+                if (request.VehicleId.HasValue)
                 {
-                    result.PolicyNumber = policyRequest.PolicyNumber;
-                    result.ExpirationDate = policyRequest.ExpirationDate;
-                    result.VehicleId = policyRequest.VehicleId;
-
-                    await _unitOfWork.PolicyRepo.Update(result);
-                    await _unitOfWork.SaveChangesAsync();
-
-                    var PolicyDTO = _mapper.Map<PolicyDto>(result);
-                    response.success = true;
-                    response.Data = PolicyDTO;
-
-                    return response;
-                }
-                else
-                {
-
-                    response.success = false;
-                    response.AddError("No se puede asignar la misma poliza a otro vehiculo", $"No se puede poner {policyRequest.VehicleId} para cargar", 1);
-                    return response;
+                    var vehicle = await _unitOfWork.VehicleRepo.GetById(request.VehicleId.Value);
+                    if(vehicle == null)
+                    {
+                        response.success = false;
+                        response.AddError("Error", "El vehiculo especificado no existe", 2);
+                        return response;
+                    }
+                    policy.VehicleId = request.VehicleId.Value;
                 }
 
+                policy.PolicyNumber = request.PolicyNumber ?? policy.PolicyNumber;
+                policy.ExpirationDate = request.ExpirationDate ?? policy.ExpirationDate;
 
-            }
-            else
-            {
-
-                result.PolicyNumber = policyRequest.PolicyNumber;
-                result.ExpirationDate = policyRequest.ExpirationDate;
-                result.VehicleId = policyRequest.VehicleId;
-
-                await _unitOfWork.PolicyRepo.Update(result);
+                //Guardar cambios
+                await _unitOfWork.PolicyRepo.Update(policy);
                 await _unitOfWork.SaveChangesAsync();
 
-                var PolicyDTO = _mapper.Map<PolicyDto>(result);
                 response.success = true;
-                response.Data = PolicyDTO;
-
+                var dto = _mapper.Map<PolicyDto>(policy);
+                response.Data = dto;
                 return response;
-
-
             }
-
+            catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message,1);
+                return response;
+            }
         }
 
         //Delete

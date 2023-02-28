@@ -40,7 +40,7 @@ namespace API.Controllers
         [Authorize(Roles = "Administrator")]
         [HttpPost]
         [Route("WebAdm/Register")]
-        public async Task<ActionResult> RegisterWebAdmUser([FromBody] WebAdmUserRegistrationRequest user)
+        public async Task<IActionResult> RegisterWebAdmUser([FromBody] WebAdmUserRegistrationRequest user)
         {
             var existingUser = await _userManager.FindByNameAsync(user.UserName);
 
@@ -85,7 +85,7 @@ namespace API.Controllers
         [Authorize(Roles = "Administrator")]
         [HttpPost]
         [Route("WebAdm/UserRoles/Remove")]
-        public async Task<ActionResult> RemoveUserFromRoles([FromBody] WebAdmRolesRequest user)
+        public async Task<IActionResult> RemoveUserFromRoles([FromBody] WebAdmRolesRequest user)
         {
             if (!ModelState.IsValid) BadRequest(ModelState);
             var request = await _identityService.RemoveUserFromRoles(user);
@@ -104,7 +104,7 @@ namespace API.Controllers
         [Authorize(Roles = "Administrator")]
         [HttpPost]
         [Route("WebAdm/UserRoles/Add")]
-        public async Task<ActionResult> AddUserToRoles([FromBody] WebAdmRolesRequest user)
+        public async Task<IActionResult> AddUserToRoles([FromBody] WebAdmRolesRequest user)
         {
             if (!ModelState.IsValid) BadRequest(ModelState);
             var request = await _identityService.AddUserToRoles(user);
@@ -122,7 +122,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("WebAdm/Login")]
-        public async Task<ActionResult> LoginWebAdmUser(WebAdmUserLoginRequest logindDto)
+        public async Task<IActionResult> LoginWebAdmUser(WebAdmUserLoginRequest logindDto)
         {
             var existingUser = await _userManager.FindByNameAsync(logindDto.Username);
             if (existingUser == null)
@@ -148,7 +148,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("App/Register")]
-        public async Task<ActionResult> RegisterAppUser([FromForm] AppUserRegistrationRequest user)
+        public async Task<IActionResult> RegisterAppUser([FromForm] AppUserRegistrationRequest user)
         {
             var existingUser = await _identityService.GetAppUserByPhoneEmail(user.Email);
             if (existingUser != null)
@@ -185,15 +185,16 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("App/Login")]
-        public async Task<ActionResult> LoginAppUser(WebAdmUserLoginRequest logindDto)
+        public async Task<IActionResult> LoginAppUser(WebAdmUserLoginRequest logindDto)
         {
             var existingUser = await _identityService.GetAppUserByPhoneEmail(logindDto.Username);
             if (existingUser == null)
             {
-                var errorResponse = new GenericResponse<AuthResult>();
-                errorResponse.success = false;
-
-                errorResponse.AddError("Invalid Request", "Solicitud de autenticación invalida", 1);
+                var errorResponse = new AuthResult();
+                errorResponse.Success = false;
+                errorResponse.Errors.Add("Solicitud de autenticación invalida");
+                errorResponse.Token = "";
+                errorResponse.RefreshToken = "";
 
                 return BadRequest(errorResponse);
             }
@@ -211,15 +212,16 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("App/SocialLogin")]
-        public async Task<ActionResult> LoginAppUserSocial(AppSocialLoginRequest loginDto)
+        public async Task<IActionResult> LoginAppUserSocial(AppSocialLoginRequest loginDto)
         {
             var existingUser = await _identityService.GetAppUserBySocial(loginDto.UID, loginDto.Email, loginDto.SocialType);
             if (existingUser == null)
             {
-                var errorResponse = new GenericResponse<AuthResult>();
-                errorResponse.success = false;
-
-                errorResponse.AddError("Error", "Error no se pudo crear el usuario", 1);
+                var errorResponse = new AuthResult();
+                errorResponse.Success = false;
+                errorResponse.Errors.Add("No fue posible crear al usuario");
+                errorResponse.Token = "";
+                errorResponse.RefreshToken = "";
 
                 return BadRequest(errorResponse);
             }
@@ -237,7 +239,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("RefreshToken")]
-        public async Task<ActionResult> RefreshToken([FromBody] TokenRequest tokenRequest)
+        public async Task<IActionResult> RefreshToken([FromBody] TokenRequest tokenRequest)
         {
             var res = await _tokenService.VerifyToken(tokenRequest, _tokenValidationParameters);
             if (res == null)
@@ -256,7 +258,7 @@ namespace API.Controllers
         [Authorize]
         [HttpPost]
         [Route("Logout")]
-        public async Task<ActionResult> UserLogout([FromBody] TokenRequest tokenRequest)
+        public async Task<IActionResult> UserLogout([FromBody] TokenRequest tokenRequest)
         {
             var res = await _tokenService.VerifyToken(tokenRequest, _tokenValidationParameters);
             if (res == null)
