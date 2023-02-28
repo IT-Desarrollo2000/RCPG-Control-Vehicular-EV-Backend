@@ -74,5 +74,62 @@ namespace API.Controllers
                 return BadRequest(users);
             }
         }
+
+        //GETALL
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GraphicsPerfomanceDto))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetAllPerfomance")]
+        public async Task<ActionResult<List<GraphicsPerfomanceDto>>> GetAllPerfomance(int VehicleId)
+        {
+            var users = await _utilitesService.GetAllPerfomance(VehicleId);
+            if (users.success)
+            {
+                return Ok(users);
+            }
+            else
+            {
+                return BadRequest(users);
+            }
+        }
+
+        //GETALL
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(TotalPerfomanceDto))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetAllTotalPerfomance")]
+        public async Task<ActionResult<List<GraphicsPerfomanceDto>>> GetAllTotalPerfomance(int VehicleId)
+        {
+            var users = await _utilitesService.GetTotalPerfomance(VehicleId);
+            if (users.success)
+            {
+                return Ok(users);
+            }
+            else
+            {
+                return BadRequest(users);
+            }
+        }
+
+        //GETALL
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ListTotalPerfomanceDto))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetAllTotalPerfomance")]
+        public async Task<ActionResult<List<GraphicsPerfomanceDto>>> GetlistTotalPerfomance(int VehicleId)
+        {
+            var users = await _utilitesService.GetListTotalPerfomance(VehicleId);
+            if (users.success)
+            {
+                return Ok(users);
+            }
+            else
+            {
+                return BadRequest(users);
+            }
+        }
     }
 }
