@@ -6,6 +6,7 @@
         public DateTime? TokenExpiration { get; set; } = null;
         public string RefreshToken { get; set; }
         public bool Success { get; set; }
+        public int? UserProfileId { get; set; }
         public List<string> Messages { get; set; } = null;
         public List<string> Errors { get; set; } = null;
     }

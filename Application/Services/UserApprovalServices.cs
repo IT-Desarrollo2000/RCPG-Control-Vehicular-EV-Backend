@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using AutoMapper;
 using Domain.CustomEntities;
+using Domain.Enums;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Requests;
 using Domain.Entities.Departament;
@@ -180,6 +181,39 @@ namespace Application.Services
             {
                 var userProfile = await _unitOfWork.UserProfileRepo.GetById(request.ProfileId);
 
+                //Verificar que no cuenta con solicitudes previas de aprobación o esten aprobadas
+                var query = await _unitOfWork.UserApprovalRepo.Get(a => a.ProfileId == request.ProfileId);
+                var pending = query.Where(a => a.Status == ApprovalStatus.PENDIENTE).FirstOrDefault();
+                var approved = query.Where(a => a.Status == ApprovalStatus.APROVADO).FirstOrDefault();
+                var last = query.LastOrDefault();
+                
+                if(pending != null)
+                {
+                    response.success = false;
+                    response.AddError("Acción Invalida", "El usuario ya cuenta con una solicitud pendiente de aprobación", 4);
+
+                    return response;
+                }
+                
+                if(approved != null)
+                {
+                    response.success = false;
+                    response.AddError("Acción Invalida", "El usuario ya ha sido aprovado previamente", 5);
+
+                    return response;
+                }
+
+                //Verificar fecha de ultima solicitud
+                if(last != null)
+                {
+                    if(last.CreatedDate <= DateTime.UtcNow.AddHours(12) && last.Status == ApprovalStatus.RECHAZADO)
+                    {
+                        response.success = false;
+                        response.AddError("Reintar mas tarde", "Debe esperar un tiempo antes de reenviar una solicitud");
+                        return response;
+                    }
+                } 
+
                 //Validar de que el perfil exista
                 if (userProfile == null)
                 {
@@ -243,6 +277,7 @@ namespace Application.Services
             {
                 var query = await _unitOfWork.UserApprovalRepo.Get(filter: a => a.Id == request.ApprovalId, includeProperties: "Profile");
                 var result = query.FirstOrDefault();
+
                 if (result == null) return null;
 
                 Departaments department = null;
@@ -254,7 +289,7 @@ namespace Application.Services
                     if (department == null)
                     {
                         response.success = false;
-                        response.AddError("Not found", $"El Id {request.DepartmentId} de departamento especificado no existe");
+                        response.AddError("Not found", $"El Id {request.DepartmentId} de departamento especificado no existe",3);
 
                         return response;
                     }
@@ -264,6 +299,13 @@ namespace Application.Services
                 {
                     //obtener el perfil a aprobar
                     var profile = await _unitOfWork.UserProfileRepo.GetById(result.ProfileId);
+                    if(profile.IsVerified)
+                    {
+                        response.success = false;
+                        response.AddError("Acción Invalida", $"El usuario ya ha sido aprobado previamente",2);
+
+                        return response;
+                    }
 
                     //Modificar el perfil
                     _mapper.Map(result, profile);
@@ -346,5 +388,6 @@ namespace Application.Services
                 return response;
             }
         }
+
     }
 }

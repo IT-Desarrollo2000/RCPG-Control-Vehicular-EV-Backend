@@ -24,7 +24,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PolicyDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
-        public async Task<ActionResult<List<PolicyDto>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
             var users = await _policyService.GetPolicyAll();
             if (users.success)
@@ -43,7 +43,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PolicyDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<PolicyDto>> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var entidad = await _policyService.GetPolicyById(id);
             if (entidad.success)
@@ -63,7 +63,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PolicyDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
-        public async Task<ActionResult<PolicyDto>> Post([FromBody] PolicyRequest policyRequest)
+        public async Task<IActionResult> Post([FromBody] PolicyRequest policyRequest)
         {
             var entidad = await _policyService.PostPolicy(policyRequest);
 
@@ -81,19 +81,15 @@ namespace API.Controllers
         //PUT
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PolicyDto))]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
-        public async Task<ActionResult<PolicyDto>> PutDestinationOfResultUse(int id, [FromBody] PolicyRequest policyRequest)
+        public async Task<IActionResult> UpdatePolicy([FromBody] PolicyUpdateRequest request)
         {
-
-            var entidad = await _policyService.PutPolicy(id, policyRequest);
+            var entidad = await _policyService.PutPolicy(request);
 
             if (entidad.success)
             {
                 return Ok(entidad);
-
             }
             else
             {
@@ -108,7 +104,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<PolicyDto>> DeletePolicy(int id)
+        public async Task<IActionResult> DeletePolicy(int id)
         {
             var existe = await _policyService.DeletePolicy(id);
 
