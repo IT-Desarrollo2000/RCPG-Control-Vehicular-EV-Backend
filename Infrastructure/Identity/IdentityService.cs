@@ -82,9 +82,9 @@ namespace Infrastructure.Identity
                 {
                     Success = false,
                     Errors = new List<string>()
-                {
-                    "Usuario y/o contraseña incorrectos"
-                }
+                    {
+                        "Usuario y/o contraseña incorrectos"
+                    }
                 };
 
                 return response;
@@ -113,13 +113,35 @@ namespace Infrastructure.Identity
                 {
                     if (!profile.IsVerified)
                     {
+                        var errors = new List<string>();
+
+                        //Verificar el estatus de su ultima solicitud
+                        var request = await _unitOfWork.UserApprovalRepo.Get(a => a.ProfileId == profile.Id && a.Status != ApprovalStatus.APROVADO);
+                        var lastRequest = request.LastOrDefault();
+                        
+                        if (lastRequest == null) errors.Add("No se encontro ninguna solicitud de aprobación del usuario");
+                        else
+                        {
+                            switch(lastRequest.Status)
+                            {
+                                case ApprovalStatus.PENDIENTE:
+                                    errors.Add("El usuario esta pendiente de aprobación por la administración");
+                                    break;
+                                case ApprovalStatus.RECHAZADO:
+                                    errors.Add("El usuario fue rechazado por la administración");
+                                    errors.Add($"Motivo: {lastRequest.Comment}");
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                        //Devolver respuesta
                         var responseV = new AuthResult
                         {
                             Success = false,
-                            Errors = new List<string>()
-                        {
-                            "El usuario no ha sido verificado por la administración"
-                        }
+                            Errors = errors,
+                            UserProfileId = profile.Id
                         };
 
                         return responseV;
@@ -127,7 +149,7 @@ namespace Infrastructure.Identity
                     else
                     {
                         var signedIn = await _userManager.CheckPasswordAsync(user, password);
-
+                        
                         var response = new AuthResult
                         {
                             Success = signedIn,
@@ -163,18 +185,76 @@ namespace Infrastructure.Identity
                 };
 
                 return errorresponse;
-            }
-
-            var response = new AuthResult
+            } 
+            else
             {
-                Success = true,
-                Errors = new List<string>()
-                {
-                    "Login social identificado"
-                }
-            };
+                //Revisar que el usuario este verificado
+                var query = await _unitOfWork.UserProfileRepo.Get(p => p.UserId == user.Id);
+                var profile = query.FirstOrDefault();
 
-            return response;
+                if (profile == null)
+                {
+                    var responseP = new AuthResult
+                    {
+                        Success = false,
+                        Errors = new List<string>()
+                        {
+                            "El usuario no cuenta con un perfil"
+                        }
+                    };
+
+                    return responseP;
+                }
+                else
+                {
+                    if (!profile.IsVerified)
+                    {
+                        var errors = new List<string>();
+
+                        //Verificar el estatus de su ultima solicitud
+                        var request = await _unitOfWork.UserApprovalRepo.Get(a => a.ProfileId == profile.Id && a.Status != ApprovalStatus.APROVADO);
+                        var lastRequest = request.LastOrDefault();
+
+                        if (lastRequest == null) errors.Add("No se encontro ninguna solicitud de aprobación del usuario");
+                        else
+                        {
+                            switch (lastRequest.Status)
+                            {
+                                case ApprovalStatus.PENDIENTE:
+                                    errors.Add("El usuario esta pendiente de aprobación por la administración");
+                                    break;
+                                case ApprovalStatus.RECHAZADO:
+                                    errors.Add("El usuario fue rechazado por la administración");
+                                    errors.Add($"Motivo: {lastRequest.Comment}");
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                        //Devolver respuesta
+                        var responseV = new AuthResult
+                        {
+                            Success = false,
+                            Errors = errors,
+                            UserProfileId = profile.Id
+                        };
+
+                        return responseV;
+                    }
+                    else
+                    {
+
+                        var response = new AuthResult
+                        {
+                            Success = true
+                        };
+                        response.Messages.Add("Login social identificado");
+
+                        return response;
+                    }
+                }
+            }
         }
 
         public async Task<bool> AuthorizeAsync(int userId, string policyName)
