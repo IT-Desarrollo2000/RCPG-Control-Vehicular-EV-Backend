@@ -118,7 +118,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ListTotalPerfomanceDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
-        [Route("GetAllTotalPerfomance")]
+        [Route("ListTotalPerfomance")]
         public async Task<ActionResult<List<GraphicsPerfomanceDto>>> GetlistTotalPerfomance(int VehicleId)
         {
             var users = await _utilitesService.GetListTotalPerfomance(VehicleId);
