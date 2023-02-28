@@ -6,7 +6,7 @@ using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
-using Domain.Entities.User_Approvals;
+using Domain.Enums;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
 
@@ -782,6 +782,129 @@ namespace Application.Services
             return response;
         }
 
+        public async Task<GenericResponse<VehiclesDto>> MarkVehicleAsInactive(int VehicleId)
+        {
+            GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
+            try
+            {
+                var vehicle = await _unitOfWork.VehicleRepo.GetById(VehicleId);
+                if (vehicle == null)
+                {
+                    response.success = false;
+                    response.AddError("Vehiculo no encontrado", "El vehiculo especificado no existe", 2);
+                    return response;
+                }
 
+                //Verificar que pueda su estatus permita su modificación
+                if (vehicle.VehicleStatus != VehicleStatus.ACTIVO)
+                {
+                    response.success = false;
+                    response.AddError("Estatus incorrecto", "El estatus del vehiculo no permite que se le de de baja", 3);
+                    return response;
+                }
+
+                vehicle.VehicleStatus = VehicleStatus.INACTIVO;
+
+                //Guardar cambios
+                await _unitOfWork.VehicleRepo.Update(vehicle);
+                await _unitOfWork.SaveChangesAsync();
+
+                var map = _mapper.Map<VehiclesDto>(vehicle);
+                response.success = true;
+                response.Data = map;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<VehiclesDto>> MarkVehicleAsSaved(int VehicleId)
+        {
+            GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
+            try
+            {
+                var vehicle = await _unitOfWork.VehicleRepo.GetById(VehicleId);
+                if (vehicle == null)
+                {
+                    response.success = false;
+                    response.AddError("Vehiculo no encontrado", "El vehiculo especificado no existe", 2);
+                    return response;
+                }
+
+                //Verificar que pueda su estatus permita su modificación
+                if (vehicle.VehicleStatus != VehicleStatus.ACTIVO)
+                {
+                    response.success = false;
+                    response.AddError("Estatus incorrecto", "El estatus del vehiculo no permite que sea apartado", 3);
+                    return response;
+                }
+
+                vehicle.VehicleStatus = VehicleStatus.APARTADO;
+
+                //Guardar cambios
+                await _unitOfWork.VehicleRepo.Update(vehicle);
+                await _unitOfWork.SaveChangesAsync();
+
+                var map = _mapper.Map<VehiclesDto>(vehicle);
+                response.success = true;
+                response.Data = map;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<VehiclesDto>> ReactivateVehicle(int VehicleId)
+        {
+            GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
+            try
+            {
+                var vehicle = await _unitOfWork.VehicleRepo.GetById(VehicleId);
+                if (vehicle == null)
+                {
+                    response.success = false;
+                    response.AddError("Vehiculo no encontrado", "El vehiculo especificado no existe", 2);
+                    return response;
+                }
+
+                //Verificar que pueda su estatus permita su modificación
+                switch (vehicle.VehicleStatus)
+                {
+                    case VehicleStatus.ACTIVO:
+                    case VehicleStatus.EN_USO:
+                    case VehicleStatus.MANTENIMIENTO:
+                        response.success = false;
+                        response.AddError("Estatus incorrecto", "El estatus del vehiculo no permite su cambio de estatus a ACTIVO", 3);
+                        return response;
+                    default:
+                        break;
+                }
+
+                vehicle.VehicleStatus = VehicleStatus.APARTADO;
+
+                //Guardar cambios
+                await _unitOfWork.VehicleRepo.Update(vehicle);
+                await _unitOfWork.SaveChangesAsync();
+
+                var map = _mapper.Map<VehiclesDto>(vehicle);
+                response.success = true;
+                response.Data = map;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
     }
 }
