@@ -1,6 +1,7 @@
 using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
 using Domain.Enums;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,6 @@ namespace Application.Interfaces
         Task<GenericResponse<List<GetVehicleActiveDto>>> GetAllVehiclesActive();
         Task<GenericResponse<TotalPerfomanceDto>> GetTotalPerfomance(int VehicleId);
         Task<GenericResponse<List<GraphicsPerfomanceDto>>> GetAllPerfomance(int VehicleId);
-        Task<GenericResponse<List<ListTotalPerfomanceDto>>> GetListTotalPerfomance(int VehicleId);
+        Task<GenericResponse<List<TotalPerfomanceDto>>> GetListTotalPerfomance([FromForm] ListTotalPerfomanceDto listTotalPerfomanceDto);
     }
 }
