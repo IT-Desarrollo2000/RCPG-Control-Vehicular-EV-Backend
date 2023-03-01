@@ -53,7 +53,6 @@ namespace Infrastructure
                 opt.Password.RequireUppercase = false;
                 opt.Password.RequireDigit = false;
                 opt.User.RequireUniqueEmail = true;
-                //opt.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
             })
             .AddRoles<AppRole>()
                 .AddRoleManager<RoleManager<AppRole>>()

@@ -24,8 +24,21 @@ namespace Domain.DTOs.Reponses
         public string VehicleName { get; set; }
         public double TotalMileageTraveled { get; set; }
         public double TotalPerfomance { get; set; }
+        public bool success { get; set; } = true;
         public string? error { get; set; }
     }
+
+    public class PerformanceReviewDto
+    {
+        public PerformanceReviewDto()
+        {
+            PerformanceList = new List<TotalPerfomanceDto>();
+        }
+
+        public double MileageAverage { get; set; }
+        public double PerformanceAverage { get; set; }
+        public List<TotalPerfomanceDto> PerformanceList { get; set; }
+    } 
 
     public class ListTotalPerfomanceDto
     {

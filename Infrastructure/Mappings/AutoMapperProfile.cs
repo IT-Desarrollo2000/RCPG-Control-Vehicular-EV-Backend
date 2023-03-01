@@ -106,7 +106,7 @@ namespace Infrastructure.Mappings
             CreateMap<MaintenanceWorkshopRequest, MaintenanceWorkshopDto>().ReverseMap();
             CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopDto>().ReverseMap();
             CreateMap<VehicleMaintenanceWorkshop, GetVehicleMaintenanceWorkshopDto>().ReverseMap();
-            CreateMap<MaintenanceWorkShopSlimDto, VehicleMaintenanceWorkshop>();
+            CreateMap<MaintenanceWorkShopSlimDto, VehicleMaintenanceWorkshop>().ReverseMap();
 
             //VehicleReport
             CreateMap<VehicleReport, VehicleReportRequest>().ReverseMap();
