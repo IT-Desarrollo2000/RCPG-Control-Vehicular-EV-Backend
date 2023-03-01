@@ -24,7 +24,7 @@ namespace API.Controllers
         }
 
         //GETALL
-        [Authorize(Roles = "Administrator, AdminUser")]
+        [Authorize(Roles = "Administrator, AdminUser, Supervisor, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -56,7 +56,7 @@ namespace API.Controllers
         }
 
         //GETBYID
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet("{id:int}")]

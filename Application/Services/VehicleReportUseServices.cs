@@ -552,6 +552,8 @@ namespace Application.Services
                     return response;
                 }
 
+
+
                 //Modificar el reporte
                 useReport.AppUserId = request.AppUserId;
                 useReport.Verification = true;
