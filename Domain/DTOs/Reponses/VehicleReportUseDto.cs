@@ -21,6 +21,7 @@ namespace Domain.DTOs.Reponses
         public int? UserProfileId { get; set; }
         public int? AppUserId { get; set; }
         public CurrentFuel? CurrentFuelLoad { get; set; }
+        public CurrentFuel? LastFuelLoad { get; set; }
         public bool Verification { get; set; }
         public int VehicleId { get; set; }
         public string VehicleName { get; set; }
@@ -33,5 +34,23 @@ namespace Domain.DTOs.Reponses
         public List<DestinationOfReportUseDto> Destinations { get; set; }
         public int? InitialCheckListId { get; set; }
         public ChecklistDto? InitialCheckList { get; set; }
+    }
+
+    public class VehicleUseReportsSlimDto
+    {
+        public VehicleUseReportsSlimDto()
+        {
+            Destinations = new List<DestinationOfReportUseDto>();
+        }
+
+        public int Id { get; set; }
+        public double? InitialMileage { get; set; }
+        public CurrentFuel? CurrentFuelLoad { get; set; }
+        public CurrentFuel? LastFuelLoad { get; set; }
+        public double? FinalMileage { get; set; }
+        public ReportUseType StatusReportUse { get; set; }
+        public int VehicleId { get; set; }
+        public string VehicleName { get; set; }
+        public List<DestinationOfReportUseDto> Destinations { get; set; }
     }
 }

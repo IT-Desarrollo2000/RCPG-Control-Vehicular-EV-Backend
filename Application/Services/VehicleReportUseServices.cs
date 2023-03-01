@@ -152,6 +152,124 @@ namespace Application.Services
 
         }
 
+        public async Task<PagedList<VehicleUseReportsSlimDto>> GetUseReportsMobile(VehicleReportUseFilter filter)
+        {
+            filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
+            filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
+
+            string properties = "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations";
+            IEnumerable<VehicleReportUse> useReports = null;
+            Expression<Func<VehicleReportUse, bool>> Query = null;
+
+            if (filter.VehicleId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.VehicleId >= filter.VehicleId.Value);
+                }
+                else { Query = p => p.VehicleId >= filter.VehicleId.Value; }
+            }
+
+            if (filter.FinalMileage.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.FinalMileage >= filter.FinalMileage.Value);
+                }
+                else { Query = p => p.FinalMileage >= filter.FinalMileage.Value; }
+            }
+
+            if (filter.StatusReportUse.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.StatusReportUse >= filter.StatusReportUse.Value);
+                }
+                else { Query = p => p.StatusReportUse >= filter.StatusReportUse.Value; }
+            }
+
+            if (!string.IsNullOrEmpty(filter.Observations))
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.Observations.Contains(filter.Observations));
+                }
+                else { Query = p => p.Observations.Contains(filter.Observations); }
+            }
+
+            if (filter.ChecklistId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.ChecklistId >= filter.ChecklistId.Value);
+                }
+                else { Query = p => p.ChecklistId >= filter.ChecklistId.Value; }
+            }
+
+            if (filter.UseDate.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.UseDate >= filter.UseDate.Value);
+                }
+                else { Query = p => p.UseDate >= filter.UseDate.Value; }
+            }
+
+            if (filter.UserProfileId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.UserProfileId >= filter.UserProfileId.Value);
+                }
+                else { Query = p => p.UserProfileId >= filter.UserProfileId.Value; }
+            }
+
+            if (filter.AppUserId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.AppUserId >= filter.AppUserId.Value);
+                }
+                else { Query = p => p.AppUserId >= filter.AppUserId.Value; }
+            }
+
+            if (filter.CurrentFuelLoad.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.CurrentFuelLoad >= filter.CurrentFuelLoad.Value);
+                }
+                else { Query = p => p.CurrentFuelLoad >= filter.CurrentFuelLoad.Value; }
+            }
+
+            if (filter.Verification.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.Verification == filter.Verification.Value);
+                }
+                else { Query = p => p.Verification == filter.Verification.Value; }
+            }
+
+
+            if (Query != null)
+            {
+                useReports = await _unitOfWork.VehicleReportUseRepo.Get(filter: Query, includeProperties: properties);
+            }
+            else
+            {
+                useReports = await _unitOfWork.VehicleReportUseRepo.Get(includeProperties: properties);
+            }
+
+            //Eliminar recursion usando DTOs
+            var dtos = _mapper.Map<IEnumerable<VehicleUseReportsSlimDto>>(useReports);
+
+            var pagedApprovals = PagedList<VehicleUseReportsSlimDto>.Create(dtos, filter.PageNumber, filter.PageSize);
+
+            return pagedApprovals;
+
+        }
+
         //GETBYID
         public async Task<GenericResponse<VehicleReportUseDto>> GetUseReportById(int Id)
         {

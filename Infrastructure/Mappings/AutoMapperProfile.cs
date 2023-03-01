@@ -157,6 +157,7 @@ namespace Infrastructure.Mappings
                 .ForMember(ur => ur.VehicleStatus, o => o.MapFrom(v => v.Vehicle.VehicleStatus))
                 .ReverseMap();
             CreateMap<UseReportAdminRequest, VehicleReportUse>();
+            CreateMap<VehicleReportUse, VehicleUseReportsSlimDto>();
             
 
 

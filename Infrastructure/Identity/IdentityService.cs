@@ -468,8 +468,8 @@ namespace Infrastructure.Identity
                     Text = @$"Por favor reinicie su contraseña haciendo click en el siguiente link: <a href='https://rcpg-controlvehicular-api.azurewebsites.net/PRecovery/{token}'>Reinicio de Contraseña</a>"
                 };
 
-                _mailClient.Connect("smtp.gmail.com", 587);
-                _mailClient.Authenticate("rcpg.controlvehicular@gmail.com", "EgNPGFg9ue3MPGd");
+                await _mailClient.ConnectAsync("smtp.gmail.com", 465);
+                await _mailClient.AuthenticateAsync("rcpg.controlvehicular@gmail.com", "EgNPGFg9ue3MPGd");
                 await _mailClient.SendAsync(message);
                 await _mailClient.DisconnectAsync(true);
 
