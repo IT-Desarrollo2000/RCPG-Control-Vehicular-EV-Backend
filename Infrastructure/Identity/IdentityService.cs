@@ -1,7 +1,6 @@
 using Application.Interfaces;
 using AutoMapper;
-using Azure.Core;
-using Azure;
+using MailKit;
 using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
@@ -11,6 +10,8 @@ using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MailKit.Net.Smtp;
+using MimeKit;
 
 namespace Infrastructure.Identity
 {
@@ -23,6 +24,7 @@ namespace Infrastructure.Identity
         private readonly IAuthorizationService _authorizationService;
         private readonly IMapper _mapper;
         private readonly IUserApprovalServices _userApprovalServices;
+        private readonly SmtpClient _mailClient;
 
         public IdentityService(
             UserManager<AppUser> userManager, RoleManager<AppRole> roleManager,
@@ -39,6 +41,7 @@ namespace Infrastructure.Identity
             _roleManager = roleManager;
             _unitOfWork = unitOfWork;
             _userApprovalServices = userApprovalServices;
+            _mailClient = new SmtpClient();
         }
         #region ..::Registro y Autenticación::..
         public async Task<AuthResult> LoginWebAdmUser(AppUser user, string password)
@@ -438,6 +441,49 @@ namespace Infrastructure.Identity
             return await _userManager.IsInRoleAsync(user, role);
         }
 
+        //Password related stuff
+        public async Task<GenericResponse<string>> ResetPassword(string userEmail)
+        {
+            var response = new GenericResponse<string>();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(userEmail);
+                if(user == null)
+                {
+                    response.AddError("Usuario no encontrado", "No se encontro un usuario bajo la dirección de correo", 2);
+                    response.success = false;
+                    return response;
+                }
+
+                //Generar token para reinicio de contraseña
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                //Enviar el token al correo
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress("password-recovery", "rcpg.no-reply@gmail.com"));
+                message.To.Add(new MailboxAddress("Daniel Cab", "danicabhern@gmail.com"));
+                message.Subject = "Reinicio de contraseña";
+                message.Body = new TextPart("plain")
+                {
+                    Text = @$"Por favor reinicie su contraseña haciendo click en el siguiente link: <a href='https://rcpg-controlvehicular-api.azurewebsites.net/PRecovery/{token}'>Reinicio de Contraseña</a>"
+                };
+
+                _mailClient.Connect("smtp.gmail.com", 587);
+                _mailClient.Authenticate("rcpg.controlvehicular@gmail.com", "EgNPGFg9ue3MPGd");
+                await _mailClient.SendAsync(message);
+                await _mailClient.DisconnectAsync(true);
+
+                response.success = true;
+                response.Data = token;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
         #endregion
 
         #region ..::Administración AdminWeb::..
