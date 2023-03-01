@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+using Application.Interfaces;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
@@ -22,7 +22,7 @@ namespace API.Controllers
         }
 
         //GETALL
-        [Authorize(Roles = "Administrator, AdminUser,AppUser")]
+        [Authorize(Roles = "Administrator, AdminUser, Supervisor, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]

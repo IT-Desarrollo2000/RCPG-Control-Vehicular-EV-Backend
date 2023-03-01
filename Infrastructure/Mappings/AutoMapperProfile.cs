@@ -122,9 +122,13 @@ namespace Infrastructure.Mappings
             CreateMap<VehicleReportImage, VehicleReportImageDto>();
             CreateMap<VehicleReport, GraphicsPerfomanceDto>()
                 .ForMember(x => x.VehicleId, c => c.MapFrom(a => a.VehicleId))
+                .ForMember(X => X.VehicleName, c => c.MapFrom(a => a.Vehicle.Name))
                 .ForMember(x => x.CurrentKm, c => c.MapFrom(a => a.VehicleReportUses.InitialMileage))
                 .ForMember(x => x.LastKm, c => c.MapFrom(a => a.VehicleReportUses.FinalMileage))
                 .ForMember(x => x.GasolineLoadAmount, c => c.MapFrom(a => a.GasolineLoadAmount)).ReverseMap();
+            CreateMap<VehicleReport, TotalPerfomanceDto>()
+                .ForMember(X => X.VehicleName, c => c.MapFrom(a => a.Vehicle.Name)).ReverseMap();
+
 
 
             //Performance
