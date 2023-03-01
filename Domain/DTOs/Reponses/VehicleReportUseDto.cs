@@ -52,5 +52,6 @@ namespace Domain.DTOs.Reponses
         public int VehicleId { get; set; }
         public string VehicleName { get; set; }
         public List<DestinationOfReportUseDto> Destinations { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }
