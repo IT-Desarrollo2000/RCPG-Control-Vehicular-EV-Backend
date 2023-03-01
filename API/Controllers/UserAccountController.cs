@@ -273,6 +273,14 @@ namespace API.Controllers
 
             return Ok(res);
         }
+
+        [HttpGet]
+        [Route("RequestPasswordRecovery")]
+        public async Task<IActionResult> RequestPasswordRecovery(string emailAddress)
+        {
+            var result = await _identityService.ResetPassword(emailAddress);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
         #endregion
 
         #region ..::Administración de usuarios AdminWeb::..
