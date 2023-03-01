@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+using Application.Interfaces;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
@@ -42,6 +42,38 @@ namespace API.Controllers
             };
 
             var response = new GenericResponse<IEnumerable<VehicleReportUseDto>>(approval)
+            {
+                Meta = metadata,
+                success = true,
+                Data = approval
+            };
+
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
+
+            return Ok(response);
+        }
+
+        //GETALL
+        [Authorize(Roles = "Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetAllMobile")]
+        public async Task<IActionResult> GetUseReportsMobile([FromQuery] VehicleReportUseFilter filter)
+        {
+            var approval = await _vehicleReportUseService.GetUseReportsMobile(filter);
+
+            var metadata = new Metadata()
+            {
+                TotalCount = approval.TotalCount,
+                PageSize = approval.PageSize,
+                CurrentPage = approval.CurrentPage,
+                TotalPages = approval.TotalPages,
+                HasNextPage = approval.HasNextPage,
+                HasPreviousPage = approval.HasPreviousPage
+            };
+
+            var response = new GenericResponse<IEnumerable<VehicleUseReportsSlimDto>>(approval)
             {
                 Meta = metadata,
                 success = true,
