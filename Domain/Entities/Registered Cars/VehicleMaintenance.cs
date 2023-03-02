@@ -6,7 +6,7 @@ namespace Domain.Entities.Registered_Cars
     public class VehicleMaintenance : BaseEntity
     {
         public string ReasonForMaintenance { get; set; }
-        public string Comment { get; set; }
+        public string? Comment { get; set; }
         public DateTime? MaintenanceDate { get; set; }
         public VehicleServiceStatus Status { get; set; }
 

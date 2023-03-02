@@ -144,7 +144,6 @@ namespace Application.Services
                     response.success = false;
                     response.AddError("No existe Vehicle", $"No existe Vehiculo con el VehicleId {request.VehicleId} solicitado", 2);
                     return response;
-
                 }
 
                 //Verificar que el vehiculo se encuentre disponible
@@ -206,8 +205,8 @@ namespace Application.Services
                 entidad.MaintenanceDate = request.MaintenanceDate ?? DateTime.UtcNow;
 
                 //Modificar Status
-                entidad.Status = Domain.Enums.VehicleServiceStatus.EN_CURSO;
-                vehicleExists.VehicleStatus = Domain.Enums.VehicleStatus.MANTENIMIENTO;
+                entidad.Status = VehicleServiceStatus.EN_CURSO;
+                vehicleExists.VehicleStatus = VehicleStatus.MANTENIMIENTO;
 
                 //GuardarCambios
                 await _unitOfWork.VehicleRepo.Update(vehicleExists);
