@@ -53,7 +53,7 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -119,7 +119,6 @@ namespace API.Controllers
         public async Task<IActionResult> PutVehicles(VehiclesUpdateRequest vehiclesUpdateRequest, int id)
         {
             var result = await _registeredVehiclesServices.PutVehicles(vehiclesUpdateRequest, id);
-            if (result.Data == null) { return NotFound($"No existe vehiculo con el Id {id}"); }
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 

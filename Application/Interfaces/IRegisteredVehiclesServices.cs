@@ -23,7 +23,7 @@ namespace Application.Interfaces
         Task<GenericResponse<VehiclesDto>> MarkVehicleAsSaved(int VehicleId);
         Task<GenericResponse<PerformanceDto>> Performance(PerformanceRequest performanceRequest);
         Task<GenericResponse<List<PerformanceDto>>> PerformanceList(List<PerformanceRequest> performanceRequests);
-        Task<GenericResponse<Vehicle>> PutVehicles(VehiclesUpdateRequest vehiclesUpdateRequest, int id);
+        Task<GenericResponse<VehiclesDto>> PutVehicles(VehiclesUpdateRequest vehiclesUpdateRequest, int id);
         Task<GenericResponse<VehiclesDto>> ReactivateVehicle(int VehicleId);
     }
 }
