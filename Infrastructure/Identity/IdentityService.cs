@@ -469,7 +469,7 @@ namespace Infrastructure.Identity
                 };
 
                 await _mailClient.ConnectAsync("smtp.gmail.com", 465);
-                await _mailClient.AuthenticateAsync("rcpg.controlvehicular@gmail.com", "EgNPGFg9ue3MPGd");
+                await _mailClient.AuthenticateAsync("rcpg.controlvehicular@gmail.com", "jaoiyivnqwdhaezz");
                 await _mailClient.SendAsync(message);
                 await _mailClient.DisconnectAsync(true);
 
@@ -484,10 +484,38 @@ namespace Infrastructure.Identity
                 return response;
             }
         }
+
+        public async Task<GenericResponse<IdentityResult>> PasswordResetConfirmation(string userEmail, string token, string newPassword)
+        {
+            var response = new GenericResponse<IdentityResult>();
+            try
+            {
+                //Generar token para reinicio de contraseña
+                var user = await _userManager.FindByEmailAsync(userEmail);
+                if (user == null)
+                {
+                    response.AddError("Usuario no encontrado", "No se encontro un usuario bajo la dirección de correo", 2);
+                    response.success = false;
+                    return response;
+                }
+
+                var reset = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+                response.success = reset.Succeeded;
+                response.Data = reset;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
         #endregion
 
         #region ..::Administración AdminWeb::..
-        public async Task<IdentityResult> CreateWebAdmUserAsync(WebAdmUserRegistrationRequest user)
+            public async Task<IdentityResult> CreateWebAdmUserAsync(WebAdmUserRegistrationRequest user)
         {
             var newUser = _mapper.Map<AppUser>(user);
 
