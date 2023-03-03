@@ -354,28 +354,36 @@ namespace Application.Services
                 var exp = await _unitOfWork.VehicleRepo.GetById(id);
                 if (exp == null) return null;
 
-                //Borrar las fotos del blob
-                var photos = await _unitOfWork.VehicleImageRepo.Get(filter: v => v.VehicleId == id);
-
-                foreach (var photo in photos)
+                //Verificar que tenga un estatus preferible
+                /*switch (exp.VehicleStatus)
                 {
-                    await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.RegisteredCars, photo.FilePath);
-                    await _unitOfWork.VehicleImageRepo.Delete(photo.Id);
-                }
+                    case VehicleStatus.EN_USO:
+                    case VehicleStatus.MANTENIMIENTO:
+                    case VehicleStatus.APARTADO:
+                        response.success = false;
+                        response.AddError("Error al eliminar vehiculo", "El estatus del vehiculo no permite su eliminación del sistema", 2);
+                        return response;
+                    default:
+                        break;
+                }*/
 
                 //Borrar Checklists 
                 var checklists = await _unitOfWork.ChecklistRepo.Get(x => x.VehicleId == id);
                 foreach (var checklist in checklists)
                 {
                     //Buscar reportes de uso
-                    var query = await _unitOfWork.VehicleReportUseRepo.Get(x => x.ChecklistId == checklist.Id, includeProperties: "Checklist");
-
+                    var query = await _unitOfWork.VehicleReportUseRepo.Get(x => x.ChecklistId == checklist.Id, includeProperties: "Checklist,InitialCheckList");
+                    int? InitialCheckId = null;
                     foreach (var report in query)
                     {
+                        InitialCheckId = report.InitialCheckListId;
                         report.Checklist = null;
+                        report.InitialCheckList = null;
+                        report.ChecklistId = null;
+                        report.InitialCheckListId = null;
                         await _unitOfWork.VehicleReportUseRepo.Update(report);
                     }
-
+                    if (InitialCheckId != null) await _unitOfWork.ChecklistRepo.Delete(InitialCheckId.Value);
                     await _unitOfWork.ChecklistRepo.Delete(checklist.Id);
                 }
 
@@ -414,6 +422,14 @@ namespace Application.Services
                     await _unitOfWork.PolicyRepo.Delete(policy.Id);
                 }
 
+                //Borrar las fotos del blob
+                var photos = await _unitOfWork.VehicleImageRepo.Get(filter: v => v.VehicleId == id);
+                foreach (var photo in photos)
+                {
+                    await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.RegisteredCars, photo.FilePath);
+                    await _unitOfWork.VehicleImageRepo.Delete(photo.Id);
+                }
+
                 await _unitOfWork.VehicleRepo.Delete(id);
                 await _unitOfWork.SaveChangesAsync();
                 response.success = true;
@@ -431,121 +447,153 @@ namespace Application.Services
 
         }
 
-        public async Task<GenericResponse<Vehicle>> PutVehicles(VehiclesUpdateRequest vehiclesUpdateRequest, int id)
+        public async Task<GenericResponse<VehiclesDto>> PutVehicles(VehiclesUpdateRequest request, int id)
         {
-
-            GenericResponse<Vehicle> response = new GenericResponse<Vehicle>();
-            var result = await _unitOfWork.VehicleRepo.Get(r => r.Id == id);
-            var veh = result.FirstOrDefault();
-            if (veh == null) return null;
-
-            if (!string.IsNullOrEmpty(vehiclesUpdateRequest.Name))
+            GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
+            try
             {
-                veh.Name = vehiclesUpdateRequest.Name;
-            }
+                var result = await _unitOfWork.VehicleRepo.Get(r => r.Id == id, includeProperties: "AssignedDepartments");
+                var veh = result.FirstOrDefault();
+                if (veh == null) return null;
 
-            if (!string.IsNullOrEmpty(vehiclesUpdateRequest.Serial))
+                if (!string.IsNullOrEmpty(request.Name))
+                {
+                    veh.Name = request.Name;
+                }
+
+                if (!string.IsNullOrEmpty(request.Serial))
+                {
+                    veh.Serial = request.Serial;
+                }
+
+                if (request.IsUtilitary.HasValue)
+                {
+                    veh.IsUtilitary = request.IsUtilitary.Value;
+                }
+
+                if (!string.IsNullOrEmpty(request.Brand))
+                {
+                    veh.Brand = request.Brand;
+                }
+
+                if (!string.IsNullOrEmpty(request.Color))
+                {
+                    veh.Color = request.Color;
+                }
+
+                if (request.ModelYear.HasValue)
+                {
+                    veh.ModelYear = request.ModelYear.Value;
+                }
+
+                if (request.FuelCapacity.HasValue)
+                {
+                    veh.FuelCapacity = request.FuelCapacity.Value;
+                }
+
+                if (request.CurrentFuel.HasValue)
+                {
+                    veh.CurrentFuel = request.CurrentFuel.Value;
+                }
+
+                if (request.FuelType.HasValue)
+                {
+                    veh.FuelType = request.FuelType.Value;
+                }
+
+                if (request.VehicleType.HasValue)
+                {
+                    veh.VehicleType = request.VehicleType.Value;
+                }
+
+                if (request.ServicePeriodMonths.HasValue)
+                {
+                    veh.ServicePeriodMonths = request.ServicePeriodMonths.Value;
+                }
+
+                if (request.ServicePeriodKM.HasValue)
+                {
+                    veh.ServicePeriodKM = request.ServicePeriodKM.Value;
+                }
+
+                if (request.OwnershipType.HasValue)
+                {
+                    veh.OwnershipType = request.OwnershipType.Value;
+                }
+
+                if (!string.IsNullOrEmpty(request.OwnersName))
+                {
+                    veh.OwnersName = request.OwnersName;
+                }
+
+                if (request.DesiredPerformance.HasValue)
+                {
+                    veh.DesiredPerformance = request.DesiredPerformance.Value;
+                }
+
+                if (!string.IsNullOrEmpty(request.VehicleObservation))
+                {
+                    veh.VehicleObservation = request.VehicleObservation;
+                }
+
+                if (!string.IsNullOrEmpty(request.CarRegistrationPlate))
+                {
+                    veh.CarRegistrationPlate = request.CarRegistrationPlate;
+                }
+
+                if (request.IsClean.HasValue)
+                {
+                    veh.IsClean = request.IsClean.Value;
+                }
+
+                if (request.CurrentKM.HasValue)
+                {
+                    veh.CurrentKM = request.CurrentKM.Value;
+                }
+
+                if (request.InitialKM.HasValue)
+                {
+                    veh.InitialKM = request.InitialKM.Value;
+                }
+
+                foreach (var department in request.DepartmentsToRemove)
+                {
+                    var exists = veh.AssignedDepartments.Where(d => d.Id == department).FirstOrDefault();
+
+                    if (exists == null)
+                    {
+                        response.success = false;
+                        response.AddError("Departamento no encontrado", $"El departamento a eliminar con Id {department} no se encontro", 3);
+                        return response;
+                    }
+                    veh.AssignedDepartments.Remove(exists);
+                }
+
+                foreach (var department in request.DepartmentsToAdd)
+                {
+                    var exists = await _unitOfWork.Departaments.GetById(department);
+                    if(exists == null)
+                    {
+                        response.success = false;
+                        response.AddError("Departamento no encontrado", $"El departamento para agregar con Id {department} no se encontro", 3);
+                        return response;
+                    }
+                    veh.AssignedDepartments.Add(exists);
+                }
+
+                await _unitOfWork.VehicleRepo.Update(veh);
+                await _unitOfWork.SaveChangesAsync();
+                response.success = true;
+                var dto = _mapper.Map<VehiclesDto>(veh);
+                response.Data = dto;
+                return response;
+            }
+            catch(Exception ex)
             {
-                veh.Serial = vehiclesUpdateRequest.Serial;
+                response.AddError("Error", ex.Message, 1);
+                response.success = false;
+                return response;
             }
-
-            if (vehiclesUpdateRequest.IsUtilitary.HasValue)
-            {
-                veh.IsUtilitary = vehiclesUpdateRequest.IsUtilitary.Value;
-            }
-
-            if (!string.IsNullOrEmpty(vehiclesUpdateRequest.Brand))
-            {
-                veh.Brand = vehiclesUpdateRequest.Brand;
-            }
-
-
-            if (!string.IsNullOrEmpty(vehiclesUpdateRequest.Color))
-            {
-                veh.Color = vehiclesUpdateRequest.Color;
-            }
-
-            if (vehiclesUpdateRequest.ModelYear.HasValue)
-            {
-                veh.ModelYear = vehiclesUpdateRequest.ModelYear.Value;
-            }
-
-            if (vehiclesUpdateRequest.FuelCapacity.HasValue)
-            {
-                veh.FuelCapacity = vehiclesUpdateRequest.FuelCapacity.Value;
-            }
-
-            if (vehiclesUpdateRequest.CurrentFuel.HasValue)
-            {
-                veh.CurrentFuel = vehiclesUpdateRequest.CurrentFuel.Value;
-            }
-
-            if (vehiclesUpdateRequest.FuelType.HasValue)
-            {
-                veh.FuelType = vehiclesUpdateRequest.FuelType.Value;
-            }
-
-            if (vehiclesUpdateRequest.VehicleType.HasValue)
-            {
-                veh.VehicleType = vehiclesUpdateRequest.VehicleType.Value;
-            }
-
-            if (vehiclesUpdateRequest.ServicePeriodMonths.HasValue)
-            {
-                veh.ServicePeriodMonths = vehiclesUpdateRequest.ServicePeriodMonths.Value;
-            }
-
-            if (vehiclesUpdateRequest.ServicePeriodKM.HasValue)
-            {
-                veh.ServicePeriodKM = vehiclesUpdateRequest.ServicePeriodKM.Value;
-            }
-
-            if (vehiclesUpdateRequest.OwnershipType.HasValue)
-            {
-                veh.OwnershipType = vehiclesUpdateRequest.OwnershipType.Value;
-            }
-
-
-            if (!string.IsNullOrEmpty(vehiclesUpdateRequest.OwnersName))
-            {
-                veh.OwnersName = vehiclesUpdateRequest.OwnersName;
-            }
-
-            if (vehiclesUpdateRequest.DesiredPerformance.HasValue)
-            {
-                veh.DesiredPerformance = vehiclesUpdateRequest.DesiredPerformance.Value;
-            }
-
-            if (!string.IsNullOrEmpty(vehiclesUpdateRequest.VehicleObservation))
-            {
-                veh.VehicleObservation = vehiclesUpdateRequest.VehicleObservation;
-            }
-
-            if(!string.IsNullOrEmpty(vehiclesUpdateRequest.CarRegistrationPlate))
-            {
-                veh.CarRegistrationPlate = vehiclesUpdateRequest.CarRegistrationPlate;
-            }
-
-            if (vehiclesUpdateRequest.IsClean.HasValue)
-            {
-                veh.IsClean = vehiclesUpdateRequest.IsClean.Value;
-            }
-
-            if (vehiclesUpdateRequest.CurrentKM.HasValue)
-            {
-                veh.CurrentKM = vehiclesUpdateRequest.CurrentKM.Value;
-            }
-
-            if (vehiclesUpdateRequest.InitialKM.HasValue)
-            {
-                veh.InitialKM = vehiclesUpdateRequest.InitialKM.Value;
-            }
-
-            await _unitOfWork.VehicleRepo.Update(veh);
-            await _unitOfWork.SaveChangesAsync();
-            response.success = true;
-            response.Data = veh;
-            return response;
 
         }
 

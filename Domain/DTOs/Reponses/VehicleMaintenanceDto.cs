@@ -10,6 +10,7 @@ namespace Domain.DTOs.Reponses
         public string ReasonForMaintenance { get; set; }
         public DateTime? MaintenanceDate { get; set; }
         public VehicleServiceStatus Status { get; set; }
+        public string? Comment { get; set; }
 
         public int? InitialMileage { get; set; }
         public CurrentFuel? InitialFuel { get; set; }

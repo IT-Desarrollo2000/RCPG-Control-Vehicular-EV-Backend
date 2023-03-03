@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MailKit.Net.Smtp;
 using MimeKit;
+using Azure;
 
 namespace Infrastructure.Identity
 {
@@ -465,7 +466,7 @@ namespace Infrastructure.Identity
                 message.Subject = "Reinicio de contraseña";
                 message.Body = new TextPart("plain")
                 {
-                    Text = @$"Por favor reinicie su contraseña haciendo click en el siguiente link: <a href='https://rcpg-controlvehicular-api.azurewebsites.net/PRecovery/{token}'>Reinicio de Contraseña</a>"
+                    Text = @$"Por favor reinicie su contraseña haciendo click en el siguiente link: <a href='https://rcpg-controlvehicular-api.azurewebsites.net/PRecovery/{token}/ '>Reinicio de Contraseña</a>"
                 };
 
                 await _mailClient.ConnectAsync("smtp.gmail.com", 465);
@@ -485,13 +486,13 @@ namespace Infrastructure.Identity
             }
         }
 
-        public async Task<GenericResponse<IdentityResult>> PasswordResetConfirmation(string userEmail, string token, string newPassword)
+        public async Task<GenericResponse<IdentityResult>> PasswordResetConfirmation(PasswordResetConfirmationRequest request)
         {
-            var response = new GenericResponse<IdentityResult>();
+            GenericResponse<IdentityResult> response = new GenericResponse<IdentityResult>();
             try
             {
                 //Generar token para reinicio de contraseña
-                var user = await _userManager.FindByEmailAsync(userEmail);
+                var user = await _userManager.FindByEmailAsync(request.userEmail);
                 if (user == null)
                 {
                     response.AddError("Usuario no encontrado", "No se encontro un usuario bajo la dirección de correo", 2);
@@ -499,10 +500,45 @@ namespace Infrastructure.Identity
                     return response;
                 }
 
-                var reset = await _userManager.ResetPasswordAsync(user, token, newPassword);
+                var reset = await _userManager.ResetPasswordAsync(user, request.ResetToken, request.NewPassword);
 
                 response.success = reset.Succeeded;
                 response.Data = reset;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<IdentityResult>> PasswordChange(PasswordChangeRequest request)
+        {
+            GenericResponse<IdentityResult> response = new GenericResponse<IdentityResult>();
+            try 
+            {
+                //Encontrar el usuario
+                var user = await _userManager.FindByEmailAsync(request.Email);
+                if (user == null)
+                {
+                    response.AddError("Usuario no encontrado", "No se encontro un usuario bajo la dirección de correo", 2);
+                    response.success = false;
+                    return response;
+                }
+
+                if(request.newPassword != request.newPasswordConfirmation)
+                {
+                    response.AddError("Confirmación Incorrecta", "La confirmación de contraseña es incorrecta", 3);
+                    response.success = false;
+                    return response;
+                }
+
+                var change = await _userManager.ChangePasswordAsync(user, request.oldPassword, request.newPassword);
+
+                response.success = change.Succeeded;
+                response.Data = change;
                 return response;
             }
             catch (Exception ex)

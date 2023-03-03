@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -279,6 +280,30 @@ namespace API.Controllers
         public async Task<IActionResult> RequestPasswordRecovery(string emailAddress)
         {
             var result = await _identityService.ResetPassword(emailAddress);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        [HttpPost]
+        [Route("PasswordResetConfirmation")]
+        public async Task<IActionResult> PasswordResetConfirmation(PasswordResetConfirmationRequest request)
+        {
+            var result = await _identityService.PasswordResetConfirmation(request);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        [Authorize(Roles = "Administrator, AppUser, AdminUser, Supervisor")]
+        [HttpPost]
+        [Route("PasswordChange")]
+        public async Task<IActionResult> PasswordChange(PasswordChangeRequest request)
+        {
+            //Obtener el usuario actual
+            ClaimsPrincipal currentUser = User;
+            var currentUserName = currentUser.FindFirst(ClaimTypes.Email).Value;
+            AppUser user = await _userManager.FindByEmailAsync(currentUserName);
+
+            //Si no proporciono un Id de usuario obtener el usuario actual
+            request.Email = request.Email ?? user.Email;
+            var result = await _identityService.PasswordChange(request);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
         #endregion

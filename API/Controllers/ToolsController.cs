@@ -62,7 +62,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetAllVehicleActive")]
-        public async Task<ActionResult<List<GetVehicleActiveDto>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
             var users = await _utilitesService.GetAllVehiclesActive();
             if (users.success)
@@ -81,7 +81,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetAllPerfomance")]
-        public async Task<ActionResult<List<GraphicsPerfomanceDto>>> GetAllPerfomance(int VehicleId)
+        public async Task<IActionResult> GetAllPerfomance(int VehicleId)
         {
             var users = await _utilitesService.GetAllPerfomance(VehicleId);
             if (users.success)
@@ -100,7 +100,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetAllTotalPerfomance")]
-        public async Task<ActionResult<List<TotalPerfomanceDto>>> GetAllTotalPerfomance(int VehicleId)
+        public async Task<IActionResult> GetAllTotalPerfomance(int VehicleId)
         {
             var users = await _utilitesService.GetTotalPerfomance(VehicleId);
             if (users.success)
@@ -119,7 +119,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("ListTotalPerfomance")]
-        public async Task<ActionResult<List<TotalPerfomanceDto>>> GetlistTotalPerfomance([FromForm] ListTotalPerfomanceDto listTotalPerfomanceDto)
+        public async Task<IActionResult> GetlistTotalPerfomance([FromForm] ListTotalPerfomanceDto listTotalPerfomanceDto)
         {
             var users = await _utilitesService.GetListTotalPerfomance(listTotalPerfomanceDto);
             if (users.success)

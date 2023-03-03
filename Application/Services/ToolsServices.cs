@@ -562,93 +562,215 @@ namespace Application.Services
 
         }
 
-        public async Task<GenericResponse<List<TotalPerfomanceDto>>> GetListTotalPerfomance([FromForm] ListTotalPerfomanceDto listTotalPerfomanceDto )
+        public async Task<GenericResponse<PerformanceReviewDto>> GetListTotalPerfomance(ListTotalPerfomanceDto listTotalPerfomanceDto)
         {
-            GenericResponse<List<TotalPerfomanceDto>> response = new GenericResponse<List<TotalPerfomanceDto>>();
+            GenericResponse<PerformanceReviewDto> response = new GenericResponse<PerformanceReviewDto>();
+            var review = new PerformanceReviewDto();
             var list = new List<TotalPerfomanceDto>();
+            double totalCount = 0;
+            double totalPerformance = 0;
+            double totalMileage = 0;
             try
             {
-
-                foreach(var Enteros in listTotalPerfomanceDto.VehicleId)
+                if(listTotalPerfomanceDto.VehicleId.Count > 0)
                 {
-                    var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == Domain.Enums.ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros, includeProperties: "Vehicle,VehicleReportUses");
-                
-                    var listt = new List<GraphicsPerfomanceDto>();
-                 
-                    
-
-                    if (Rendimiento == null)
+                    foreach (var Enteros in listTotalPerfomanceDto.VehicleId)
                     {
-                        response.success = false;
-                        response.AddError("No existe ", $"No existe Vehiculo con el Id { Enteros }", 1);
-                        return response;
-                    }
+                        var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == Domain.Enums.ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros, includeProperties: "Vehicle,VehicleReportUses,Vehicle.VehicleImages");
 
-                    if(Rendimiento.Count() == 0)
-                    {
-                        var Totale = new TotalPerfomanceDto()
+                        var listt = new List<GraphicsPerfomanceDto>();
+
+                        if (Rendimiento == null)
                         {
-                            VehicleId = Enteros,
-                            VehicleName = "No se obtuvo informacion del vehiculo solicitado",
-                            TotalMileageTraveled = 0,
-                            TotalPerfomance = 0,
-                            error = $"No existe datos de Rendimiento para { Enteros } "
-                        };
+                            response.success = false;
+                            response.AddError("No existe ", $"No existe Vehiculo con el Id {Enteros}", 1);
+                            return response;
+                        }
 
-                        list.Add(Totale);
-
-                    }
-
-                    else
-                    {
-                        var Name = Rendimiento.FirstOrDefault().Vehicle.Name;
-                        double sum = 0;
-                        double sum2 = 0;
-                        foreach (var Aray in Rendimiento)
+                        if (Rendimiento.Count() == 0)
                         {
-                            var KmActual = Aray.VehicleReportUses.FinalMileage;
-                            var KmUltimo = Aray.VehicleReportUses.InitialMileage;
-                            var GasolinaCarga = Aray.GasolineLoadAmount;
-
-                            var KmRecorrido = KmActual - KmUltimo;
-                            var KmPorLitros = KmRecorrido / GasolinaCarga;
-
-
-                            var Perfomance = new GraphicsPerfomanceDto()
+                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros);
+                            var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
+                            var Totale = new TotalPerfomanceDto()
                             {
-                                VehicleId = Aray.VehicleId,
-                                VehicleName = Aray.Vehicle.Name,
-                                CurrentKm = Aray.VehicleReportUses.FinalMileage ?? 0,
-                                LastKm = Aray.VehicleReportUses.InitialMileage ?? 0,
-                                GasolineLoadAmount = Aray.GasolineLoadAmount ?? 0,
-                                MileageTraveled = KmRecorrido ?? 0,
-                                Perfomance = KmPorLitros ?? 0
+                                VehicleId = Enteros,
+                                VehicleName = "No se obtuvo informacion del vehiculo solicitado",
+                                TotalMileageTraveled = 0,
+                                TotalPerfomance = 0,
+                                success = false,
+                                error = $"No existe datos de Rendimiento para {Enteros} ",
+                                Images = ImagesDto
                             };
 
-                            listt.Add(Perfomance);
+                            list.Add(Totale);
+                        }
 
-                            sum += Perfomance.MileageTraveled;
-                            sum2 += Perfomance.Perfomance;
+                        else
+                        {
+                            var Name = Rendimiento.FirstOrDefault().Vehicle.Name;
+                            double sum = 0;
+                            double sum2 = 0;
+                            foreach (var Aray in Rendimiento)
+                            {
+                                var KmActual = Aray.VehicleReportUses.FinalMileage;
+                                var KmUltimo = Aray.VehicleReportUses.InitialMileage;
+                                var GasolinaCarga = Aray.GasolineLoadAmount;
 
+                                var KmRecorrido = KmActual - KmUltimo;
+                                var KmPorLitros = KmRecorrido / GasolinaCarga;
+
+
+                                var Perfomance = new GraphicsPerfomanceDto()
+                                {
+                                    VehicleId = Aray.VehicleId,
+                                    VehicleName = Aray.Vehicle.Name,
+                                    CurrentKm = Aray.VehicleReportUses.FinalMileage ?? 0,
+                                    LastKm = Aray.VehicleReportUses.InitialMileage ?? 0,
+                                    GasolineLoadAmount = Aray.GasolineLoadAmount ?? 0,
+                                    MileageTraveled = KmRecorrido ?? 0,
+                                    Perfomance = KmPorLitros ?? 0
+                                };
+
+                                listt.Add(Perfomance);
+
+                                sum += Perfomance.MileageTraveled;
+                                sum2 += Perfomance.Perfomance;
+
+
+                            }
+
+                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros);
+                            var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
+                            var Total = new TotalPerfomanceDto()
+                            {
+                                VehicleId = Enteros,
+                                VehicleName = Name,
+                                TotalMileageTraveled = sum / Rendimiento.Count(),
+                                TotalPerfomance = sum2 / Rendimiento.Count(),
+                                Images = ImagesDto
+                            };
+
+                            list.Add(Total);
 
                         }
-                        var Total = new TotalPerfomanceDto()
-                        {
-                            VehicleId = Enteros,
-                            VehicleName = Name,
-                            TotalMileageTraveled = sum / Rendimiento.Count(),
-                            TotalPerfomance = sum2 / Rendimiento.Count()
-                        };
+                    }
+                    
+                    foreach(var total in list)
+                    {
+                        totalCount += 1;
+                        totalPerformance += total.TotalPerfomance;
+                        totalMileage += total.TotalMileageTraveled;
+                    }
+                    review.PerformanceAverage = totalPerformance / totalCount;
+                    review.MileageAverage = totalMileage / totalCount;
+                    review.PerformanceList = list;
 
-                        list.Add(Total);
+                    response.success = true;
+                    response.Data = review;
+                    return response;
+                } 
+                else
+                {
+                    var vehicles = await _unitOfWork.VehicleRepo.Get(v => v.VehicleStatus != VehicleStatus.INACTIVO);
+                    foreach (var Enteros in vehicles.ToList())
+                    {
+                        var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros.Id, includeProperties: "Vehicle,VehicleReportUses,Vehicle.VehicleImages");
+
+                        var listt = new List<GraphicsPerfomanceDto>();
+
+
+
+                        if (Rendimiento == null)
+                        {
+                            response.success = false;
+                            response.AddError("No existe ", $"No existe Vehiculo con el Id {Enteros.Id}", 1);
+                            return response;
+                        }
+
+                        if (Rendimiento.Count() == 0)
+                        {
+                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros.Id);
+                            var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
+                            var Totale = new TotalPerfomanceDto()
+                            {
+                                VehicleId = Enteros.Id,
+                                VehicleName = "No se obtuvo informacion del vehiculo solicitado",
+                                TotalMileageTraveled = 0,
+                                TotalPerfomance = 0,
+                                success = false,
+                                error = $"No existe datos de Rendimiento para {Enteros.Id} ",
+                                Images = ImagesDto
+                            };
+
+                            list.Add(Totale);
+
+                        }
+
+                        else
+                        {
+                            var Name = Rendimiento.FirstOrDefault().Vehicle.Name;
+                            double sum = 0;
+                            double sum2 = 0;
+                            foreach (var Aray in Rendimiento)
+                            {
+                                var KmActual = Aray.VehicleReportUses.FinalMileage;
+                                var KmUltimo = Aray.VehicleReportUses.InitialMileage;
+                                var GasolinaCarga = Aray.GasolineLoadAmount;
+
+                                var KmRecorrido = KmActual - KmUltimo;
+                                var KmPorLitros = KmRecorrido / GasolinaCarga;
+
+
+                                var Perfomance = new GraphicsPerfomanceDto()
+                                {
+                                    VehicleId = Aray.VehicleId,
+                                    VehicleName = Aray.Vehicle.Name,
+                                    CurrentKm = Aray.VehicleReportUses.FinalMileage ?? 0,
+                                    LastKm = Aray.VehicleReportUses.InitialMileage ?? 0,
+                                    GasolineLoadAmount = Aray.GasolineLoadAmount ?? 0,
+                                    MileageTraveled = KmRecorrido ?? 0,
+                                    Perfomance = KmPorLitros ?? 0
+                                };
+
+                                listt.Add(Perfomance);
+
+                                sum += Perfomance.MileageTraveled;
+                                sum2 += Perfomance.Perfomance;
+
+
+                            }
+                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros.Id);
+                            var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
+                            var Total = new TotalPerfomanceDto()
+                            {
+                                VehicleId = Enteros.Id,
+                                VehicleName = Name,
+                                TotalMileageTraveled = sum / Rendimiento.Count(),
+                                TotalPerfomance = sum2 / Rendimiento.Count(),
+                                Images = ImagesDto
+                            };
+
+                            list.Add(Total);
+
+                        }
 
                     }
+                    
+                    foreach (var total in list)
+                    {
+                        totalCount += 1;
+                        totalPerformance += total.TotalPerfomance;
+                        totalMileage += total.TotalMileageTraveled;
+                    }
+                    review.PerformanceAverage = totalPerformance / totalCount;
+                    review.MileageAverage = totalMileage / totalCount;
+                    review.PerformanceList = list;
 
+                    response.success = true;
+                    response.Data = review;
+                    return response;
                 }
-                response.success = true;
-                response.Data = list;
-                return response;
-
+                
             }
             catch (Exception ex)
             {
