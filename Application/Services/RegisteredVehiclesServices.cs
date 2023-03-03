@@ -354,28 +354,36 @@ namespace Application.Services
                 var exp = await _unitOfWork.VehicleRepo.GetById(id);
                 if (exp == null) return null;
 
-                //Borrar las fotos del blob
-                var photos = await _unitOfWork.VehicleImageRepo.Get(filter: v => v.VehicleId == id);
-
-                foreach (var photo in photos)
+                //Verificar que tenga un estatus preferible
+                /*switch (exp.VehicleStatus)
                 {
-                    await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.RegisteredCars, photo.FilePath);
-                    await _unitOfWork.VehicleImageRepo.Delete(photo.Id);
-                }
+                    case VehicleStatus.EN_USO:
+                    case VehicleStatus.MANTENIMIENTO:
+                    case VehicleStatus.APARTADO:
+                        response.success = false;
+                        response.AddError("Error al eliminar vehiculo", "El estatus del vehiculo no permite su eliminación del sistema", 2);
+                        return response;
+                    default:
+                        break;
+                }*/
 
                 //Borrar Checklists 
                 var checklists = await _unitOfWork.ChecklistRepo.Get(x => x.VehicleId == id);
                 foreach (var checklist in checklists)
                 {
                     //Buscar reportes de uso
-                    var query = await _unitOfWork.VehicleReportUseRepo.Get(x => x.ChecklistId == checklist.Id, includeProperties: "Checklist");
-
+                    var query = await _unitOfWork.VehicleReportUseRepo.Get(x => x.ChecklistId == checklist.Id, includeProperties: "Checklist,InitialCheckList");
+                    int? InitialCheckId = null;
                     foreach (var report in query)
                     {
+                        InitialCheckId = report.InitialCheckListId;
                         report.Checklist = null;
+                        report.InitialCheckList = null;
+                        report.ChecklistId = null;
+                        report.InitialCheckListId = null;
                         await _unitOfWork.VehicleReportUseRepo.Update(report);
                     }
-
+                    if (InitialCheckId != null) await _unitOfWork.ChecklistRepo.Delete(InitialCheckId.Value);
                     await _unitOfWork.ChecklistRepo.Delete(checklist.Id);
                 }
 
@@ -412,6 +420,14 @@ namespace Application.Services
                 {
 
                     await _unitOfWork.PolicyRepo.Delete(policy.Id);
+                }
+
+                //Borrar las fotos del blob
+                var photos = await _unitOfWork.VehicleImageRepo.Get(filter: v => v.VehicleId == id);
+                foreach (var photo in photos)
+                {
+                    await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.RegisteredCars, photo.FilePath);
+                    await _unitOfWork.VehicleImageRepo.Delete(photo.Id);
                 }
 
                 await _unitOfWork.VehicleRepo.Delete(id);

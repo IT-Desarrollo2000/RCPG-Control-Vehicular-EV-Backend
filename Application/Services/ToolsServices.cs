@@ -576,7 +576,7 @@ namespace Application.Services
                 {
                     foreach (var Enteros in listTotalPerfomanceDto.VehicleId)
                     {
-                        var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == Domain.Enums.ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros, includeProperties: "Vehicle,VehicleReportUses");
+                        var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == Domain.Enums.ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros, includeProperties: "Vehicle,VehicleReportUses,Vehicle.VehicleImages");
 
                         var listt = new List<GraphicsPerfomanceDto>();
 
@@ -589,6 +589,8 @@ namespace Application.Services
 
                         if (Rendimiento.Count() == 0)
                         {
+                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros);
+                            var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
                             var Totale = new TotalPerfomanceDto()
                             {
                                 VehicleId = Enteros,
@@ -596,7 +598,8 @@ namespace Application.Services
                                 TotalMileageTraveled = 0,
                                 TotalPerfomance = 0,
                                 success = false,
-                                error = $"No existe datos de Rendimiento para {Enteros} "
+                                error = $"No existe datos de Rendimiento para {Enteros} ",
+                                Images = ImagesDto
                             };
 
                             list.Add(Totale);
@@ -635,12 +638,16 @@ namespace Application.Services
 
 
                             }
+
+                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros);
+                            var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
                             var Total = new TotalPerfomanceDto()
                             {
                                 VehicleId = Enteros,
                                 VehicleName = Name,
                                 TotalMileageTraveled = sum / Rendimiento.Count(),
-                                TotalPerfomance = sum2 / Rendimiento.Count()
+                                TotalPerfomance = sum2 / Rendimiento.Count(),
+                                Images = ImagesDto
                             };
 
                             list.Add(Total);
@@ -667,7 +674,7 @@ namespace Application.Services
                     var vehicles = await _unitOfWork.VehicleRepo.Get(v => v.VehicleStatus != VehicleStatus.INACTIVO);
                     foreach (var Enteros in vehicles.ToList())
                     {
-                        var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros.Id, includeProperties: "Vehicle,VehicleReportUses");
+                        var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros.Id, includeProperties: "Vehicle,VehicleReportUses,Vehicle.VehicleImages");
 
                         var listt = new List<GraphicsPerfomanceDto>();
 
@@ -682,6 +689,8 @@ namespace Application.Services
 
                         if (Rendimiento.Count() == 0)
                         {
+                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros.Id);
+                            var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
                             var Totale = new TotalPerfomanceDto()
                             {
                                 VehicleId = Enteros.Id,
@@ -689,7 +698,8 @@ namespace Application.Services
                                 TotalMileageTraveled = 0,
                                 TotalPerfomance = 0,
                                 success = false,
-                                error = $"No existe datos de Rendimiento para {Enteros.Id} "
+                                error = $"No existe datos de Rendimiento para {Enteros.Id} ",
+                                Images = ImagesDto
                             };
 
                             list.Add(Totale);
@@ -729,12 +739,15 @@ namespace Application.Services
 
 
                             }
+                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros.Id);
+                            var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
                             var Total = new TotalPerfomanceDto()
                             {
                                 VehicleId = Enteros.Id,
                                 VehicleName = Name,
                                 TotalMileageTraveled = sum / Rendimiento.Count(),
-                                TotalPerfomance = sum2 / Rendimiento.Count()
+                                TotalPerfomance = sum2 / Rendimiento.Count(),
+                                Images = ImagesDto
                             };
 
                             list.Add(Total);

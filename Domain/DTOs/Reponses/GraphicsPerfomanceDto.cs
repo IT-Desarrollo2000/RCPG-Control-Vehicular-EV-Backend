@@ -20,8 +20,13 @@ namespace Domain.DTOs.Reponses
 
     public class TotalPerfomanceDto
     {
+        public TotalPerfomanceDto()
+        {
+            Images = new List<VehicleImageDto>();
+        }
         public int VehicleId { get; set;}
         public string VehicleName { get; set; }
+        public List<VehicleImageDto> Images { get; set; }
         public double TotalMileageTraveled { get; set; }
         public double TotalPerfomance { get; set; }
         public bool success { get; set; } = true;
