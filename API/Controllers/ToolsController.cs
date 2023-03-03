@@ -62,7 +62,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetAllVehicleActive")]
-        public async Task<ActionResult<List<GetVehicleActiveDto>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
             var users = await _utilitesService.GetAllVehiclesActive();
             if (users.success)
@@ -76,12 +76,12 @@ namespace API.Controllers
         }
 
         //GETALL
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GraphicsPerfomanceDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetAllPerfomance")]
-        public async Task<ActionResult<List<GraphicsPerfomanceDto>>> GetAllPerfomance(int VehicleId)
+        public async Task<IActionResult> GetAllPerfomance(int VehicleId)
         {
             var users = await _utilitesService.GetAllPerfomance(VehicleId);
             if (users.success)
@@ -95,12 +95,12 @@ namespace API.Controllers
         }
 
         //GETALL
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(TotalPerfomanceDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetAllTotalPerfomance")]
-        public async Task<ActionResult<List<GraphicsPerfomanceDto>>> GetAllTotalPerfomance(int VehicleId)
+        public async Task<IActionResult> GetAllTotalPerfomance(int VehicleId)
         {
             var users = await _utilitesService.GetTotalPerfomance(VehicleId);
             if (users.success)
@@ -114,14 +114,14 @@ namespace API.Controllers
         }
 
         //GETALL
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ListTotalPerfomanceDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [HttpGet]
+        [HttpPost]
         [Route("ListTotalPerfomance")]
-        public async Task<ActionResult<List<GraphicsPerfomanceDto>>> GetlistTotalPerfomance(int VehicleId)
+        public async Task<IActionResult> GetlistTotalPerfomance([FromForm] ListTotalPerfomanceDto listTotalPerfomanceDto)
         {
-            var users = await _utilitesService.GetListTotalPerfomance(VehicleId);
+            var users = await _utilitesService.GetListTotalPerfomance(listTotalPerfomanceDto);
             if (users.success)
             {
                 return Ok(users);

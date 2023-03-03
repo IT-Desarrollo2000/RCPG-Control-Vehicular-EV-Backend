@@ -4,6 +4,11 @@ namespace Domain.DTOs.Requests
 {
     public class VehiclesUpdateRequest
     {
+        public VehiclesUpdateRequest()
+        {
+            DepartmentsToAdd = new List<int>();
+            DepartmentsToRemove = new List<int>();
+        }
         public string? Name { get; set; }
         public string? Serial { get; set; }
         public bool? IsUtilitary { get; set; }
@@ -24,5 +29,7 @@ namespace Domain.DTOs.Requests
         public bool? IsClean { get; set; }
         public int? CurrentKM { get; set; }
         public int? InitialKM { get; set; }
+        public List<int> DepartmentsToAdd { get; set; }
+        public List<int> DepartmentsToRemove { get; set; }
     }
 }

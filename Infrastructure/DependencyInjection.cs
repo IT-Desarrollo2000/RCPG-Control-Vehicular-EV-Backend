@@ -58,7 +58,8 @@ namespace Infrastructure
                 .AddRoleManager<RoleManager<AppRole>>()
                 .AddSignInManager<SignInManager<AppUser>>()
             .AddRoleValidator<RoleValidator<AppRole>>()
-                .AddEntityFrameworkStores<CVContext>();
+                .AddEntityFrameworkStores<CVContext>()
+                .AddDefaultTokenProviders();
 
             //Context and Repositories
             services.AddDbContext<CVContext>(options => options.UseSqlServer(configuration.GetConnectionString("AzureDB")));

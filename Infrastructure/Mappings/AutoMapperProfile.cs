@@ -106,7 +106,7 @@ namespace Infrastructure.Mappings
             CreateMap<MaintenanceWorkshopRequest, MaintenanceWorkshopDto>().ReverseMap();
             CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopDto>().ReverseMap();
             CreateMap<VehicleMaintenanceWorkshop, GetVehicleMaintenanceWorkshopDto>().ReverseMap();
-            CreateMap<MaintenanceWorkShopSlimDto, VehicleMaintenanceWorkshop>();
+            CreateMap<MaintenanceWorkShopSlimDto, VehicleMaintenanceWorkshop>().ReverseMap();
 
             //VehicleReport
             CreateMap<VehicleReport, VehicleReportRequest>().ReverseMap();
@@ -122,9 +122,13 @@ namespace Infrastructure.Mappings
             CreateMap<VehicleReportImage, VehicleReportImageDto>();
             CreateMap<VehicleReport, GraphicsPerfomanceDto>()
                 .ForMember(x => x.VehicleId, c => c.MapFrom(a => a.VehicleId))
+                .ForMember(X => X.VehicleName, c => c.MapFrom(a => a.Vehicle.Name))
                 .ForMember(x => x.CurrentKm, c => c.MapFrom(a => a.VehicleReportUses.InitialMileage))
                 .ForMember(x => x.LastKm, c => c.MapFrom(a => a.VehicleReportUses.FinalMileage))
                 .ForMember(x => x.GasolineLoadAmount, c => c.MapFrom(a => a.GasolineLoadAmount)).ReverseMap();
+            CreateMap<VehicleReport, TotalPerfomanceDto>()
+                .ForMember(X => X.VehicleName, c => c.MapFrom(a => a.Vehicle.Name)).ReverseMap();
+
 
 
             //Performance
@@ -157,6 +161,7 @@ namespace Infrastructure.Mappings
                 .ForMember(ur => ur.VehicleStatus, o => o.MapFrom(v => v.Vehicle.VehicleStatus))
                 .ReverseMap();
             CreateMap<UseReportAdminRequest, VehicleReportUse>();
+            CreateMap<VehicleReportUse, VehicleUseReportsSlimDto>();
             
 
 

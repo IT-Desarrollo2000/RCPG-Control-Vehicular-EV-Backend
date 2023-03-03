@@ -9,6 +9,7 @@ namespace Application.Interfaces
     {
         Task<ProfileDto> GetCurrentProfile(AppUser user);
         Task<ProfileDto> GetUserProfile(int UserId);
+        Task<GenericResponse<ProfileDto>> UpdateDriverLicence(ApprovalCreationRequest request);
         Task<GenericResponse<ProfileDto>> UploadProfileImage(ProfileImageRequest request);
     }
 }
