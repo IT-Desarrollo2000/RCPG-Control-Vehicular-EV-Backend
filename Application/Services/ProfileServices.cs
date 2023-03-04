@@ -52,40 +52,50 @@ namespace Application.Services
 
         public async Task<GenericResponse<ProfileDto>> UploadProfileImage(ProfileImageRequest request)
         {
-            var profile = await _unitOfWork.UserProfileRepo.GetById(request.UserProfileId);
-            if (profile == null) return null;
-
-            if (profile.ProfileImagePath != null)
+            GenericResponse<ProfileDto> response = new GenericResponse<ProfileDto>();
+            try
             {
-                await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.UserProfiles, profile.ProfileImagePath);
+                var profile = await _unitOfWork.UserProfileRepo.GetById(request.UserProfileId);
+                if (profile == null) return null;
+
+                if (profile.ProfileImagePath != null)
+                {
+                    await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.UserProfiles, profile.ProfileImagePath);
+                }
+
+                if (request.ImageFile.ContentType.Contains("image"))
+                {
+                    var uploadDate = DateTime.UtcNow;
+                    string FileExtn = System.IO.Path.GetExtension(request.ImageFile.FileName);
+                    var filePath = $"{profile.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_ProfileImage{FileExtn}";
+                    var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(request.ImageFile, _azureBlobContainers.Value.UserProfiles, filePath);
+
+                    profile.ProfileImagePath = filePath;
+                    profile.ProfileImageUrl = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.UserProfiles, filePath);
+
+                    await _unitOfWork.UserProfileRepo.Update(profile);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    var profileDto = _mapper.Map<ProfileDto>(profile);
+                    profileDto.ProfileImageUrl = uploadedUrl;
+
+                    response.success = true;
+                    response.Data = profileDto;
+
+                    return response;
+                }
+                else
+                {
+                    response.success = false;
+                    response.AddError("Invalid File Type", "El archivo no corresponde a un tipo de imagen");
+
+                    return response;
+                }
             }
-
-            if (request.ImageFile.ContentType.Contains("image"))
+            catch (Exception ex)
             {
-                var uploadDate = DateTime.UtcNow;
-                string FileExtn = System.IO.Path.GetExtension(request.ImageFile.FileName);
-                var filePath = $"{profile.Id}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_ProfileImage{FileExtn}";
-                var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(request.ImageFile, _azureBlobContainers.Value.UserProfiles, filePath);
-
-                profile.ProfileImagePath = filePath;
-                profile.ProfileImageUrl = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.UserProfiles, filePath);
-
-                await _unitOfWork.UserProfileRepo.Update(profile);
-                await _unitOfWork.SaveChangesAsync();
-
-                var profileDto = _mapper.Map<ProfileDto>(profile);
-                profileDto.ProfileImageUrl = uploadedUrl;
-
-                GenericResponse<ProfileDto> response = new GenericResponse<ProfileDto>(profileDto);
-
-                return response;
-            }
-            else
-            {
-                var profileDto = _mapper.Map<ProfileDto>(profile);
-                GenericResponse<ProfileDto> response = new GenericResponse<ProfileDto>(profileDto);
-                response.AddError("Invalid File Type", "El archivo no corresponde a un tipo de imagen");
-
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
                 return response;
             }
         }
