@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public int TypesOfExpensesId { get; set; }
+        public string TypesOfExpensesName { get; set; }
         public decimal Cost { get; set; }
         public DateTime ExpenseDate { get; set; }
         public string ERPFolio { get; set; }
