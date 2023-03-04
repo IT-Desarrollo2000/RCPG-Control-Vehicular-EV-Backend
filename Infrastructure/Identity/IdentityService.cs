@@ -560,6 +560,10 @@ namespace Infrastructure.Identity
             newUser.LockoutEnabled = true;
             newUser.EmailConfirmed = true;
             newUser.PhoneNumberConfirmed = true;
+            newUser.Name = user.FirstName;
+            newUser.LastNameP = user.LastNameP;
+            newUser.LastNameM = user.LastNameM;
+            newUser.FullName = $"{user.FirstName} {user.LastNameP} {user.LastNameM}"; 
 
             var result = await _userManager.CreateAsync(newUser, user.Password);
 
@@ -691,6 +695,10 @@ namespace Infrastructure.Identity
                     {
                         u.Id,
                         Username = u.UserName,
+                        FullName = u.FullName,
+                        Name = u.Name,
+                        LastNameP = u.LastNameP,
+                        LastNameM = u.LastNameM,
                         Email = u.Email,
                         Roles = u.UserRoles.Select(r => r.Role.Name).ToList(),
                         SupervisingDepartments = u.AssignedDepartments
@@ -712,6 +720,10 @@ namespace Infrastructure.Identity
                     {
                         u.Id,
                         Username = u.UserName,
+                        FullName = u.FullName,
+                        Name = u.Name,
+                        LastNameP = u.LastNameP,
+                        LastNameM = u.LastNameM,
                         Email = u.Email,
                         Roles = u.UserRoles.Select(r => r.Role.Name).ToList(),
                         SupervisingDepartments = u.AssignedDepartments

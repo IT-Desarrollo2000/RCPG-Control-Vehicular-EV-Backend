@@ -179,7 +179,7 @@ namespace API.Controllers
         }
 
         //VERIFICAR EL VIAJE
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
