@@ -179,12 +179,12 @@ namespace API.Controllers
         }
 
         //VERIFICAR EL VIAJE
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("Cancel")]
-        public async Task<ActionResult<IActionResult>> CancelUseReport(UseReportCancelRequest request)
+        public async Task<IActionResult> CancelUseReport(UseReportCancelRequest request)
         {
             var result = await _vehicleReportUseService.MarkTravelAsCanceled(request);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
