@@ -41,7 +41,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser";
+            string properties = "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses";
             IEnumerable<VehicleReport> userApprovals = null;
             Expression<Func<VehicleReport, bool>> Query = null;
 
@@ -193,7 +193,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleReportDto>> GetVehicleReportById(int Id)
         {
             GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
-            var profile = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser");
+            var profile = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses");
             var result = profile.FirstOrDefault();
             var VehicleReportDto = _mapper.Map<VehicleReportDto>(result);
             response.success = true;
@@ -642,7 +642,7 @@ namespace Application.Services
             try
             {
                 //Borrar las fotos del blob
-                var photos = await _unitOfWork.VehicleImageRepo.GetById(reportImageId);
+                var photos = await _unitOfWork.VehicleReportImage.GetById(reportImageId);
                 if (photos == null) return null;
 
                 await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.VehicleReports, photos.FilePath);
@@ -657,10 +657,7 @@ namespace Application.Services
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
-
-                response.AddError("Error", ex.Message, 1);
                 return response;
-
             }
         }
     }
