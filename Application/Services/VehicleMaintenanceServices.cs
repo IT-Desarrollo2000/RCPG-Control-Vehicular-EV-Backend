@@ -186,7 +186,7 @@ namespace Application.Services
                 //Verificar que exista el taller
                 if (request.ReportId.HasValue)
                 {
-                    var workshop = await _unitOfWork.MaintenanceWorkshopRepo.GetById(request.ReportId.Value);
+                    var workshop = await _unitOfWork.VehicleReportRepo.GetById(request.ReportId.Value);
                     if (workshop == null)
                     {
                         response.success = false;
