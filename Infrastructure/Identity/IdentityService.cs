@@ -551,7 +551,7 @@ namespace Infrastructure.Identity
         #endregion
 
         #region ..::Administración AdminWeb::..
-            public async Task<IdentityResult> CreateWebAdmUserAsync(WebAdmUserRegistrationRequest user)
+        public async Task<IdentityResult> CreateWebAdmUserAsync(WebAdmUserRegistrationRequest user)
         {
             var newUser = _mapper.Map<AppUser>(user);
 

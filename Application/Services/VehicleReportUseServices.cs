@@ -47,9 +47,9 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.VehicleId >= filter.VehicleId.Value);
+                    Query = Query.And(p => p.VehicleId == filter.VehicleId.Value);
                 }
-                else { Query = p => p.VehicleId >= filter.VehicleId.Value; }
+                else { Query = p => p.VehicleId == filter.VehicleId.Value; }
             }
 
             if (filter.FinalMileage.HasValue)
@@ -65,9 +65,9 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.StatusReportUse >= filter.StatusReportUse.Value);
+                    Query = Query.And(p => p.StatusReportUse == filter.StatusReportUse.Value);
                 }
-                else { Query = p => p.StatusReportUse >= filter.StatusReportUse.Value; }
+                else { Query = p => p.StatusReportUse == filter.StatusReportUse.Value; }
             }
 
             if (!string.IsNullOrEmpty(filter.Observations))
@@ -83,36 +83,36 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.ChecklistId >= filter.ChecklistId.Value);
+                    Query = Query.And(p => p.ChecklistId == filter.ChecklistId.Value);
                 }
-                else { Query = p => p.ChecklistId >= filter.ChecklistId.Value; }
+                else { Query = p => p.ChecklistId == filter.ChecklistId.Value; }
             }
 
             if (filter.UseDate.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.UseDate >= filter.UseDate.Value);
+                    Query = Query.And(p => p.UseDate == filter.UseDate.Value);
                 }
-                else { Query = p => p.UseDate >= filter.UseDate.Value; }
+                else { Query = p => p.UseDate == filter.UseDate.Value; }
             }
 
             if (filter.UserProfileId.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.UserProfileId >= filter.UserProfileId.Value);
+                    Query = Query.And(p => p.UserProfileId == filter.UserProfileId.Value);
                 }
-                else { Query = p => p.UserProfileId >= filter.UserProfileId.Value; }
+                else { Query = p => p.UserProfileId == filter.UserProfileId.Value; }
             }
 
             if (filter.AppUserId.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.AppUserId >= filter.AppUserId.Value);
+                    Query = Query.And(p => p.AppUserId == filter.AppUserId.Value);
                 }
-                else { Query = p => p.AppUserId >= filter.AppUserId.Value; }
+                else { Query = p => p.AppUserId == filter.AppUserId.Value; }
             }
 
             if (filter.CurrentFuelLoad.HasValue)
@@ -165,9 +165,9 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.VehicleId >= filter.VehicleId.Value);
+                    Query = Query.And(p => p.VehicleId == filter.VehicleId.Value);
                 }
-                else { Query = p => p.VehicleId >= filter.VehicleId.Value; }
+                else { Query = p => p.VehicleId == filter.VehicleId.Value; }
             }
 
             if (filter.FinalMileage.HasValue)
@@ -183,9 +183,9 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.StatusReportUse >= filter.StatusReportUse.Value);
+                    Query = Query.And(p => p.StatusReportUse == filter.StatusReportUse.Value);
                 }
-                else { Query = p => p.StatusReportUse >= filter.StatusReportUse.Value; }
+                else { Query = p => p.StatusReportUse == filter.StatusReportUse.Value; }
             }
 
             if (!string.IsNullOrEmpty(filter.Observations))
@@ -201,36 +201,36 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.ChecklistId >= filter.ChecklistId.Value);
+                    Query = Query.And(p => p.ChecklistId == filter.ChecklistId.Value);
                 }
-                else { Query = p => p.ChecklistId >= filter.ChecklistId.Value; }
+                else { Query = p => p.ChecklistId == filter.ChecklistId.Value; }
             }
 
             if (filter.UseDate.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.UseDate >= filter.UseDate.Value);
+                    Query = Query.And(p => p.UseDate == filter.UseDate.Value);
                 }
-                else { Query = p => p.UseDate >= filter.UseDate.Value; }
+                else { Query = p => p.UseDate == filter.UseDate.Value; }
             }
 
             if (filter.UserProfileId.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.UserProfileId >= filter.UserProfileId.Value);
+                    Query = Query.And(p => p.UserProfileId == filter.UserProfileId.Value);
                 }
-                else { Query = p => p.UserProfileId >= filter.UserProfileId.Value; }
+                else { Query = p => p.UserProfileId == filter.UserProfileId.Value; }
             }
 
             if (filter.AppUserId.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.AppUserId >= filter.AppUserId.Value);
+                    Query = Query.And(p => p.AppUserId == filter.AppUserId.Value);
                 }
-                else { Query = p => p.AppUserId >= filter.AppUserId.Value; }
+                else { Query = p => p.AppUserId == filter.AppUserId.Value; }
             }
 
             if (filter.CurrentFuelLoad.HasValue)
@@ -713,11 +713,16 @@ namespace Application.Services
                 }
 
                 //Verificar que cuenta con el estatus apropiado
-                if(useReport.StatusReportUse == ReportUseType.Cancelado || useReport.StatusReportUse == ReportUseType.Finalizado)
+                switch(useReport.StatusReportUse)
                 {
-                    response.success = false;
-                    response.AddError("Estatus invalido", "El estatus del reporte de uso no permite su finalización", 3);
-                    return response;
+                    case ReportUseType.Cancelado:
+                    case ReportUseType.Finalizado:
+                    case ReportUseType.ViajeRapido:
+                        response.success = false;
+                        response.AddError("Estatus invalido", "El estatus del reporte de uso no permite su finalización", 3);
+                        return response;
+                    default:
+                        break;
                 }
 
                 //Obtener el vehiculo para su modificación
@@ -802,12 +807,16 @@ namespace Application.Services
                     return response;
                 }
 
-                //Verificar que cuenta con el estatus apropiado
-                if (useReport.StatusReportUse == ReportUseType.Cancelado || useReport.StatusReportUse == ReportUseType.Finalizado)
+                switch (useReport.StatusReportUse)
                 {
-                    response.success = false;
-                    response.AddError("Estatus invalido", "El estatus del reporte de uso no permite su finalización", 3);
-                    return response;
+                    case ReportUseType.Cancelado:
+                    case ReportUseType.Finalizado:
+                    case ReportUseType.ViajeNormal:
+                        response.success = false;
+                        response.AddError("Estatus invalido", "El estatus del reporte de uso no permite su cancelación", 3);
+                        return response;
+                    default:
+                        break;
                 }
 
                 //Obtener el vehiculo para su modificación
@@ -900,12 +909,15 @@ namespace Application.Services
                     return response;
                 }
 
-                //Verificar que cuenta con el estatus apropiado
-                if (useReport.StatusReportUse != ReportUseType.ViajeNormal || useReport.StatusReportUse != ReportUseType.ViajeRapido)
+                switch (useReport.StatusReportUse)
                 {
-                    response.success = false;
-                    response.AddError("Estatus invalido", "El estatus del reporte de uso no permite su cancelación", 3);
-                    return response;
+                    case ReportUseType.Cancelado:
+                    case ReportUseType.Finalizado:
+                        response.success = false;
+                        response.AddError("Estatus invalido", "El estatus del reporte de uso no permite su cancelación", 3);
+                        return response;
+                    default:
+                        break;
                 }
 
                 //Obtener el vehiculo para su modificación
