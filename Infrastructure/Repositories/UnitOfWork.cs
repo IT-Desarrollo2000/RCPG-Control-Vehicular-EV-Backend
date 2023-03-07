@@ -31,7 +31,7 @@ namespace Infrastructure.Repositories
         private readonly IRepository<VehicleReportUse> _VehicleReportUseRepo;
         private readonly IRepository<DestinationOfReportUse> _DestinationOfReportUseRepo;
         private readonly IRepository<Policy> _PolicyRepo;
-
+        private readonly IRepository<MaintenanceProgress> _MaintenanceProgressRepo;
 
         public UnitOfWork(CVContext context)
         {
@@ -58,6 +58,7 @@ namespace Infrastructure.Repositories
         public IRepository<VehicleReportUse> VehicleReportUseRepo => _VehicleReportUseRepo ?? new BaseRepository<VehicleReportUse>(_context);
         public IRepository<DestinationOfReportUse> DestinationOfReportUseRepo => _DestinationOfReportUseRepo ?? new BaseRepository<DestinationOfReportUse>(_context);
         public IRepository<Policy> PolicyRepo => _PolicyRepo ?? new BaseRepository<Policy>(_context);
+        public IRepository<MaintenanceProgress> MaintenanceProgressRepo => _MaintenanceProgressRepo ?? new BaseRepository<MaintenanceProgress>(_context);
 
         //FUNCIONES DEL SERVICIO
         public void Dispose()

@@ -138,7 +138,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetUserTravel")]
-        public async Task<ActionResult<List<GetUserForTravelDto>>> GetlistTotalPerfomance()
+        public async Task<ActionResult<List<GetUserForTravelDto>>> GetUserTravel()
         {
             var users = await _utilitesService.GetUserForTravel();
             if (users.success)
