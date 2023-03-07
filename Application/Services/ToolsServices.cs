@@ -509,7 +509,7 @@ namespace Application.Services
                     var Name = Rendimiento.FirstOrDefault().Vehicle.Name;
                     double sum = 0;
                     double sum2 = 0;
-
+                    double Dperfomance = 0;
                     foreach (var Aray in Rendimiento)
                     {
                         var KmActual = Aray.VehicleReportUses.FinalMileage;
@@ -535,7 +535,7 @@ namespace Application.Services
 
                         sum += Perfomance.MileageTraveled;
                         sum2 += Perfomance.Perfomance;
-
+                        Dperfomance = (double)Aray.Vehicle.DesiredPerformance;
 
                     }
                     var Total = new TotalPerfomanceDto()
@@ -543,7 +543,8 @@ namespace Application.Services
                         VehicleId = VehicleId,
                         VehicleName = Name,
                         TotalMileageTraveled = sum / Rendimiento.Count(),
-                        TotalPerfomance = sum2 / Rendimiento.Count()
+                        TotalPerfomance = sum2 / Rendimiento.Count(),
+                        DesiredPerfomance = Dperfomance
                     };
 
                     response.success = true;
@@ -612,6 +613,7 @@ namespace Application.Services
                             var Name = Rendimiento.FirstOrDefault().Vehicle.Name;
                             double sum = 0;
                             double sum2 = 0;
+                            double DPerfomance = 0; 
                             foreach (var Aray in Rendimiento)
                             {
                                 var KmActual = Aray.VehicleReportUses.FinalMileage;
@@ -638,6 +640,7 @@ namespace Application.Services
                                 sum += Perfomance.MileageTraveled;
                                 sum2 += Perfomance.Perfomance;
 
+                                DPerfomance = (double)Aray.Vehicle.DesiredPerformance;
 
                             }
 
@@ -649,6 +652,7 @@ namespace Application.Services
                                 VehicleName = Name,
                                 TotalMileageTraveled = sum / Rendimiento.Count(),
                                 TotalPerfomance = sum2 / Rendimiento.Count(),
+                                DesiredPerfomance = DPerfomance,
                                 Images = ImagesDto
                             };
 
@@ -713,6 +717,7 @@ namespace Application.Services
                             var Name = Rendimiento.FirstOrDefault().Vehicle.Name;
                             double sum = 0;
                             double sum2 = 0;
+                            double DPerfomance = 0;
                             foreach (var Aray in Rendimiento)
                             {
                                 var KmActual = Aray.VehicleReportUses.FinalMileage;
@@ -739,6 +744,8 @@ namespace Application.Services
                                 sum += Perfomance.MileageTraveled;
                                 sum2 += Perfomance.Perfomance;
 
+                                DPerfomance = (double)Aray.Vehicle.DesiredPerformance;
+
 
                             }
                             var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros.Id);
@@ -749,6 +756,7 @@ namespace Application.Services
                                 VehicleName = Name,
                                 TotalMileageTraveled = sum / Rendimiento.Count(),
                                 TotalPerfomance = sum2 / Rendimiento.Count(),
+                                DesiredPerfomance = DPerfomance,
                                 Images = ImagesDto
                             };
 

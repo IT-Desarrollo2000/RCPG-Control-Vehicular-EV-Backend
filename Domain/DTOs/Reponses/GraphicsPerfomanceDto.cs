@@ -29,6 +29,7 @@ namespace Domain.DTOs.Reponses
         public List<VehicleImageDto> Images { get; set; }
         public double TotalMileageTraveled { get; set; }
         public double TotalPerfomance { get; set; }
+        public double DesiredPerfomance { get; set; }
         public bool success { get; set; } = true;
         public string? error { get; set; }
     }
