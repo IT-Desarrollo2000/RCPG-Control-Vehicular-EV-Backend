@@ -152,6 +152,7 @@ namespace Application.Services
 
         }
 
+        //GetAllMobile
         public async Task<PagedList<VehicleUseReportsSlimDto>> GetUseReportsMobile(VehicleReportUseFilter filter)
         {
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
@@ -270,6 +271,35 @@ namespace Application.Services
 
         }
 
+        //GETByCarId
+        public async Task<GenericResponse<VehicleReportUseDto>> GetVehicleCurrentUse(int VehicleId)
+        {
+            GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
+            try
+            {
+                var useReport = await _unitOfWork.VehicleReportUseRepo.Get(filter: p => p.VehicleId == VehicleId && (p.StatusReportUse == ReportUseType.ViajeNormal || p.StatusReportUse == ReportUseType.ViajeRapido), includeProperties: "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations");
+                var result = useReport.LastOrDefault();
+
+                if (result == null)
+                {
+                    response.success = true;
+                    response.AddError("Sin viaje en curso", $"El vehiculo especificado {VehicleId} no se encuentra en viaje", 2);
+                    return response;
+                }
+
+                var VehicleReportUseDto = _mapper.Map<VehicleReportUseDto>(result);
+                response.success = true;
+                response.Data = VehicleReportUseDto;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
         //GETBYID
         public async Task<GenericResponse<VehicleReportUseDto>> GetUseReportById(int Id)
         {
@@ -334,7 +364,7 @@ namespace Application.Services
                 if(userExists.LicenceExpirationDate <= DateTime.UtcNow)
                 {
                     response.success = false;
-                    response.AddError("Licencia Expirada", "La licencia del usuario se encuentra expirada");
+                    response.AddError("Licencia Expirada", "La licencia del usuario se encuentra expirada", 6);
                     return response;
                 }
 
