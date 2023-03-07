@@ -355,7 +355,7 @@ namespace Application.Services
                 if (exp == null) return null;
 
                 //Verificar que tenga un estatus preferible
-                /*switch (exp.VehicleStatus)
+                switch (exp.VehicleStatus)
                 {
                     case VehicleStatus.EN_USO:
                     case VehicleStatus.MANTENIMIENTO:
@@ -365,25 +365,29 @@ namespace Application.Services
                         return response;
                     default:
                         break;
-                }*/
-
+                }
+                
                 //Borrar Checklists 
-                var checklists = await _unitOfWork.ChecklistRepo.Get(x => x.VehicleId == id);
+                var checklists = await _unitOfWork.ChecklistRepo.Get(x => x.VehicleId == id, includeProperties: "InitialCheckListForUseReport,VehicleReportUses");
                 foreach (var checklist in checklists)
                 {
                     //Buscar reportes de uso
-                    var query = await _unitOfWork.VehicleReportUseRepo.Get(x => x.ChecklistId == checklist.Id, includeProperties: "Checklist,InitialCheckList");
-                    int? InitialCheckId = null;
+                    var query = await _unitOfWork.VehicleReportUseRepo.Get(x => x.ChecklistId == checklist.Id);
                     foreach (var report in query)
                     {
-                        InitialCheckId = report.InitialCheckListId;
-                        report.Checklist = null;
-                        report.InitialCheckList = null;
-                        report.ChecklistId = null;
-                        report.InitialCheckListId = null;
-                        await _unitOfWork.VehicleReportUseRepo.Update(report);
+                        if (checklist.InitialCheckListForUseReport.Contains(report))
+                        {
+                            checklist.InitialCheckListForUseReport.Remove(report);
+                        }
+
+                        if (checklist.VehicleReportUses.Contains(report))
+                        {
+                            checklist.VehicleReportUses.Remove(report);
+                        }
+
+                        await _unitOfWork.ChecklistRepo.Update(checklist);
+                        await _unitOfWork.SaveChangesAsync();
                     }
-                    if (InitialCheckId != null) await _unitOfWork.ChecklistRepo.Delete(InitialCheckId.Value);
                     await _unitOfWork.ChecklistRepo.Delete(checklist.Id);
                 }
 

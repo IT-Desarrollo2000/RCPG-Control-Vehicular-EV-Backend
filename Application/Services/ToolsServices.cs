@@ -674,7 +674,7 @@ namespace Application.Services
                     var vehicles = await _unitOfWork.VehicleRepo.Get(v => v.VehicleStatus != VehicleStatus.INACTIVO);
                     foreach (var Enteros in vehicles.ToList())
                     {
-                        var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros.Id, includeProperties: "Vehicle,VehicleReportUses,Vehicle.VehicleImages");
+                        var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros.Id && reportStatus.VehicleReportUses.StatusReportUse == ReportUseType.Finalizado, includeProperties: "Vehicle,VehicleReportUses,Vehicle.VehicleImages");
 
                         var listt = new List<GraphicsPerfomanceDto>();
 

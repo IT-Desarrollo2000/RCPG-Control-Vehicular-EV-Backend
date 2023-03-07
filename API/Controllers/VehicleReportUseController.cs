@@ -85,6 +85,26 @@ namespace API.Controllers
             return Ok(response);
         }
 
+        //GetVehicleCurrentUse
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet("GetCurrent/{vehicleId:int}")]
+        public async Task<IActionResult> GetVehicleCurrentUse(int vehicleId)
+        {
+            var entidad = await _vehicleReportUseService.GetVehicleCurrentUse(vehicleId);
+            if (entidad.success)
+            {
+                return Ok(entidad);
+            }
+            else
+            {
+                return BadRequest(entidad);
+
+            }
+
+        }
+
         //GETBYID
         [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -179,7 +199,7 @@ namespace API.Controllers
         }
 
         //VERIFICAR EL VIAJE
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]

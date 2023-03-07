@@ -18,6 +18,7 @@ namespace Application.Interfaces
         Task<GenericResponse<VehicleReportUseDto>> GetUseReportById(int Id);
         Task<PagedList<VehicleReportUseDto>> GetUseReports(VehicleReportUseFilter filter);
         Task<PagedList<VehicleUseReportsSlimDto>> GetUseReportsMobile(VehicleReportUseFilter filter);
+        Task<GenericResponse<VehicleReportUseDto>> GetVehicleCurrentUse(int VehicleId);
         Task<GenericResponse<VehicleReportUseDto>> MarkFastTravelAsFinished(UseReportFastTravelFinishRequest request);
         Task<GenericResponse<VehicleReportUseDto>> MarkNormalTravelAsFinished(UseReportFinishRequest request);
         Task<GenericResponse<VehicleReportUseDto>> MarkTravelAsCanceled(UseReportCancelRequest request);
