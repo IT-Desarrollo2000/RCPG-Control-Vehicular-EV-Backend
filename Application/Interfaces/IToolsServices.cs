@@ -19,5 +19,6 @@ namespace Application.Interfaces
         Task<GenericResponse<TotalPerfomanceDto>> GetTotalPerfomance(int VehicleId);
         Task<GenericResponse<List<GraphicsPerfomanceDto>>> GetAllPerfomance(int VehicleId);
         Task<GenericResponse<List<TotalPerfomanceDto>>> GetListTotalPerfomance([FromForm] ListTotalPerfomanceDto listTotalPerfomanceDto);
+        Task<GenericResponse<List<GetUserForTravelDto>>> GetUserForTravel();
     }
 }
