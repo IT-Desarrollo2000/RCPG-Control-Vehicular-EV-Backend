@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MailKit.Net.Smtp;
 using MimeKit;
+using Azure;
 
 namespace Infrastructure.Identity
 {
@@ -465,16 +466,79 @@ namespace Infrastructure.Identity
                 message.Subject = "Reinicio de contraseña";
                 message.Body = new TextPart("plain")
                 {
-                    Text = @$"Por favor reinicie su contraseña haciendo click en el siguiente link: <a href='https://rcpg-controlvehicular-api.azurewebsites.net/PRecovery/{token}'>Reinicio de Contraseña</a>"
+                    Text = @$"Por favor reinicie su contraseña haciendo click en el siguiente link: <a href='https://rcpg-controlvehicular-api.azurewebsites.net/PRecovery/{token}/ '>Reinicio de Contraseña</a>"
                 };
 
-                _mailClient.Connect("smtp.gmail.com", 587);
-                _mailClient.Authenticate("rcpg.controlvehicular@gmail.com", "EgNPGFg9ue3MPGd");
+                await _mailClient.ConnectAsync("smtp.gmail.com", 465);
+                await _mailClient.AuthenticateAsync("rcpg.controlvehicular@gmail.com", "jaoiyivnqwdhaezz");
                 await _mailClient.SendAsync(message);
                 await _mailClient.DisconnectAsync(true);
 
                 response.success = true;
                 response.Data = token;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<IdentityResult>> PasswordResetConfirmation(PasswordResetConfirmationRequest request)
+        {
+            GenericResponse<IdentityResult> response = new GenericResponse<IdentityResult>();
+            try
+            {
+                //Generar token para reinicio de contraseña
+                var user = await _userManager.FindByEmailAsync(request.userEmail);
+                if (user == null)
+                {
+                    response.AddError("Usuario no encontrado", "No se encontro un usuario bajo la dirección de correo", 2);
+                    response.success = false;
+                    return response;
+                }
+
+                var reset = await _userManager.ResetPasswordAsync(user, request.ResetToken, request.NewPassword);
+
+                response.success = reset.Succeeded;
+                response.Data = reset;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<IdentityResult>> PasswordChange(PasswordChangeRequest request)
+        {
+            GenericResponse<IdentityResult> response = new GenericResponse<IdentityResult>();
+            try 
+            {
+                //Encontrar el usuario
+                var user = await _userManager.FindByEmailAsync(request.Email);
+                if (user == null)
+                {
+                    response.AddError("Usuario no encontrado", "No se encontro un usuario bajo la dirección de correo", 2);
+                    response.success = false;
+                    return response;
+                }
+
+                if(request.newPassword != request.newPasswordConfirmation)
+                {
+                    response.AddError("Confirmación Incorrecta", "La confirmación de contraseña es incorrecta", 3);
+                    response.success = false;
+                    return response;
+                }
+
+                var change = await _userManager.ChangePasswordAsync(user, request.oldPassword, request.newPassword);
+
+                response.success = change.Succeeded;
+                response.Data = change;
                 return response;
             }
             catch (Exception ex)
@@ -496,6 +560,10 @@ namespace Infrastructure.Identity
             newUser.LockoutEnabled = true;
             newUser.EmailConfirmed = true;
             newUser.PhoneNumberConfirmed = true;
+            newUser.Name = user.FirstName;
+            newUser.LastNameP = user.LastNameP;
+            newUser.LastNameM = user.LastNameM;
+            newUser.FullName = $"{user.FirstName} {user.LastNameP} {user.LastNameM}"; 
 
             var result = await _userManager.CreateAsync(newUser, user.Password);
 
@@ -627,6 +695,10 @@ namespace Infrastructure.Identity
                     {
                         u.Id,
                         Username = u.UserName,
+                        FullName = u.FullName,
+                        Name = u.Name,
+                        LastNameP = u.LastNameP,
+                        LastNameM = u.LastNameM,
                         Email = u.Email,
                         Roles = u.UserRoles.Select(r => r.Role.Name).ToList(),
                         SupervisingDepartments = u.AssignedDepartments
@@ -648,6 +720,10 @@ namespace Infrastructure.Identity
                     {
                         u.Id,
                         Username = u.UserName,
+                        FullName = u.FullName,
+                        Name = u.Name,
+                        LastNameP = u.LastNameP,
+                        LastNameM = u.LastNameM,
                         Email = u.Email,
                         Roles = u.UserRoles.Select(r => r.Role.Name).ToList(),
                         SupervisingDepartments = u.AssignedDepartments

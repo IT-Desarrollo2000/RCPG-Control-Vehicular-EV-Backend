@@ -2,7 +2,13 @@
 using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
+using Domain.Entities.Registered_Cars;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
@@ -11,6 +17,8 @@ namespace Application.Interfaces
         Task<GenericResponse<bool>> DeleteVehicleReportUse(int Id);
         Task<GenericResponse<VehicleReportUseDto>> GetUseReportById(int Id);
         Task<PagedList<VehicleReportUseDto>> GetUseReports(VehicleReportUseFilter filter);
+        Task<PagedList<VehicleUseReportsSlimDto>> GetUseReportsMobile(VehicleReportUseFilter filter);
+        Task<GenericResponse<VehicleReportUseDto>> GetVehicleCurrentUse(int VehicleId);
         Task<GenericResponse<VehicleReportUseDto>> MarkFastTravelAsFinished(UseReportFastTravelFinishRequest request);
         Task<GenericResponse<VehicleReportUseDto>> MarkNormalTravelAsFinished(UseReportFinishRequest request);
         Task<GenericResponse<VehicleReportUseDto>> MarkTravelAsCanceled(UseReportCancelRequest request);

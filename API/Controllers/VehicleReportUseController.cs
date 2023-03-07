@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+using Application.Interfaces;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
@@ -51,6 +51,58 @@ namespace API.Controllers
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
 
             return Ok(response);
+        }
+
+        //GETALL
+        [Authorize(Roles = "Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetAllMobile")]
+        public async Task<IActionResult> GetUseReportsMobile([FromQuery] VehicleReportUseFilter filter)
+        {
+            var approval = await _vehicleReportUseService.GetUseReportsMobile(filter);
+
+            var metadata = new Metadata()
+            {
+                TotalCount = approval.TotalCount,
+                PageSize = approval.PageSize,
+                CurrentPage = approval.CurrentPage,
+                TotalPages = approval.TotalPages,
+                HasNextPage = approval.HasNextPage,
+                HasPreviousPage = approval.HasPreviousPage
+            };
+
+            var response = new GenericResponse<IEnumerable<VehicleUseReportsSlimDto>>(approval)
+            {
+                Meta = metadata,
+                success = true,
+                Data = approval
+            };
+
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
+
+            return Ok(response);
+        }
+
+        //GetVehicleCurrentUse
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet("GetCurrent/{vehicleId:int}")]
+        public async Task<IActionResult> GetVehicleCurrentUse(int vehicleId)
+        {
+            var entidad = await _vehicleReportUseService.GetVehicleCurrentUse(vehicleId);
+            if (entidad.success)
+            {
+                return Ok(entidad);
+            }
+            else
+            {
+                return BadRequest(entidad);
+
+            }
+
         }
 
         //GETBYID
@@ -147,12 +199,12 @@ namespace API.Controllers
         }
 
         //VERIFICAR EL VIAJE
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("Cancel")]
-        public async Task<ActionResult<IActionResult>> CancelUseReport(UseReportCancelRequest request)
+        public async Task<IActionResult> CancelUseReport(UseReportCancelRequest request)
         {
             var result = await _vehicleReportUseService.MarkTravelAsCanceled(request);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }

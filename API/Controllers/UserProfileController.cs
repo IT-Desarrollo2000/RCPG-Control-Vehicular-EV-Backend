@@ -47,6 +47,18 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); };
         }
 
+        [Authorize(Roles = "AppUser,Administrator,Supervisor,AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ProfileDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPut]
+        [Route("updateDriversLicence")]
+        public async Task<IActionResult> UpdateLicence([FromForm] ApprovalCreationRequest request)
+        {
+            var result = await _profileServices.UpdateDriverLicence(request);
+
+            if (result.success) { return Ok(result); } else { return BadRequest(result); };
+        }
+
         [Authorize(Roles = "Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ProfileDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

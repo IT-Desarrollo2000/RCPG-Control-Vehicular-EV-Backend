@@ -33,5 +33,7 @@ namespace Application.Interfaces
         Task<GenericResponse<AppUser>> AssignDepartmentSupervisor(SupervisorAssignmentRequest request);
         Task<GenericResponse<AppUser>> RemoveDepartmentSupervisor(SupervisorRemovalRequest request);
         Task<GenericResponse<string>> ResetPassword(string userEmail);
+        Task<GenericResponse<IdentityResult>> PasswordResetConfirmation(PasswordResetConfirmationRequest request);
+        Task<GenericResponse<IdentityResult>> PasswordChange(PasswordChangeRequest request);
     }
 }

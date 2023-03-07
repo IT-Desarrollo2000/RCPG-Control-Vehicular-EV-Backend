@@ -80,7 +80,7 @@ namespace API.Controllers
         }
 
         //POST
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [Route("Create")]
@@ -101,7 +101,7 @@ namespace API.Controllers
         }
 
         //PUT
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportDto))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

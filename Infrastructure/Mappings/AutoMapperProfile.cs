@@ -87,7 +87,8 @@ namespace Infrastructure.Mappings
             CreateMap<Expenses, GetExpensesDto>().ReverseMap();
             CreateMap<GetExpensesDtoList, Expenses>().ReverseMap();
             CreateMap<GetExpensesDtoList, Vehicle>().ReverseMap();
-            CreateMap<Expenses, UnrelatedExpensesDto>().ReverseMap();
+            CreateMap<Expenses, UnrelatedExpensesDto>()
+                .ForMember(e => e.TypesOfExpensesName, o => o.MapFrom(e => e.TypesOfExpenses.Name));
             CreateMap<PhotosOfSpendingDto, PhotosOfSpending>().ReverseMap();
 
             //TypesOfExpenses
@@ -107,7 +108,7 @@ namespace Infrastructure.Mappings
             CreateMap<MaintenanceWorkshopRequest, MaintenanceWorkshopDto>().ReverseMap();
             CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopDto>().ReverseMap();
             CreateMap<VehicleMaintenanceWorkshop, GetVehicleMaintenanceWorkshopDto>().ReverseMap();
-            CreateMap<MaintenanceWorkShopSlimDto, VehicleMaintenanceWorkshop>();
+            CreateMap<MaintenanceWorkShopSlimDto, VehicleMaintenanceWorkshop>().ReverseMap();
 
             //VehicleReport
             CreateMap<VehicleReport, VehicleReportRequest>().ReverseMap();
@@ -166,6 +167,7 @@ namespace Infrastructure.Mappings
                 .ForMember(ur => ur.VehicleName, o => o.MapFrom(v => v.Vehicle.Name))
                 .ForMember(ur => ur.UserDriverId, o => o.MapFrom(v => v.UserProfile.Id))
                 .ForMember(ur => ur.UserName, o => o.MapFrom(v => v.UserProfile.FullName)).ReverseMap();
+            CreateMap<VehicleReportUse, VehicleUseReportsSlimDto>();
 
             //Graphics
             CreateMap<GraphicsDto, Vehicle>().ReverseMap();
