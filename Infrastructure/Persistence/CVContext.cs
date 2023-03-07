@@ -51,6 +51,7 @@ namespace Infrastructure.Persistence
 
         //Vehicle Maintenance With Vehicle MaintenanceWorkShop
         public virtual DbSet<VehicleMaintenance> VehicleMaintenances { get; set; }
+        public virtual DbSet<MaintenanceProgress> MaintenanceProgresses { get; set; }
         public virtual DbSet<VehicleMaintenanceWorkshop> VehicleMaintenanceWorkshops { get; set; }
 
         //Vehicle Report with Image
@@ -84,6 +85,7 @@ namespace Infrastructure.Persistence
             builder.ApplyConfiguration(new DepartmentConfiguration());
             builder.ApplyConfiguration(new VehicleServiceConfiguration());
             builder.ApplyConfiguration(new MaintenanceConfiguration());
+            builder.ApplyConfiguration(new MaintenanceProgressConfiguration());
         }
     }
 }

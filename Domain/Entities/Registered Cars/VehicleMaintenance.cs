@@ -5,6 +5,10 @@ namespace Domain.Entities.Registered_Cars
 {
     public class VehicleMaintenance : BaseEntity
     {
+        public VehicleMaintenance()
+        {
+            MaintenanceProgress = new HashSet<MaintenanceProgress>();
+        }
         public string ReasonForMaintenance { get; set; }
         public string? Comment { get; set; }
         public DateTime? MaintenanceDate { get; set; }
@@ -27,5 +31,7 @@ namespace Domain.Entities.Registered_Cars
 
         public int? ReportId { get; set; }
         public virtual VehicleReport Report { get; set; }
+
+        public virtual ICollection<MaintenanceProgress> MaintenanceProgress { get; set; }
     }
 }

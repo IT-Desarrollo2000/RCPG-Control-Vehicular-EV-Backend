@@ -38,7 +38,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicle,WorkShop,Report,ApprovedByUser";
+            string properties = "Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress";
             IEnumerable<VehicleMaintenance> maintenances = null;
             Expression<Func<VehicleMaintenance, bool>> Query = null;
 
@@ -116,7 +116,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleMaintenanceDto>> GetVehicleMaintenanceById(int Id)
         {
             GenericResponse<VehicleMaintenanceDto> response = new GenericResponse<VehicleMaintenanceDto>();
-            var profile = await _unitOfWork.VehicleMaintenanceRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,WorkShop,Report,ApprovedByUser");
+            var profile = await _unitOfWork.VehicleMaintenanceRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress");
             var result = profile.FirstOrDefault();
             if(result == null)
             {
@@ -424,6 +424,55 @@ namespace Application.Services
                 return response;
             }
             catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
+        //AGREGAR PROGRESO
+        public async Task<GenericResponse<MaintenanceProgressDto>> AddProgress(MaintenanceProgressRequest request)
+        {
+            GenericResponse<MaintenanceProgressDto> response = new GenericResponse<MaintenanceProgressDto>();
+            try
+            {
+                //Verificar que exista el mantenimiento y tenga el estatus correcto para su modificación
+                var maintenance = await _unitOfWork.VehicleMaintenanceRepo.GetById(request.VehicleMaintenanceId);
+                if(maintenance == null)
+                {
+                    response.success = false;
+                    response.AddError("Mantenimiento no encontrado", $"El mantenimiento especificado {request.VehicleMaintenanceId} no existe", 2);
+                    return response;
+                }
+
+                if(maintenance.Status == VehicleServiceStatus.CANCELADO)
+                {
+                    response.success = false;
+                    response.AddError("Estatus invalido", "El estatus del mantenmiento especificado no permite su modificación", 3);
+                    return response;
+                }
+
+                //Verificar que ambos usuarios no sean nulos
+                if(!request.AdminUserId.HasValue && !request.MobileUserId.HasValue)
+                {
+                    response.success = false;
+                    response.AddError("Usuario no especificado", "Debe especificar un usuario de Admin o un conductor", 4);
+                    return response;
+                }
+
+                //Mapear los datos
+                var newProgress = _mapper.Map<MaintenanceProgress>(request);
+
+                await _unitOfWork.MaintenanceProgressRepo.Add(newProgress);
+                await _unitOfWork.SaveChangesAsync();
+
+                var dto = _mapper.Map<MaintenanceProgressDto>(newProgress);
+                response.Data = dto;
+                response.success = true;
+                return response;
+            }
+            catch(Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);

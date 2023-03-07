@@ -23,7 +23,7 @@ namespace API.Controllers
         }
 
         //GETALL
-        //[Authorize(Roles = "Administrator, AdminUser, Supervisor")]
+        [Authorize(Roles = "Administrator, AdminUser, Supervisor")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -55,7 +55,7 @@ namespace API.Controllers
         }
 
         //GETBYID
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleMaintenanceDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -91,7 +91,7 @@ namespace API.Controllers
         }
 
         //CANCEL
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
@@ -103,7 +103,7 @@ namespace API.Controllers
         }
 
         //UPDATE
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
@@ -115,7 +115,7 @@ namespace API.Controllers
         }
 
         //DELETE
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete]
@@ -123,6 +123,18 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteMaintenance(int Id)
         {
             var entity = await _maintenanceService.DeleteVehicleManintenance(Id);
+            if (entity.success) { return Ok(entity); } else { return BadRequest(entity); }
+        }
+
+        //ADD PROGRESS
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(MaintenanceProgressDto))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPut]
+        [Route("AddProgress")]
+        public async Task<IActionResult> AddMaintenanceProgress(MaintenanceProgressRequest request)
+        {
+            var entity = await _maintenanceService.AddProgress(request);
             if (entity.success) { return Ok(entity); } else { return BadRequest(entity); }
         }
     }
