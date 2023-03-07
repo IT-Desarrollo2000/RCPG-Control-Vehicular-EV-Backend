@@ -8,8 +8,12 @@ namespace Domain.DTOs.Reponses
 {
     public class GetUserForTravelDto
     {
-        public string VehicleName { get; set; }
+        
+        public List<string> VehicleName { get; set; }
+        public int UserDriverId { get; set; }
         public string UserName { get; set; }
         public int TripNumber { get; set; }
+        public string? error { get; set; }
     }
+
 }

@@ -5,7 +5,9 @@ using Domain.DTOs.Reponses;
 using Domain.Entities.Registered_Cars;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Application.Services
 {
@@ -778,6 +780,115 @@ namespace Application.Services
                 response.AddError("Error", ex.Message, 1);
 
                 return response;
+            }
+
+        }
+
+        public async Task<GenericResponse<List<GetUserForTravelDto>>> GetUserForTravel()
+        {
+            GenericResponse<List<GetUserForTravelDto>> response = new GenericResponse<List<GetUserForTravelDto>>();
+            var list = new List<GetUserForTravelDto>();
+            List<string> NameU = new List<string>();
+
+            try
+            {
+                var travel = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == ReportUseType.Finalizado );
+            
+
+                if (travel == null)
+                {
+                    response.success = false;
+                    response.AddError("No existe ", $"No existe Reporte Solicitado", 1);
+                    return response;
+                }
+
+                foreach (var usuario in travel)
+                {
+                    var user = await _unitOfWork.VehicleReportUseRepo.Get(filter: user => user.UserProfileId == usuario.UserProfileId && user.StatusReportUse == ReportUseType.Finalizado, includeProperties: "Vehicle,UserProfile");
+      
+                    if ( usuario.UserProfileId == null )
+                    {
+                        var pub = new GetUserForTravelDto()
+                        {
+                            
+                            UserName = "No hay datos",
+                            TripNumber = 0,
+                            error = $"Este campo no tiene datos con el reporte { usuario.Id}"
+                        };
+
+                    }
+                    else
+                    {
+                        var nombres = await _unitOfWork.VehicleReportUseRepo.Get(filter: user => user.UserProfileId == usuario.UserProfileId && user.StatusReportUse == ReportUseType.Finalizado, includeProperties: "Vehicle,UserProfile");
+                        var resulv= nombres.Select(nom => nom.Vehicle.Name).ToList();
+
+                        var L = list.LastOrDefault();
+
+                        if ( L == null)
+                        {
+
+                            foreach ( var n in nombres)
+                            {
+                                NameU.Add(n.Vehicle.Name);
+                                var add = new GetUserForTravelDto()
+                                {
+                                    VehicleName = resulv,
+                                    UserDriverId = usuario.UserProfileId ?? 0,
+                                    UserName = usuario.UserProfile.FullName,
+                                    TripNumber = user.Count()
+
+                                };
+
+                                list.Add(add);
+
+                            }
+
+                        }
+
+        
+
+                        var exist = list.Exists(x => x.UserDriverId == usuario.UserProfileId);
+
+                        if (exist)
+                        {
+                            
+
+                        }
+
+                    
+                        else
+                        {
+
+                   
+                            var add = new GetUserForTravelDto()
+                            {
+                                VehicleName = resulv,
+                                UserDriverId = usuario.UserProfileId ?? 0,
+                                UserName = usuario.UserProfile.FullName,
+                                TripNumber = user.Count()
+
+                            };
+
+                            list.Add(add);
+
+                        }
+
+                    }
+
+                }
+
+                response.success = true;
+                response.Data = list;
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+
             }
 
         }
