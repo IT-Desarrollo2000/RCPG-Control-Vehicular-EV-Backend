@@ -9,6 +9,7 @@ namespace Application.Interfaces
 {
     public interface IVehicleMaintenanceService
     {
+        Task<GenericResponse<MaintenanceProgressDto>> AddProgress(MaintenanceProgressRequest request);
         Task<GenericResponse<VehicleMaintenanceDto>> CancelMaintenance(CancelMaintenanceRequest request);
         Task<GenericResponse<VehicleMaintenanceDto>> DeleteVehicleManintenance(int Id);
         Task<GenericResponse<VehicleMaintenanceDto>> FinalizeMaintenance(FinalizeMaintenanceRequest request);

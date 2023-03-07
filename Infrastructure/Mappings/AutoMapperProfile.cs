@@ -194,6 +194,12 @@ namespace Infrastructure.Mappings
                 .ForMember(l => l.UserFullName, o => o.MapFrom(l => l.FullName))
                 .ForMember(l => l.LicenceExpirationDate, o => o.MapFrom(l => l.LicenceExpirationDate))
                 .ForMember(l => l.LicenceType, o => o.MapFrom(l => l.LicenceType));
+
+            //MaintenanceProgress
+            CreateMap<MaintenanceProgress, MaintenanceProgressDto>()
+                .ForMember(m => m.AdminUserName, o => o.MapFrom(m => m.AdminUser.FullName))
+                .ForMember(m => m.MobileUserName, o => o.MapFrom(m => m.MobileUser.FullName));
+            CreateMap<MaintenanceProgressRequest, MaintenanceProgress>();
         }
     }
 }
