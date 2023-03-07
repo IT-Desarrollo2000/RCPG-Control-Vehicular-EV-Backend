@@ -113,7 +113,7 @@ namespace API.Controllers
             }
         }
 
-        //GETALL
+        //GETpOST
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ListTotalPerfomanceDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -122,6 +122,25 @@ namespace API.Controllers
         public async Task<IActionResult> GetlistTotalPerfomance([FromForm] ListTotalPerfomanceDto listTotalPerfomanceDto)
         {
             var users = await _utilitesService.GetListTotalPerfomance(listTotalPerfomanceDto);
+            if (users.success)
+            {
+                return Ok(users);
+            }
+            else
+            {
+                return BadRequest(users);
+            }
+        }
+
+        //GETpOST
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetUserForTravelDto))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetUserTravel")]
+        public async Task<ActionResult<List<GetUserForTravelDto>>> GetlistTotalPerfomance()
+        {
+            var users = await _utilitesService.GetUserForTravel();
             if (users.success)
             {
                 return Ok(users);
