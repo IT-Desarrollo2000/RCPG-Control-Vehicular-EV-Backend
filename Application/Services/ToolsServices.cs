@@ -653,6 +653,7 @@ namespace Application.Services
                                 TotalMileageTraveled = sum / Rendimiento.Count(),
                                 TotalPerfomance = sum2 / Rendimiento.Count(),
                                 DesiredPerfomance = DPerfomance,
+                                PerformanceDifference = (sum2 / Rendimiento.Count()) / DPerfomance,
                                 Images = ImagesDto
                             };
 
@@ -757,6 +758,7 @@ namespace Application.Services
                                 TotalMileageTraveled = sum / Rendimiento.Count(),
                                 TotalPerfomance = sum2 / Rendimiento.Count(),
                                 DesiredPerfomance = DPerfomance,
+                                PerformanceDifference = (sum2 / Rendimiento.Count()) / DPerfomance,
                                 Images = ImagesDto
                             };
 
