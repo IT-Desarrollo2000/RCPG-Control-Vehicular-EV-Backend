@@ -10,6 +10,10 @@ namespace Domain.Entities.Registered_Cars
 {
     public class MaintenanceProgress : BaseEntity
     {
+        public MaintenanceProgress() 
+        {
+            ProgressImages = new HashSet<MaintenanceProgressImages>();
+        }
         public int VehicleMaintenanceId { get; set; }
         public VehicleMaintenance VehicleMaintenance { get; set; }
         public string Comment { get; set; }
@@ -17,7 +21,6 @@ namespace Domain.Entities.Registered_Cars
         public AppUser? AdminUser { get; set; }
         public int? AdminUserId { get; set; }
         public UserProfile? MobileUser { get; set; }
-        //public string? ImagePath { get; set; }
-        //public string? ImageUrl { get; set;}
+        public virtual ICollection<MaintenanceProgressImages> ProgressImages { get; set; }
     }
 }

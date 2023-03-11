@@ -23,13 +23,17 @@ namespace Application.Services
         private readonly IMapper _mapper;
         private readonly PaginationOptions _paginationOptions;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IOptions<BlobContainers> _azureBlobContainers;
+        private readonly IBlobStorageService _blobStorageService;
 
-        public VehicleMaintenanceServices(IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options, UserManager<AppUser> userManager)
+        public VehicleMaintenanceServices(IUnitOfWork unitOfWork, IMapper mapper, IOptions<PaginationOptions> options, UserManager<AppUser> userManager, IOptions<BlobContainers> azureBlobContainers, IBlobStorageService blobStorageService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _paginationOptions = options.Value;
             _userManager = userManager;
+            _azureBlobContainers = azureBlobContainers;
+            _blobStorageService = blobStorageService;
         }
 
         //GetAll
@@ -464,12 +468,86 @@ namespace Application.Services
                 //Mapear los datos
                 var newProgress = _mapper.Map<MaintenanceProgress>(request);
 
+                //Agregar imagenes al reporte
+                //Guardar las fotos
+                var images = new List<MaintenanceProgressImages>();
+
+                foreach (var image in request.Images)
+                {
+                    //Validar imagenes y Guardar las imagenes en el blobstorage
+                    if (image.ContentType.Contains("image"))
+                    {
+                        //Manipular el nombre de archivo
+                        var uploadDate = DateTime.UtcNow;
+                        Random rndm = new Random();
+                        string FileExtn = System.IO.Path.GetExtension(image.FileName);
+                        var filePath = $"{newProgress.VehicleMaintenanceId}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{uploadDate.Hour}{uploadDate.Minute}{rndm.Next(1, 1000)}{FileExtn}";
+                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.MaintenanceProgressImages, filePath);
+
+                        //Agregar la imagen en BD
+                        var newImage = new MaintenanceProgressImages()
+                        {
+                            FilePath = filePath,
+                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.MaintenanceProgressImages, filePath),
+                            Progress = newProgress
+                        };
+
+                        await _unitOfWork.MaintenanceProgressImageRepot.Add(newImage);  
+                        images.Add(newImage);
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+
+                        return response;
+                    }
+                }
+
+
+                //Guardar los datos
                 await _unitOfWork.MaintenanceProgressRepo.Add(newProgress);
                 await _unitOfWork.SaveChangesAsync();
 
                 var dto = _mapper.Map<MaintenanceProgressDto>(newProgress);
                 response.Data = dto;
                 response.success = true;
+                return response;
+            }
+            catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<bool>> DeleteProgress(int ProgressId)
+        {
+            GenericResponse<bool> response= new GenericResponse<bool>();
+            try
+            {
+                var progress = await _unitOfWork.MaintenanceProgressRepo.GetById(ProgressId);
+                if(progress == null)
+                {
+                    response.success = false;
+                    response.AddError("Not found", "El comentario de progreso de mantenimiento no existe", 2);
+                    return response;
+                }
+
+                //Borrar las imagenes del blob
+                var images = await _unitOfWork.MaintenanceProgressImageRepot.Get(filter: i => i.ProgressId== ProgressId);
+                foreach(var image in images)
+                {
+                    await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.MaintenanceProgressImages, image.FilePath);
+                    await _unitOfWork.MaintenanceProgressImageRepot.Delete(image.Id);
+                }
+
+                var delete = await _unitOfWork.MaintenanceProgressRepo.Delete(ProgressId);
+                await _unitOfWork.SaveChangesAsync();
+
+                response.success = true;
+                response.Data = delete;
                 return response;
             }
             catch(Exception ex)

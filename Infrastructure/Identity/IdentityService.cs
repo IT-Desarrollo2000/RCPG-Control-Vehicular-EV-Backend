@@ -388,7 +388,7 @@ namespace Infrastructure.Identity
 
         public async Task<AppUser> GetAppUserBydIdAsync(int UserId)
         {
-            var user = await _userManager.Users.Include(x => x.AssignedDepartments).FirstOrDefaultAsync(u => u.Id == UserId);
+            var user = await _userManager.Users.Include(x => x.AssignedDepartments).Include(r => r.UserRoles).ThenInclude(r => r.Role).Where(u => u.Id == UserId).SingleOrDefaultAsync();
 
             return user;
         }
