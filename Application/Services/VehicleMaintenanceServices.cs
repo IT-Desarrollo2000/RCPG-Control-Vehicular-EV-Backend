@@ -42,7 +42,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress";
+            string properties = "Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress,MaintenanceProgress.ProgressImages";
             IEnumerable<VehicleMaintenance> maintenances = null;
             Expression<Func<VehicleMaintenance, bool>> Query = null;
 
@@ -120,7 +120,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleMaintenanceDto>> GetVehicleMaintenanceById(int Id)
         {
             GenericResponse<VehicleMaintenanceDto> response = new GenericResponse<VehicleMaintenanceDto>();
-            var profile = await _unitOfWork.VehicleMaintenanceRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress");
+            var profile = await _unitOfWork.VehicleMaintenanceRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress,MaintenanceProgress.ProgressImages");
             var result = profile.FirstOrDefault();
             if(result == null)
             {
