@@ -424,27 +424,47 @@ namespace Application.Services
                 {
                     foreach (var Aray in Rendimiento)
                     {
-
-                        var KmActual = Aray.VehicleReportUses.FinalMileage;
-                        var KmUltimo = Aray.VehicleReportUses.InitialMileage;
-                        var GasolinaCarga = Aray.GasolineLoadAmount;
-
-                        var KmRecorrido = KmActual - KmUltimo;
-                        var KmPorLitros = KmRecorrido / GasolinaCarga;
-
-
-                        var Perfomance = new GraphicsPerfomanceDto()
+                        if ( Aray.VehicleReportUses == null)
                         {
-                            VehicleId = Aray.VehicleId,
-                            VehicleName = Aray.Vehicle.Name,
-                            CurrentKm = Aray.VehicleReportUses.FinalMileage ?? 0,
-                            LastKm = Aray.VehicleReportUses.InitialMileage ?? 0,
-                            GasolineLoadAmount = Aray.GasolineLoadAmount ?? 0,
-                            MileageTraveled = KmRecorrido ?? 0,
-                            Perfomance = KmPorLitros ?? 0
-                        };
+                            var Perfo = new GraphicsPerfomanceDto()
+                            {
+                                VehicleId = VehicleId,
+                                VehicleName = "No se obtuvo informacion del documento solicitado",
+                                CurrentKm = 0,
+                                LastKm = 0,
+                                GasolineLoadAmount = 0,
+                                MileageTraveled = 0,
+                                Perfomance = 0,
+                                error = $"No existe rendimiento por reportes de Vehiculo {VehicleId} "
+                            };
 
-                        list.Add(Perfomance);
+                            list.Add(Perfo);
+
+                        }
+
+                        else
+                        {
+                            var KmActual = Aray.VehicleReportUses.FinalMileage;
+                            var KmUltimo = Aray.VehicleReportUses.InitialMileage;
+                            var GasolinaCarga = Aray.GasolineLoadAmount;
+
+                            var KmRecorrido = KmActual - KmUltimo;
+                            var KmPorLitros = KmRecorrido / GasolinaCarga;
+
+
+                            var Perfomance = new GraphicsPerfomanceDto()
+                            {
+                                VehicleId = Aray.VehicleId,
+                                VehicleName = Aray.Vehicle.Name,
+                                CurrentKm = Aray.VehicleReportUses.FinalMileage ?? 0,
+                                LastKm = Aray.VehicleReportUses.InitialMileage ?? 0,
+                                GasolineLoadAmount = Aray.GasolineLoadAmount ?? 0,
+                                MileageTraveled = KmRecorrido ?? 0,
+                                Perfomance = KmPorLitros ?? 0
+                            };
+
+                            list.Add(Perfomance);
+                        }
 
                     }
 
@@ -512,30 +532,52 @@ namespace Application.Services
                     double Dperfomance = 0;
                     foreach (var Aray in Rendimiento)
                     {
-                        var KmActual = Aray.VehicleReportUses.FinalMileage;
-                        var KmUltimo = Aray.VehicleReportUses.InitialMileage;
-                        var GasolinaCarga = Aray.GasolineLoadAmount;
-
-                        var KmRecorrido = KmActual - KmUltimo;
-                        var KmPorLitros = KmRecorrido / GasolinaCarga;
-
-
-                        var Perfomance = new GraphicsPerfomanceDto()
+                        if ( Aray.VehicleReportUses == null)
                         {
-                            VehicleId = Aray.VehicleId,
-                            VehicleName = Aray.Vehicle.Name,
-                            CurrentKm = Aray.VehicleReportUses.FinalMileage ?? 0,
-                            LastKm = Aray.VehicleReportUses.InitialMileage ?? 0,
-                            GasolineLoadAmount = Aray.GasolineLoadAmount ?? 0,
-                            MileageTraveled = KmRecorrido ?? 0,
-                            Perfomance = KmPorLitros ?? 0
-                        };
+                            var Perfo = new GraphicsPerfomanceDto()
+                            {
+                                VehicleId = Aray.VehicleId,
+                                VehicleName = "No Hay Datos Obtenidos de Este Reporte",
+                                CurrentKm = 0 ,
+                                LastKm = 0,
+                                GasolineLoadAmount = 0,
+                                MileageTraveled =  0,
+                                Perfomance = 0
+                            };
 
-                        listt.Add(Perfomance);
+                            listt.Add(Perfo);
 
-                        sum += Perfomance.MileageTraveled;
-                        sum2 += Perfomance.Perfomance;
-                        Dperfomance = (double)Aray.Vehicle.DesiredPerformance;
+
+                        }
+
+                        else
+                        {
+                            var KmActual = Aray.VehicleReportUses.FinalMileage;
+                            var KmUltimo = Aray.VehicleReportUses.InitialMileage;
+                            var GasolinaCarga = Aray.GasolineLoadAmount;
+
+                            var KmRecorrido = KmActual - KmUltimo;
+                            var KmPorLitros = KmRecorrido / GasolinaCarga;
+
+
+                            var Perfomance = new GraphicsPerfomanceDto()
+                            {
+                                VehicleId = Aray.VehicleId,
+                                VehicleName = Aray.Vehicle.Name,
+                                CurrentKm = Aray.VehicleReportUses.FinalMileage ?? 0,
+                                LastKm = Aray.VehicleReportUses.InitialMileage ?? 0,
+                                GasolineLoadAmount = Aray.GasolineLoadAmount ?? 0,
+                                MileageTraveled = KmRecorrido ?? 0,
+                                Perfomance = KmPorLitros ?? 0
+                            };
+
+                            listt.Add(Perfomance);
+
+                            sum += Perfomance.MileageTraveled;
+                            sum2 += Perfomance.Perfomance;
+                            Dperfomance = (double)Aray.Vehicle.DesiredPerformance;
+
+                        } 
 
                     }
                     var Total = new TotalPerfomanceDto()
