@@ -43,8 +43,6 @@ namespace Infrastructure.Mappings
             CreateMap<Departaments, DepartamentDto>().ReverseMap();
             CreateMap<Departaments, UnrelatedDepartamentDto>().ReverseMap();
 
-
-
             //Vehicle
             CreateMap<Vehicle, VehicleRequest>().ReverseMap();
             CreateMap<Vehicle, VehiclesDto>().ReverseMap();
@@ -200,6 +198,7 @@ namespace Infrastructure.Mappings
                 .ForMember(m => m.AdminUserName, o => o.MapFrom(m => m.AdminUser.FullName))
                 .ForMember(m => m.MobileUserName, o => o.MapFrom(m => m.MobileUser.FullName));
             CreateMap<MaintenanceProgressRequest, MaintenanceProgress>();
+            CreateMap<MaintenanceProgressImages, ProgressImageDto>();
         }
     }
 }

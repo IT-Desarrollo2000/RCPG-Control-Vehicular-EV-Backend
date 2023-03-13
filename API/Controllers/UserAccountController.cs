@@ -322,13 +322,31 @@ namespace API.Controllers
         #endregion
 
         #region ..::Administración de usuarios AdminWeb::..
-        //[Authorize(Roles = "Administrator, AdminUser")]
+        [Authorize(Roles = "Administrator, AdminUser")]
         [HttpGet]
         [Route("WebAdm/GetAdminUsers")]
         public async Task<ActionResult> GetWebAdmUsers(AdminRoleType? roleType = null)
         {
             var users = await _identityService.GetUsersWithRoles(roleType);
             return Ok(users);
+        }
+
+        [Authorize(Roles = "Administrator, AdminUser")]
+        [HttpGet]
+        [Route("GetAdmById")]
+        public async Task<IActionResult> GetAdmUserById(int id)
+        {
+            var result = await _identityService.GetAppUserBydIdAsync(id);
+            if (result == null) { return NotFound(); } else { return Ok(result); }
+        }
+
+        [Authorize(Roles = "Administrator, AdminUser")]
+        [HttpPut]
+        [Route("UpdateAdm")]
+        public async Task<IActionResult> UpdateAdminUser(AdmUserUpdateRequest request)
+        {
+            var result = await _identityService.UpdateAdmUser(request);
+            if (result == null) { return NotFound(); } else { return Ok(result); }
         }
 
         [Authorize(Roles = "Administrator")]
