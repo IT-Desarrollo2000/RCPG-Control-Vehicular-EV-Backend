@@ -388,7 +388,7 @@ namespace Infrastructure.Identity
 
         public async Task<AppUser> GetAppUserBydIdAsync(int UserId)
         {
-            var user = await _userManager.Users.Include(x => x.AssignedDepartments).FirstOrDefaultAsync(u => u.Id == UserId);
+            var user = await _userManager.Users.Include(x => x.AssignedDepartments).Include(r => r.UserRoles).ThenInclude(r => r.Role).Where(u => u.Id == UserId).SingleOrDefaultAsync();
 
             return user;
         }
@@ -440,6 +440,46 @@ namespace Infrastructure.Identity
             var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
 
             return await _userManager.IsInRoleAsync(user, role);
+        }
+
+        public async Task<GenericResponse<AppUser>> UpdateAdmUser(AdmUserUpdateRequest request)
+        {
+            GenericResponse<AppUser> response = new GenericResponse<AppUser>();
+            try
+            {
+                var user = await _userManager.Users.Where(u => u.Id == request.AppUserId).SingleOrDefaultAsync();
+                if(user == null)
+                {
+                    response.success = false;
+                    response.AddError("Usuario inexistente", "Nope no existe <:^) ", 2);
+                    return response;
+                }
+
+                user.Name = request.Name ?? user.Name;
+                user.LastNameP = request.LastNameP ?? user.LastNameP;
+                user.LastNameM = request.LastNameM ?? user.LastNameM;
+                user.FullName = $"{user.Name} {user.LastNameP} {user.LastNameM}";
+
+                var update = await _userManager.UpdateAsync(user);
+
+                if (!update.Succeeded)
+                {
+                    response.success = false;
+                    response.AddError("Error", "Nope no se actualizo <:^) ", 3);
+                    return response;
+                }
+
+                response.success = true;
+                response.Data = user;
+
+                return response;
+            }
+            catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
         }
 
         //Password related stuff
@@ -560,6 +600,10 @@ namespace Infrastructure.Identity
             newUser.LockoutEnabled = true;
             newUser.EmailConfirmed = true;
             newUser.PhoneNumberConfirmed = true;
+            newUser.Name = user.FirstName;
+            newUser.LastNameP = user.LastNameP;
+            newUser.LastNameM = user.LastNameM;
+            newUser.FullName = $"{user.FirstName} {user.LastNameP} {user.LastNameM}"; 
 
             var result = await _userManager.CreateAsync(newUser, user.Password);
 
@@ -691,6 +735,10 @@ namespace Infrastructure.Identity
                     {
                         u.Id,
                         Username = u.UserName,
+                        FullName = u.FullName,
+                        Name = u.Name,
+                        LastNameP = u.LastNameP,
+                        LastNameM = u.LastNameM,
                         Email = u.Email,
                         Roles = u.UserRoles.Select(r => r.Role.Name).ToList(),
                         SupervisingDepartments = u.AssignedDepartments
@@ -712,6 +760,10 @@ namespace Infrastructure.Identity
                     {
                         u.Id,
                         Username = u.UserName,
+                        FullName = u.FullName,
+                        Name = u.Name,
+                        LastNameP = u.LastNameP,
+                        LastNameM = u.LastNameM,
                         Email = u.Email,
                         Roles = u.UserRoles.Select(r => r.Role.Name).ToList(),
                         SupervisingDepartments = u.AssignedDepartments

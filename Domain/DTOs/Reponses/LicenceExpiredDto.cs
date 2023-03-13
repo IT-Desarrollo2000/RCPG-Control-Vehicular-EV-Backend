@@ -14,6 +14,8 @@ namespace Domain.DTOs.Reponses
         public string StatusName { get; set; }
         public int UserProfileId { get; set; }
         public string UserFullName { get; set; }
+        public string? DriversLicenceFrontUrl { get; set; }
+        public string? DriversLicenceBackUrl { get; set; }
         public LicenceType LicenceType { get; set; }
         public LicenceExpStopLight ExpirationType { get; set; }
         public DateTime LicenceExpirationDate { get; set; }

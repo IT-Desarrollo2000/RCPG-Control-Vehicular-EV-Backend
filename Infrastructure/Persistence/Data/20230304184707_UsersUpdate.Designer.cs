@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230304184707_UsersUpdate")]
+    partial class UsersUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -531,76 +534,6 @@ namespace Infrastructure.Persistence.Data
                     b.HasIndex("VehicleReportId");
 
                     b.ToTable("Expenses");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.MaintenanceProgress", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AdminUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("MobileUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("VehicleMaintenanceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AdminUserId");
-
-                    b.HasIndex("MobileUserId");
-
-                    b.HasIndex("VehicleMaintenanceId");
-
-                    b.ToTable("MaintenanceProgresses");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.MaintenanceProgressImages", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileURL")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProgressId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProgressId");
-
-                    b.ToTable("MaintenanceProgressImages");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.PhotosOfSpending", b =>
@@ -1466,42 +1399,6 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("VehicleReport");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.MaintenanceProgress", b =>
-                {
-                    b.HasOne("Domain.Entities.Identity.AppUser", "AdminUser")
-                        .WithMany()
-                        .HasForeignKey("AdminUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Profiles.UserProfile", "MobileUser")
-                        .WithMany()
-                        .HasForeignKey("MobileUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Registered_Cars.VehicleMaintenance", "VehicleMaintenance")
-                        .WithMany("MaintenanceProgress")
-                        .HasForeignKey("VehicleMaintenanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AdminUser");
-
-                    b.Navigation("MobileUser");
-
-                    b.Navigation("VehicleMaintenance");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.MaintenanceProgressImages", b =>
-                {
-                    b.HasOne("Domain.Entities.Registered_Cars.MaintenanceProgress", "Progress")
-                        .WithMany("ProgressImages")
-                        .HasForeignKey("ProgressId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Progress");
-                });
-
             modelBuilder.Entity("Domain.Entities.Registered_Cars.PhotosOfSpending", b =>
                 {
                     b.HasOne("Domain.Entities.Registered_Cars.Expenses", "Expenses")
@@ -1797,11 +1694,6 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("PhotosOfSpending");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.MaintenanceProgress", b =>
-                {
-                    b.Navigation("ProgressImages");
-                });
-
             modelBuilder.Entity("Domain.Entities.Registered_Cars.TypesOfExpenses", b =>
                 {
                     b.Navigation("Expenses");
@@ -1822,11 +1714,6 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("VehicleReportsUses");
 
                     b.Navigation("VehicleServices");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleMaintenance", b =>
-                {
-                    b.Navigation("MaintenanceProgress");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleMaintenanceWorkshop", b =>

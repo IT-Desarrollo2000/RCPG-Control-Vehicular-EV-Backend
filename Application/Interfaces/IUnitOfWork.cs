@@ -28,6 +28,8 @@ namespace Application.Interfaces
         IRepository<VehicleReportUse> VehicleReportUseRepo { get; }
         IRepository<VehicleReportImage> VehicleReportImage { get; }
         IRepository<Policy> PolicyRepo { get; }
+        IRepository<MaintenanceProgress> MaintenanceProgressRepo { get; }
+        IRepository<MaintenanceProgressImages> MaintenanceProgressImageRepot { get; }
 
         void Dispose();
         void SaveChanges();

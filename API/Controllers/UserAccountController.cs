@@ -19,6 +19,7 @@ namespace API.Controllers
     public class UserAccountController : ControllerBase
     {
         private readonly IIdentityService _identityService;
+        private readonly IDepartamentServices _departmentServices;
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
@@ -28,13 +29,15 @@ namespace API.Controllers
             ITokenService tokenService,
             IMapper mapper,
             TokenValidationParameters tokenValidationParameters,
-            IIdentityService identityService)
+            IIdentityService identityService,
+            IDepartamentServices departmentServices)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _mapper = mapper;
             _tokenValidationParameters = tokenValidationParameters;
             _identityService = identityService;
+            _departmentServices = departmentServices;
         }
 
         #region ..::Registro y Autenticación::..
@@ -51,6 +54,16 @@ namespace API.Controllers
                 response.success = false;
                 response.AddError("User Exists", "Ya existe un usuario registrado con las mismas credenciales", 1);
                 return BadRequest(response);
+            }
+
+            //Verificar que los departamentos indicados existan
+            foreach(var id in user.SupervisingDepartments)
+            {
+                var department = await _departmentServices.GetDepartamentById(id);
+                if(department == null)
+                {
+                    return BadRequest($"El departamento con Id {id} no existe");
+                }
             }
 
             var isCreated = await _identityService.CreateWebAdmUserAsync(user);
@@ -309,13 +322,31 @@ namespace API.Controllers
         #endregion
 
         #region ..::Administración de usuarios AdminWeb::..
-        //[Authorize(Roles = "Administrator, AdminUser")]
+        [Authorize(Roles = "Administrator, AdminUser")]
         [HttpGet]
         [Route("WebAdm/GetAdminUsers")]
         public async Task<ActionResult> GetWebAdmUsers(AdminRoleType? roleType = null)
         {
             var users = await _identityService.GetUsersWithRoles(roleType);
             return Ok(users);
+        }
+
+        [Authorize(Roles = "Administrator, AdminUser")]
+        [HttpGet]
+        [Route("GetAdmById")]
+        public async Task<IActionResult> GetAdmUserById(int id)
+        {
+            var result = await _identityService.GetAppUserBydIdAsync(id);
+            if (result == null) { return NotFound(); } else { return Ok(result); }
+        }
+
+        [Authorize(Roles = "Administrator, AdminUser")]
+        [HttpPut]
+        [Route("UpdateAdm")]
+        public async Task<IActionResult> UpdateAdminUser(AdmUserUpdateRequest request)
+        {
+            var result = await _identityService.UpdateAdmUser(request);
+            if (result == null) { return NotFound(); } else { return Ok(result); }
         }
 
         [Authorize(Roles = "Administrator")]
