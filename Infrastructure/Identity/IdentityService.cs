@@ -502,9 +502,9 @@ namespace Infrastructure.Identity
                 //Enviar el token al correo
                 var message = new MimeMessage();
                 message.From.Add(new MailboxAddress("password-recovery", "rcpg.no-reply@gmail.com"));
-                message.To.Add(new MailboxAddress("Daniel Cab", "danicabhern@gmail.com"));
+                message.To.Add(new MailboxAddress("Calamardo", $"{ userEmail }"));
                 message.Subject = "Reinicio de contraseña";
-                message.Body = new TextPart("plain")
+                message.Body = new TextPart("html")
                 {
                     Text = @$"Por favor reinicie su contraseña haciendo click en el siguiente link: <a href='https://rcpg-controlvehicular-api.azurewebsites.net/PRecovery/{token}/ '>Reinicio de Contraseña</a>"
                 };
