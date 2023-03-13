@@ -151,7 +151,7 @@ namespace Application.Services
         public async Task<GenericResponse<ExpensesDto>> GetExpensesById(int id)
         {
             GenericResponse<ExpensesDto> response = new GenericResponse<ExpensesDto>();
-            var entity = await _unitOfWork.ExpensesRepo.Get(filter: a => a.Id == id, includeProperties: "Vehicles,TypesOfExpenses");
+            var entity = await _unitOfWork.ExpensesRepo.Get(filter: a => a.Id == id, includeProperties: "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop");
             var check = entity.FirstOrDefault();
             var map = _mapper.Map<ExpensesDto>(check);
             response.success = true;

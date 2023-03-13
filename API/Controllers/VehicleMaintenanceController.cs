@@ -132,9 +132,20 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("AddProgress")]
-        public async Task<IActionResult> AddMaintenanceProgress(MaintenanceProgressRequest request)
+        public async Task<IActionResult> AddMaintenanceProgress([FromForm]MaintenanceProgressRequest request)
         {
             var entity = await _maintenanceService.AddProgress(request);
+            if (entity.success) { return Ok(entity); } else { return BadRequest(entity); }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpDelete]
+        [Route("DeleteProgress")]
+        public async Task<IActionResult> DeleteProgressImage(int progressId)
+        {
+            var entity = await _maintenanceService.DeleteProgress(progressId);
             if (entity.success) { return Ok(entity); } else { return BadRequest(entity); }
         }
     }

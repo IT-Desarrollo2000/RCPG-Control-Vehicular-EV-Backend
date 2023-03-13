@@ -217,6 +217,45 @@ namespace Application.Services
 
                 Expenses expensesRequest = null;
 
+                //Verificar que el usuario que lo creo exista
+                if (vehicleReportRequest.MobileUserId.HasValue)
+                {
+                    var existeUserProfile = await _unitOfWork.UserProfileRepo.Get(c => c.Id == vehicleReportRequest.MobileUserId.Value);
+                    var resultUserProfile = existeUserProfile.FirstOrDefault();
+
+                    if (resultUserProfile == null)
+                    {
+                        response.success = false;
+                        response.AddError("No existe UserProfile", $"No existe UserProfileId {vehicleReportRequest.MobileUserId} para cargar", 1);
+                        return response;
+                    }
+
+                }
+
+                if (vehicleReportRequest.AdminUserId.HasValue)
+                {
+                    var existeAppUser = await _userManager.Users.SingleOrDefaultAsync(c => c.Id == vehicleReportRequest.AdminUserId.Value);
+                    if (existeAppUser == null)
+                    {
+                        response.success = false;
+                        response.AddError("No existe AppUser", $"No existe AppUserId {vehicleReportRequest.AdminUserId} para cargar", 1);
+                        return response;
+                    }
+
+                }
+
+                //Verificar que el vehiculo exista
+                var vehicleExistQuery = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportRequest.VehicleId);
+                var vehicleExists = vehicleExistQuery.FirstOrDefault();
+
+                if (vehicleExists == null)
+                {
+                    response.success = false;
+                    response.AddError("Vehiculo no encontrado", $"No existe Vehiculo con el Id {vehicleReportRequest.VehicleId} solicitado", 5);
+                    return response;
+
+                }
+
                 //Verificar si el reporte es por carga de gasolina y si contiene los campos requeridos para ello
                 if (vehicleReportRequest.ReportType == Domain.Enums.ReportType.Carga_Gasolina)
                 {
@@ -266,48 +305,8 @@ namespace Application.Services
                         Cost = (decimal)vehicleReportRequest.AmountGasoline,
                         ExpenseDate = DateTime.Now,
                         ERPFolio = Guid.NewGuid().ToString()
-
                     };
-
-                }
-
-                //Verificar que el usuario que lo creo exista
-                if (vehicleReportRequest.MobileUserId.HasValue)
-                {
-                    var existeUserProfile = await _unitOfWork.UserProfileRepo.Get(c => c.Id == vehicleReportRequest.MobileUserId.Value);
-                    var resultUserProfile = existeUserProfile.FirstOrDefault();
-
-                    if (resultUserProfile == null)
-                    {
-                        response.success = false;
-                        response.AddError("No existe UserProfile", $"No existe UserProfileId {vehicleReportRequest.MobileUserId} para cargar", 1);
-                        return response;
-                    }
-
-                }
-
-                if (vehicleReportRequest.AdminUserId.HasValue)
-                {
-                    var existeAppUser = await _userManager.Users.SingleOrDefaultAsync(c => c.Id == vehicleReportRequest.AdminUserId.Value);
-                    if (existeAppUser == null)
-                    {
-                        response.success = false;
-                        response.AddError("No existe AppUser", $"No existe AppUserId {vehicleReportRequest.AdminUserId} para cargar", 1);
-                        return response;
-                    }
-
-                }
-
-                //Verificar que el vehiculo exista
-                var vehicleExistQuery = await _unitOfWork.VehicleRepo.Get(c => c.Id == vehicleReportRequest.VehicleId);
-                var vehicleExists = vehicleExistQuery.FirstOrDefault();
-
-                if (vehicleExists == null)
-                {
-                    response.success = false;
-                    response.AddError("Vehiculo no encontrado", $"No existe Vehiculo con el Id {vehicleReportRequest.VehicleId} solicitado", 5);
-                    return response;
-
+                    expensesRequest.Vehicles.Add(vehicleExists);
                 }
 
                 //Verificar si se agregara a un reporte de uso

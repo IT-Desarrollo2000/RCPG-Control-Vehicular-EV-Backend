@@ -35,5 +35,6 @@ namespace Application.Interfaces
         Task<GenericResponse<string>> ResetPassword(string userEmail);
         Task<GenericResponse<IdentityResult>> PasswordResetConfirmation(PasswordResetConfirmationRequest request);
         Task<GenericResponse<IdentityResult>> PasswordChange(PasswordChangeRequest request);
+        Task<GenericResponse<AppUser>> UpdateAdmUser(AdmUserUpdateRequest request);
     }
 }
