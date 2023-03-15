@@ -150,5 +150,27 @@ namespace API.Controllers
                 return BadRequest(users);
             }
         }
+
+        //GETpOST
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GetServicesMaintenance))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetTotalServiceMaintenance")]
+        public async Task<ActionResult<List<GetServicesMaintenance>>> GetServiceMaintenance()
+        {
+            var users = await _utilitesService.GetServiceMaintenance();
+            if (users.success)
+            {
+                return Ok(users);
+            }
+            else
+            {
+                return BadRequest(users);
+            }
+        }
+
+
+
     }
 }
