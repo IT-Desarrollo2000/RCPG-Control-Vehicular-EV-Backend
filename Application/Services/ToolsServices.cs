@@ -634,17 +634,16 @@ namespace Application.Services
 
                         if (Rendimiento.Count() == 0)
                         {
-                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros);
+                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros, includeProperties: "Vehicle");
                             var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
                             var Totale = new TotalPerfomanceDto()
                             {
                                 VehicleId = Enteros,
-                                VehicleName = "No se obtuvo informacion del vehiculo solicitado",
+                                VehicleName = $"El vehiculo no contiene datos para mostrar",
                                 TotalMileageTraveled = 0,
                                 TotalPerfomance = 0,
                                 success = false,
-                                error = $"No existe datos de Rendimiento para {Enteros} ",
-                                Images = ImagesDto
+                                error = $"No existe datos de Rendimiento para {Enteros} "
                             };
 
                             list.Add(Totale);
@@ -738,17 +737,16 @@ namespace Application.Services
 
                         if (Rendimiento.Count() == 0)
                         {
-                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros.Id);
+                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros.Id,includeProperties: "Vehicle");
                             var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
                             var Totale = new TotalPerfomanceDto()
                             {
                                 VehicleId = Enteros.Id,
-                                VehicleName = "No se obtuvo informacion del vehiculo solicitado",
+                                VehicleName = "El vehiculo no contiene datos para mostrar",
                                 TotalMileageTraveled = 0,
                                 TotalPerfomance = 0,
                                 success = false,
-                                error = $"No existe datos de Rendimiento para {Enteros.Id} ",
-                                Images = ImagesDto
+                                error = $"No existe datos de Rendimiento para {Enteros.Id} "
                             };
 
                             list.Add(Totale);
@@ -844,7 +842,7 @@ namespace Application.Services
 
             try
             {
-                var travel = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == ReportUseType.Finalizado );
+                var travel = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == ReportUseType.Finalizado);
             
 
                 if (travel == null)
@@ -887,7 +885,8 @@ namespace Application.Services
                                     VehicleName = resulv,
                                     UserDriverId = usuario.UserProfileId ?? 0,
                                     UserName = usuario.UserProfile.FullName,
-                                    TripNumber = user.Count()
+                                    TripNumber = user.Count(),
+                                    ProfileImageURL = usuario.UserProfile.ProfileImageUrl
 
                                 };
 
@@ -917,8 +916,8 @@ namespace Application.Services
                                 VehicleName = resulv,
                                 UserDriverId = usuario.UserProfileId ?? 0,
                                 UserName = usuario.UserProfile.FullName,
-                                TripNumber = user.Count()
-
+                                TripNumber = user.Count(),
+                                ProfileImageURL = usuario.UserProfile.ProfileImageUrl
                             };
 
                             list.Add(add);
