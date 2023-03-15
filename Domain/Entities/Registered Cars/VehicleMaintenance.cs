@@ -32,6 +32,9 @@ namespace Domain.Entities.Registered_Cars
         public int? ReportId { get; set; }
         public virtual VehicleReport Report { get; set; }
 
+        public int? ExpenseId { get; set; }
+        public virtual Expenses? Expense { get; set; }
+
         public virtual ICollection<MaintenanceProgress> MaintenanceProgress { get; set; }
     }
 }
