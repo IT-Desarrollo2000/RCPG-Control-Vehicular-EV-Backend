@@ -42,7 +42,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress,MaintenanceProgress.ProgressImages";
+            string properties = "Expense,Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress,MaintenanceProgress.ProgressImages,MaintenanceProgress.AdminUser,MaintenanceProgress.MobileUser";
             IEnumerable<VehicleMaintenance> maintenances = null;
             Expression<Func<VehicleMaintenance, bool>> Query = null;
 
@@ -120,7 +120,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleMaintenanceDto>> GetVehicleMaintenanceById(int Id)
         {
             GenericResponse<VehicleMaintenanceDto> response = new GenericResponse<VehicleMaintenanceDto>();
-            var profile = await _unitOfWork.VehicleMaintenanceRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress,MaintenanceProgress.ProgressImages");
+            var profile = await _unitOfWork.VehicleMaintenanceRepo.Get(filter: p => p.Id == Id, includeProperties: "Expense,Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress,MaintenanceProgress.ProgressImages,MaintenanceProgress.AdminUser,MaintenanceProgress.MobileUser");
             var result = profile.FirstOrDefault();
             if(result == null)
             {
@@ -253,6 +253,20 @@ namespace Application.Services
                     return response;
                 }
 
+                //Verificar el gasto
+                if (request.ExpenseId.HasValue)
+                {
+                    var expense = await _unitOfWork.ExpensesRepo.GetById(request.ExpenseId.Value);
+                    if(expense == null)
+                    {
+                        response.success = false;
+                        response.AddError("Gasto invalido", "El gasto especificado no existe", 4);
+                        return response;
+                    }
+
+                    maintenance.ExpenseId = expense.Id;
+                }
+
                 //Mapear Elementos
                 maintenance.Status = VehicleServiceStatus.FINALIZADO;
                 maintenance.FinalFuel = request.FinalFuel;
@@ -353,6 +367,20 @@ namespace Application.Services
                     response.success = false;
                     response.AddError("Estatus invalido", "El estatus del mantenmiento no permite su modificación", 3);
                     return response;
+                }
+
+                //Verificar el gasto
+                if (request.ExpenseId.HasValue)
+                {
+                    var expense = await _unitOfWork.ExpensesRepo.GetById(request.ExpenseId.Value);
+                    if (expense == null)
+                    {
+                        response.success = false;
+                        response.AddError("Gasto invalido", "El gasto especificado no existe", 4);
+                        return response;
+                    }
+
+                    maintenance.ExpenseId = expense.Id;
                 }
 
                 //Aplicar cambios
