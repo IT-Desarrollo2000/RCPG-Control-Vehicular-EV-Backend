@@ -34,6 +34,9 @@ namespace Domain.DTOs.Reponses
         public VehicleReportSlimDto Report { get; set; }
         public List<MaintenanceProgressDto> MaintenanceProgress { get; set; }
 
+        public int? ExpenseId { get; set; }
+        public ExpensesDto? Expense { get; set; }
+
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
     }

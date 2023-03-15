@@ -19,6 +19,8 @@ namespace Domain.DTOs.Requests
         [Required]
         public CurrentFuel FinalFuel { get; set; }
 
+        public int? ExpenseId { get; set; }
+
         public string? Comment { get; set; }
     }
 
