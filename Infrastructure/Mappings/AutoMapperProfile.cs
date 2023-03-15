@@ -52,6 +52,9 @@ namespace Infrastructure.Mappings
             CreateMap<Vehicle, MaintenanceSpotlightDto>()
                 .ForMember(s => s.VehicleId, o => o.MapFrom(s => s.Id))
                 .ForMember(s => s.VehicleName, o => o.MapFrom(s => s.Name));
+            CreateMap<Vehicle, GetServicesMaintenance>().ReverseMap()
+                .ForMember(s => s.Id, o => o.MapFrom( s => s.VehicleId))
+                .ForMember(s => s.Name, o => o.MapFrom(s => s.NameVehicle)).ReverseMap();
 
 
             //VehicleService

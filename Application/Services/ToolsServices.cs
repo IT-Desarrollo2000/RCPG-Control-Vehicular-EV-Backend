@@ -945,6 +945,45 @@ namespace Application.Services
 
         }
 
-        
+        public async Task<GenericResponse<List<GetServicesMaintenance>>> GetServiceMaintenance()
+        {
+            GenericResponse<List<GetServicesMaintenance>> response = new GenericResponse<List<GetServicesMaintenance>>();
+            var list = new List<GetServicesMaintenance>();
+            try
+            {
+                var Vehicle = await _unitOfWork.VehicleRepo.Get();
+                foreach (var TotalVehicle in Vehicle)
+                {
+                    var Maintenance = await _unitOfWork.VehicleMaintenanceRepo.Get(filter: v => v.VehicleId == TotalVehicle.Id && v.Status == VehicleServiceStatus.FINALIZADO);
+                    var Service = await _unitOfWork.VehicleServiceRepo.Get(filter: v => v.VehicleId == TotalVehicle.Id && v.Status == VehicleServiceStatus.FINALIZADO);
+
+                    var resultT = new GetServicesMaintenance()
+                    {
+                        VehicleId = TotalVehicle.Id,
+                        NameVehicle = TotalVehicle.Name,
+                        TotalService = Service.Count(),
+                        TotalMaintenance = Maintenance.Count(),
+
+                    };
+
+                    list.Add(resultT);
+
+                }
+
+                response.success = true;
+                response.Data = list;
+                return response;
+
+
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+
+                return response;
+            }
+        }
+
     }
 }
