@@ -414,6 +414,14 @@ namespace Application.Services
             GenericResponse<VehicleServiceDto> response = new GenericResponse<VehicleServiceDto>();
             var entidad = await _unitOfWork.VehicleServiceRepo.Get(filter: p => p.Id == Id);
             var result = entidad.FirstOrDefault();
+
+            if(result.Status == VehicleServiceStatus.EN_CURSO)
+            {
+                response.success = false;
+                response.AddError("Estatus invalido", "El estatus del servicio no permite su eliminación", 2);
+                return response;
+            }
+
             if (result == null)
             {
                 return null;

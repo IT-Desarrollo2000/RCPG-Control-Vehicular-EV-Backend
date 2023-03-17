@@ -7,6 +7,7 @@ using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
 using Domain.Entities.User_Approvals;
 using Microsoft.Extensions.Options;
+using System.Runtime.Intrinsics.Arm;
 
 namespace Application.Services
 {
@@ -124,14 +125,15 @@ namespace Application.Services
                 //Validar imagenes y Guardar las imagenes en el blobstorage
                 if (request.DriversLicenceFrontFile.ContentType.Contains("image") && request.DriversLicenceBackFile.ContentType.Contains("image"))
                 {
-                    
+
 
                     //Manipular el nombre de archivo
+                    Random rndm = new Random();
                     var uploadDate = DateTime.UtcNow;
                     string FileExtnFront = System.IO.Path.GetExtension(request.DriversLicenceFrontFile.FileName);
                     string FileExtnBack = System.IO.Path.GetExtension(request.DriversLicenceBackFile.FileName);
-                    var filePathFront = $"{request.ProfileId}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_LicenceFront{FileExtnFront}";
-                    var filePathBack = $"{request.ProfileId}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_LicenceBack{FileExtnBack}";
+                    var filePathFront = $"{request.ProfileId}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_LicenceFront{rndm.Next(1, 1000)}{FileExtnFront}";
+                    var filePathBack = $"{request.ProfileId}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_LicenceBack{rndm.Next(1, 1000)}{FileExtnBack}";
                     var uploadedUrlFront = await _blobStorageService.UploadFileToBlobAsync(request.DriversLicenceFrontFile, _azureBlobContainers.Value.DriverLicences, filePathFront);
                     var uploadedUrlBack = await _blobStorageService.UploadFileToBlobAsync(request.DriversLicenceBackFile, _azureBlobContainers.Value.DriverLicences, filePathBack);
 
