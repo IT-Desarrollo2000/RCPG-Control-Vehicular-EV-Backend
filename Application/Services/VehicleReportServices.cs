@@ -317,7 +317,7 @@ namespace Application.Services
 
                     if (resultD == null)
                     {
-                        response.success = true;
+                        response.success = false;
                         response.AddError("No existe reporte de uso", $"No existe reporte de uso con el Id {vehicleReportRequest.VehicleReportUseId} solicitado");
                         return response;
                     }

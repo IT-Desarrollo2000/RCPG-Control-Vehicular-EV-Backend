@@ -2,6 +2,11 @@
 {
     public class AuthResult
     {
+        public AuthResult()
+        {
+            Messages = new List<string>();
+            Errors = new List<string>();
+        }
         public string Token { get; set; }
         public DateTime? TokenExpiration { get; set; } = null;
         public string RefreshToken { get; set; }
