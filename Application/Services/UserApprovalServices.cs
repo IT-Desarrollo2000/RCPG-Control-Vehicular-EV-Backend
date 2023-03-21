@@ -209,7 +209,7 @@ namespace Application.Services
                     if(last.CreatedDate <= DateTime.UtcNow.AddHours(12) && last.Status == ApprovalStatus.RECHAZADO)
                     {
                         response.success = false;
-                        response.AddError("Reintar mas tarde", "Debe esperar un tiempo antes de reenviar una solicitud");
+                        response.AddError("Reintar mas tarde", "Debe esperar un tiempo antes de reenviar una solicitud", 3);
                         return response;
                     }
                 } 
