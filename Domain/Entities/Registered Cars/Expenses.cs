@@ -15,7 +15,9 @@
 
         public int? VehicleReportId { get; set; }
         public int? VehicleMaintenanceWorkshopId { get; set; }
-
+        public int? VehicleMaintenanceId { get; set; }
+        public string? Comment { get; set; }
+        public virtual VehicleMaintenance VehicleMaintenance { get; set; }
         public virtual VehicleReport? VehicleReport { get; set; }
         public virtual VehicleMaintenanceWorkshop? VehicleMaintenanceWorkshop { get; set; }
         public virtual ICollection<Vehicle> Vehicles { get; set; }
