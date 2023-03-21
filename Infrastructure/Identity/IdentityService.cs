@@ -89,7 +89,7 @@ namespace Infrastructure.Identity
                     {
                         "Usuario y/o contraseña incorrectos"
                     },
-                    ErrorCode = 1
+                    ErrorCode = 5
                 };
 
                 return response;
@@ -166,7 +166,7 @@ namespace Infrastructure.Identity
                             {
                                 "Usuario y/o contraseña incorrectos"
                             },
-                            ErrorCode = 5
+                            ErrorCode = 1
                         };
 
                         return response;

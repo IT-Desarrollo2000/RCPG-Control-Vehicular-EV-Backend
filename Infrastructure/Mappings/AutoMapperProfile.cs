@@ -65,7 +65,8 @@ namespace Infrastructure.Mappings
                 .ForMember(s => s.ServiceUserId, o => o.MapFrom(s => s.ServiceUserId));
             CreateMap<VehicleService, MaintenanceSpotlightDto>()
                 .ForMember(m => m.VehicleName, o => o.MapFrom(m => m.Vehicle.Name))
-                .ForMember(m => m.Type, o => o.MapFrom(m => m.TypeService));
+                .ForMember(m => m.Type, o => o.MapFrom(m => m.TypeService))
+                .ForMember(m => m.CurrentKM, o => o.MapFrom(m => m.Vehicle.CurrentKM));
             CreateMap<VehicleServiceUpdateRequest, VehicleService>();
             CreateMap<VehicleServiceFinishRequest, VehicleService>();
             CreateMap<VehicleServiceCanceledRequest, VehicleService>();
@@ -73,7 +74,8 @@ namespace Infrastructure.Mappings
                 .ForMember(s => s.VehicleName, o => o.MapFrom(s => s.Vehicle.Name))
                 .ForMember(s => s.Type, o => o.MapFrom(s => s.TypeService))
                 .ForMember(s => s.ServicePeriodMonths, o => o.MapFrom(s => s.Vehicle.ServicePeriodMonths))
-                .ForMember(s => s.ServicePeriodKM, o => o.MapFrom(s => s.Vehicle.ServicePeriodKM));
+                .ForMember(s => s.ServicePeriodKM, o => o.MapFrom(s => s.Vehicle.ServicePeriodKM))
+                .ForMember(m => m.CurrentKM, o => o.MapFrom(m => m.Vehicle.CurrentKM));
 
             //Checklist
             CreateMap<Checklist, ChecklistDto>().ReverseMap();

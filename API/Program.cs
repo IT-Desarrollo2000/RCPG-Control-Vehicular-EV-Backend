@@ -1,7 +1,9 @@
 using Application;
+using Application.Services;
 using Domain.Entities.Identity;
 using Infrastructure;
 using Infrastructure.Persistence;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
@@ -54,7 +56,8 @@ try
 {
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-    await Seed.SeedUsers(userManager, roleManager);
+    var unitOfWork = services.GetRequiredService<UnitOfWork>();
+    await Seed.SeedUsers(userManager, roleManager, unitOfWork);
 }
 catch (Exception ex)
 {

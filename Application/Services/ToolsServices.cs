@@ -245,6 +245,7 @@ namespace Application.Services
                                 dto.StatusName = "OK";
                                 dto.StatusColor = "#3ee80b";
                                 dto.AlertType = StopLightAlert.VERDE;
+                                dto.LastServiceId = lastServices.Id;
                                 dtos.Add(dto);
                                 break;
                             case double d when d >= 15 && d <= 30:
@@ -253,6 +254,7 @@ namespace Application.Services
                                 dtoyellow.StatusName = "ATENCIÓN";
                                 dtoyellow.StatusColor = "#f3d132";
                                 dtoyellow.AlertType = StopLightAlert.AMARILLO;
+                                dtoyellow.LastServiceId = lastServices.Id;
                                 dtos.Add(dtoyellow);
                                 break;
                             case double d when d >= 5 && d < 15:
@@ -261,6 +263,7 @@ namespace Application.Services
                                 dtogreen.StatusName = "ATENCIÓN!!";
                                 dtogreen.StatusColor = "#efbc38";
                                 dtogreen.AlertType= StopLightAlert.NARANJA;
+                                dtogreen.LastServiceId = lastServices.Id;
                                 dtos.Add(dtogreen);
                                 break;
                             case double d when d < 5:
@@ -269,6 +272,7 @@ namespace Application.Services
                                 dtored.StatusName = "SERVICIO NECESARIO!!";
                                 dtored.StatusColor = "#e41212";
                                 dtored.AlertType = StopLightAlert.ROJO;
+                                dtored.LastServiceId = lastServices.Id;
                                 dtos.Add(dtored);
                                 break;
                         }
@@ -360,7 +364,7 @@ namespace Application.Services
             GenericResponse<List<GetVehicleActiveDto>> response = new GenericResponse<List<GetVehicleActiveDto>>();
             try
             {
-                var VehicleA = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == Domain.Enums.ReportUseType.ViajeNormal, includeProperties: "Vehicle,UserProfile,Destinations");
+                var VehicleA = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == ReportUseType.ViajeNormal || status.StatusReportUse == ReportUseType.ViajeRapido, includeProperties: "Vehicle,UserProfile,Destinations");
                 if (VehicleA == null)
                 {
                     response.success = false;
