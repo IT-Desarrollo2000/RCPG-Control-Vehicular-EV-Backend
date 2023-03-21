@@ -19,6 +19,7 @@ namespace Domain.DTOs.Requests
         public DateTime ExpenseDate { get; set; }
         public List<IFormFile> Attachments { get; set; }
         public int? VehicleReportId { get; set; }
+        public string? Comment { get; set; }
 
     }
 

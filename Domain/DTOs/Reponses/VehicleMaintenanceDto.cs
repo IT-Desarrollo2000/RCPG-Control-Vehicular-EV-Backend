@@ -9,6 +9,7 @@ namespace Domain.DTOs.Reponses
         public VehicleMaintenanceDto()
         {
             MaintenanceProgress = new List<MaintenanceProgressDto>();
+            ExpenseId = new List<int?>();
         }
         public int Id { get; set; }
         public string ReasonForMaintenance { get; set; }
@@ -34,8 +35,8 @@ namespace Domain.DTOs.Reponses
         public VehicleReportSlimDto Report { get; set; }
         public List<MaintenanceProgressDto> MaintenanceProgress { get; set; }
 
-        public int? ExpenseId { get; set; }
-        public ExpensesDto? Expense { get; set; }
+        public List<int?> ExpenseId { get; set; }
+        public ICollection<Expenses> Expenses { get; set; }
 
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }

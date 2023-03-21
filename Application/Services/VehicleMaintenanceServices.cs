@@ -120,7 +120,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleMaintenanceDto>> GetVehicleMaintenanceById(int Id)
         {
             GenericResponse<VehicleMaintenanceDto> response = new GenericResponse<VehicleMaintenanceDto>();
-            var profile = await _unitOfWork.VehicleMaintenanceRepo.Get(filter: p => p.Id == Id, includeProperties: "Expense,Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress,MaintenanceProgress.ProgressImages,MaintenanceProgress.AdminUser,MaintenanceProgress.MobileUser");
+            var profile = await _unitOfWork.VehicleMaintenanceRepo.Get(filter: p => p.Id == Id, includeProperties: "Expenses,Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress,MaintenanceProgress.ProgressImages,MaintenanceProgress.AdminUser,MaintenanceProgress.MobileUser");
             var result = profile.FirstOrDefault();
             if(result == null)
             {
@@ -136,6 +136,7 @@ namespace Application.Services
         }
 
         //INICIAR MTTO
+
         public async Task<GenericResponse<VehicleMaintenanceDto>> InitiateMaintenance(VehicleMaintenanceRequest request)
         {
            GenericResponse<VehicleMaintenanceDto> response = new GenericResponse<VehicleMaintenanceDto>();
@@ -253,18 +254,32 @@ namespace Application.Services
                     return response;
                 }
 
-                //Verificar el gasto
-                if (request.ExpenseId.HasValue)
+                foreach ( var ex in request.ExpenseId)
                 {
-                    var expense = await _unitOfWork.ExpensesRepo.GetById(request.ExpenseId.Value);
-                    if(expense == null)
+                    //Verificar el gasto
+                    if (ex.HasValue)
                     {
-                        response.success = false;
-                        response.AddError("Gasto invalido", "El gasto especificado no existe", 4);
-                        return response;
+                        var expense = await _unitOfWork.ExpensesRepo.GetById(ex.Value);
+                        if (expense == null)
+                        {
+                            response.success = false;
+                            response.AddError("Gasto invalido", "El gasto especificado no existe", 4);
+                            return response;
+                        }
+
+                        var consultE = await _unitOfWork.ExpensesRepo.Get(filter: x => x.Id == ex.Value);
+                        var resultE = consultE.FirstOrDefault();
+                        foreach (var co in consultE )
+                        {
+                            co.VehicleMaintenanceId = maintenance.Id;
+                            await _unitOfWork.ExpensesRepo.Update(co);
+                            await _unitOfWork.SaveChangesAsync();
+
+                        }
+
+
                     }
 
-                    maintenance.ExpenseId = expense.Id;
                 }
 
                 //Mapear Elementos
@@ -380,7 +395,7 @@ namespace Application.Services
                         return response;
                     }
 
-                    maintenance.ExpenseId = expense.Id;
+                   // maintenance.ExpenseId = expense.Id;
                 }
 
                 //Aplicar cambios
@@ -500,6 +515,36 @@ namespace Application.Services
                     response.AddError("Usuario no especificado", "Debe especificar un usuario de Admin o un conductor", 4);
                     return response;
                 }
+
+                foreach ( var ex in request.ExpenseId)
+                {
+                    //verificar el gasto
+                    if (ex.HasValue)
+                    {
+                        var expense = await _unitOfWork.ExpensesRepo.GetById(ex.Value);
+                        if (expense == null)
+                        {
+                            response.success = false;
+                            response.AddError("Gasto invalido", "El gasto especificado no existe", 4);
+                            return response;
+                        }
+
+                        var consultE = await _unitOfWork.ExpensesRepo.Get(filter: x => x.Id == ex.Value);
+                        var resultE = consultE.FirstOrDefault();
+                        foreach (var co in consultE)
+                        {
+                            co.VehicleMaintenanceId = maintenance.Id;
+                            await _unitOfWork.ExpensesRepo.Update(co);
+                            await _unitOfWork.SaveChangesAsync();
+
+                        }
+
+
+                    }
+
+                }
+
+
 
                 //Mapear los datos
                 var newProgress = _mapper.Map<MaintenanceProgress>(request);

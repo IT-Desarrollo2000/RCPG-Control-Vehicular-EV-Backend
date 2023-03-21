@@ -222,6 +222,8 @@ namespace Application.Services
                     expenses.VehicleReportId = report.Id;
                 }
 
+                expenses.Comment = expensesRequest.Comment;
+
                 await _unitOfWork.ExpensesRepo.Update(expenses);
                 await _unitOfWork.SaveChangesAsync();
                 response.success = true;
