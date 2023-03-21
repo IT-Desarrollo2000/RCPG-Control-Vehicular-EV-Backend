@@ -41,7 +41,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses";
+            string properties = "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses,Expenses.PhotosOfSpending";
             IEnumerable<VehicleReport> userApprovals = null;
             Expression<Func<VehicleReport, bool>> Query = null;
 
@@ -193,7 +193,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleReportDto>> GetVehicleReportById(int Id)
         {
             GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
-            var profile = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses");
+            var profile = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses,Expenses.PhotosOfSpending");
             var result = profile.FirstOrDefault();
             var VehicleReportDto = _mapper.Map<VehicleReportDto>(result);
             response.success = true;
@@ -202,7 +202,7 @@ namespace Application.Services
         }
 
         //POST 
-        public async Task<GenericResponse<VehicleReportDto>> PostVehicleReport(VehicleReportRequest vehicleReportRequest)
+        public async Task<GenericResponse<VehicleReportDto>> PostVehicleReport(VehicleReportRequest vehicleReportRequest) 
         {
             GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
             try
@@ -262,7 +262,7 @@ namespace Application.Services
                     if (!vehicleReportRequest.GasolineLoadAmount.HasValue)
                     {
                         response.success = false;
-                        response.AddError("Es necesario un valor existente Litros", $"Para el tipo de Carga de Gasolina, es necesario un valor para la carga de Litros", 1);
+                        response.AddError("Es necesario un valor existente Litros", $"Para el tipo de Carga de Gasolina, es necesario un valor para la carga de Litros", 2);
                         return response;
                     }
 
@@ -283,20 +283,6 @@ namespace Application.Services
                     //Verificar que exista el tipo de gasto
                     var existetypeOfExpenses = await _unitOfWork.TypesOfExpensesRepo.Get(v => v.Name == "Carga_Gasolina");
                     var resultType = existetypeOfExpenses.FirstOrDefault();
-                    TypesOfExpenses expenseFuel = null;
-
-                    if (resultType == null)
-                    {
-                        var typesOfExpensesRequest = new TypesOfExpenses()
-                        {
-                            Name = "Carga_Gasolina",
-                            Description = "Gasto Creado Por Reporte de Gasolina"
-                        };
-
-
-                        expenseFuel = _mapper.Map<TypesOfExpenses>(typesOfExpensesRequest);
-                        await _unitOfWork.TypesOfExpensesRepo.Add(expenseFuel);
-                    }
 
                     //se crea gastos
                     expensesRequest = new Expenses()
@@ -317,8 +303,8 @@ namespace Application.Services
 
                     if (resultD == null)
                     {
-                        response.success = true;
-                        response.AddError("No existe reporte de uso", $"No existe reporte de uso con el Id {vehicleReportRequest.VehicleReportUseId} solicitado");
+                        response.success = false;
+                        response.AddError("No existe reporte de uso", $"No existe reporte de uso con el Id {vehicleReportRequest.VehicleReportUseId} solicitado",3);
                         return response;
                     }
                 }
@@ -341,7 +327,7 @@ namespace Application.Services
                     if (expense == null)
                     {
                         response.success = false;
-                        response.AddError("Gasto no existe", $"El Id de gasto {expenseId} no existe");
+                        response.AddError("Gasto no existe", $"El Id de gasto {expenseId} no existe", 4);
                     }
                     entidadR.Expenses.Add(expense);
                 }
@@ -379,7 +365,7 @@ namespace Application.Services
                     else
                     {
                         response.success = false;
-                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 5);
 
                         return response;
                     }

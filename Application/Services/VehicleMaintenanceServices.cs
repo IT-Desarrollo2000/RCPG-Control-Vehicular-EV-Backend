@@ -454,6 +454,14 @@ namespace Application.Services
             {
                 var entidad = await _unitOfWork.VehicleMaintenanceRepo.Get(filter: p => p.Id == Id);
                 var result = entidad.FirstOrDefault();
+
+                if(result.Status == VehicleServiceStatus.EN_CURSO)
+                {
+                    response.success = false;
+                    response.AddError("Estatus invalido", "El estatus del mantenimiento no permite su eliminación", 3);
+                    return response;
+                }
+
                 if (result == null)
                 {
                     response.success = false;

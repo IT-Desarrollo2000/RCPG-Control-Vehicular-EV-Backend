@@ -66,7 +66,7 @@ namespace API.Controllers
             return Ok(approval);
         }
 
-        [Authorize(Roles = "Administrator, AdminUser")]
+        [Authorize(Roles = "Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<UserApproval>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]

@@ -14,6 +14,7 @@ namespace Domain.DTOs.Reponses
         public string UserName { get; set; }
         public int TripNumber { get; set; }
         public string? error { get; set; }
+        public string? ProfileImageURL { get; set; }
     }
 
 }
