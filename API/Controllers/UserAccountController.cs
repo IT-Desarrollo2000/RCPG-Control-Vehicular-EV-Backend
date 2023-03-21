@@ -220,6 +220,9 @@ namespace API.Controllers
             }
             else
             {
+                var token = await _tokenService.CreateToken(existingUser);
+                isCorrect.Token = token.Token;
+                isCorrect.RefreshToken = token.RefreshToken;
                 return BadRequest(isCorrect);
             }
         }

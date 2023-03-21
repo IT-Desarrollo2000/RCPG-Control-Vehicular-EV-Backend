@@ -73,14 +73,42 @@ namespace Application.Services
         public async Task<GenericResponse<TypesOfExpenses>> DeleteTypeOfExpenses(int id)
         {
             GenericResponse<TypesOfExpenses> response = new GenericResponse<TypesOfExpenses>();
-            var type = await _unitOfWork.TypesOfExpensesRepo.GetById(id);
-            if (type == null) return null;
-            var exists = await _unitOfWork.TypesOfExpensesRepo.Delete(id);
-            await _unitOfWork.SaveChangesAsync();
-            var typedto = _mapper.Map<TypesOfExpenses>(type);
-            response.success = true;
-            response.Data = typedto;
-            return response;
+            try
+            {
+                var type = await _unitOfWork.TypesOfExpensesRepo.GetById(id);
+                if (type == null) return null;
+
+                switch (type.Name)
+                {
+                    case "Carga_Gasolina":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
+                        response.success = false;
+                        return response;
+                    case "Mantenimiento_Correctivo":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
+                        response.success = false;
+                        return response;
+                    case "Mantenimiento_Preventivo":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
+                        response.success = false;
+                        return response;
+                    default:
+                        break;
+                }
+
+                var exists = await _unitOfWork.TypesOfExpensesRepo.Delete(id);
+                await _unitOfWork.SaveChangesAsync();
+                var typedto = _mapper.Map<TypesOfExpenses>(type);
+                response.success = true;
+                response.Data = typedto;
+                return response;
+            } 
+            catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
         }
 
     }

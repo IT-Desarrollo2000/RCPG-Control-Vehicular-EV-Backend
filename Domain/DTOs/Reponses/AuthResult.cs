@@ -14,5 +14,6 @@
         public int? UserProfileId { get; set; }
         public List<string> Messages { get; set; } = null;
         public List<string> Errors { get; set; } = null;
+        public int? ErrorCode { get; set; } = 0;
     }
 }
