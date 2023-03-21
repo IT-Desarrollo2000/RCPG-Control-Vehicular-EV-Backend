@@ -621,6 +621,8 @@ namespace Application.Services
                 {
                     foreach (var Enteros in listTotalPerfomanceDto.VehicleId)
                     {
+                        
+
                         var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == Domain.Enums.ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros, includeProperties: "Vehicle,VehicleReportUses,Vehicle.VehicleImages");
 
                         var listt = new List<GraphicsPerfomanceDto>();
@@ -720,6 +722,11 @@ namespace Application.Services
                 } 
                 else
                 {
+                    if ( listTotalPerfomanceDto.VehicleId.Count == 0)
+                    {
+
+
+                    }
                     var vehicles = await _unitOfWork.VehicleRepo.Get(v => v.VehicleStatus != VehicleStatus.INACTIVO);
                     foreach (var Enteros in vehicles.ToList())
                     {

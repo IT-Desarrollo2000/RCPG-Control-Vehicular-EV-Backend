@@ -27,6 +27,12 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(m => m.VehicleMaintenanceWorkshopId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(m => m.VehicleMaintenance)
+                .WithMany(ms => ms.Expenses)
+                .HasForeignKey(m => m.VehicleMaintenanceId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.Property(v => v.Cost).HasColumnType("decimal(18,2)");
         }
     }

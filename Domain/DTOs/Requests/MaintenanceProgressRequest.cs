@@ -16,6 +16,7 @@ namespace Domain.DTOs.Requests
         public MaintenanceProgressRequest()
         {
             Images = new List<IFormFile>();
+            ExpenseId = new List<int?>();
         }
         [Required]
         public int VehicleMaintenanceId { get; set; }
@@ -23,6 +24,7 @@ namespace Domain.DTOs.Requests
         public string Comment { get; set; }
         public int? MobileUserId { get; set; }
         public int? AdminUserId { get; set; }
+        public List<int?> ExpenseId { get; set; }
         public List<IFormFile> Images { get; set; }
     }
 }

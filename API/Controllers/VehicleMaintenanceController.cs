@@ -67,7 +67,7 @@ namespace API.Controllers
         }
 
         //POST
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
@@ -79,7 +79,7 @@ namespace API.Controllers
         }
 
         //FINALIZE
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+       // [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
@@ -127,7 +127,7 @@ namespace API.Controllers
         }
 
         //ADD PROGRESS
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+       // [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(MaintenanceProgressDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
