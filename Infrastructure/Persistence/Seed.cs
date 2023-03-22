@@ -1,4 +1,5 @@
-﻿using Application.Services;
+﻿using Application.Interfaces;
+using Application.Services;
 using Domain.Entities.Identity;
 using Domain.Entities.Registered_Cars;
 using Infrastructure.Repositories;
@@ -9,10 +10,10 @@ namespace Infrastructure.Persistence
 {
     public class Seed
     {
-        public static async Task SeedUsers(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, UnitOfWork unitOfWork)
+        public static async Task SeedUsers(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, IUnitOfWork unitOfWork)
         {
             //SI HAY USUARIOS ACTIVOS EL SEED NO CORRE, COMENTAR CREACION DE SUPER ADMIN PARA CORRER EL SEED CON ROLES EXTRA
-            if (await userManager.Users.AnyAsync(x => x.UserName == "CVAdmin")) return;
+             if (await userManager.Users.AnyAsync(x => x.UserName == "CVAdmin")) return;
 
             var user = new AppUser()
             {
@@ -83,6 +84,7 @@ namespace Infrastructure.Persistence
 
                 await unitOfWork.TypesOfExpensesRepo.Add(newType);
             }
+            await unitOfWork.SaveChangesAsync();
         }
     }
 }

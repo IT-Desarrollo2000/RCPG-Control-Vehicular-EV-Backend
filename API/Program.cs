@@ -1,4 +1,5 @@
 using Application;
+using Application.Interfaces;
 using Application.Services;
 using Domain.Entities.Identity;
 using Infrastructure;
@@ -56,7 +57,7 @@ try
 {
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-    var unitOfWork = services.GetRequiredService<UnitOfWork>();
+    var unitOfWork = services.GetRequiredService<IUnitOfWork>();
     await Seed.SeedUsers(userManager, roleManager, unitOfWork);
 }
 catch (Exception ex)

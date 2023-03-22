@@ -24,8 +24,8 @@ namespace Infrastructure.Persistence.Configurations
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(s => s.Expense)
-                .WithMany()
-                .HasForeignKey(s => s.ExpenseId)
+                .WithOne(m => m.VehicleService)
+                .HasForeignKey<Expenses>(e => e.VehicleServiceId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

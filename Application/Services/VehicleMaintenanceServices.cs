@@ -45,12 +45,6 @@ namespace Application.Services
             string properties = "Expenses,Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress,MaintenanceProgress.ProgressImages,MaintenanceProgress.AdminUser,MaintenanceProgress.MobileUser";
             IEnumerable<VehicleMaintenance> maintenances = null;
             Expression<Func<VehicleMaintenance, bool>> Query = null;
-            var List = new List<VehicleMaintenanceDto>();
-            var Vehicle = new UnrelatedVehiclesDto();
-            var workshop = new MaintenanceWorkShopSlimDto();
-            var report = new VehicleReportSlimDto();
-            var main = new List<MaintenanceProgressDto>();
-            var exp = new List<ExpensesDto>();
 
             if (filter.VehicleId.HasValue)
             {
@@ -109,94 +103,54 @@ namespace Application.Services
             if (Query != null)
             {
                 maintenances = await _unitOfWork.VehicleMaintenanceRepo.Get(filter: Query, includeProperties: properties);
-                var resultm = maintenances.FirstOrDefault();
-                foreach (var ma in maintenances)
-                {
-                    var expense = await _unitOfWork.ExpensesRepo.Get(filter: expense => expense.VehicleMaintenanceId == ma.Id);
-                    var resultexpense = expense.FirstOrDefault();
-
-                    decimal suma = 0;
-                    foreach (var sum in expense)
-                    {
-                        suma += sum.Cost;
-                    }
-
-                    var Main = new VehicleMaintenanceDto()
-                    {
-                        Id = ma.Id,
-                        ReasonForMaintenance = ma.ReasonForMaintenance,
-                        MaintenanceDate = ma.MaintenanceDate,
-                        Status = ma.Status,
-                        Comment = ma.Comment,
-                        InitialMileage = ma.InitialMileage,
-                        InitialFuel = ma.InitialFuel,
-                        FinalMileage = ma.FinalMileage,
-                        FinalFuel = ma.FinalFuel,
-                        VehicleId = ma.VehicleId,
-                        Vehicle = Vehicle,
-                        WorkShopId = ma.WorkShopId,
-                        WorkShop = workshop,
-                        ApprovedByUserId = ma.ApprovedByUserId,
-                        ApprovedByAdminName = ma.ApprovedByUser.FullName,
-                        ReportId = ma.ReportId,
-                        TotalExpense = suma,
-                        Report = report,
-                        MaintenanceProgress = main,
-                        Expenses = exp,
-
-                    };
-                    List.Add(Main);
-
-                }
             }
             else
             {
                 maintenances = await _unitOfWork.VehicleMaintenanceRepo.Get(includeProperties: properties);
-                var resultm = maintenances.FirstOrDefault();
-                foreach (var ma in maintenances)
-                {
-                    var expense = await _unitOfWork.ExpensesRepo.Get(filter: expense => expense.VehicleMaintenanceId == ma.Id);
-                    var resultexpense = expense.FirstOrDefault();
-
-                    decimal suma = 0;
-                    foreach (var sum in expense)
-                    {
-                        suma += sum.Cost;
-                    }
-
-                    var Main = new VehicleMaintenanceDto()
-                    {
-                        Id = ma.Id,
-                        ReasonForMaintenance = ma.ReasonForMaintenance,
-                        MaintenanceDate = ma.MaintenanceDate,
-                        Status = ma.Status,
-                        Comment = ma.Comment,
-                        InitialMileage = ma.InitialMileage,
-                        InitialFuel = ma.InitialFuel,
-                        FinalMileage = ma.FinalMileage,
-                        FinalFuel = ma.FinalFuel,
-                        VehicleId = ma.VehicleId,
-                        Vehicle = Vehicle,
-                        WorkShopId = ma.WorkShopId,
-                        WorkShop = workshop,
-                        ApprovedByUserId = ma.ApprovedByUserId,
-                        ApprovedByAdminName = ma.ApprovedByUser.FullName,
-                        ReportId = ma.ReportId,
-                        TotalExpense = suma,
-                        Report = report,
-                        MaintenanceProgress = main,
-                        Expenses = exp,
-
-                    };
-                    List.Add(Main);
-                }
             }
 
-            var dtos = _mapper.Map<IEnumerable<VehicleMaintenanceDto>>(List);
+            var dtos = _mapper.Map<IEnumerable<VehicleMaintenanceDto>>(maintenances);
             var pagedApprovals = PagedList<VehicleMaintenanceDto>.Create(dtos, filter.PageNumber, filter.PageSize);
 
             return pagedApprovals;
 
+        }
+
+        public async Task<GenericResponse<MaintenanceExpenseSummaryDto>> GetMaintenanceExpenseSummary(int MaintenanceId)
+        {
+            GenericResponse<MaintenanceExpenseSummaryDto> response = new GenericResponse<MaintenanceExpenseSummaryDto>();
+            try
+            {
+                //Respuesta 
+                var summary = new MaintenanceExpenseSummaryDto();
+
+                //Obtener todos los gastos
+                var expenses = await _unitOfWork.ExpensesRepo.Get(e => e.VehicleMaintenanceId == MaintenanceId);
+
+                //Realizar sumatoria
+                decimal expenseTotal = 0;
+                foreach(var expense in expenses)
+                {
+                    expenseTotal += expense.Cost;
+                }
+
+                //Asignar los datos
+                summary.MaintenanceId = MaintenanceId;
+                summary.ExpenseTotal = expenseTotal;
+                summary.ExpensesSummary = _mapper.Map<List<ExpenseSummary>>(expenses);
+
+                response.success = true;
+                response.Data = summary;
+
+                return response;
+
+            } 
+            catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
         }
 
         //GETBYID
@@ -247,7 +201,6 @@ namespace Application.Services
                 ApprovedByUserId = result.ApprovedByUserId,
                 ApprovedByAdminName = result.ApprovedByUser.FullName,
                 ReportId = result.ReportId,
-                TotalExpense = suma,
                 Report = report,
                 MaintenanceProgress = main,
                 Expenses = exp,
@@ -664,13 +617,8 @@ namespace Application.Services
                             await _unitOfWork.SaveChangesAsync();
 
                         }
-
-
                     }
-
                 }
-
-
 
                 //Mapear los datos
                 var newProgress = _mapper.Map<MaintenanceProgress>(request);
