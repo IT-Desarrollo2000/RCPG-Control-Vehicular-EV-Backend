@@ -972,12 +972,23 @@ namespace Application.Services
 
                 var dto = new ServicesMaintenanceDto()
                 {
-                    VehicleId = vehicleId,
-                    LastMaintenanceDate = maintenanceQuery.LastOrDefault().CreatedDate,
-                    LastMaintenanceId = maintenanceQuery.LastOrDefault().Id,
-                    LastServiceDate = serviceQuery.LastOrDefault().CreatedDate,
-                    LastServiceId = serviceQuery.LastOrDefault().Id
+                    VehicleId = vehicleId
                 };
+
+                var lastMan = maintenanceQuery.LastOrDefault();
+                var lastServ = serviceQuery.LastOrDefault();
+
+                if(lastMan != null)
+                {
+                    dto.LastMaintenanceDate = lastMan.MaintenanceDate;
+                    dto.LastMaintenanceId = lastMan.Id;
+                }
+
+                if(lastServ != null)
+                {
+                    dto.LastServiceDate = lastServ.CreatedDate;
+                    dto.LastServiceId = lastServ.Id;
+                }
 
                 response.success = true;
                 response.Data = dto;
