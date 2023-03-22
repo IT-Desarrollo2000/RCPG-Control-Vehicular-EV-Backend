@@ -198,5 +198,16 @@ namespace API.Controllers
             var result = await _registeredVehiclesServices.ReactivateVehicle(VehicleId);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("Maintenances/{VehicleId:int}")]
+        public async Task<IActionResult> GetLastMaintenances(int VehicleId)
+        {
+            var result = await _registeredVehiclesServices.GetLatestMaintenanceDto(VehicleId);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
     }
 }

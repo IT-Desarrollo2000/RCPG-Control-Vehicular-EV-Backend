@@ -585,6 +585,9 @@ namespace Application.Services
                     veh.AssignedDepartments.Add(exists);
                 }
 
+                veh.FuelCardNumber = request.FuelCardNumber ?? veh.FuelCardNumber;
+                veh.VehicleResponsibleName = request.VehicleResponsibleName ?? veh.VehicleResponsibleName;
+
                 await _unitOfWork.VehicleRepo.Update(veh);
                 await _unitOfWork.SaveChangesAsync();
                 response.success = true;
@@ -952,6 +955,36 @@ namespace Application.Services
                 return response;
             }
             catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<ServicesMaintenanceDto>> GetLatestMaintenanceDto(int vehicleId)
+        {
+            GenericResponse<ServicesMaintenanceDto> response = new GenericResponse<ServicesMaintenanceDto>();
+            try
+            {
+                var serviceQuery = await _unitOfWork.VehicleServiceRepo.Get(filter: s => s.VehicleId == vehicleId && s.Status == VehicleServiceStatus.FINALIZADO);
+                var maintenanceQuery = await _unitOfWork.VehicleMaintenanceRepo.Get(filter: m => m.VehicleId == vehicleId && m.Status == VehicleServiceStatus.FINALIZADO);
+
+                var dto = new ServicesMaintenanceDto()
+                {
+                    VehicleId = vehicleId,
+                    LastMaintenanceDate = maintenanceQuery.LastOrDefault().CreatedDate,
+                    LastMaintenanceId = maintenanceQuery.LastOrDefault().Id,
+                    LastServiceDate = serviceQuery.LastOrDefault().CreatedDate,
+                    LastServiceId = serviceQuery.LastOrDefault().Id
+                };
+
+                response.success = true;
+                response.Data = dto;
+
+                return response;
+            }
+            catch(Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);

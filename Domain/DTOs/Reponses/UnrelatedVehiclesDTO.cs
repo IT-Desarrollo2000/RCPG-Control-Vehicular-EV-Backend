@@ -25,5 +25,7 @@ namespace Domain.DTOs.Reponses
         public decimal DesiredPerformance { get; set; }
         public string VehicleQRId { get; set; }
         public string? VehicleObservation { get; set; }
+        public string? FuelCardNumber { get; set; }
+        public string? VehicleResponsibleName { get; set; }
     }
 }
