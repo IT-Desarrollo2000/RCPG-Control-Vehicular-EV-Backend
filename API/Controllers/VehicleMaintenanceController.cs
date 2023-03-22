@@ -23,7 +23,7 @@ namespace API.Controllers
         }
 
         //GETALL
-        [Authorize(Roles = "Administrator, AdminUser, Supervisor")]
+       // [Authorize(Roles = "Administrator, AdminUser, Supervisor")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
