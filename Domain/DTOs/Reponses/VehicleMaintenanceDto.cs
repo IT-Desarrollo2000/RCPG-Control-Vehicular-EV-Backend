@@ -32,7 +32,6 @@ namespace Domain.DTOs.Reponses
         public string? ApprovedByAdminName { get; set; }
 
         public int? ReportId { get; set; }
-        public decimal TotalExpense { get; set; }
 
         public VehicleReportSlimDto Report { get; set; }
         public List<MaintenanceProgressDto> MaintenanceProgress { get; set; }

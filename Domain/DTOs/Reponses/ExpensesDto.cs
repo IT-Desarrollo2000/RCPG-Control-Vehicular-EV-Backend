@@ -21,6 +21,8 @@ namespace Domain.DTOs.Reponses
         public MaintenanceWorkshopDto? VehicleMaintenanceWorkshop { get; set; }
         public List<PhotosOfSpendingDto> PhotosOfSpending { get; set; }
         public VehicleReportDto VehicleReport { get; set; }
+        public int? VehicleMaintenanceId { get; set; }
+        public int? VehicleServiceId { get; set; }
         public string? Comment { get; set; }
     }
 }
