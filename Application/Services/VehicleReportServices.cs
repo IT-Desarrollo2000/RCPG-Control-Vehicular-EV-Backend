@@ -293,6 +293,8 @@ namespace Application.Services
                         ERPFolio = Guid.NewGuid().ToString()
                     };
                     expensesRequest.Vehicles.Add(vehicleExists);
+                    vehicleExists.CurrentKM = vehicleReportRequest.GasolineCurrentKM.Value;
+                    await _unitOfWork.VehicleRepo.Update(vehicleExists);
                 }
 
                 //Verificar si se agregara a un reporte de uso

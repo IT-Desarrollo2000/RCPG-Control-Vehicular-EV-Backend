@@ -105,6 +105,7 @@ namespace Infrastructure.Mappings
             CreateMap<VehicleMaintenanceRequest, VehicleMaintenanceDto>().ReverseMap();
             CreateMap<VehicleMaintenance, VehicleMaintenanceDto>()
                 .ForMember(m => m.ApprovedByAdminName, o => o.MapFrom(m => m.ApprovedByUser.UserName));
+            CreateMap<Expenses, ExpenseSummary>();
 
             //MaintenanceWorkshops
             CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopRequest>().ReverseMap();

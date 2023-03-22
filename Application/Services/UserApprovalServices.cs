@@ -206,7 +206,7 @@ namespace Application.Services
                 //Verificar fecha de ultima solicitud
                 if(last != null)
                 {
-                    if(last.CreatedDate <= DateTime.UtcNow.AddHours(12) && last.Status == ApprovalStatus.RECHAZADO)
+                    if(last.CreatedDate <= DateTime.UtcNow.AddMinutes(15) && last.Status == ApprovalStatus.RECHAZADO)
                     {
                         response.success = false;
                         response.AddError("Reintar mas tarde", "Debe esperar un tiempo antes de reenviar una solicitud", 3);
