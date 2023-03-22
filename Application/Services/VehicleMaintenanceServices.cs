@@ -116,6 +116,7 @@ namespace Application.Services
 
         }
 
+        //Obtener resumen de gastos
         public async Task<GenericResponse<MaintenanceExpenseSummaryDto>> GetMaintenanceExpenseSummary(int MaintenanceId)
         {
             GenericResponse<MaintenanceExpenseSummaryDto> response = new GenericResponse<MaintenanceExpenseSummaryDto>();
@@ -331,34 +332,6 @@ namespace Application.Services
                     response.success = false;
                     response.AddError("Estatus invalido", "El estatus del mantenmiento no permite su modificación", 3);
                     return response;
-                }
-
-                foreach ( var ex in request.ExpenseId)
-                {
-                    //Verificar el gasto
-                    if (ex.HasValue)
-                    {
-                        var expense = await _unitOfWork.ExpensesRepo.GetById(ex.Value);
-                        if (expense == null)
-                        {
-                            response.success = false;
-                            response.AddError("Gasto invalido", "El gasto especificado no existe", 4);
-                            return response;
-                        }
-
-                        var consultE = await _unitOfWork.ExpensesRepo.Get(filter: x => x.Id == ex.Value);
-                        var resultE = consultE.FirstOrDefault();
-                        foreach (var co in consultE )
-                        {
-                            co.VehicleMaintenanceId = maintenance.Id;
-                            await _unitOfWork.ExpensesRepo.Update(co);
-                            await _unitOfWork.SaveChangesAsync();
-
-                        }
-
-
-                    }
-
                 }
 
                 //Mapear Elementos

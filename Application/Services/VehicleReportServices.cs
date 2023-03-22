@@ -49,9 +49,9 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.ReportType >= filter.ReportType.Value);
+                    Query = Query.And(p => p.ReportType == filter.ReportType.Value);
                 }
-                else { Query = p => p.ReportType >= filter.ReportType.Value; }
+                else { Query = p => p.ReportType == filter.ReportType.Value; }
             }
 
             if (filter.VehicleId.HasValue)
@@ -140,9 +140,9 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.ReportStatus >= filter.ReportStatus.Value);
+                    Query = Query.And(p => p.ReportStatus == filter.ReportStatus.Value);
                 }
-                else { Query = p => p.ReportStatus >= filter.ReportStatus.Value; }
+                else { Query = p => p.ReportStatus == filter.ReportStatus.Value; }
             }
 
             if (filter.VehicleReportUseId.HasValue)
