@@ -59,15 +59,6 @@ namespace Application.Services
                 else { Query = p => p.WorkShopId >= filter.WorkShopId.Value; }
             }
 
-            if (filter.ServiceUserId.HasValue)
-            {
-                if (Query != null)
-                {
-                    Query = Query.And(p => p.ServiceUserId >= filter.ServiceUserId.Value);
-                }
-                else { Query = p => p.ServiceUserId >= filter.ServiceUserId.Value; }
-            }
-
             if (filter.VehicleId.HasValue)
             {
                 if (Query != null)
@@ -77,24 +68,25 @@ namespace Application.Services
                 else { Query = p => p.VehicleId >= filter.VehicleId.Value; }
             }
 
-            if (filter.TypeService.HasValue)
-            {
-                if (Query != null)
-                {
-                    Query = Query.And(p => p.TypeService >= filter.TypeService.Value);
-                }
-                else { Query = p => p.TypeService >= filter.TypeService.Value; }
-            }
-
             if (filter.Status.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.Status >= filter.Status.Value);
+                    Query = Query.And(p => p.Status == filter.Status.Value);
                 }
-                else { Query = p => p.Status >= filter.Status.Value; }
+                else { Query = p => p.Status == filter.Status.Value; }
             }
 
+            if (filter.TypeService.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.TypeService == filter.TypeService.Value);
+                }
+                else { Query = p => p.TypeService == filter.TypeService.Value; }
+            }
+
+           
             if (Query != null)
             {
                 userApprovals = await _unitOfWork.VehicleServiceRepo.Get(filter: Query, includeProperties: properties);
