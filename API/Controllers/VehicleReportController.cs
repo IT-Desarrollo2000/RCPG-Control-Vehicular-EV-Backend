@@ -24,7 +24,7 @@ namespace API.Controllers
         }
 
         //GETALL
-        //[Authorize(Roles = "Administrator, AdminUser, Supervisor, AppUser")]
+        [Authorize(Roles = "Administrator, AdminUser, Supervisor, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
