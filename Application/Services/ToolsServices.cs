@@ -888,22 +888,18 @@ namespace Application.Services
                         if ( L == null)
                         {
 
-                            foreach ( var n in nombres)
+                            //NameU.Add(n.Vehicle.Name);
+                            var add = new GetUserForTravelDto()
                             {
-                                NameU.Add(n.Vehicle.Name);
-                                var add = new GetUserForTravelDto()
-                                {
-                                    VehicleName = resulv,
-                                    UserDriverId = usuario.UserProfileId ?? 0,
-                                    UserName = usuario.UserProfile.FullName,
-                                    TripNumber = user.Count(),
-                                    ProfileImageURL = usuario.UserProfile.ProfileImageUrl
+                                VehicleName = resulv,
+                                UserDriverId = usuario.UserProfileId ?? 0,
+                                UserName = usuario.UserProfile.FullName,
+                                TripNumber = user.Count(),
+                                ProfileImageURL = usuario.UserProfile.ProfileImageUrl
 
-                                };
+                            };
 
-                                list.Add(add);
-
-                            }
+                            list.Add(add);
 
                         }
 
