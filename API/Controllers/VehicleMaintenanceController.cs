@@ -148,5 +148,17 @@ namespace API.Controllers
             var entity = await _maintenanceService.DeleteProgress(progressId);
             if (entity.success) { return Ok(entity); } else { return BadRequest(entity); }
         }
+
+        //Obtener resumen de gastos
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleMaintenanceDto))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetExpenseSummary/{MaintenanceId:int}")]
+        public async Task<ActionResult<VehicleMaintenanceDto>> GetExpenseSummary(int MaintenanceId)
+        {
+            var entidad = await _maintenanceService.GetMaintenanceExpenseSummary(MaintenanceId);
+            if (entidad.success) { return Ok(entidad); } else { return BadRequest(entidad); }
+        }
     }
 }

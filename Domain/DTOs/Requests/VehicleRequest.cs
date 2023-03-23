@@ -45,6 +45,8 @@ namespace Domain.DTOs.Requests
         public int CurrentKM { get; set; }
         public string? VehicleObservation { get; set; } = "";
         public string? CarRegistrationPlate { get; set; }
+        public string? FuelCardNumber { get; set; }
+        public string? VehicleResponsibleName { get; set; }
         [Required]
         public bool IsClean { get; set; } 
         public List<int> DepartmentsToAssign { get; set; }
