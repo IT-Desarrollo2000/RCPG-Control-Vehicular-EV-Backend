@@ -66,7 +66,8 @@ namespace Infrastructure.Mappings
             CreateMap<VehicleService, MaintenanceSpotlightDto>()
                 .ForMember(m => m.VehicleName, o => o.MapFrom(m => m.Vehicle.Name))
                 .ForMember(m => m.Type, o => o.MapFrom(m => m.TypeService))
-                .ForMember(m => m.CurrentKM, o => o.MapFrom(m => m.Vehicle.CurrentKM));
+                .ForMember(m => m.CurrentKM, o => o.MapFrom(m => m.Vehicle.CurrentKM))
+                .ForMember(m => m.VehicleStatus, o => o.MapFrom(m => m.Vehicle.VehicleStatus));
             CreateMap<VehicleServiceUpdateRequest, VehicleService>();
             CreateMap<VehicleServiceFinishRequest, VehicleService>();
             CreateMap<VehicleServiceCanceledRequest, VehicleService>();
