@@ -31,5 +31,7 @@ namespace Domain.DTOs.Requests
         public int? InitialKM { get; set; }
         public List<int> DepartmentsToAdd { get; set; }
         public List<int> DepartmentsToRemove { get; set; }
+        public string? FuelCardNumber { get; set; }
+        public string? VehicleResponsibleName { get; set; }
     }
 }

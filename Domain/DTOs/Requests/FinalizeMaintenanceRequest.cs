@@ -10,11 +10,6 @@ namespace Domain.DTOs.Requests
 {
     public class FinalizeMaintenanceRequest
     {
-        public FinalizeMaintenanceRequest () 
-        {
-            ExpenseId = new List<int?>();
-        }
-
         [Required]
         public int MaintenanceId { get; set; }
 
@@ -23,8 +18,6 @@ namespace Domain.DTOs.Requests
 
         [Required]
         public CurrentFuel FinalFuel { get; set; }
-
-        public List<int?> ExpenseId { get; set; }
 
         public string? Comment { get; set; }
     }
