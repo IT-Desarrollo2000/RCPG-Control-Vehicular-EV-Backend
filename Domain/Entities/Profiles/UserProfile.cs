@@ -38,12 +38,8 @@ namespace Domain.Entities.Profiles
         public DateTime? LicenceExpirationDate { get; set; }
         public int? DepartmentId { get; set; }
         public virtual Departaments? Department { get; set; }
-        public ICollection<VehicleReport> VehicleReports { get; set; }
-        public ICollection<VehicleReportUse> VehicleReportUses { get; set; }
-
-
-        //Unique
-        //public string SharingKey { get; set; }
-        //public ICollection<UserContact> Contacts { get; set; }
+        public virtual ICollection<VehicleReport> VehicleReports { get; set; }
+        public virtual ICollection<VehicleReportUse> VehicleReportUses { get; set; }
+        public virtual ICollection<VehicleReportUse> FinishedUseReports { get; set; }
     }
 }

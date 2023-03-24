@@ -943,7 +943,7 @@ namespace Application.Services
                         break;
                 }
 
-                vehicle.VehicleStatus = VehicleStatus.APARTADO;
+                vehicle.VehicleStatus = VehicleStatus.ACTIVO;
 
                 //Guardar cambios
                 await _unitOfWork.VehicleRepo.Update(vehicle);
