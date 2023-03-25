@@ -10,9 +10,10 @@ namespace Domain.Entities.Profiles
     {
         public UserProfile()
         {
-            this.Approvals = new HashSet<UserApproval>();
-            this.VehicleReports = new HashSet<VehicleReport>();
-            this.VehicleReportUses = new HashSet<VehicleReportUse>();
+            Approvals = new HashSet<UserApproval>();
+            VehicleReports = new HashSet<VehicleReport>();
+            VehicleReportUses = new HashSet<VehicleReportUse>();
+            FinishedUseReports = new HashSet<VehicleReportUse>();
         }
 
         public int UserId { get; set; }
@@ -38,12 +39,8 @@ namespace Domain.Entities.Profiles
         public DateTime? LicenceExpirationDate { get; set; }
         public int? DepartmentId { get; set; }
         public virtual Departaments? Department { get; set; }
-        public ICollection<VehicleReport> VehicleReports { get; set; }
-        public ICollection<VehicleReportUse> VehicleReportUses { get; set; }
-
-
-        //Unique
-        //public string SharingKey { get; set; }
-        //public ICollection<UserContact> Contacts { get; set; }
+        public virtual ICollection<VehicleReport> VehicleReports { get; set; }
+        public virtual ICollection<VehicleReportUse> VehicleReportUses { get; set; }
+        public virtual ICollection<VehicleReportUse> FinishedUseReports { get; set; }
     }
 }

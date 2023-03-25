@@ -1,4 +1,6 @@
-﻿using Domain.Entities.Registered_Cars;
+﻿using Domain.Entities.Identity;
+using Domain.Entities.Profiles;
+using Domain.Entities.Registered_Cars;
 using Domain.Enums;
 
 namespace Domain.DTOs.Reponses
@@ -34,6 +36,10 @@ namespace Domain.DTOs.Reponses
         public List<DestinationOfReportUseDto> Destinations { get; set; }
         public int? InitialCheckListId { get; set; }
         public ChecklistDto? InitialCheckList { get; set; }
+        public int? FinishedByDriverId { get; set; }
+        public string? FinishedByDriverName { get; set; }
+        public int? FinishedByAdminId { get; set; }
+        public string? FinishedByAdminName { get; set; }
     }
 
     public class VehicleUseReportsSlimDto
@@ -53,5 +59,9 @@ namespace Domain.DTOs.Reponses
         public string VehicleName { get; set; }
         public List<DestinationOfReportUseDto> Destinations { get; set; }
         public DateTime CreatedDate { get; set; }
+        public int? FinishedByDriverId { get; set; }
+        public string? FinishedByDriverName { get; set; }
+        public int? FinishedByAdminId { get; set; }
+        public string? FinishedByAdminName { get; set; }
     }
 }

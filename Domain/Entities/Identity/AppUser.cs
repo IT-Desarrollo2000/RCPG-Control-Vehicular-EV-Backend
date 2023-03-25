@@ -9,11 +9,11 @@ namespace Domain.Entities.Identity
     {
         public AppUser()
         {
-            this.UserRoles = new HashSet<AppUserRole>();
-            this.Socials = new HashSet<AppUserSocial>();
-            this.VehicleReports = new HashSet<VehicleReport>();
-            this.VehicleReportUses = new HashSet<VehicleReportUse>();
-
+            UserRoles = new HashSet<AppUserRole>();
+            Socials = new HashSet<AppUserSocial>();
+            VehicleReports = new HashSet<VehicleReport>();
+            VehicleReportUses = new HashSet<VehicleReportUse>();
+            FinishedUseReports = new HashSet<VehicleReportUse>();
         }
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
@@ -29,5 +29,6 @@ namespace Domain.Entities.Identity
         public virtual ICollection<VehicleReportUse> VehicleReportUses { get; set; }
         public virtual ICollection<Departaments> AssignedDepartments { get; set; }
         public virtual ICollection<VehicleReport> SolvedReports { get; set; }
+        public virtual ICollection<VehicleReportUse> FinishedUseReports { get; set; }
     }
 }

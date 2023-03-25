@@ -21,5 +21,6 @@ namespace Application.Interfaces
         Task<GenericResponse<List<GetUserForTravelDto>>> GetUserForTravel();
         Task<GenericResponse<PerformanceReviewDto>> GetListTotalPerfomance(ListTotalPerfomanceDto listTotalPerfomanceDto);
         Task<GenericResponse<List<GetServicesMaintenance>>> GetServiceMaintenance();
+        Task<GenericResponse<UserInTravelDto>> IsUserInTravel(int userProfileId);
     }
 }

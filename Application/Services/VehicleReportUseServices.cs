@@ -39,7 +39,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations";
+            string properties = "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations,FinishedByDriver,FinishedByAdmin";
             IEnumerable<VehicleReportUse> useReports = null;
             Expression<Func<VehicleReportUse, bool>> Query = null;
 
@@ -158,7 +158,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations";
+            string properties = "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations,FinishedByDriver,FinishedByAdmin";
             IEnumerable<VehicleReportUse> useReports = null;
             Expression<Func<VehicleReportUse, bool>> Query = null;
 
@@ -277,7 +277,7 @@ namespace Application.Services
             GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
             try
             {
-                var useReport = await _unitOfWork.VehicleReportUseRepo.Get(filter: p => p.VehicleId == VehicleId && (p.StatusReportUse == ReportUseType.ViajeNormal || p.StatusReportUse == ReportUseType.ViajeRapido), includeProperties: "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations");
+                var useReport = await _unitOfWork.VehicleReportUseRepo.Get(filter: p => p.VehicleId == VehicleId && (p.StatusReportUse == ReportUseType.ViajeNormal || p.StatusReportUse == ReportUseType.ViajeRapido), includeProperties: "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations,FinishedByDriver,FinishedByAdmin");
                 var result = useReport.LastOrDefault();
 
                 if (result == null)
@@ -304,7 +304,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleReportUseDto>> GetUseReportById(int Id)
         {
             GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
-            var profile = await _unitOfWork.VehicleReportUseRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations");
+            var profile = await _unitOfWork.VehicleReportUseRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations,FinishedByDriver,FinishedByAdmin");
             var result = profile.FirstOrDefault();
 
             if (result == null)
@@ -742,6 +742,14 @@ namespace Application.Services
                     return response;
                 }
 
+                //Verificar que minimo contenga un usuario para finalizarlo
+                if(!request.FinishedByAdminId.HasValue && !request.FinishedByDriverId.HasValue)
+                {
+                    response.success = false;
+                    response.AddError("Usuario no especificado", "Debe especificar un usuario para finalizar el viaje", 4);
+                    return response;
+                }
+
                 //Verificar que cuenta con el estatus apropiado
                 switch(useReport.StatusReportUse)
                 {
@@ -793,6 +801,8 @@ namespace Application.Services
                 useReport.LastFuelLoad = request.FinalFuelLoad;
                 useReport.StatusReportUse = ReportUseType.Finalizado;
                 useReport.Observations = request.Observations ?? "N/A";
+                useReport.FinishedByAdminId = request.FinishedByAdminId ?? null;
+                useReport.FinishedByDriverId = request.FinishedByDriverId ?? null;
 
                 //Modificar el vehiculo
                 vehicle.VehicleStatus = VehicleStatus.ACTIVO;
@@ -849,6 +859,14 @@ namespace Application.Services
                         break;
                 }
 
+                //Verificar que minimo contenga un usuario para finalizarlo
+                if (!request.FinishedByAdminId.HasValue && !request.FinishedByDriverId.HasValue)
+                {
+                    response.success = false;
+                    response.AddError("Usuario no especificado", "Debe especificar un usuario para finalizar el viaje", 4);
+                    return response;
+                }
+
                 //Obtener el vehiculo para su modificación
                 var vehicle = await _unitOfWork.VehicleRepo.GetById(useReport.VehicleId);
 
@@ -887,6 +905,8 @@ namespace Application.Services
                 useReport.LastFuelLoad = request.FinalFuelLoad;
                 useReport.StatusReportUse = ReportUseType.Finalizado;
                 useReport.Observations = request.Observations ?? "N/A";
+                useReport.FinishedByAdminId = request.FinishedByAdminId ?? null;
+                useReport.FinishedByDriverId = request.FinishedByDriverId ?? null;
 
                 //Asignar los destinos
                 //Asignar los destinos
@@ -939,6 +959,14 @@ namespace Application.Services
                     return response;
                 }
 
+                //Verificar que minimo contenga un usuario para finalizarlo
+                if (!request.FinishedByAdminId.HasValue && !request.FinishedByDriverId.HasValue)
+                {
+                    response.success = false;
+                    response.AddError("Usuario no especificado", "Debe especificar un usuario para finalizar el viaje", 4);
+                    return response;
+                }
+
                 switch (useReport.StatusReportUse)
                 {
                     case ReportUseType.Cancelado:
@@ -957,6 +985,8 @@ namespace Application.Services
                 //Modificar datos del reporte
                 useReport.StatusReportUse = ReportUseType.Cancelado;
                 useReport.Observations = request.Observations ?? "N/A";
+                useReport.FinishedByAdminId = request.FinishedByAdminId ?? null;
+                useReport.FinishedByDriverId = request.FinishedByDriverId ?? null;
 
                 //Modificar el vehiculo
                 vehicle.VehicleStatus = VehicleStatus.ACTIVO;
