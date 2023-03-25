@@ -52,7 +52,7 @@ namespace Application.Services
             if (resultCompany == null)
             {
                 response.success = false;
-                response.AddError("No existe Company", $"No existe Company con el CompanyId {departamentRequest.CompanyId} solicitado", 1);
+                response.AddError("No existe Company", $"No existe Company con el CompanyId {departamentRequest.CompanyId} solicitado", 2);
 
                 return response;
             }
@@ -80,7 +80,7 @@ namespace Application.Services
             if (resultCompany == null)
             {
                 response.success = false;
-                response.AddError("No existe Company", $"No existe Company con el CompanyId {departamentRequest.CompanyId} solicitado", 1);
+                response.AddError("No existe Company", $"No existe Company con el CompanyId {departamentRequest.CompanyId} solicitado", 2);
 
                 return response;
             }

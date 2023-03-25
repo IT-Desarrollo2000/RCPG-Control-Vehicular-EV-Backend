@@ -35,7 +35,7 @@ namespace Application.Services
             if (resultExpenses == null)
             {
                 response.success = false;
-                response.AddError("No existe vehiculo", $"No existe vehiculo con ese id{vehicleId} solicitado", 1);
+                response.AddError("No existe vehiculo", $"No existe vehiculo con ese id{vehicleId} solicitado", 2);
                 return response;
             }
             //entity.Vehicle = _unitOfWork.VehicleRepo.Get(VehicleDB => VehicleDB.Id == vehicleId);
