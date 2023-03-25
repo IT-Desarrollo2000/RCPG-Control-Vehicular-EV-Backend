@@ -19,6 +19,8 @@ namespace Domain.DTOs.Requests
         [Required]
         public double FinalMileage { get; set; }
 
+        public int? FinishedByDriverId { get; set; }
+        public int? FinishedByAdminId { get; set; }
         public bool? IsVehicleClean { get; set; }
         public string? Observations { get; set; }
         public CreationChecklistDto? FinalCheckList { get; set; }
@@ -44,6 +46,8 @@ namespace Domain.DTOs.Requests
         public string? Observations { get; set; }
         public List<DestinationRequest> Destinations { get; set; }
         public CreationChecklistDto? FinalCheckList { get; set; }
+        public int? FinishedByDriverId { get; set; }
+        public int? FinishedByAdminId { get; set; }
     }
 
     public class UseReportCancelRequest
@@ -51,5 +55,7 @@ namespace Domain.DTOs.Requests
         [Required]
         public int UseReportId { get; set; }
         public string? Observations { get; set; }
+        public int? FinishedByDriverId { get; set; }
+        public int? FinishedByAdminId { get; set; }
     }
 }

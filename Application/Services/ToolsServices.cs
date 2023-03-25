@@ -4,6 +4,7 @@ using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
 using Domain.Entities.Registered_Cars;
 using Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -627,7 +628,7 @@ namespace Application.Services
                     {
                         
 
-                        var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == Domain.Enums.ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros, includeProperties: "Vehicle,VehicleReportUses,Vehicle.VehicleImages");
+                        var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros, includeProperties: "Vehicle,VehicleReportUses,Vehicle.VehicleImages");
 
                         var listt = new List<GraphicsPerfomanceDto>();
 
@@ -725,11 +726,6 @@ namespace Application.Services
                 } 
                 else
                 {
-                    if ( listTotalPerfomanceDto.VehicleId.Count == 0)
-                    {
-
-
-                    }
                     var vehicles = await _unitOfWork.VehicleRepo.Get(v => v.VehicleStatus != VehicleStatus.INACTIVO);
                     foreach (var Enteros in vehicles.ToList())
                     {
@@ -987,6 +983,42 @@ namespace Application.Services
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
 
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<UserInTravelDto>> IsUserInTravel(int userProfileId)
+        {
+            GenericResponse<UserInTravelDto> response = new GenericResponse<UserInTravelDto>();
+            try
+            {
+                var dto = new UserInTravelDto();
+                var useReport = await _unitOfWork.VehicleReportUseRepo.Get(u => u.UserProfileId == userProfileId && (u.StatusReportUse == ReportUseType.ViajeNormal || u.StatusReportUse == ReportUseType.ViajeRapido));
+                var lastOne = useReport.LastOrDefault();
+
+                if(lastOne != null)
+                {
+                    var car = await _unitOfWork.VehicleRepo.GetById(lastOne.VehicleId);
+
+                    dto.UseReportId = lastOne.Id;
+                    dto.IsInTravel = true;
+                    dto.DriverId = userProfileId;
+                    dto.VehicleQRId = car.VehicleQRId;
+                }
+                else
+                {
+                    dto.DriverId = userProfileId;
+                    dto.IsInTravel = false;
+                }
+
+                response.success = true;
+                response.Data = dto;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
                 return response;
             }
         }

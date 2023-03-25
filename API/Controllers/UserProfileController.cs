@@ -17,10 +17,13 @@ namespace API.Controllers
     {
         private readonly IProfileServices _profileServices;
         private readonly UserManager<AppUser> _userManager;
-        public UserProfileController(IProfileServices profileServices, UserManager<AppUser> userManager)
+        private readonly IToolsServices _utilitesService;
+
+        public UserProfileController(IProfileServices profileServices, UserManager<AppUser> userManager, IToolsServices utilitesService)
         {
             _profileServices = profileServices;
             _userManager = userManager;
+            _utilitesService = utilitesService;
         }
 
         [Authorize(Roles = "AppUser")]
@@ -84,6 +87,35 @@ namespace API.Controllers
             var profile = await _profileServices.GetCurrentProfile(user);
 
             return Ok(profile);
+        }
+
+        //Verificar si el usuario esta en viaje
+        [Authorize(Roles = "Administrator, AppUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<UserInTravelDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("IsUserInTravel")]
+        public async Task<IActionResult> GetServiceMaintenance(int? userProfileId)
+        {
+            var currentUser = this.User;
+            var currentUserName = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = await _userManager.FindByIdAsync(currentUserName);
+            var profile = await _profileServices.GetCurrentProfile(user);
+
+            if (profile == null && userProfileId == null)
+            {
+                return NotFound("El usuario especificado no cuenta con un perfil de conductor");
+            }
+
+            var users = await _utilitesService.IsUserInTravel(userProfileId ?? profile.Id);
+            if (users.success)
+            {
+                return Ok(users);
+            }
+            else
+            {
+                return BadRequest(users);
+            }
         }
     }
 }

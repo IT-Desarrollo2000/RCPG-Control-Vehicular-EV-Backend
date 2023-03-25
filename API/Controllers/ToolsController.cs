@@ -3,12 +3,15 @@ using Application.Services;
 using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
+using Domain.Entities.Identity;
 using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Net;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -20,7 +23,7 @@ namespace API.Controllers
 
         public ToolsController(IToolsServices toolsServices)
         {
-            _utilitesService= toolsServices;
+            _utilitesService = toolsServices;
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
@@ -45,7 +48,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<List<MaintenanceSpotlightDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -157,7 +160,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetTotalServiceMaintenance")]
-        public async Task<ActionResult<List<GetServicesMaintenance>>> GetServiceMaintenance()
+        public async Task<IActionResult> GetServiceMaintenance()
         {
             var users = await _utilitesService.GetServiceMaintenance();
             if (users.success)
@@ -169,8 +172,5 @@ namespace API.Controllers
                 return BadRequest(users);
             }
         }
-
-
-
     }
 }
