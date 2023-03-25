@@ -19,5 +19,6 @@ namespace Domain.DTOs.Requests
         public DateTime? MaintenanceDate { get; set; }
         public int? WorkShopId { get; set; }
         public int? ReportId { get; set; }
+        public int? ExpenseId { get; set; }
     }
 }

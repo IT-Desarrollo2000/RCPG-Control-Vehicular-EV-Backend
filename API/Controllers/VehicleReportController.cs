@@ -24,7 +24,7 @@ namespace API.Controllers
         }
 
         //GETALL
-        [Authorize(Roles = "Administrator, AdminUser, Supervisor, AppUser")]
+        //[Authorize(Roles = "Administrator, AdminUser, Supervisor, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleReportDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -87,7 +87,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<VehicleReportDto>> Post([FromForm] VehicleReportRequest vehicleReportRequest)
         {
-            var entidad = await _vehicleReportService.PostVehicleReport(vehicleReportRequest);
+            var entidad = await _vehicleReportService.  PostVehicleReport(vehicleReportRequest);
 
             if (entidad.success)
             {

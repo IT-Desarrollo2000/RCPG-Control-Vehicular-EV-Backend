@@ -4,6 +4,7 @@ using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
 using Domain.Entities.Registered_Cars;
 using Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -245,6 +246,7 @@ namespace Application.Services
                                 dto.StatusName = "OK";
                                 dto.StatusColor = "#3ee80b";
                                 dto.AlertType = StopLightAlert.VERDE;
+                                dto.LastServiceId = lastServices.Id;
                                 dtos.Add(dto);
                                 break;
                             case double d when d >= 15 && d <= 30:
@@ -253,6 +255,7 @@ namespace Application.Services
                                 dtoyellow.StatusName = "ATENCIÓN";
                                 dtoyellow.StatusColor = "#f3d132";
                                 dtoyellow.AlertType = StopLightAlert.AMARILLO;
+                                dtoyellow.LastServiceId = lastServices.Id;
                                 dtos.Add(dtoyellow);
                                 break;
                             case double d when d >= 5 && d < 15:
@@ -261,6 +264,7 @@ namespace Application.Services
                                 dtogreen.StatusName = "ATENCIÓN!!";
                                 dtogreen.StatusColor = "#efbc38";
                                 dtogreen.AlertType= StopLightAlert.NARANJA;
+                                dtogreen.LastServiceId = lastServices.Id;
                                 dtos.Add(dtogreen);
                                 break;
                             case double d when d < 5:
@@ -269,6 +273,7 @@ namespace Application.Services
                                 dtored.StatusName = "SERVICIO NECESARIO!!";
                                 dtored.StatusColor = "#e41212";
                                 dtored.AlertType = StopLightAlert.ROJO;
+                                dtored.LastServiceId = lastServices.Id;
                                 dtos.Add(dtored);
                                 break;
                         }
@@ -360,7 +365,7 @@ namespace Application.Services
             GenericResponse<List<GetVehicleActiveDto>> response = new GenericResponse<List<GetVehicleActiveDto>>();
             try
             {
-                var VehicleA = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == Domain.Enums.ReportUseType.ViajeNormal, includeProperties: "Vehicle,UserProfile,Destinations");
+                var VehicleA = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == ReportUseType.ViajeNormal || status.StatusReportUse == ReportUseType.ViajeRapido, includeProperties: "Vehicle,UserProfile,Destinations");
                 if (VehicleA == null)
                 {
                     response.success = false;
@@ -621,7 +626,9 @@ namespace Application.Services
                 {
                     foreach (var Enteros in listTotalPerfomanceDto.VehicleId)
                     {
-                        var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == Domain.Enums.ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros, includeProperties: "Vehicle,VehicleReportUses,Vehicle.VehicleImages");
+                        
+
+                        var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros, includeProperties: "Vehicle,VehicleReportUses,Vehicle.VehicleImages");
 
                         var listt = new List<GraphicsPerfomanceDto>();
 
@@ -634,17 +641,16 @@ namespace Application.Services
 
                         if (Rendimiento.Count() == 0)
                         {
-                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros);
+                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros, includeProperties: "Vehicle");
                             var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
                             var Totale = new TotalPerfomanceDto()
                             {
                                 VehicleId = Enteros,
-                                VehicleName = "No se obtuvo informacion del vehiculo solicitado",
+                                VehicleName = $"El vehiculo no contiene datos para mostrar",
                                 TotalMileageTraveled = 0,
                                 TotalPerfomance = 0,
                                 success = false,
-                                error = $"No existe datos de Rendimiento para {Enteros} ",
-                                Images = ImagesDto
+                                error = $"No existe datos de Rendimiento para {Enteros} "
                             };
 
                             list.Add(Totale);
@@ -738,17 +744,16 @@ namespace Application.Services
 
                         if (Rendimiento.Count() == 0)
                         {
-                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros.Id);
+                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros.Id,includeProperties: "Vehicle");
                             var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
                             var Totale = new TotalPerfomanceDto()
                             {
                                 VehicleId = Enteros.Id,
-                                VehicleName = "No se obtuvo informacion del vehiculo solicitado",
+                                VehicleName = "El vehiculo no contiene datos para mostrar",
                                 TotalMileageTraveled = 0,
                                 TotalPerfomance = 0,
                                 success = false,
-                                error = $"No existe datos de Rendimiento para {Enteros.Id} ",
-                                Images = ImagesDto
+                                error = $"No existe datos de Rendimiento para {Enteros.Id} "
                             };
 
                             list.Add(Totale);
@@ -844,7 +849,7 @@ namespace Application.Services
 
             try
             {
-                var travel = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == ReportUseType.Finalizado );
+                var travel = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == ReportUseType.Finalizado);
             
 
                 if (travel == null)
@@ -879,21 +884,18 @@ namespace Application.Services
                         if ( L == null)
                         {
 
-                            foreach ( var n in nombres)
+                            //NameU.Add(n.Vehicle.Name);
+                            var add = new GetUserForTravelDto()
                             {
-                                NameU.Add(n.Vehicle.Name);
-                                var add = new GetUserForTravelDto()
-                                {
-                                    VehicleName = resulv,
-                                    UserDriverId = usuario.UserProfileId ?? 0,
-                                    UserName = usuario.UserProfile.FullName,
-                                    TripNumber = user.Count()
+                                VehicleName = resulv,
+                                UserDriverId = usuario.UserProfileId ?? 0,
+                                UserName = usuario.UserProfile.FullName,
+                                TripNumber = user.Count(),
+                                ProfileImageURL = usuario.UserProfile.ProfileImageUrl
 
-                                };
+                            };
 
-                                list.Add(add);
-
-                            }
+                            list.Add(add);
 
                         }
 
@@ -917,8 +919,8 @@ namespace Application.Services
                                 VehicleName = resulv,
                                 UserDriverId = usuario.UserProfileId ?? 0,
                                 UserName = usuario.UserProfile.FullName,
-                                TripNumber = user.Count()
-
+                                TripNumber = user.Count(),
+                                ProfileImageURL = usuario.UserProfile.ProfileImageUrl
                             };
 
                             list.Add(add);
@@ -981,6 +983,42 @@ namespace Application.Services
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
 
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<UserInTravelDto>> IsUserInTravel(int userProfileId)
+        {
+            GenericResponse<UserInTravelDto> response = new GenericResponse<UserInTravelDto>();
+            try
+            {
+                var dto = new UserInTravelDto();
+                var useReport = await _unitOfWork.VehicleReportUseRepo.Get(u => u.UserProfileId == userProfileId && (u.StatusReportUse == ReportUseType.ViajeNormal || u.StatusReportUse == ReportUseType.ViajeRapido));
+                var lastOne = useReport.LastOrDefault();
+
+                if(lastOne != null)
+                {
+                    var car = await _unitOfWork.VehicleRepo.GetById(lastOne.VehicleId);
+
+                    dto.UseReportId = lastOne.Id;
+                    dto.IsInTravel = true;
+                    dto.DriverId = userProfileId;
+                    dto.VehicleQRId = car.VehicleQRId;
+                }
+                else
+                {
+                    dto.DriverId = userProfileId;
+                    dto.IsInTravel = false;
+                }
+
+                response.success = true;
+                response.Data = dto;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
                 return response;
             }
         }

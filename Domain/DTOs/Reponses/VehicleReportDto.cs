@@ -8,6 +8,7 @@ namespace Domain.DTOs.Reponses
         {
             VehicleReportImages = new List<VehicleReportImageDto>();
             Expenses = new List<UnrelatedExpensesDto>();
+            Maintenances = new List<VehicleMaintenanceDto>();
         }
 
         public int Id { get; set; }
@@ -28,9 +29,10 @@ namespace Domain.DTOs.Reponses
         public string? ReportSolutionComment { get; set; }
         public ReportStatusType ReportStatus { get; set; }
         public int? VehicleReportUseId { get; set; }
-        public virtual UnrelatedVehicleReportUseDto? VehicleReportUses { get; set; }
+        public UnrelatedVehicleReportUseDto? VehicleReportUses { get; set; }
         public int? SolvedByAdminUserId { get; set; }
         public string? SolvedByAdminUserName { get; set; }
         public double? AmountGasoline { get; set; }
+        public List<VehicleMaintenanceDto> Maintenances { get; set; }
     }
 }

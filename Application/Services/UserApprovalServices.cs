@@ -206,10 +206,10 @@ namespace Application.Services
                 //Verificar fecha de ultima solicitud
                 if(last != null)
                 {
-                    if(last.CreatedDate <= DateTime.UtcNow.AddHours(12) && last.Status == ApprovalStatus.RECHAZADO)
+                    if(DateTime.UtcNow <= last.CreatedDate.Value.AddMinutes(15) && last.Status == ApprovalStatus.RECHAZADO)
                     {
                         response.success = false;
-                        response.AddError("Reintar mas tarde", "Debe esperar un tiempo antes de reenviar una solicitud");
+                        response.AddError("Reintar mas tarde", "Debe esperar un tiempo antes de reenviar una solicitud", 3);
                         return response;
                     }
                 } 
@@ -232,10 +232,11 @@ namespace Application.Services
 
                     //Manipular el nombre de archivo
                     var uploadDate = DateTime.UtcNow;
+                    Random rndm = new Random();
                     string FileExtnFront = System.IO.Path.GetExtension(request.DriversLicenceFrontFile.FileName);
                     string FileExtnBack = System.IO.Path.GetExtension(request.DriversLicenceBackFile.FileName);
-                    var filePathFront = $"{request.ProfileId}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_LicenceFront{FileExtnFront}";
-                    var filePathBack = $"{request.ProfileId}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_LicenceBack{FileExtnBack}";
+                    var filePathFront = $"{request.ProfileId}/{rndm.Next(1, 1000)}_{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_LicenceFront{FileExtnFront}";
+                    var filePathBack = $"{request.ProfileId}/{rndm.Next(1, 1000)}_{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_LicenceBack{FileExtnBack}";
                     var uploadedUrlFront = await _blobStorageService.UploadFileToBlobAsync(request.DriversLicenceFrontFile, _azureBlobContainers.Value.DriverLicences, filePathFront);
                     var uploadedUrlBack = await _blobStorageService.UploadFileToBlobAsync(request.DriversLicenceBackFile, _azureBlobContainers.Value.DriverLicences, filePathBack);
 

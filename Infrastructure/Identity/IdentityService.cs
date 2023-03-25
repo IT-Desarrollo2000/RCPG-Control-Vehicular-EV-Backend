@@ -88,7 +88,8 @@ namespace Infrastructure.Identity
                     Errors = new List<string>()
                     {
                         "Usuario y/o contraseña incorrectos"
-                    }
+                    },
+                    ErrorCode = 5
                 };
 
                 return response;
@@ -108,7 +109,8 @@ namespace Infrastructure.Identity
                         Errors = new List<string>()
                         {
                             "El usuario no cuenta con un perfil"
-                        }
+                        },
+                        ErrorCode = 2
                     };
 
                     return responseP;
@@ -122,7 +124,14 @@ namespace Infrastructure.Identity
                         //Verificar el estatus de su ultima solicitud
                         var request = await _unitOfWork.UserApprovalRepo.Get(a => a.ProfileId == profile.Id && a.Status != ApprovalStatus.APROVADO);
                         var lastRequest = request.LastOrDefault();
-                        
+
+                        //Devolver respuesta
+                        var responseV = new AuthResult
+                        {
+                            Success = false,
+                            UserProfileId = profile.Id
+                        };
+
                         if (lastRequest == null) errors.Add("No se encontro ninguna solicitud de aprobación del usuario");
                         else
                         {
@@ -130,23 +139,19 @@ namespace Infrastructure.Identity
                             {
                                 case ApprovalStatus.PENDIENTE:
                                     errors.Add("El usuario esta pendiente de aprobación por la administración");
+                                    responseV.ErrorCode = 3;
                                     break;
                                 case ApprovalStatus.RECHAZADO:
                                     errors.Add("El usuario fue rechazado por la administración");
                                     errors.Add($"Motivo: {lastRequest.Comment}");
+                                    responseV.ErrorCode = 4;
                                     break;
                                 default:
                                     break;
                             }
                         }
 
-                        //Devolver respuesta
-                        var responseV = new AuthResult
-                        {
-                            Success = false,
-                            Errors = errors,
-                            UserProfileId = profile.Id
-                        };
+                        responseV.Errors.AddRange(errors);
 
                         return responseV;
                     }
@@ -160,7 +165,8 @@ namespace Infrastructure.Identity
                             Errors = new List<string>()
                             {
                                 "Usuario y/o contraseña incorrectos"
-                            }
+                            },
+                            ErrorCode = 1
                         };
 
                         return response;

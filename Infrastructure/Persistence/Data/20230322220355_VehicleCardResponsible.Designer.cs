@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230322220355_VehicleCardResponsible")]
+    partial class VehicleCardResponsible
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1064,12 +1067,6 @@ namespace Infrastructure.Persistence.Data
                     b.Property<decimal?>("FinalMileage")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("FinishedByAdminId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("FinishedByDriverId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("InitialCheckListId")
                         .HasColumnType("int");
 
@@ -1105,10 +1102,6 @@ namespace Infrastructure.Persistence.Data
                     b.HasIndex("AppUserId");
 
                     b.HasIndex("ChecklistId");
-
-                    b.HasIndex("FinishedByAdminId");
-
-                    b.HasIndex("FinishedByDriverId");
 
                     b.HasIndex("InitialCheckListId");
 
@@ -1668,16 +1661,6 @@ namespace Infrastructure.Persistence.Data
                         .HasForeignKey("ChecklistId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Entities.Identity.AppUser", "FinishedByAdmin")
-                        .WithMany("FinishedUseReports")
-                        .HasForeignKey("FinishedByAdminId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Profiles.UserProfile", "FinishedByDriver")
-                        .WithMany("FinishedUseReports")
-                        .HasForeignKey("FinishedByDriverId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Entities.Registered_Cars.Checklist", "InitialCheckList")
                         .WithMany("InitialCheckListForUseReport")
                         .HasForeignKey("InitialCheckListId")
@@ -1697,10 +1680,6 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("AppUser");
 
                     b.Navigation("Checklist");
-
-                    b.Navigation("FinishedByAdmin");
-
-                    b.Navigation("FinishedByDriver");
 
                     b.Navigation("InitialCheckList");
 
@@ -1812,8 +1791,6 @@ namespace Infrastructure.Persistence.Data
 
             modelBuilder.Entity("Domain.Entities.Identity.AppUser", b =>
                 {
-                    b.Navigation("FinishedUseReports");
-
                     b.Navigation("Profile")
                         .IsRequired();
 
@@ -1831,8 +1808,6 @@ namespace Infrastructure.Persistence.Data
             modelBuilder.Entity("Domain.Entities.Profiles.UserProfile", b =>
                 {
                     b.Navigation("Approvals");
-
-                    b.Navigation("FinishedUseReports");
 
                     b.Navigation("VehicleReportUses");
 

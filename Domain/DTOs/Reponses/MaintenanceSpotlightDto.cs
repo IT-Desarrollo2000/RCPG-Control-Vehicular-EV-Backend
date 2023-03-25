@@ -12,7 +12,10 @@ namespace Domain.DTOs.Reponses
     {
         public int VehicleId { get; set; }
         public string VehicleName { get; set; }
+        public VehicleStatus VehicleStatus { get; set; }
         public VehicleServiceType Type { get; set; }
+        public int? CurrentKM { get; set; }
+        public int? LastServiceId { get; set; }
         public int ServicePeriodMonths { get; set; }
         public int ServicePeriodKM { get; set; }
         public string StatusMessage { get; set; }

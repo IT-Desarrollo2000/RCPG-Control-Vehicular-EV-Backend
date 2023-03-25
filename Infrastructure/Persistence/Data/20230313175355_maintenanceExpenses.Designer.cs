@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230313175355_maintenanceExpenses")]
+    partial class maintenanceExpenses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -494,9 +497,6 @@ namespace Infrastructure.Persistence.Data
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal>("Cost")
                         .HasColumnType("decimal(18,2)");
 
@@ -519,31 +519,19 @@ namespace Infrastructure.Persistence.Data
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("VehicleMaintenanceId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("VehicleMaintenanceWorkshopId")
                         .HasColumnType("int");
 
                     b.Property<int?>("VehicleReportId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("VehicleServiceId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("TypesOfExpensesId");
 
-                    b.HasIndex("VehicleMaintenanceId");
-
                     b.HasIndex("VehicleMaintenanceWorkshopId");
 
                     b.HasIndex("VehicleReportId");
-
-                    b.HasIndex("VehicleServiceId")
-                        .IsUnique()
-                        .HasFilter("[VehicleServiceId] IS NOT NULL");
 
                     b.ToTable("Expenses");
                 });
@@ -744,9 +732,6 @@ namespace Infrastructure.Persistence.Data
                     b.Property<int>("FuelCapacity")
                         .HasColumnType("int");
 
-                    b.Property<string>("FuelCardNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("FuelType")
                         .HasColumnType("int");
 
@@ -790,9 +775,6 @@ namespace Infrastructure.Persistence.Data
 
                     b.Property<string>("VehicleQRId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VehicleResponsibleName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("VehicleStatus")
@@ -855,6 +837,9 @@ namespace Infrastructure.Persistence.Data
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("ExpenseId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("FinalFuel")
                         .HasColumnType("int");
 
@@ -892,6 +877,8 @@ namespace Infrastructure.Persistence.Data
                     b.HasKey("Id");
 
                     b.HasIndex("ApprovedByUserId");
+
+                    b.HasIndex("ExpenseId");
 
                     b.HasIndex("ReportId");
 
@@ -1064,12 +1051,6 @@ namespace Infrastructure.Persistence.Data
                     b.Property<decimal?>("FinalMileage")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("FinishedByAdminId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("FinishedByDriverId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("InitialCheckListId")
                         .HasColumnType("int");
 
@@ -1105,10 +1086,6 @@ namespace Infrastructure.Persistence.Data
                     b.HasIndex("AppUserId");
 
                     b.HasIndex("ChecklistId");
-
-                    b.HasIndex("FinishedByAdminId");
-
-                    b.HasIndex("FinishedByDriverId");
 
                     b.HasIndex("InitialCheckListId");
 
@@ -1176,6 +1153,8 @@ namespace Infrastructure.Persistence.Data
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ExpenseId");
 
                     b.HasIndex("ServiceUserId");
 
@@ -1479,11 +1458,6 @@ namespace Infrastructure.Persistence.Data
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Registered_Cars.VehicleMaintenance", "VehicleMaintenance")
-                        .WithMany("Expenses")
-                        .HasForeignKey("VehicleMaintenanceId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Entities.Registered_Cars.VehicleMaintenanceWorkshop", "VehicleMaintenanceWorkshop")
                         .WithMany("Expenses")
                         .HasForeignKey("VehicleMaintenanceWorkshopId")
@@ -1493,20 +1467,11 @@ namespace Infrastructure.Persistence.Data
                         .WithMany("Expenses")
                         .HasForeignKey("VehicleReportId");
 
-                    b.HasOne("Domain.Entities.Registered_Cars.VehicleService", "VehicleService")
-                        .WithOne("Expense")
-                        .HasForeignKey("Domain.Entities.Registered_Cars.Expenses", "VehicleServiceId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("TypesOfExpenses");
-
-                    b.Navigation("VehicleMaintenance");
 
                     b.Navigation("VehicleMaintenanceWorkshop");
 
                     b.Navigation("VehicleReport");
-
-                    b.Navigation("VehicleService");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.MaintenanceProgress", b =>
@@ -1584,6 +1549,11 @@ namespace Infrastructure.Persistence.Data
                         .HasForeignKey("ApprovedByUserId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("Domain.Entities.Registered_Cars.Expenses", "Expense")
+                        .WithMany()
+                        .HasForeignKey("ExpenseId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.Registered_Cars.VehicleReport", "Report")
                         .WithMany("Maintenances")
                         .HasForeignKey("ReportId")
@@ -1601,6 +1571,8 @@ namespace Infrastructure.Persistence.Data
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ApprovedByUser");
+
+                    b.Navigation("Expense");
 
                     b.Navigation("Report");
 
@@ -1668,16 +1640,6 @@ namespace Infrastructure.Persistence.Data
                         .HasForeignKey("ChecklistId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Domain.Entities.Identity.AppUser", "FinishedByAdmin")
-                        .WithMany("FinishedUseReports")
-                        .HasForeignKey("FinishedByAdminId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Profiles.UserProfile", "FinishedByDriver")
-                        .WithMany("FinishedUseReports")
-                        .HasForeignKey("FinishedByDriverId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Entities.Registered_Cars.Checklist", "InitialCheckList")
                         .WithMany("InitialCheckListForUseReport")
                         .HasForeignKey("InitialCheckListId")
@@ -1698,10 +1660,6 @@ namespace Infrastructure.Persistence.Data
 
                     b.Navigation("Checklist");
 
-                    b.Navigation("FinishedByAdmin");
-
-                    b.Navigation("FinishedByDriver");
-
                     b.Navigation("InitialCheckList");
 
                     b.Navigation("UserProfile");
@@ -1711,6 +1669,11 @@ namespace Infrastructure.Persistence.Data
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleService", b =>
                 {
+                    b.HasOne("Domain.Entities.Registered_Cars.Expenses", "Expense")
+                        .WithMany()
+                        .HasForeignKey("ExpenseId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.Identity.AppUser", "ServiceUser")
                         .WithMany()
                         .HasForeignKey("ServiceUserId")
@@ -1730,6 +1693,8 @@ namespace Infrastructure.Persistence.Data
                         .WithMany()
                         .HasForeignKey("WorkShopId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Expense");
 
                     b.Navigation("ServiceUser");
 
@@ -1812,8 +1777,6 @@ namespace Infrastructure.Persistence.Data
 
             modelBuilder.Entity("Domain.Entities.Identity.AppUser", b =>
                 {
-                    b.Navigation("FinishedUseReports");
-
                     b.Navigation("Profile")
                         .IsRequired();
 
@@ -1831,8 +1794,6 @@ namespace Infrastructure.Persistence.Data
             modelBuilder.Entity("Domain.Entities.Profiles.UserProfile", b =>
                 {
                     b.Navigation("Approvals");
-
-                    b.Navigation("FinishedUseReports");
 
                     b.Navigation("VehicleReportUses");
 
@@ -1880,8 +1841,6 @@ namespace Infrastructure.Persistence.Data
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleMaintenance", b =>
                 {
-                    b.Navigation("Expenses");
-
                     b.Navigation("MaintenanceProgress");
                 });
 
@@ -1908,11 +1867,6 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("Destinations");
 
                     b.Navigation("VehicleReport");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleService", b =>
-                {
-                    b.Navigation("Expense");
                 });
 #pragma warning restore 612, 618
         }

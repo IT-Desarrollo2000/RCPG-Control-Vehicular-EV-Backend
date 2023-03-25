@@ -24,6 +24,12 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(m => m.ReportId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
+
+          /* builder.HasMany(m => m.Expenses)
+                .WithOne( d => d.VehicleMaintenance)
+                .HasForeignKey(m => m.)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);*/
         }
     }
 }

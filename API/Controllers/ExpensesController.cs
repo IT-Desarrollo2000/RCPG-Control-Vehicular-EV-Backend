@@ -68,7 +68,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return NotFound(result); }
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+       // [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ExpensesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
@@ -79,7 +79,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<Expenses>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
