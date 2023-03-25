@@ -10,9 +10,10 @@ namespace Domain.Entities.Profiles
     {
         public UserProfile()
         {
-            this.Approvals = new HashSet<UserApproval>();
-            this.VehicleReports = new HashSet<VehicleReport>();
-            this.VehicleReportUses = new HashSet<VehicleReportUse>();
+            Approvals = new HashSet<UserApproval>();
+            VehicleReports = new HashSet<VehicleReport>();
+            VehicleReportUses = new HashSet<VehicleReportUse>();
+            FinishedUseReports = new HashSet<VehicleReportUse>();
         }
 
         public int UserId { get; set; }
