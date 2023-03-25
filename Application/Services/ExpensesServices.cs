@@ -85,7 +85,7 @@ namespace Application.Services
                     if (resultworkshop == null)
                     {
                         response.success = false;
-                        response.AddError("No existe el taller", $"No existe taller con el id{expensesRequest.VehicleMaintenanceWorkshopId} solicitado", 1);
+                        response.AddError("No existe el taller", $"No existe taller con el id{expensesRequest.VehicleMaintenanceWorkshopId} solicitado", 5);
                         return response;
                     }
 
@@ -126,7 +126,7 @@ namespace Application.Services
                     else
                     {
                         response.success = false;
-                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 6);
 
                         return response;
                     }
@@ -175,7 +175,7 @@ namespace Application.Services
                     var typeOfExpense = await _unitOfWork.TypesOfExpensesRepo.GetById(expensesRequest.TypesOfExpensesId.Value);
                     if (typeOfExpense == null)
                     {
-                        response.AddError("Tipo de gasto no encontrado", $"El tipo de gasto con Id {expensesRequest.TypesOfExpensesId.Value} no existe", 2);
+                        response.AddError("Tipo de gasto no encontrado", $"El tipo de gasto con Id {expensesRequest.TypesOfExpensesId.Value} no existe", 7);
                         response.success = false;
                         return response;
                     }
@@ -202,7 +202,7 @@ namespace Application.Services
                     var workshop = await _unitOfWork.MaintenanceWorkshopRepo.GetById(expensesRequest.VehicleMaintenanceWorkshopId.Value);
                     if (workshop == null)
                     {
-                        response.AddError("Taller no encontrado", $"El taller con Id {expensesRequest.VehicleMaintenanceWorkshopId.Value} no existe", 3);
+                        response.AddError("Taller no encontrado", $"El taller con Id {expensesRequest.VehicleMaintenanceWorkshopId.Value} no existe", 8);
                         response.success = false;
                         return response;
                     }
@@ -214,7 +214,7 @@ namespace Application.Services
                     var report = await _unitOfWork.VehicleReportRepo.GetById(expensesRequest.VehicleReportId.Value);
                     if (report == null)
                     {
-                        response.AddError("Reporte no encontrado", $"El reporte con Id {expensesRequest.VehicleReportId.Value} no existe", 4);
+                        response.AddError("Reporte no encontrado", $"El reporte con Id {expensesRequest.VehicleReportId.Value} no existe", 9);
                         response.success = false;
                         return response;
                     }
@@ -419,7 +419,7 @@ namespace Application.Services
                 else
                 {
                     response.success = false;
-                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 10);
 
                     return response;
                 }

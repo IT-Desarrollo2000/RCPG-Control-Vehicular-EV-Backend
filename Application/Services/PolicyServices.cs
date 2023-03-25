@@ -41,7 +41,7 @@ namespace Application.Services
             if (result == null)
             {
                 response.success = false;
-                response.AddError("No existe Policy", $"No existe Policy con el Id {Id} solicitado", 1);
+                response.AddError("No existe Policy", $"No existe Policy con el Id {Id} solicitado", 2);
                 return response;
             }
 
@@ -67,7 +67,7 @@ namespace Application.Services
                 if (resultVehicle == null)
                 {
                     response.success = false;
-                    response.AddError("No existe Vehicle", $"No existe Vehicle con el Id {policyRequest.VehicleId} para cargar", 1);
+                    response.AddError("No existe Vehicle", $"No existe Vehicle con el Id {policyRequest.VehicleId} para cargar", 3);
                     return response;
                 }
 
@@ -90,7 +90,7 @@ namespace Application.Services
                 {
 
                     response.success = false;
-                    response.AddError("No se puede asignar la misma poliza a otro vehiculo", $"No se puede poner {policyRequest.VehicleId} para cargar", 1);
+                    response.AddError("No se puede asignar la misma poliza a otro vehiculo", $"No se puede poner {policyRequest.VehicleId} para cargar", 4);
                     return response;
                 }
 
@@ -121,7 +121,7 @@ namespace Application.Services
                 if (policy == null)
                 {
                     response.success = false;
-                    response.AddError("No existe registro de Policy", $"No existe registro de Policy con el Id {request.PolicyId} solicitado", 1);
+                    response.AddError("No existe registro de Policy", $"No existe registro de Policy con el Id {request.PolicyId} solicitado", 5);
                     return response;
                 }
 
@@ -131,7 +131,7 @@ namespace Application.Services
                     if(vehicle == null)
                     {
                         response.success = false;
-                        response.AddError("Error", "El vehiculo especificado no existe", 2);
+                        response.AddError("Error", "El vehiculo especificado no existe", 6);
                         return response;
                     }
                     policy.VehicleId = request.VehicleId.Value;
@@ -166,7 +166,7 @@ namespace Application.Services
             if (result == null)
             {
                 response.success = false;
-                response.AddError("No existe registro de Policy", $"No existe registro de Policy con el Id {Id} solicitado", 1);
+                response.AddError("No existe registro de Policy", $"No existe registro de Policy con el Id {Id} solicitado", 7);
                 return response;
             }
 
