@@ -23,7 +23,7 @@ namespace Application.Services
         public async Task<GenericResponse<List<DepartamentDto>>> GetDepartamentALL()
         {
             GenericResponse<List<DepartamentDto>> response = new GenericResponse<List<DepartamentDto>>();
-            var entidades = await _unitOfWork.Departaments.Get(includeProperties: "Company");
+            var entidades = await _unitOfWork.Departaments.Get(includeProperties: "Company,AssignedVehicles,Supervisors");
             var dtos = _mapper.Map<List<DepartamentDto>>(entidades);
             response.success = true;
             response.Data = dtos;
@@ -34,7 +34,7 @@ namespace Application.Services
         public async Task<GenericResponse<DepartamentDto>> GetDepartamentById(int Id)
         {
             GenericResponse<DepartamentDto> response = new GenericResponse<DepartamentDto>();
-            var entidad = await _unitOfWork.Departaments.Get(p => p.Id == Id, includeProperties: "Company");
+            var entidad = await _unitOfWork.Departaments.Get(p => p.Id == Id, includeProperties: "Company,AssignedVehicles,Supervisors");
             var result = entidad.FirstOrDefault();
             var DepartamentDTO = _mapper.Map<DepartamentDto>(result);
             response.success = true;
