@@ -41,7 +41,7 @@ namespace Application.Services
             if (result == null)
             {
                 response.success = false;
-                response.AddError("No existe DestinationOfResultReportUse", $"No existe DestinationOfResultReportUse con el Id {Id} solicitado", 1);
+                response.AddError("No existe DestinationOfResultReportUse", $"No existe DestinationOfResultReportUse con el Id {Id} solicitado", 2);
                 return response;
             }
 
@@ -66,7 +66,7 @@ namespace Application.Services
                 if (resultVehicleReportUse == null)
                 {
                     response.success = false;
-                    response.AddError("No existe VehicleReportUse", $"No existe VehicleReportUseId {destinationOfReportUseRequest.VehicleReportUseId} para cargar", 2);
+                    response.AddError("No existe VehicleReportUse", $"No existe VehicleReportUseId {destinationOfReportUseRequest.VehicleReportUseId} para cargar", 3);
                     return response;
                 }
 
@@ -98,7 +98,7 @@ namespace Application.Services
                 if (result == null)
                 {
                     response.success = false;
-                    response.AddError("No existe registro de DestinationOfReportUse", $"No existe registro de DestinationOfReportUse con el Id {Id} solicitado", 2);
+                    response.AddError("No existe registro de DestinationOfReportUse", $"No existe registro de DestinationOfReportUse con el Id {Id} solicitado", 4);
                     return response;
                 }
 
