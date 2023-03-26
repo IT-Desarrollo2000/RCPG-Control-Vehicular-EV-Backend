@@ -49,36 +49,36 @@ namespace Infrastructure.Persistence
             await userManager.AddToRoleAsync(adminUser, "Administrator");
 
             //Crear los tipos de gastos por default
-            var fuelexists = await unitOfWork.TypesOfExpensesRepo.Get(e => e.Name == "Carga_Gasolina");
+            var fuelexists = await unitOfWork.TypesOfExpensesRepo.Get(e => e.Name == "Carga Gasolina");
             if (fuelexists.SingleOrDefault() == null)
             {
                 var newType = new TypesOfExpenses()
                 {
-                    Name = "Carga_Gasolina",
+                    Name = "Carga Gasolina",
                     Description = "Gasto generado por Carga de Gasolina"
                 };
 
                 await unitOfWork.TypesOfExpensesRepo.Add(newType);
             }
 
-            var correctiveMtn = await unitOfWork.TypesOfExpensesRepo.Get(e => e.Name == "Mantenimiento_Correctivo");
+            var correctiveMtn = await unitOfWork.TypesOfExpensesRepo.Get(e => e.Name == "Mantenimiento Correctivo");
             if (correctiveMtn.SingleOrDefault() == null)
             {
                 var newType = new TypesOfExpenses()
                 {
-                    Name = "Mantenimiento_Correctivo",
+                    Name = "Mantenimiento Correctivo",
                     Description = "Gasto generado por Mantenimiento Correctivo"
                 };
 
                 await unitOfWork.TypesOfExpensesRepo.Add(newType);
             }
 
-            var preventiveMtn = await unitOfWork.TypesOfExpensesRepo.Get(e => e.Name == "Mantenimiento_Preventivo");
+            var preventiveMtn = await unitOfWork.TypesOfExpensesRepo.Get(e => e.Name == "Mantenimiento Preventivo");
             if (preventiveMtn.SingleOrDefault() == null)
             {
                 var newType = new TypesOfExpenses()
                 {
-                    Name = "Mantenimiento_Preventivo",
+                    Name = "Mantenimiento Preventivo",
                     Description = "Gasto generado por Mantenimiento Preventivo"
                 };
 

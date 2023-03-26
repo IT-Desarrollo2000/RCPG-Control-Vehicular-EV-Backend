@@ -281,7 +281,7 @@ namespace Application.Services
                     }
 
                     //Verificar que exista el tipo de gasto
-                    var existetypeOfExpenses = await _unitOfWork.TypesOfExpensesRepo.Get(v => v.Name == "Carga_Gasolina");
+                    var existetypeOfExpenses = await _unitOfWork.TypesOfExpensesRepo.Get(v => v.Name == "Carga Gasolina");
                     var resultType = existetypeOfExpenses.FirstOrDefault();
 
                     //se crea gastos
