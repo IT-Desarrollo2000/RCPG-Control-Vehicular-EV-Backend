@@ -80,7 +80,7 @@ namespace API.Controllers
         }
 
         //POST
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(VehicleReportDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [Route("Create")]
