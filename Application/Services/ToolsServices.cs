@@ -51,7 +51,7 @@ namespace Application.Services
                         {
                             var dto = _mapper.Map<LicenceExpiredDto>(licence);
                             dto.StatusName = "3 MESES";
-                            dto.StatusMessage = "Licencia con 3 a 6 meses de vigencia";
+                            dto.StatusMessage = "Licencia con 3 meses de vigencia";
                             dto.StatusColor = "#efbc38";
                             dto.ExpirationType = LicenceExpStopLight.TRES_MESES;
 
@@ -71,7 +71,7 @@ namespace Application.Services
                         {
                             var dto = _mapper.Map<LicenceExpiredDto>(licence);
                             dto.StatusName = "6 MESES";
-                            dto.StatusMessage = "Licencia con 6 a 12 meses de vigencia";
+                            dto.StatusMessage = "Licencia con 6 meses de vigencia";
                             dto.StatusColor = "#f3d132";
                             dto.ExpirationType = LicenceExpStopLight.SEIS_MESES;
 
@@ -91,7 +91,7 @@ namespace Application.Services
                         {
                             var dto = _mapper.Map<LicenceExpiredDto>(licence);
                             dto.StatusName = "12 MESES";
-                            dto.StatusMessage = "Licencia con 12 meses o mas de vigencia";
+                            dto.StatusMessage = "Licencia con mas de 6 meses de vigencia";
                             dto.StatusColor = "#3ee80b";
                             dto.ExpirationType = LicenceExpStopLight.DOCE_MESES;
 
@@ -151,7 +151,7 @@ namespace Application.Services
                         {
                             var dto = _mapper.Map<PolicyExpiredDto>(policy);
                             dto.StatusName = "3 MESES";
-                            dto.StatusMessage = "Poliza con 3 a 6 meses de vigencia";
+                            dto.StatusMessage = "Poliza con 3 meses de vigencia";
                             dto.StatusColor = "#efbc38";
                             dto.ExpirationType = LicenceExpStopLight.TRES_MESES;
 
@@ -170,7 +170,7 @@ namespace Application.Services
                         {
                             var dto = _mapper.Map<PolicyExpiredDto>(policy);
                             dto.StatusName = "6 MESES";
-                            dto.StatusMessage = "Poliza con 6 a 12 meses de vigencia";
+                            dto.StatusMessage = "Poliza con 6 meses de vigencia";
                             dto.StatusColor = "#f3d132";
                             dto.ExpirationType = LicenceExpStopLight.SEIS_MESES;
 
@@ -189,7 +189,7 @@ namespace Application.Services
                         {
                             var dto = _mapper.Map<PolicyExpiredDto>(policy);
                             dto.StatusName = "12 MESES";
-                            dto.StatusMessage = "Poliza con 12 meses o mas de vigencia";
+                            dto.StatusMessage = "Poliza con 6 meses o mas de vigencia";
                             dto.StatusColor = "#3ee80b";
                             dto.ExpirationType = LicenceExpStopLight.DOCE_MESES;
 
