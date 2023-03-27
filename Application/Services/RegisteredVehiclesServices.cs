@@ -277,7 +277,7 @@ namespace Application.Services
                     else
                     {
                         response.success = false;
-                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen",3);
 
                         return response;
                     }
@@ -567,7 +567,7 @@ namespace Application.Services
                     if (exists == null)
                     {
                         response.success = false;
-                        response.AddError("Departamento no encontrado", $"El departamento a eliminar con Id {department} no se encontro", 3);
+                        response.AddError("Departamento no encontrado", $"El departamento a eliminar con Id {department} no se encontro", 2);
                         return response;
                     }
                     veh.AssignedDepartments.Remove(exists);
@@ -642,7 +642,7 @@ namespace Application.Services
                 else
                 {
                     response.success = false;
-                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen",2);
 
                     return response;
                 }

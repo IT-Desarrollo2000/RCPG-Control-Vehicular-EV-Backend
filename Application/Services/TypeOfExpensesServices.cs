@@ -21,53 +21,106 @@ namespace Application.Services
         public async Task<GenericResponse<TypesOfExpensesDto>> CreateTypeOfExpenses(TypesOfExpensesRequest typesOfExpensesRequest)
         {
             GenericResponse<TypesOfExpensesDto> response = new GenericResponse<TypesOfExpensesDto>();
-            var entity = _mapper.Map<TypesOfExpenses>(typesOfExpensesRequest);
-            await _unitOfWork.TypesOfExpensesRepo.Add(entity);
-            await _unitOfWork.SaveChangesAsync();
-            response.success = true;
-            var typesDto = _mapper.Map<TypesOfExpensesDto>(entity);
-            response.Data = typesDto;
-            return response;
+            try
+            {
+                switch (typesOfExpensesRequest.Name)
+                {
+                    case "Carga Gasolina":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
+                        response.success = false;
+                        return response;
+                    case "Mantenimiento Correctivo":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
+                        response.success = false;
+                        return response;
+                    case "Mantenimiento Preventivo":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
+                        response.success = false;
+                        return response;
+                    default:
+                        break;
+                }
+
+                var entity = _mapper.Map<TypesOfExpenses>(typesOfExpensesRequest);
+                await _unitOfWork.TypesOfExpensesRepo.Add(entity);
+                await _unitOfWork.SaveChangesAsync();
+                response.success = true;
+                var typesDto = _mapper.Map<TypesOfExpensesDto>(entity);
+                response.Data = typesDto;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
         }
         public async Task<GenericResponse<List<TypesOfExpensesDto>>> GetTypesOfExpensesList()
         {
             GenericResponse<List<TypesOfExpensesDto>> response = new GenericResponse<List<TypesOfExpensesDto>>();
-            var tags = await _unitOfWork.TypesOfExpensesRepo.GetAll();
-            var prueba = _mapper.Map<List<TypesOfExpensesDto>>(tags);
-            response.success = true;
-            response.Data = prueba;
-            return response;
+            try
+            {
+                var tags = await _unitOfWork.TypesOfExpensesRepo.GetAll();
+                var prueba = _mapper.Map<List<TypesOfExpensesDto>>(tags);
+                response.success = true;
+                response.Data = prueba;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
         }
 
         public async Task<GenericResponse<TypesOfExpensesDto>> GetTypesOfExpensesId(int id)
         {
             GenericResponse<TypesOfExpensesDto> response = new GenericResponse<TypesOfExpensesDto>();
-            var entity = await _unitOfWork.TypesOfExpensesRepo.Get(filter: a => a.Id == id);
+            try
+            {
+                var entity = await _unitOfWork.TypesOfExpensesRepo.Get(filter: a => a.Id == id);
 
-            var check = entity.FirstOrDefault();
-            var map = _mapper.Map<TypesOfExpensesDto>(check);
-            response.success = true;
-            response.Data = map;
-            return response;
+                var check = entity.FirstOrDefault();
+                var map = _mapper.Map<TypesOfExpensesDto>(check);
+                response.success = true;
+                response.Data = map;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
         }
 
         public async Task<GenericResponse<TypesOfExpenses>> PutTypesOfExpenses(TypesOfExpensesRequest typesOfExpensesRequest, int id)
         {
 
             GenericResponse<TypesOfExpenses> response = new GenericResponse<TypesOfExpenses>();
-            var result = await _unitOfWork.TypesOfExpensesRepo.Get(r => r.Id == id);
-            var type = result.FirstOrDefault();
-            if (type == null) return null;
+            try
+            {
+                var result = await _unitOfWork.TypesOfExpensesRepo.Get(r => r.Id == id);
+                var type = result.FirstOrDefault();
+                if (type == null) return null;
 
-            type.Name = typesOfExpensesRequest.Name;
-            type.Description = typesOfExpensesRequest.Description;
+                type.Name = typesOfExpensesRequest.Name;
+                type.Description = typesOfExpensesRequest.Description;
 
-            await _unitOfWork.TypesOfExpensesRepo.Update(type);
-            await _unitOfWork.SaveChangesAsync();
-            response.success = true;
-            response.Data = type;
-            return response;
-
+                await _unitOfWork.TypesOfExpensesRepo.Update(type);
+                await _unitOfWork.SaveChangesAsync();
+                response.success = true;
+                response.Data = type;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
         }
 
         public async Task<GenericResponse<TypesOfExpenses>> DeleteTypeOfExpenses(int id)
@@ -80,16 +133,16 @@ namespace Application.Services
 
                 switch (type.Name)
                 {
-                    case "Carga_Gasolina":
+                    case "Carga Gasolina":
                         response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
                         response.success = false;
                         return response;
                     case "Mantenimiento_Correctivo":
-                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 3);
                         response.success = false;
                         return response;
                     case "Mantenimiento_Preventivo":
-                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 4);
                         response.success = false;
                         return response;
                     default:
@@ -110,6 +163,5 @@ namespace Application.Services
                 return response;
             }
         }
-
     }
 }
