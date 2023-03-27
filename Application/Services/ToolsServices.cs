@@ -2,13 +2,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
-using Domain.Entities.Registered_Cars;
 using Domain.Enums;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Application.Services
 {
@@ -22,7 +16,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        
+
         public async Task<GenericResponse<List<LicenceExpiredDto>>> GetLicencesExpirations(LicenceExpStopLight request)
         {
             GenericResponse<List<LicenceExpiredDto>> response = new GenericResponse<List<LicenceExpiredDto>>();
@@ -31,10 +25,10 @@ namespace Application.Services
             {
                 switch (request)
                 {
-                    case LicenceExpStopLight.EXPIRADOS: 
+                    case LicenceExpStopLight.EXPIRADOS:
                         var explicences = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate <= DateTime.UtcNow);
                         var dtos = new List<LicenceExpiredDto>();
-                        foreach(var licence in explicences)
+                        foreach (var licence in explicences)
                         {
                             var dto = _mapper.Map<LicenceExpiredDto>(licence);
                             dto.StatusName = "Expirado";
@@ -50,8 +44,8 @@ namespace Application.Services
 
                         return response;
                     case LicenceExpStopLight.TRES_MESES:
-                        var licences3m = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate >= DateTime.UtcNow.AddMonths(3) && u.LicenceExpirationDate <= DateTime.UtcNow.AddMonths(6));
-
+                        var licences3mQuery = await _unitOfWork.UserProfileRepo.Get(l => l.LicenceExpirationDate != null);
+                        var licences3m = licences3mQuery.Where(u => (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays <= 90 && (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays > 0);
                         var dtos1 = new List<LicenceExpiredDto>();
                         foreach (var licence in licences3m)
                         {
@@ -69,7 +63,8 @@ namespace Application.Services
 
                         return response;
                     case LicenceExpStopLight.SEIS_MESES:
-                        var licences6m = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate >= DateTime.UtcNow.AddMonths(6) && u.LicenceExpirationDate <= DateTime.UtcNow.AddMonths(12));
+                        var licences6mQuery = await _unitOfWork.UserProfileRepo.Get(l => l.LicenceExpirationDate != null);
+                        var licences6m = licences6mQuery.Where(u => (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays <= 180 && (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays > 90);
 
                         var dtos2 = new List<LicenceExpiredDto>();
                         foreach (var licence in licences6m)
@@ -88,7 +83,8 @@ namespace Application.Services
 
                         return response;
                     case LicenceExpStopLight.DOCE_MESES:
-                        var licences12m = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate >= DateTime.UtcNow.AddMonths(12));
+                        var licences12mQuery = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate != null);
+                        var licences12m = licences12mQuery.Where(u => (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays > 180);
 
                         var dtos3 = new List<LicenceExpiredDto>();
                         foreach (var licence in licences12m)
@@ -147,7 +143,8 @@ namespace Application.Services
 
                         return response;
                     case LicenceExpStopLight.TRES_MESES:
-                        var policy3m = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate >= DateTime.UtcNow.AddMonths(3) && u.ExpirationDate <= DateTime.UtcNow.AddMonths(6), includeProperties: "Vehicle");
+                        var policy3mQuery = await _unitOfWork.PolicyRepo.Get(includeProperties: "Vehicle");
+                        var policy3m = policy3mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays <= 90 && (u.ExpirationDate - DateTime.UtcNow).TotalDays > 0);
 
                         var dtos1 = new List<PolicyExpiredDto>();
                         foreach (var policy in policy3m)
@@ -166,8 +163,8 @@ namespace Application.Services
 
                         return response;
                     case LicenceExpStopLight.SEIS_MESES:
-                        var policy6m = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate >= DateTime.UtcNow.AddMonths(6) && u.ExpirationDate <= DateTime.UtcNow.AddMonths(12), includeProperties: "Vehicle");
-
+                        var policy6mQuery = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate >= DateTime.UtcNow.AddMonths(6) && u.ExpirationDate <= DateTime.UtcNow.AddMonths(12), includeProperties: "Vehicle");
+                        var policy6m = policy6mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays <= 180 && (u.ExpirationDate - DateTime.UtcNow).TotalDays > 90);
                         var dtos2 = new List<PolicyExpiredDto>();
                         foreach (var policy in policy6m)
                         {
@@ -185,8 +182,8 @@ namespace Application.Services
 
                         return response;
                     case LicenceExpStopLight.DOCE_MESES:
-                        var policy12m = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate   >= DateTime.UtcNow.AddMonths(12), includeProperties: "Vehicle");
-
+                        var policy12mQuery = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate >= DateTime.UtcNow.AddMonths(12), includeProperties: "Vehicle");
+                        var policy12m = policy12mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays > 180);
                         var dtos3 = new List<PolicyExpiredDto>();
                         foreach (var policy in policy12m)
                         {
@@ -208,10 +205,10 @@ namespace Application.Services
                         return response;
                 }
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 response.success = false;
-                response.AddError("Error",ex.Message, 1);
+                response.AddError("Error", ex.Message, 1);
                 return response;
             }
         }
@@ -227,14 +224,14 @@ namespace Application.Services
 
                 //Obtener los autos
                 var vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: "VehicleServices");
-                
-                foreach(var vehicle in vehicles)
+
+                foreach (var vehicle in vehicles)
                 {
                     var lastServicesQuery = await _unitOfWork.VehicleServiceRepo.Get(filter: s => s.Status == VehicleServiceStatus.FINALIZADO && s.VehicleId == vehicle.Id, includeProperties: "Vehicle");
                     var lastServices = lastServicesQuery.FirstOrDefault();
-                    
+
                     //Verificar si ya cuenta con un servicio previo
-                    if(lastServices != null)
+                    if (lastServices != null)
                     {
                         //Revisar por fecha
                         TimeSpan timespan = lastServices.NextService.Value - DateTime.UtcNow;
@@ -269,7 +266,7 @@ namespace Application.Services
                                 dtogreen.StatusMessage = "El vehiculo requiere de servicio";
                                 dtogreen.StatusName = "ATENCIÓN!!";
                                 dtogreen.StatusColor = "#efbc38";
-                                dtogreen.AlertType= StopLightAlert.NARANJA;
+                                dtogreen.AlertType = StopLightAlert.NARANJA;
                                 dtogreen.LastServiceId = lastServices.Id;
                                 dtogreen.NextServiceDate = lastServices.NextService;
                                 dtogreen.NextServiceKM = lastServices.NextServiceKM;
@@ -302,8 +299,8 @@ namespace Application.Services
                             dtored.NextServiceKM = lastServices.NextServiceKM;
                             dtored.Type = VehicleServiceType.Kilometraje;
                             dtos.Add(dtored);
-                        } 
-                        else if((lastServices.NextServiceKM - vehicle.CurrentKM) <= 1000)
+                        }
+                        else if ((lastServices.NextServiceKM - vehicle.CurrentKM) <= 1000)
                         {
                             MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(lastServices);
                             dtoyellow.StatusMessage = "El vehiculo requiere de servicio pronto";
@@ -315,8 +312,8 @@ namespace Application.Services
                             dtoyellow.NextServiceKM = lastServices.NextServiceKM;
                             dtoyellow.Type = VehicleServiceType.Kilometraje;
                             dtos.Add(dtoyellow);
-                        } 
-                        else if((lastServices.NextServiceKM - vehicle.CurrentKM) > 1000)
+                        }
+                        else if ((lastServices.NextServiceKM - vehicle.CurrentKM) > 1000)
                         {
                             MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(lastServices);
                             dto.StatusMessage = "No requiere de servicio";
@@ -333,7 +330,7 @@ namespace Application.Services
                     }
                     else
                     {
-                        if((vehicle.CurrentKM + vehicle.ServicePeriodKM) - vehicle.CurrentKM <= 300)
+                        if ((vehicle.CurrentKM + vehicle.ServicePeriodKM) - vehicle.CurrentKM <= 300)
                         {
                             MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dtored.Type = VehicleServiceType.Kilometraje;
@@ -342,7 +339,7 @@ namespace Application.Services
                             dtored.StatusColor = "#e41212";
                             dtored.AlertType = StopLightAlert.ROJO;
                             dtos.Add(dtored);
-                        } 
+                        }
                         else if ((vehicle.CurrentKM + vehicle.ServicePeriodKM) - vehicle.CurrentKM <= 1000)
                         {
                             MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
@@ -352,7 +349,7 @@ namespace Application.Services
                             dtoyellow.AlertType = StopLightAlert.AMARILLO;
                             dtoyellow.Type = VehicleServiceType.Kilometraje;
                             dtos.Add(dtoyellow);
-                        } 
+                        }
                         else if ((vehicle.CurrentKM + vehicle.ServicePeriodKM) - vehicle.CurrentKM > 1000)
                         {
                             MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
@@ -413,7 +410,7 @@ namespace Application.Services
 
                 return response;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
@@ -421,7 +418,7 @@ namespace Application.Services
                 return response;
             }
         }
-        
+
         //GetAllVehicleStatus
         public async Task<GenericResponse<List<GetVehicleActiveDto>>> GetAllVehiclesActive()
         {
@@ -442,7 +439,7 @@ namespace Application.Services
                 return response;
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
@@ -450,27 +447,27 @@ namespace Application.Services
                 return response;
 
             }
-            
+
         }
 
         public async Task<GenericResponse<List<GraphicsPerfomanceDto>>> GetAllPerfomance(int VehicleId)
         {
             GenericResponse<List<GraphicsPerfomanceDto>> response = new GenericResponse<List<GraphicsPerfomanceDto>>();
 
-            try 
+            try
             {
                 var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == Domain.Enums.ReportType.Carga_Gasolina && reportStatus.VehicleId == VehicleId, includeProperties: "Vehicle,VehicleReportUses");
-                var result =  Rendimiento.FirstOrDefault();
+                var result = Rendimiento.FirstOrDefault();
                 var list = new List<GraphicsPerfomanceDto>();
 
-                if(Rendimiento == null)
+                if (Rendimiento == null)
                 {
                     response.success = false;
-                    response.AddError("No existe ",$"No existe Vehiculo con el Id { VehicleId }", 2);
+                    response.AddError("No existe ", $"No existe Vehiculo con el Id {VehicleId}", 2);
                     return response;
                 }
 
-                if(Rendimiento.Count() == 0)
+                if (Rendimiento.Count() == 0)
                 {
                     var Perfomance = new GraphicsPerfomanceDto()
                     {
@@ -481,7 +478,7 @@ namespace Application.Services
                         GasolineLoadAmount = 0,
                         MileageTraveled = 0,
                         Perfomance = 0,
-                        error = $"No existe rendimiento por reportes de Vehiculo { VehicleId } "
+                        error = $"No existe rendimiento por reportes de Vehiculo {VehicleId} "
                     };
 
                     list.Add(Perfomance);
@@ -492,7 +489,7 @@ namespace Application.Services
                 {
                     foreach (var Aray in Rendimiento)
                     {
-                        if ( Aray.VehicleReportUses == null)
+                        if (Aray.VehicleReportUses == null)
                         {
                             var Perfo = new GraphicsPerfomanceDto()
                             {
@@ -544,7 +541,7 @@ namespace Application.Services
                 return response;
 
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
@@ -562,10 +559,10 @@ namespace Application.Services
             try
             {
                 var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == Domain.Enums.ReportType.Carga_Gasolina && reportStatus.VehicleId == VehicleId, includeProperties: "Vehicle,VehicleReportUses");
-             
+
                 var listt = new List<GraphicsPerfomanceDto>();
-         
-     
+
+
 
 
                 if (Rendimiento == null)
@@ -575,7 +572,7 @@ namespace Application.Services
                     return response;
                 }
 
-                if(Rendimiento.Count() == 0)
+                if (Rendimiento.Count() == 0)
                 {
                     var Totale = new TotalPerfomanceDto()
                     {
@@ -583,7 +580,7 @@ namespace Application.Services
                         VehicleName = "No se obtuvo informacion del documento solicitado",
                         TotalMileageTraveled = 0,
                         TotalPerfomance = 0,
-                        error = $"No existe datos de Rendimiento para { VehicleId } "
+                        error = $"No existe datos de Rendimiento para {VehicleId} "
                     };
 
                     response.success = true;
@@ -600,16 +597,16 @@ namespace Application.Services
                     double Dperfomance = 0;
                     foreach (var Aray in Rendimiento)
                     {
-                        if ( Aray.VehicleReportUses == null)
+                        if (Aray.VehicleReportUses == null)
                         {
                             var Perfo = new GraphicsPerfomanceDto()
                             {
                                 VehicleId = Aray.VehicleId,
                                 VehicleName = "No Hay Datos Obtenidos de Este Reporte",
-                                CurrentKm = 0 ,
+                                CurrentKm = 0,
                                 LastKm = 0,
                                 GasolineLoadAmount = 0,
-                                MileageTraveled =  0,
+                                MileageTraveled = 0,
                                 Perfomance = 0
                             };
 
@@ -645,7 +642,7 @@ namespace Application.Services
                             sum2 += Perfomance.Perfomance;
                             Dperfomance = (double)Aray.Vehicle.DesiredPerformance;
 
-                        } 
+                        }
 
                     }
                     var Total = new TotalPerfomanceDto()
@@ -662,7 +659,7 @@ namespace Application.Services
                     return response;
 
                 }
-      
+
 
             }
             catch (Exception ex)
@@ -685,11 +682,11 @@ namespace Application.Services
             double totalMileage = 0;
             try
             {
-                if(listTotalPerfomanceDto.VehicleId.Count > 0)
+                if (listTotalPerfomanceDto.VehicleId.Count > 0)
                 {
                     foreach (var Enteros in listTotalPerfomanceDto.VehicleId)
                     {
-                        
+
 
                         var Rendimiento = await _unitOfWork.VehicleReportRepo.Get(filter: reportStatus => reportStatus.ReportType == ReportType.Carga_Gasolina && reportStatus.VehicleId == Enteros, includeProperties: "Vehicle,VehicleReportUses,Vehicle.VehicleImages");
 
@@ -724,7 +721,7 @@ namespace Application.Services
                             var Name = Rendimiento.FirstOrDefault().Vehicle.Name;
                             double sum = 0;
                             double sum2 = 0;
-                            double DPerfomance = 0; 
+                            double DPerfomance = 0;
                             foreach (var Aray in Rendimiento)
                             {
                                 var KmActual = Aray.VehicleReportUses.FinalMileage;
@@ -772,8 +769,8 @@ namespace Application.Services
 
                         }
                     }
-                    
-                    foreach(var total in list)
+
+                    foreach (var total in list)
                     {
                         totalCount += 1;
                         totalPerformance += total.TotalPerfomance;
@@ -786,7 +783,7 @@ namespace Application.Services
                     response.success = true;
                     response.Data = review;
                     return response;
-                } 
+                }
                 else
                 {
                     var vehicles = await _unitOfWork.VehicleRepo.Get(v => v.VehicleStatus != VehicleStatus.INACTIVO);
@@ -807,7 +804,7 @@ namespace Application.Services
 
                         if (Rendimiento.Count() == 0)
                         {
-                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros.Id,includeProperties: "Vehicle");
+                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Enteros.Id, includeProperties: "Vehicle");
                             var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
                             var Totale = new TotalPerfomanceDto()
                             {
@@ -877,7 +874,7 @@ namespace Application.Services
                         }
 
                     }
-                    
+
                     foreach (var total in list)
                     {
                         totalCount += 1;
@@ -892,7 +889,7 @@ namespace Application.Services
                     response.Data = review;
                     return response;
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -913,7 +910,7 @@ namespace Application.Services
             try
             {
                 var travel = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == ReportUseType.Finalizado);
-            
+
 
                 if (travel == null)
                 {
@@ -925,26 +922,26 @@ namespace Application.Services
                 foreach (var usuario in travel)
                 {
                     var user = await _unitOfWork.VehicleReportUseRepo.Get(filter: user => user.UserProfileId == usuario.UserProfileId && user.StatusReportUse == ReportUseType.Finalizado, includeProperties: "Vehicle,UserProfile");
-      
-                    if ( usuario.UserProfileId == null )
+
+                    if (usuario.UserProfileId == null)
                     {
                         var pub = new GetUserForTravelDto()
                         {
-                            
+
                             UserName = "No hay datos",
                             TripNumber = 0,
-                            error = $"Este campo no tiene datos con el reporte { usuario.Id}"
+                            error = $"Este campo no tiene datos con el reporte {usuario.Id}"
                         };
 
                     }
                     else
                     {
                         var nombres = await _unitOfWork.VehicleReportUseRepo.Get(filter: user => user.UserProfileId == usuario.UserProfileId && user.StatusReportUse == ReportUseType.Finalizado, includeProperties: "Vehicle,UserProfile");
-                        var resulv= nombres.Select(nom => nom.Vehicle.Name).ToList();
+                        var resulv = nombres.Select(nom => nom.Vehicle.Name).ToList();
 
                         var L = list.LastOrDefault();
 
-                        if ( L == null)
+                        if (L == null)
                         {
 
                             //NameU.Add(n.Vehicle.Name);
@@ -962,21 +959,21 @@ namespace Application.Services
 
                         }
 
-        
+
 
                         var exist = list.Exists(x => x.UserDriverId == usuario.UserProfileId);
 
                         if (exist)
                         {
-                            
+
 
                         }
 
-                    
+
                         else
                         {
 
-                   
+
                             var add = new GetUserForTravelDto()
                             {
                                 VehicleName = resulv,
@@ -1059,7 +1056,7 @@ namespace Application.Services
                 var useReport = await _unitOfWork.VehicleReportUseRepo.Get(u => u.UserProfileId == userProfileId && (u.StatusReportUse == ReportUseType.ViajeNormal || u.StatusReportUse == ReportUseType.ViajeRapido));
                 var lastOne = useReport.LastOrDefault();
 
-                if(lastOne != null)
+                if (lastOne != null)
                 {
                     var car = await _unitOfWork.VehicleRepo.GetById(lastOne.VehicleId);
 
