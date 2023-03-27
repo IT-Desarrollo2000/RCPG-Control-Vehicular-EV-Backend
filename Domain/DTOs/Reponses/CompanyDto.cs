@@ -8,6 +8,6 @@ namespace Domain.DTOs.Reponses
         public string Name { get; set; }
         [Required]
         public string ReasonSocial { get; set; }
-        public virtual ICollection<UnrelatedDepartamentDto> Departaments { get; set; }
+        public virtual ICollection<DepartamentDto> Departaments { get; set; }
     }
 }
