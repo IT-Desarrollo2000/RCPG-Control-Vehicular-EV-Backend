@@ -23,17 +23,17 @@ namespace Application.Services
             GenericResponse<TypesOfExpensesDto> response = new GenericResponse<TypesOfExpensesDto>();
             try
             {
-                switch (typesOfExpensesRequest.Name)
+                switch (typesOfExpensesRequest.Name.ToUpper())
                 {
-                    case "Carga Gasolina":
+                    case "CARGA GASOLINA":
                         response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
                         response.success = false;
                         return response;
-                    case "Mantenimiento Correctivo":
+                    case "MANTENIMIENTO CORRECTIVO":
                         response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
                         response.success = false;
                         return response;
-                    case "Mantenimiento Preventivo":
+                    case "MANTENIMIENTO PREVENTIVO":
                         response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
                         response.success = false;
                         return response;
@@ -137,12 +137,12 @@ namespace Application.Services
                         response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
                         response.success = false;
                         return response;
-                    case "Mantenimiento_Correctivo":
-                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 3);
+                    case "Mantenimiento Correctivo":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
                         response.success = false;
                         return response;
-                    case "Mantenimiento_Preventivo":
-                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 4);
+                    case "Mantenimiento Preventivo":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
                         response.success = false;
                         return response;
                     default:
