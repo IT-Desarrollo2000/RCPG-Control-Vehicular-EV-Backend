@@ -88,7 +88,7 @@ namespace Application.Services
                 else
                 {
                     response.success = false;
-                    response.AddError("Invalid File Type", "El archivo no corresponde a un tipo de imagen");
+                    response.AddError("Invalid File Type", "El archivo no corresponde a un tipo de imagen", 2);
 
                     return response;
                 }
@@ -111,7 +111,7 @@ namespace Application.Services
                 if (userProfile == null)
                 {
                     response.success = false;
-                    response.AddError("Profile not found", "No se pudo identificar el perfil de usuario solicitado", 2);
+                    response.AddError("Profile not found", "No se pudo identificar el perfil de usuario solicitado", 3);
 
                     return response;
                 }
@@ -154,7 +154,7 @@ namespace Application.Services
                 else
                 {
                     response.success = false;
-                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 4);
 
                     return response;
                 }

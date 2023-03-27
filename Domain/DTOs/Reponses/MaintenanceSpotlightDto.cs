@@ -22,5 +22,7 @@ namespace Domain.DTOs.Reponses
         public string StatusColor { get; set; }
         public string StatusName { get; set; }
         public StopLightAlert AlertType { get; set; }
+        public DateTime? NextServiceDate { get; set; }
+        public int? NextServiceKM { get; set; }
     }
 }
