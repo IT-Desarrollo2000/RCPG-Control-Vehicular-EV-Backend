@@ -369,7 +369,7 @@ namespace Application.Services
                 if (VehicleA == null)
                 {
                     response.success = false;
-                    response.AddError("No existe Vehiculos Por Mostrar", "No Hay Vehiculos en Viaje actualmente", 1);
+                    response.AddError("No existe Vehiculos Por Mostrar", "No Hay Vehiculos en Viaje actualmente", 2);
                     return response;
                 }
 
@@ -403,7 +403,7 @@ namespace Application.Services
                 if(Rendimiento == null)
                 {
                     response.success = false;
-                    response.AddError("No existe ",$"No existe Vehiculo con el Id { VehicleId }", 1);
+                    response.AddError("No existe ",$"No existe Vehiculo con el Id { VehicleId }", 2);
                     return response;
                 }
 
@@ -508,7 +508,7 @@ namespace Application.Services
                 if (Rendimiento == null)
                 {
                     response.success = false;
-                    response.AddError("No existe ", $"No existe Vehiculo con el Id {VehicleId}", 1);
+                    response.AddError("No existe ", $"No existe Vehiculo con el Id {VehicleId}", 2);
                     return response;
                 }
 
@@ -635,7 +635,7 @@ namespace Application.Services
                         if (Rendimiento == null)
                         {
                             response.success = false;
-                            response.AddError("No existe ", $"No existe Vehiculo con el Id {Enteros}", 1);
+                            response.AddError("No existe ", $"No existe Vehiculo con el Id {Enteros}", 2);
                             return response;
                         }
 
@@ -738,7 +738,7 @@ namespace Application.Services
                         if (Rendimiento == null)
                         {
                             response.success = false;
-                            response.AddError("No existe ", $"No existe Vehiculo con el Id {Enteros.Id}", 1);
+                            response.AddError("No existe ", $"No existe Vehiculo con el Id {Enteros.Id}", 3);
                             return response;
                         }
 
@@ -855,7 +855,7 @@ namespace Application.Services
                 if (travel == null)
                 {
                     response.success = false;
-                    response.AddError("No existe ", $"No existe Reporte Solicitado", 1);
+                    response.AddError("No existe ", $"No existe Reporte Solicitado", 2);
                     return response;
                 }
 

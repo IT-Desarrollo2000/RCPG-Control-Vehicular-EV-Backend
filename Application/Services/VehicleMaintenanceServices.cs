@@ -170,7 +170,7 @@ namespace Application.Services
             if(result == null)
             {
                 response.success = false;
-                response.AddError("Mantenimiento no encontrado", $"El mantenimiento con ID {Id} no existe", 1);
+                response.AddError("Mantenimiento no encontrado", $"El mantenimiento con ID {Id} no existe", 2);
                 return response;
             }
 
@@ -238,7 +238,7 @@ namespace Application.Services
                     case VehicleStatus.MANTENIMIENTO:
                     case VehicleStatus.EN_USO:
                         response.success = false;
-                        response.AddError("Vehiculo no disponible", "El estatus del vehiculo no permite su mantenimiento por el momento", 4);
+                        response.AddError("Vehiculo no disponible", "El estatus del vehiculo no permite su mantenimiento por el momento", 3);
                         return response;
                     default:
                         break;
@@ -251,7 +251,7 @@ namespace Application.Services
                     if (workshop == null)
                     {
                         response.success = false;
-                        response.AddError("No existe taller", $"No existe taller con el Id {request.WorkShopId} solicitado", 3);
+                        response.AddError("No existe taller", $"No existe taller con el Id {request.WorkShopId} solicitado", 4);
                         return response;
                     }
                 }
@@ -263,7 +263,7 @@ namespace Application.Services
                     if (adminUser == null)
                     {
                         response.success = false;
-                        response.AddError("No existe usuario", $"No existe usuario con el Id {request.AdminUserId} solicitado", 4);
+                        response.AddError("No existe usuario", $"No existe usuario con el Id {request.AdminUserId} solicitado", 5);
                         return response;
                     }
                 }
@@ -275,7 +275,7 @@ namespace Application.Services
                     if (workshop == null)
                     {
                         response.success = false;
-                        response.AddError("No existe reporte", $"No existe reporte con el Id {request.ReportId} solicitado", 5);
+                        response.AddError("No existe reporte", $"No existe reporte con el Id {request.ReportId} solicitado", 6);
                         return response;
                     }
                 }
@@ -462,7 +462,7 @@ namespace Application.Services
                     if( workshop == null)
                     {
                         response.success = false;
-                        response.AddError("Taller no existe", "El taller especificado no existe", 4);
+                        response.AddError("Taller no existe", "El taller especificado no existe", 5);
                         return response;
                     }
                     maintenance.WorkShopId = workshop.Id;
@@ -475,7 +475,7 @@ namespace Application.Services
                     if (report == null)
                     {
                         response.success = false;
-                        response.AddError("Reporte no existe", "El reporte especificado no existe", 4);
+                        response.AddError("Reporte no existe", "El reporte especificado no existe", 6);
                         return response;
                     }
                     maintenance.ReportId = report.Id;
@@ -577,7 +577,7 @@ namespace Application.Services
                         if (expense == null)
                         {
                             response.success = false;
-                            response.AddError("Gasto invalido", "El gasto especificado no existe", 4);
+                            response.AddError("Gasto invalido", "El gasto especificado no existe", 5);
                             return response;
                         }
 
@@ -626,7 +626,7 @@ namespace Application.Services
                     else
                     {
                         response.success = false;
-                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen",6);
 
                         return response;
                     }

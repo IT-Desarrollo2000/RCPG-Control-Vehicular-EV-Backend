@@ -85,11 +85,11 @@ namespace Application.Services
                         response.success = false;
                         return response;
                     case "Mantenimiento_Correctivo":
-                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 3);
                         response.success = false;
                         return response;
                     case "Mantenimiento_Preventivo":
-                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 4);
                         response.success = false;
                         return response;
                     default:
