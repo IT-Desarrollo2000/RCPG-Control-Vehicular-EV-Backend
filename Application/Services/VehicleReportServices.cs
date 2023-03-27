@@ -211,7 +211,7 @@ namespace Application.Services
                 if (!vehicleReportRequest.AdminUserId.HasValue && !vehicleReportRequest.MobileUserId.HasValue)
                 {
                     response.success = false;
-                    response.AddError("Usuario no especificado", $"Es necesario especificar un usuario para la creación del reporte", 4);
+                    response.AddError("Usuario no especificado", $"Es necesario especificar un usuario para la creación del reporte", 2);
                     return response;
                 }
 
@@ -226,7 +226,7 @@ namespace Application.Services
                     if (resultUserProfile == null)
                     {
                         response.success = false;
-                        response.AddError("No existe UserProfile", $"No existe UserProfileId {vehicleReportRequest.MobileUserId} para cargar", 1);
+                        response.AddError("No existe UserProfile", $"No existe UserProfileId {vehicleReportRequest.MobileUserId} para cargar", 3);
                         return response;
                     }
 
@@ -238,7 +238,7 @@ namespace Application.Services
                     if (existeAppUser == null)
                     {
                         response.success = false;
-                        response.AddError("No existe AppUser", $"No existe AppUserId {vehicleReportRequest.AdminUserId} para cargar", 1);
+                        response.AddError("No existe AppUser", $"No existe AppUserId {vehicleReportRequest.AdminUserId} para cargar", 4);
                         return response;
                     }
 
@@ -262,21 +262,21 @@ namespace Application.Services
                     if (!vehicleReportRequest.GasolineLoadAmount.HasValue)
                     {
                         response.success = false;
-                        response.AddError("Es necesario un valor existente Litros", $"Para el tipo de Carga de Gasolina, es necesario un valor para la carga de Litros", 2);
+                        response.AddError("Es necesario un valor existente Litros", $"Para el tipo de Carga de Gasolina, es necesario un valor para la carga de Litros", 6);
                         return response;
                     }
 
                     if (!vehicleReportRequest.GasolineCurrentKM.HasValue)
                     {
                         response.success = false;
-                        response.AddError("Es necesario un valor existente KM", $"Para el tipo de Carga de Gasolina, es necesario un valor para el KM actual ", 2);
+                        response.AddError("Es necesario un valor existente KM", $"Para el tipo de Carga de Gasolina, es necesario un valor para el KM actual ", 7);
                         return response;
                     }
 
                     if (!vehicleReportRequest.AmountGasoline.HasValue)
                     {
                         response.success = false;
-                        response.AddError("Es necesario el monto de carga de gasolina", $"Para el tipo de Carga de Gasolina, es necesario el monto que se gasto ", 2);
+                        response.AddError("Es necesario el monto de carga de gasolina", $"Para el tipo de Carga de Gasolina, es necesario el monto que se gasto ", 8);
                         return response;
                     }
 
@@ -306,7 +306,7 @@ namespace Application.Services
                     if (resultD == null)
                     {
                         response.success = false;
-                        response.AddError("No existe reporte de uso", $"No existe reporte de uso con el Id {vehicleReportRequest.VehicleReportUseId} solicitado",3);
+                        response.AddError("No existe reporte de uso", $"No existe reporte de uso con el Id {vehicleReportRequest.VehicleReportUseId} solicitado",9);
                         return response;
                     }
                 }
@@ -329,7 +329,7 @@ namespace Application.Services
                     if (expense == null)
                     {
                         response.success = false;
-                        response.AddError("Gasto no existe", $"El Id de gasto {expenseId} no existe", 4);
+                        response.AddError("Gasto no existe", $"El Id de gasto {expenseId} no existe", 10);
                     }
                     entidadR.Expenses.Add(expense);
                 }
@@ -367,7 +367,7 @@ namespace Application.Services
                     else
                     {
                         response.success = false;
-                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 5);
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 11);
 
                         return response;
                     }
@@ -383,7 +383,7 @@ namespace Application.Services
             catch (Exception ex)
             {
                 response.success = false;
-                response.AddError("Error", ex.Message, 0);
+                response.AddError("Error", ex.Message, 1);
 
                 return response;
             }
@@ -501,7 +501,7 @@ namespace Application.Services
                     if (expense == null)
                     {
                         response.success = false;
-                        response.AddError("Gasto no existe", $"El Id de gasto {expenseId} no existe");
+                        response.AddError("Gasto no existe", $"El Id de gasto {expenseId} no existe",5);
                     }
                     report.Expenses.Add(expense);
                 }
@@ -513,7 +513,7 @@ namespace Application.Services
                     if (expense == null)
                     {
                         response.success = false;
-                        response.AddError("Gasto no existe", $"El Id de gasto {expenseId} no existe");
+                        response.AddError("Gasto no existe", $"El Id de gasto {expenseId} no existe",6);
                     }
                     report.Expenses.Remove(expense);
                 }
@@ -544,7 +544,7 @@ namespace Application.Services
             {
                 response.success = false;
                 response.Data = false;
-                response.AddError("Reporte no encontrado", "El reporte especificado no existe", 1);
+                response.AddError("Reporte no encontrado", "El reporte especificado no existe", 2);
 
                 return response;
             }
@@ -606,7 +606,7 @@ namespace Application.Services
                 else
                 {
                     response.success = false;
-                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen",2);
 
                     return response;
                 }

@@ -310,7 +310,7 @@ namespace Application.Services
             if (result == null)
             {
                 response.success = true;
-                response.AddError("No existe VehicleReportUse", $"No existe ReportUse con el Id {Id} solicitado ");
+                response.AddError("No existe VehicleReportUse", $"No existe ReportUse con el Id {Id} solicitado ",2);
                 return response;
             }
 
@@ -364,7 +364,7 @@ namespace Application.Services
                 if(userExists.LicenceExpirationDate <= DateTime.UtcNow)
                 {
                     response.success = false;
-                    response.AddError("Licencia Expirada", "La licencia del usuario se encuentra expirada", 6);
+                    response.AddError("Licencia Expirada", "La licencia del usuario se encuentra expirada", 5);
                     return response;
                 }
 
@@ -373,7 +373,7 @@ namespace Application.Services
                 if (!canDrive)
                 {
                     response.success = false;
-                    response.AddError("Licencia Invalida", $"La licencia del usuario {userExists.LicenceType} no permite el manejo de este tipo de vehiculo {vehicleExists.VehicleType}", 5);
+                    response.AddError("Licencia Invalida", $"La licencia del usuario {userExists.LicenceType} no permite el manejo de este tipo de vehiculo {vehicleExists.VehicleType}", 6);
                     return response;
                 }
 
@@ -482,7 +482,7 @@ namespace Application.Services
                 if (userExists.LicenceExpirationDate <= DateTime.UtcNow)
                 {
                     response.success = false;
-                    response.AddError("Licencia Expirada", "La licencia del usuario se encuentra expirada");
+                    response.AddError("Licencia Expirada", "La licencia del usuario se encuentra expirada", 5);
                     return response;
                 }
 
@@ -491,7 +491,7 @@ namespace Application.Services
                 if (!canDrive)
                 {
                     response.success = false;
-                    response.AddError("Licencia Invalida", $"La licencia del usuario {userExists.LicenceType} no permite el manejo de este tipo de vehiculo {vehicleExists.VehicleType}", 5);
+                    response.AddError("Licencia Invalida", $"La licencia del usuario {userExists.LicenceType} no permite el manejo de este tipo de vehiculo {vehicleExists.VehicleType}", 6);
                     return response;
                 }
 
@@ -746,7 +746,7 @@ namespace Application.Services
                 if(!request.FinishedByAdminId.HasValue && !request.FinishedByDriverId.HasValue)
                 {
                     response.success = false;
-                    response.AddError("Usuario no especificado", "Debe especificar un usuario para finalizar el viaje", 4);
+                    response.AddError("Usuario no especificado", "Debe especificar un usuario para finalizar el viaje", 3);
                     return response;
                 }
 
@@ -757,7 +757,7 @@ namespace Application.Services
                     case ReportUseType.Finalizado:
                     case ReportUseType.ViajeRapido:
                         response.success = false;
-                        response.AddError("Estatus invalido", "El estatus del reporte de uso no permite su finalización", 3);
+                        response.AddError("Estatus invalido", "El estatus del reporte de uso no permite su finalización", 4);
                         return response;
                     default:
                         break;
@@ -963,7 +963,7 @@ namespace Application.Services
                 if (!request.FinishedByAdminId.HasValue && !request.FinishedByDriverId.HasValue)
                 {
                     response.success = false;
-                    response.AddError("Usuario no especificado", "Debe especificar un usuario para finalizar el viaje", 4);
+                    response.AddError("Usuario no especificado", "Debe especificar un usuario para finalizar el viaje", 3);
                     return response;
                 }
 
@@ -972,7 +972,7 @@ namespace Application.Services
                     case ReportUseType.Cancelado:
                     case ReportUseType.Finalizado:
                         response.success = false;
-                        response.AddError("Estatus invalido", "El estatus del reporte de uso no permite su cancelación", 3);
+                        response.AddError("Estatus invalido", "El estatus del reporte de uso no permite su cancelación", 4);
                         return response;
                     default:
                         break;
