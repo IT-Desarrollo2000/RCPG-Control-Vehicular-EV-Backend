@@ -330,7 +330,12 @@ namespace Application.Services
                     }
                     else
                     {
-                        if ((vehicle.CurrentKM + vehicle.ServicePeriodKM) - vehicle.CurrentKM <= 300)
+                        double differenceKM = vehicle.CurrentKM / vehicle.ServicePeriodKM;
+                        double periodAmountKM = differenceKM < 1 ? 1 * vehicle.ServicePeriodKM : differenceKM * vehicle.ServicePeriodKM;
+                        double KMForNextService = periodAmountKM - vehicle.CurrentKM;
+                        double conversion = KMForNextService > 0 ? KMForNextService : -KMForNextService;
+                        var percentageEquivalent = (conversion / vehicle.ServicePeriodKM) * 100;
+                        if (percentageEquivalent <= 20)
                         {
                             MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dtored.Type = VehicleServiceType.Kilometraje;
@@ -340,7 +345,7 @@ namespace Application.Services
                             dtored.AlertType = StopLightAlert.ROJO;
                             dtos.Add(dtored);
                         }
-                        else if ((vehicle.CurrentKM + vehicle.ServicePeriodKM) - vehicle.CurrentKM <= 1000)
+                        else if (percentageEquivalent <= 40)
                         {
                             MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dtoyellow.StatusMessage = "El vehiculo requiere de servicio pronto";
@@ -350,7 +355,7 @@ namespace Application.Services
                             dtoyellow.Type = VehicleServiceType.Kilometraje;
                             dtos.Add(dtoyellow);
                         }
-                        else if ((vehicle.CurrentKM + vehicle.ServicePeriodKM) - vehicle.CurrentKM > 1000)
+                        else if (percentageEquivalent > 40)
                         {
                             MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dto.StatusMessage = "No requiere de servicio";
@@ -365,7 +370,7 @@ namespace Application.Services
 
                         switch (timespan.TotalDays)
                         {
-                            case double d when d > 30:
+                            case double d when d > 180:
                                 MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                                 dto.Type = VehicleServiceType.Fecha;
                                 dto.StatusMessage = "No requiere de servicio";
@@ -374,7 +379,7 @@ namespace Application.Services
                                 dto.AlertType = StopLightAlert.VERDE;
                                 dtos.Add(dto);
                                 break;
-                            case double d when d >= 15 && d <= 30:
+                            case double d when d >= 90 && d <= 180:
                                 MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                                 dtoyellow.Type = VehicleServiceType.Fecha;
                                 dtoyellow.StatusMessage = "El vehiculo requiere de servicio pronto";
@@ -383,7 +388,7 @@ namespace Application.Services
                                 dtoyellow.AlertType = StopLightAlert.AMARILLO;
                                 dtos.Add(dtoyellow);
                                 break;
-                            case double d when d >= 5 && d < 15:
+                            case double d when d >= 30 && d < 90:
                                 MaintenanceSpotlightDto dtogreen = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                                 dtogreen.Type = VehicleServiceType.Fecha;
                                 dtogreen.StatusMessage = "El vehiculo requiere de servicio";
@@ -392,7 +397,7 @@ namespace Application.Services
                                 dtogreen.AlertType = StopLightAlert.NARANJA;
                                 dtos.Add(dtogreen);
                                 break;
-                            case double d when d < 5:
+                            case double d when d < 30:
                                 MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                                 dtored.Type = VehicleServiceType.Fecha;
                                 dtored.StatusMessage = "Es requerido llevar el vehiculo a servicio";
