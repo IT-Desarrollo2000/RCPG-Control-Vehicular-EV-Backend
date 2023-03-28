@@ -40,7 +40,7 @@ namespace Application
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Tokenkey"])),
                 ValidateIssuer = false,
                 ValidateAudience = false,
-                ValidateLifetime = true,
+                ValidateLifetime = false,
                 RequireExpirationTime = true,
                 RequireSignedTokens= true
                 //Si el token es menor a 5 Min
