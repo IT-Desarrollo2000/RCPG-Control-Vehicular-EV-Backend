@@ -335,7 +335,7 @@ namespace Application.Services
                         double KMForNextService = periodAmountKM - vehicle.CurrentKM;
                         double conversion = KMForNextService > 0 ? KMForNextService : -KMForNextService;
                         var percentageEquivalent = (conversion / vehicle.ServicePeriodKM) * 100;
-                        if (percentageEquivalent <= 20)
+                        if (percentageEquivalent <= 10)
                         {
                             MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dtored.Type = VehicleServiceType.Kilometraje;
@@ -345,17 +345,27 @@ namespace Application.Services
                             dtored.AlertType = StopLightAlert.ROJO;
                             dtos.Add(dtored);
                         }
-                        else if (percentageEquivalent <= 40)
+                        else if (percentageEquivalent <= 20)
                         {
                             MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dtoyellow.StatusMessage = "El vehiculo requiere de servicio pronto";
+                            dtoyellow.StatusName = "ATENCIÓN!!";
+                            dtoyellow.StatusColor = "#f3d132";
+                            dtoyellow.AlertType = StopLightAlert.NARANJA;
+                            dtoyellow.Type = VehicleServiceType.Kilometraje;
+                            dtos.Add(dtoyellow);
+                        }
+                        else if (percentageEquivalent <= 30)
+                        {
+                            MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                            dtoyellow.StatusMessage = "El vehiculo esta proximo a requerir servicio";
                             dtoyellow.StatusName = "ATENCIÓN";
                             dtoyellow.StatusColor = "#f3d132";
                             dtoyellow.AlertType = StopLightAlert.AMARILLO;
                             dtoyellow.Type = VehicleServiceType.Kilometraje;
                             dtos.Add(dtoyellow);
                         }
-                        else if (percentageEquivalent > 40)
+                        else
                         {
                             MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dto.StatusMessage = "No requiere de servicio";
