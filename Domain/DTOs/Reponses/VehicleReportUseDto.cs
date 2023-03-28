@@ -40,6 +40,8 @@ namespace Domain.DTOs.Reponses
         public string? FinishedByDriverName { get; set; }
         public int? FinishedByAdminId { get; set; }
         public string? FinishedByAdminName { get; set; }
+        public double? InitialLatitude { get; set; }
+        public double? InitialLongitude { get; set; }
     }
 
     public class VehicleUseReportsSlimDto
@@ -63,5 +65,7 @@ namespace Domain.DTOs.Reponses
         public string? FinishedByDriverName { get; set; }
         public int? FinishedByAdminId { get; set; }
         public string? FinishedByAdminName { get; set; }
+        public double? InitialLatitude { get; set; }
+        public double? InitialLongitude { get; set; }
     }
 }

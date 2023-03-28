@@ -26,10 +26,12 @@ namespace Domain.Entities.Registered_Cars
         public bool? Verification { get; set; }
         public int? InitialCheckListId { get; set; }
         public int? FinishedByDriverId { get; set; }
+        public double? InitialLatitude { get; set; }
+        public double? InitialLongitude { get; set; }
+
         public virtual UserProfile? FinishedByDriver { get; set; }
         public int? FinishedByAdminId { get; set; }
         public virtual AppUser? FinishedByAdmin { get; set; }
-        
         public virtual Checklist? InitialCheckList { get; set; }
         public virtual Vehicle Vehicle { get; set; }
         public virtual Checklist? Checklist { get; set; }
