@@ -24,5 +24,6 @@ namespace Domain.DTOs.Reponses
         public StopLightAlert AlertType { get; set; }
         public DateTime? NextServiceDate { get; set; }
         public int? NextServiceKM { get; set; }
+        public DateTime? LastServiceDate { get; set; }
     }
 }

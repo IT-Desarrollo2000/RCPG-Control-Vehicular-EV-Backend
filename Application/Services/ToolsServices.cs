@@ -228,7 +228,7 @@ namespace Application.Services
                 foreach (var vehicle in vehicles)
                 {
                     var lastServicesQuery = await _unitOfWork.VehicleServiceRepo.Get(filter: s => s.Status == VehicleServiceStatus.FINALIZADO && s.VehicleId == vehicle.Id, includeProperties: "Vehicle");
-                    var lastServices = lastServicesQuery.FirstOrDefault();
+                    var lastServices = lastServicesQuery.LastOrDefault();
 
                     //Verificar si ya cuenta con un servicio previo
                     if (lastServices != null)
@@ -247,6 +247,7 @@ namespace Application.Services
                                 dto.NextServiceDate = lastServices.NextService;
                                 dto.NextServiceKM = lastServices.NextServiceKM;
                                 dto.Type = VehicleServiceType.Fecha;
+                                dto.LastServiceDate = lastServices.CreatedDate;
                                 dtos.Add(dto);
                                 break;
                             case double d when d >= 15 && d <= 30:
@@ -259,6 +260,7 @@ namespace Application.Services
                                 dtoyellow.NextServiceDate = lastServices.NextService;
                                 dtoyellow.NextServiceKM = lastServices.NextServiceKM;
                                 dtoyellow.Type = VehicleServiceType.Fecha;
+                                dtoyellow.LastServiceDate = lastServices.CreatedDate;
                                 dtos.Add(dtoyellow);
                                 break;
                             case double d when d >= 5 && d < 15:
@@ -271,6 +273,7 @@ namespace Application.Services
                                 dtogreen.NextServiceDate = lastServices.NextService;
                                 dtogreen.NextServiceKM = lastServices.NextServiceKM;
                                 dtogreen.Type = VehicleServiceType.Fecha;
+                                dtogreen.LastServiceDate = lastServices.CreatedDate;
                                 dtos.Add(dtogreen);
                                 break;
                             case double d when d < 5:
@@ -283,6 +286,7 @@ namespace Application.Services
                                 dtored.NextServiceDate = lastServices.NextService;
                                 dtored.NextServiceKM = lastServices.NextServiceKM;
                                 dtored.Type = VehicleServiceType.Fecha;
+                                dtored.LastServiceDate = lastServices.CreatedDate;
                                 dtos.Add(dtored);
                                 break;
                         }
@@ -298,6 +302,7 @@ namespace Application.Services
                             dtored.NextServiceDate = lastServices.NextService;
                             dtored.NextServiceKM = lastServices.NextServiceKM;
                             dtored.Type = VehicleServiceType.Kilometraje;
+                            dtored.LastServiceDate = lastServices.CreatedDate;
                             dtos.Add(dtored);
                         }
                         else if ((lastServices.NextServiceKM - vehicle.CurrentKM) <= 1000)
@@ -311,6 +316,7 @@ namespace Application.Services
                             dtoyellow.NextServiceDate = lastServices.NextService;
                             dtoyellow.NextServiceKM = lastServices.NextServiceKM;
                             dtoyellow.Type = VehicleServiceType.Kilometraje;
+                            dtoyellow.LastServiceDate= lastServices.CreatedDate;
                             dtos.Add(dtoyellow);
                         }
                         else if ((lastServices.NextServiceKM - vehicle.CurrentKM) > 1000)
@@ -324,9 +330,9 @@ namespace Application.Services
                             dto.NextServiceDate = lastServices.NextService;
                             dto.NextServiceKM = lastServices.NextServiceKM;
                             dto.Type = VehicleServiceType.Kilometraje;
+                            dto.LastServiceDate= lastServices.CreatedDate;
                             dtos.Add(dto);
                         }
-
                     }
                     else
                     {
@@ -335,7 +341,7 @@ namespace Application.Services
                         double KMForNextService = periodAmountKM - vehicle.CurrentKM;
                         double conversion = KMForNextService > 0 ? KMForNextService : -KMForNextService;
                         var percentageEquivalent = (conversion / vehicle.ServicePeriodKM) * 100;
-                        if (percentageEquivalent <= 20)
+                        if (percentageEquivalent <= 10)
                         {
                             MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dtored.Type = VehicleServiceType.Kilometraje;
@@ -345,17 +351,27 @@ namespace Application.Services
                             dtored.AlertType = StopLightAlert.ROJO;
                             dtos.Add(dtored);
                         }
-                        else if (percentageEquivalent <= 40)
+                        else if (percentageEquivalent <= 20)
                         {
                             MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dtoyellow.StatusMessage = "El vehiculo requiere de servicio pronto";
+                            dtoyellow.StatusName = "ATENCIÓN!!";
+                            dtoyellow.StatusColor = "#f3d132";
+                            dtoyellow.AlertType = StopLightAlert.NARANJA;
+                            dtoyellow.Type = VehicleServiceType.Kilometraje;
+                            dtos.Add(dtoyellow);
+                        }
+                        else if (percentageEquivalent <= 30)
+                        {
+                            MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                            dtoyellow.StatusMessage = "El vehiculo esta proximo a requerir servicio";
                             dtoyellow.StatusName = "ATENCIÓN";
                             dtoyellow.StatusColor = "#f3d132";
                             dtoyellow.AlertType = StopLightAlert.AMARILLO;
                             dtoyellow.Type = VehicleServiceType.Kilometraje;
                             dtos.Add(dtoyellow);
                         }
-                        else if (percentageEquivalent > 40)
+                        else
                         {
                             MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dto.StatusMessage = "No requiere de servicio";
