@@ -228,7 +228,7 @@ namespace Application.Services
                 foreach (var vehicle in vehicles)
                 {
                     var lastServicesQuery = await _unitOfWork.VehicleServiceRepo.Get(filter: s => s.Status == VehicleServiceStatus.FINALIZADO && s.VehicleId == vehicle.Id, includeProperties: "Vehicle");
-                    var lastServices = lastServicesQuery.FirstOrDefault();
+                    var lastServices = lastServicesQuery.LastOrDefault();
 
                     //Verificar si ya cuenta con un servicio previo
                     if (lastServices != null)

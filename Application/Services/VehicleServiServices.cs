@@ -207,7 +207,7 @@ namespace Application.Services
                 }
 
                 //Verificar que sea editable
-                if(result.Status == Domain.Enums.VehicleServiceStatus.CANCELADO)
+                if(result.Status == VehicleServiceStatus.CANCELADO)
                 {
                     response.success = false;
                     response.AddError("Error al editar", "No es posible modificar el reporte puesto que se encuentra con estatus de CANCELADO",3);
