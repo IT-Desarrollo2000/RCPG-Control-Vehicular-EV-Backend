@@ -247,6 +247,7 @@ namespace Application.Services
                                 dto.NextServiceDate = lastServices.NextService;
                                 dto.NextServiceKM = lastServices.NextServiceKM;
                                 dto.Type = VehicleServiceType.Fecha;
+                                dto.LastServiceDate = lastServices.CreatedDate;
                                 dtos.Add(dto);
                                 break;
                             case double d when d >= 15 && d <= 30:
@@ -259,6 +260,7 @@ namespace Application.Services
                                 dtoyellow.NextServiceDate = lastServices.NextService;
                                 dtoyellow.NextServiceKM = lastServices.NextServiceKM;
                                 dtoyellow.Type = VehicleServiceType.Fecha;
+                                dtoyellow.LastServiceDate = lastServices.CreatedDate;
                                 dtos.Add(dtoyellow);
                                 break;
                             case double d when d >= 5 && d < 15:
@@ -271,6 +273,7 @@ namespace Application.Services
                                 dtogreen.NextServiceDate = lastServices.NextService;
                                 dtogreen.NextServiceKM = lastServices.NextServiceKM;
                                 dtogreen.Type = VehicleServiceType.Fecha;
+                                dtogreen.LastServiceDate = lastServices.CreatedDate;
                                 dtos.Add(dtogreen);
                                 break;
                             case double d when d < 5:
@@ -283,6 +286,7 @@ namespace Application.Services
                                 dtored.NextServiceDate = lastServices.NextService;
                                 dtored.NextServiceKM = lastServices.NextServiceKM;
                                 dtored.Type = VehicleServiceType.Fecha;
+                                dtored.LastServiceDate = lastServices.CreatedDate;
                                 dtos.Add(dtored);
                                 break;
                         }
@@ -298,6 +302,7 @@ namespace Application.Services
                             dtored.NextServiceDate = lastServices.NextService;
                             dtored.NextServiceKM = lastServices.NextServiceKM;
                             dtored.Type = VehicleServiceType.Kilometraje;
+                            dtored.LastServiceDate = lastServices.CreatedDate;
                             dtos.Add(dtored);
                         }
                         else if ((lastServices.NextServiceKM - vehicle.CurrentKM) <= 1000)
@@ -311,6 +316,7 @@ namespace Application.Services
                             dtoyellow.NextServiceDate = lastServices.NextService;
                             dtoyellow.NextServiceKM = lastServices.NextServiceKM;
                             dtoyellow.Type = VehicleServiceType.Kilometraje;
+                            dtoyellow.LastServiceDate= lastServices.CreatedDate;
                             dtos.Add(dtoyellow);
                         }
                         else if ((lastServices.NextServiceKM - vehicle.CurrentKM) > 1000)
@@ -324,9 +330,9 @@ namespace Application.Services
                             dto.NextServiceDate = lastServices.NextService;
                             dto.NextServiceKM = lastServices.NextServiceKM;
                             dto.Type = VehicleServiceType.Kilometraje;
+                            dto.LastServiceDate= lastServices.CreatedDate;
                             dtos.Add(dto);
                         }
-
                     }
                     else
                     {
