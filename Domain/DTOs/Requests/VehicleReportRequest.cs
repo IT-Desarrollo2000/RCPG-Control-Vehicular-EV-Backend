@@ -21,7 +21,7 @@ namespace Domain.DTOs.Requests
         public int? MobileUserId { get; set; }
         [Required]
         public DateTime ReportDate { get; set; }
-        public int? GasolineLoadAmount { get; set; }
+        public double? GasolineLoadAmount { get; set; }
         public int? GasolineCurrentKM { get; set; }
         public decimal? AmountGasoline { get; set; }
         public int? VehicleReportUseId { get; set; }

@@ -16,7 +16,7 @@ namespace Domain.DTOs.Requests
         public ReportType? ReportType { get; set; }
         public string? Commentary { get; set; }
         public DateTime? ReportDate { get; set; }
-        public int? GasolineLoadAmount { get; set; }
+        public double? GasolineLoadAmount { get; set; }
         public int? GasolineCurrentKM { get; set; }
         public string? ReportSolutionComment { get; set; }
 
