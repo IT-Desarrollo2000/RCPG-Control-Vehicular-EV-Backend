@@ -14,5 +14,7 @@ namespace Domain.DTOs.Requests
 
         [Required]
         public int UserProfileId { get; set; }
+        public double? InitialLatitude { get; set; }
+        public double? InitialLongitude { get; set; }
     }
 }

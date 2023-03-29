@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -40,7 +41,8 @@ namespace Application
                 ValidateIssuer = false,
                 ValidateAudience = false,
                 ValidateLifetime = false,
-                RequireExpirationTime = false
+                RequireExpirationTime = true,
+                RequireSignedTokens= true
                 //Si el token es menor a 5 Min
                 //, ClockSkew = TimeSpan.Zero
             };
@@ -52,6 +54,7 @@ namespace Application
                 {
                     options.SaveToken = true;
                     options.TokenValidationParameters = tokenValidationParameters;
+                    
                 });
 
             return services;

@@ -139,7 +139,7 @@ namespace Application.Services
                     case VehicleStatus.MANTENIMIENTO:
                     case VehicleStatus.EN_USO:
                         response.success = false;
-                        response.AddError("Vehiculo no disponible", "El estatus del vehiculo no permite su uso para viajes por el momento", 4);
+                        response.AddError("Vehiculo no disponible", "El estatus del vehiculo no permite su uso para viajes por el momento", 3);
                         return response;
                     default:
                         break;
@@ -150,7 +150,7 @@ namespace Application.Services
                 if (workshopExists == null)
                 {
                     response.success = false;
-                    response.AddError("Taller no encontrado", $"No existe un taller con el Id {vehicleServiceRequest.WorkShopId}", 3);
+                    response.AddError("Taller no encontrado", $"No existe un taller con el Id {vehicleServiceRequest.WorkShopId}", 4);
                     return response;
                 }
 
@@ -159,7 +159,7 @@ namespace Application.Services
                 if(user == null)
                 {
                     response.success = false;
-                    response.AddError("Usuario no encontrado", "El id de usuario especificado no se encuentra", 4);
+                    response.AddError("Usuario no encontrado", "El id de usuario especificado no se encuentra", 5);
                     return response;
                 }
 
@@ -201,16 +201,16 @@ namespace Application.Services
                 if (result == null)
                 {
                     response.success = false;
-                    response.AddError("Orden de Servicio no encontrada", $"No se encontro la orden con Id {request.VehicleServiceId}");
+                    response.AddError("Orden de Servicio no encontrada", $"No se encontro la orden con Id {request.VehicleServiceId}",2);
 
                     return response;
                 }
 
                 //Verificar que sea editable
-                if(result.Status == Domain.Enums.VehicleServiceStatus.CANCELADO)
+                if(result.Status == VehicleServiceStatus.CANCELADO)
                 {
                     response.success = false;
-                    response.AddError("Error al editar", "No es posible modificar el reporte puesto que se encuentra con estatus de CANCELADO");
+                    response.AddError("Error al editar", "No es posible modificar el reporte puesto que se encuentra con estatus de CANCELADO",3);
                     return response;
                 }
 
@@ -221,7 +221,7 @@ namespace Application.Services
                     if (resultVehicle == null)
                     {
                         response.success = false;
-                        response.AddError("No existe Vehicle", $"No existe Vehiculo con el VehicleId {request.VehicleId} solicitado", 1);
+                        response.AddError("No existe Vehicle", $"No existe Vehiculo con el VehicleId {request.VehicleId} solicitado", 4);
                         return response;
                     }
 
@@ -234,7 +234,7 @@ namespace Application.Services
                     if (workshopExists == null)
                     {
                         response.success = false;
-                        response.AddError("Taller no encontrado", $"No existe un taller con el Id {request.WorkShopId}", 3);
+                        response.AddError("Taller no encontrado", $"No existe un taller con el Id {request.WorkShopId}", 5);
                         return response;
                     }
 
@@ -247,7 +247,7 @@ namespace Application.Services
                     if(expense == null)
                     {
                         response.success = false;
-                        response.AddError("Gasto no encontrado", $"El gasto con Id {request.ExpenseId.Value}", 4);
+                        response.AddError("Gasto no encontrado", $"El gasto con Id {request.ExpenseId.Value}", 6);
 
                         return response;
                     }
@@ -294,7 +294,7 @@ namespace Application.Services
                 if (result == null)
                 {
                     response.success = false;
-                    response.AddError("Orden de Servicio no encontrada", $"No se encontro la orden con Id {request.VehicleServiceId}");
+                    response.AddError("Orden de Servicio no encontrada", $"No se encontro la orden con Id {request.VehicleServiceId}",2);
 
                     return response;
                 }
@@ -325,7 +325,7 @@ namespace Application.Services
                     var expense = await _unitOfWork.ExpensesRepo.GetById(request.ExpenseId.Value);
                     if(expense == null)
                     {
-                        response.AddError("Gasto no encontrado", $"No se encontro el gasto con Id {request.ExpenseId}");
+                        response.AddError("Gasto no encontrado", $"No se encontro el gasto con Id {request.ExpenseId}",4);
                         response.success=false;
                         return response;
                     }
@@ -363,7 +363,7 @@ namespace Application.Services
                 if (result == null)
                 {
                     response.success = false;
-                    response.AddError("Orden de Servicio no encontrada", $"No se encontro la orden con Id {request.VehicleServiceId}");
+                    response.AddError("Orden de Servicio no encontrada", $"No se encontro la orden con Id {request.VehicleServiceId}",2);
 
                     return response;
                 }

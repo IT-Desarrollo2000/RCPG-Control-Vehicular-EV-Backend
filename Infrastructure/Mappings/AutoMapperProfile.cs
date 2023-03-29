@@ -43,6 +43,7 @@ namespace Infrastructure.Mappings
             CreateMap<Departaments, DepartamentDto>().ReverseMap();
             CreateMap<Departaments, UnrelatedDepartamentDto>().ReverseMap();
             CreateMap<Vehicle, DepartmentVehicleDto>();
+            CreateMap<DepartamentDto, UnrelatedDepartamentDto>().ReverseMap();
 
             //Vehicle
             CreateMap<Vehicle, VehicleRequest>().ReverseMap();

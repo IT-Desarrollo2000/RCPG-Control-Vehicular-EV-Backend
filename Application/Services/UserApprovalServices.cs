@@ -190,7 +190,7 @@ namespace Application.Services
                 if(pending != null)
                 {
                     response.success = false;
-                    response.AddError("Acción Invalida", "El usuario ya cuenta con una solicitud pendiente de aprobación", 4);
+                    response.AddError("Acción Invalida", "El usuario ya cuenta con una solicitud pendiente de aprobación", 2);
 
                     return response;
                 }
@@ -198,7 +198,7 @@ namespace Application.Services
                 if(approved != null)
                 {
                     response.success = false;
-                    response.AddError("Acción Invalida", "El usuario ya ha sido aprovado previamente", 5);
+                    response.AddError("Acción Invalida", "El usuario ya ha sido aprovado previamente", 3);
 
                     return response;
                 }
@@ -209,7 +209,7 @@ namespace Application.Services
                     if(DateTime.UtcNow <= last.CreatedDate.Value.AddMinutes(15) && last.Status == ApprovalStatus.RECHAZADO)
                     {
                         response.success = false;
-                        response.AddError("Reintar mas tarde", "Debe esperar un tiempo antes de reenviar una solicitud", 3);
+                        response.AddError("Reintar mas tarde", "Debe esperar un tiempo antes de reenviar una solicitud", 4);
                         return response;
                     }
                 } 
@@ -218,7 +218,7 @@ namespace Application.Services
                 if (userProfile == null)
                 {
                     response.success = false;
-                    response.AddError("Profile not found", "No se pudo identificar el perfil de usuario solicitado", 2);
+                    response.AddError("Profile not found", "No se pudo identificar el perfil de usuario solicitado", 5);
 
                     return response;
                 }
@@ -256,7 +256,7 @@ namespace Application.Services
                 else
                 {
                     response.success = false;
-                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen");
+                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 6);
 
                     return response;
                 }

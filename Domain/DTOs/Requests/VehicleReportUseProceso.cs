@@ -28,6 +28,8 @@ namespace Domain.DTOs.Requests
         public CurrentFuel? CurrentFuelLoad { get; set; }
 
         public double? InitialMileage { get; set; }
+        public double? InitialLatitude { get; set; }
+        public double? InitialLongitude { get; set; }
     }
 
     public class UseReportAdminRequest
@@ -55,5 +57,7 @@ namespace Domain.DTOs.Requests
         public CurrentFuel? CurrentFuelLoad { get; set; }
 
         public double? InitialMileage { get; set; }
+        public double? InitialLatitude { get; set; }
+        public double? InitialLongitude { get; set; }
     }
 }
