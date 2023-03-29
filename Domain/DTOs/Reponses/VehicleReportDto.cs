@@ -24,7 +24,7 @@ namespace Domain.DTOs.Reponses
         public List<UnrelatedExpensesDto> Expenses { get; set; }
         public List<VehicleReportImageDto> VehicleReportImages { get; set; }
         public bool IsResolved { get; set; }
-        public int? GasolineLoadAmount { get; set; }
+        public double? GasolineLoadAmount { get; set; }
         public int? GasolineCurrentKM { get; set; }
         public string? ReportSolutionComment { get; set; }
         public ReportStatusType ReportStatus { get; set; }

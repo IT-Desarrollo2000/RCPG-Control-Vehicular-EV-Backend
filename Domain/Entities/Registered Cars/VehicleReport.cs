@@ -23,7 +23,7 @@ namespace Domain.Entities.Registered_Cars
         public virtual AppUser? AdminUser { get; set; }
         public DateTime ReportDate { get; set; }
         public bool IsResolved { get; set; }
-        public int? GasolineLoadAmount { get; set; }
+        public double? GasolineLoadAmount { get; set; }
         public int? GasolineCurrentKM { get; set; }
         public string? ReportSolutionComment { get; set; }
         public ReportStatusType ReportStatus { get; set; }
