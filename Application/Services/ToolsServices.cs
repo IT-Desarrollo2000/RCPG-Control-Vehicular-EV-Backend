@@ -336,12 +336,22 @@ namespace Application.Services
                     }
                     else
                     {
-                        double differenceKM = vehicle.CurrentKM / vehicle.ServicePeriodKM;
+                        double differenceKM = vehicle.InitialKM / vehicle.ServicePeriodKM;
                         double periodAmountKM = differenceKM < 1 ? 1 * vehicle.ServicePeriodKM : differenceKM * vehicle.ServicePeriodKM;
-                        double KMForNextService = periodAmountKM - vehicle.CurrentKM;
+                        double KMForNextService = periodAmountKM - vehicle.InitialKM;
                         double conversion = KMForNextService > 0 ? KMForNextService : -KMForNextService;
                         var percentageEquivalent = (conversion / vehicle.ServicePeriodKM) * 100;
-                        if (percentageEquivalent <= 10)
+                        if (vehicle.InitialKM == vehicle.CurrentKM)
+                        {
+                            MaintenanceSpotlightDto dtoNope = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                            dtoNope.StatusMessage = "No requiere de servicio";
+                            dtoNope.StatusName = "OK";
+                            dtoNope.StatusColor = "#3ee80b";
+                            dtoNope.AlertType = StopLightAlert.VERDE;
+                            dtoNope.Type = VehicleServiceType.Kilometraje;
+                            dtos.Add(dtoNope);
+                        }
+                        else if (percentageEquivalent <= 10)
                         {
                             MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dtored.Type = VehicleServiceType.Kilometraje;
@@ -351,17 +361,17 @@ namespace Application.Services
                             dtored.AlertType = StopLightAlert.ROJO;
                             dtos.Add(dtored);
                         }
-                        else if (percentageEquivalent <= 20)
+                        else if (percentageEquivalent <= 20 && percentageEquivalent > 10)
                         {
-                            MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                            dtoyellow.StatusMessage = "El vehiculo requiere de servicio pronto";
-                            dtoyellow.StatusName = "ATENCIÓN!!";
-                            dtoyellow.StatusColor = "#f3d132";
-                            dtoyellow.AlertType = StopLightAlert.NARANJA;
-                            dtoyellow.Type = VehicleServiceType.Kilometraje;
-                            dtos.Add(dtoyellow);
+                            MaintenanceSpotlightDto dtoOrange = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                            dtoOrange.StatusMessage = "El vehiculo requiere de servicio pronto";
+                            dtoOrange.StatusName = "ATENCIÓN!!";
+                            dtoOrange.StatusColor = "#f3d132";
+                            dtoOrange.AlertType = StopLightAlert.NARANJA;
+                            dtoOrange.Type = VehicleServiceType.Kilometraje;
+                            dtos.Add(dtoOrange);
                         }
-                        else if (percentageEquivalent <= 30)
+                        else if (percentageEquivalent <= 30 && percentageEquivalent > 20)
                         {
                             MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dtoyellow.StatusMessage = "El vehiculo esta proximo a requerir servicio";
@@ -371,7 +381,7 @@ namespace Application.Services
                             dtoyellow.Type = VehicleServiceType.Kilometraje;
                             dtos.Add(dtoyellow);
                         }
-                        else
+                        else if(percentageEquivalent > 30)
                         {
                             MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dto.StatusMessage = "No requiere de servicio";
