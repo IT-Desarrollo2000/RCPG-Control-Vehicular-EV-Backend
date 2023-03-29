@@ -93,6 +93,8 @@ namespace Infrastructure.Mappings
                 .ForMember(e => e.TypesOfExpensesName, o => o.MapFrom(e => e.TypesOfExpenses.Name));
             CreateMap<PhotosOfSpendingDto, PhotosOfSpending>().ReverseMap();
 
+ 
+
             //TypesOfExpenses
             CreateMap<TypesOfExpenses, TypesOfExpensesDto>().ReverseMap();
             CreateMap<TypesOfExpenses, TypesOfExpensesRequest>().ReverseMap();
