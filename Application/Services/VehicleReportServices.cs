@@ -58,9 +58,9 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.VehicleId >= filter.VehicleId.Value);
+                    Query = Query.And(p => p.VehicleId == filter.VehicleId.Value);
                 }
-                else { Query = p => p.VehicleId >= filter.VehicleId.Value; }
+                else { Query = p => p.VehicleId == filter.VehicleId.Value; }
             }
 
 
@@ -95,9 +95,9 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.ReportDate >= filter.ReportDate.Value);
+                    Query = Query.And(p => p.ReportDate == filter.ReportDate.Value);
                 }
-                else { Query = p => p.ReportDate >= filter.ReportDate.Value; }
+                else { Query = p => p.ReportDate == filter.ReportDate.Value; }
             }
 
             if (filter.IsResolved.HasValue)
@@ -113,18 +113,18 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.VehicleId >= filter.VehicleId.Value);
+                    Query = Query.And(p => p.VehicleId == filter.VehicleId.Value);
                 }
-                else { Query = p => p.VehicleId >= filter.VehicleId.Value; }
+                else { Query = p => p.VehicleId == filter.VehicleId.Value; }
             }
 
             if (filter.GasolineCurrentKM.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.GasolineCurrentKM >= filter.GasolineCurrentKM.Value);
+                    Query = Query.And(p => p.GasolineCurrentKM == filter.GasolineCurrentKM.Value);
                 }
-                else { Query = p => p.GasolineCurrentKM >= filter.GasolineCurrentKM.Value; }
+                else { Query = p => p.GasolineCurrentKM == filter.GasolineCurrentKM.Value; }
             }
 
             if (!string.IsNullOrEmpty(filter.ReportSolutionComment))
@@ -149,27 +149,27 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.VehicleReportUseId >= filter.VehicleReportUseId.Value);
+                    Query = Query.And(p => p.VehicleReportUseId == filter.VehicleReportUseId.Value);
                 }
-                else { Query = p => p.VehicleReportUseId >= filter.VehicleReportUseId.Value; }
+                else { Query = p => p.VehicleReportUseId == filter.VehicleReportUseId.Value; }
             }
 
             if (filter.SolvedByAdminUserId.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.SolvedByAdminUserId >= filter.SolvedByAdminUserId.Value);
+                    Query = Query.And(p => p.SolvedByAdminUserId == filter.SolvedByAdminUserId.Value);
                 }
-                else { Query = p => p.SolvedByAdminUserId >= filter.SolvedByAdminUserId.Value; }
+                else { Query = p => p.SolvedByAdminUserId == filter.SolvedByAdminUserId.Value; }
             }
 
             if (filter.AmountGasoline.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.AmountGasoline >= filter.AmountGasoline.Value);
+                    Query = Query.And(p => p.AmountGasoline == filter.AmountGasoline.Value);
                 }
-                else { Query = p => p.AmountGasoline >= filter.AmountGasoline.Value; }
+                else { Query = p => p.AmountGasoline == filter.AmountGasoline.Value; }
             }
 
 
