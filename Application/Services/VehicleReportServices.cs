@@ -77,18 +77,18 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.MobileUserId >= filter.MobileUserId.Value);
+                    Query = Query.And(p => p.MobileUserId == filter.MobileUserId.Value);
                 }
-                else { Query = p => p.MobileUserId >= filter.MobileUserId.Value; }
+                else { Query = p => p.MobileUserId == filter.MobileUserId.Value; }
             }
 
             if (filter.AdminUserId.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.AdminUserId >= filter.AdminUserId.Value);
+                    Query = Query.And(p => p.AdminUserId == filter.AdminUserId.Value);
                 }
-                else { Query = p => p.AdminUserId >= filter.AdminUserId.Value; }
+                else { Query = p => p.AdminUserId == filter.AdminUserId.Value; }
             }
 
             if (filter.ReportDate.HasValue)
