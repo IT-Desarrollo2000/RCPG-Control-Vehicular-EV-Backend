@@ -26,7 +26,7 @@ namespace Domain.DTOs.Reponses
         public int? VehicleReportUseId { get; set; }
         public int? SolvedByAdminUserId { get; set; }
         public string SolvedByAdminUserName { get; set; }
-        public int? GasolineLoadAmount { get; set; }
+        public double? GasolineLoadAmount { get; set; }
         public int? GasolineCurrentKM { get; set; }
     }
 }
