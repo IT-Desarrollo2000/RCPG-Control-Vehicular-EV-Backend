@@ -25,5 +25,6 @@ namespace Domain.DTOs.Reponses
         public DateTime? NextServiceDate { get; set; }
         public int? NextServiceKM { get; set; }
         public DateTime? LastServiceDate { get; set; }
+        public double? NextServiceKMDiff { get; set; }
     }
 }

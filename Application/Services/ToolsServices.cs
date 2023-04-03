@@ -303,6 +303,7 @@ namespace Application.Services
                             dtored.NextServiceKM = lastServices.NextServiceKM;
                             dtored.Type = VehicleServiceType.Kilometraje;
                             dtored.LastServiceDate = lastServices.CreatedDate;
+                            dtored.NextServiceKMDiff = lastServices.NextServiceKM - lastServices.Vehicle.CurrentKM;
                             dtos.Add(dtored);
                         }
                         else if ((lastServices.NextServiceKM - vehicle.CurrentKM) <= 1000)
@@ -317,6 +318,7 @@ namespace Application.Services
                             dtoyellow.NextServiceKM = lastServices.NextServiceKM;
                             dtoyellow.Type = VehicleServiceType.Kilometraje;
                             dtoyellow.LastServiceDate= lastServices.CreatedDate;
+                            dtoyellow.NextServiceKMDiff = lastServices.NextServiceKM - lastServices.Vehicle.CurrentKM;
                             dtos.Add(dtoyellow);
                         }
                         else if ((lastServices.NextServiceKM - vehicle.CurrentKM) > 1000)
@@ -331,16 +333,15 @@ namespace Application.Services
                             dto.NextServiceKM = lastServices.NextServiceKM;
                             dto.Type = VehicleServiceType.Kilometraje;
                             dto.LastServiceDate= lastServices.CreatedDate;
+                            dto.NextServiceKMDiff = lastServices.NextServiceKM - lastServices.Vehicle.CurrentKM;
                             dtos.Add(dto);
                         }
                     }
                     else
                     {
                         double differenceKM = vehicle.InitialKM / vehicle.ServicePeriodKM;
-                        double periodAmountKM = differenceKM < 1 ? 1 * vehicle.ServicePeriodKM : differenceKM * vehicle.ServicePeriodKM;
-                        double KMForNextService = periodAmountKM - vehicle.InitialKM;
-                        double conversion = KMForNextService > 0 ? KMForNextService : -KMForNextService;
-                        var percentageEquivalent = (conversion / vehicle.ServicePeriodKM) * 100;
+                        double periodAmountKM = Math.Ceiling((double)vehicle.CurrentKM / vehicle.ServicePeriodKM) * vehicle.ServicePeriodKM;
+                        double KMForNextService = periodAmountKM - vehicle.CurrentKM;
                         if (vehicle.InitialKM == vehicle.CurrentKM)
                         {
                             MaintenanceSpotlightDto dtoNope = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
@@ -349,9 +350,10 @@ namespace Application.Services
                             dtoNope.StatusColor = "#3ee80b";
                             dtoNope.AlertType = StopLightAlert.VERDE;
                             dtoNope.Type = VehicleServiceType.Kilometraje;
+                            dtoNope.NextServiceKMDiff = KMForNextService;
                             dtos.Add(dtoNope);
                         }
-                        else if (percentageEquivalent <= 10)
+                        else if (KMForNextService <= 500)
                         {
                             MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dtored.Type = VehicleServiceType.Kilometraje;
@@ -359,9 +361,10 @@ namespace Application.Services
                             dtored.StatusName = "SERVICIO NECESARIO!!";
                             dtored.StatusColor = "#e41212";
                             dtored.AlertType = StopLightAlert.ROJO;
+                            dtored.NextServiceKMDiff = KMForNextService;
                             dtos.Add(dtored);
                         }
-                        else if (percentageEquivalent <= 20 && percentageEquivalent > 10)
+                        else if (KMForNextService <= 900 && KMForNextService > 500)
                         {
                             MaintenanceSpotlightDto dtoOrange = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dtoOrange.StatusMessage = "El vehiculo requiere de servicio pronto";
@@ -369,9 +372,10 @@ namespace Application.Services
                             dtoOrange.StatusColor = "#f3d132";
                             dtoOrange.AlertType = StopLightAlert.NARANJA;
                             dtoOrange.Type = VehicleServiceType.Kilometraje;
+                            dtoOrange.NextServiceKMDiff = KMForNextService;
                             dtos.Add(dtoOrange);
                         }
-                        else if (percentageEquivalent <= 30 && percentageEquivalent > 20)
+                        else if (KMForNextService <= 1500 && KMForNextService > 900)
                         {
                             MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dtoyellow.StatusMessage = "El vehiculo esta proximo a requerir servicio";
@@ -379,9 +383,10 @@ namespace Application.Services
                             dtoyellow.StatusColor = "#f3d132";
                             dtoyellow.AlertType = StopLightAlert.AMARILLO;
                             dtoyellow.Type = VehicleServiceType.Kilometraje;
+                            dtoyellow.NextServiceKMDiff = KMForNextService;
                             dtos.Add(dtoyellow);
                         }
-                        else if(percentageEquivalent > 30)
+                        else if(KMForNextService > 1500)
                         {
                             MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
                             dto.StatusMessage = "No requiere de servicio";
@@ -389,6 +394,7 @@ namespace Application.Services
                             dto.StatusColor = "#3ee80b";
                             dto.AlertType = StopLightAlert.VERDE;
                             dto.Type = VehicleServiceType.Kilometraje;
+                            dto.NextServiceKMDiff = KMForNextService;
                             dtos.Add(dto);
                         }
 

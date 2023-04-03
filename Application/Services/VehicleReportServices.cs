@@ -58,9 +58,9 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.VehicleId >= filter.VehicleId.Value);
+                    Query = Query.And(p => p.VehicleId == filter.VehicleId.Value);
                 }
-                else { Query = p => p.VehicleId >= filter.VehicleId.Value; }
+                else { Query = p => p.VehicleId == filter.VehicleId.Value; }
             }
 
 
@@ -95,9 +95,9 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.ReportDate >= filter.ReportDate.Value);
+                    Query = Query.And(p => p.ReportDate == filter.ReportDate.Value);
                 }
-                else { Query = p => p.ReportDate >= filter.ReportDate.Value; }
+                else { Query = p => p.ReportDate == filter.ReportDate.Value; }
             }
 
             if (filter.IsResolved.HasValue)
@@ -113,18 +113,18 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.VehicleId >= filter.VehicleId.Value);
+                    Query = Query.And(p => p.VehicleId == filter.VehicleId.Value);
                 }
-                else { Query = p => p.VehicleId >= filter.VehicleId.Value; }
+                else { Query = p => p.VehicleId == filter.VehicleId.Value; }
             }
 
             if (filter.GasolineCurrentKM.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.GasolineCurrentKM >= filter.GasolineCurrentKM.Value);
+                    Query = Query.And(p => p.GasolineCurrentKM == filter.GasolineCurrentKM.Value);
                 }
-                else { Query = p => p.GasolineCurrentKM >= filter.GasolineCurrentKM.Value; }
+                else { Query = p => p.GasolineCurrentKM == filter.GasolineCurrentKM.Value; }
             }
 
             if (!string.IsNullOrEmpty(filter.ReportSolutionComment))
@@ -149,27 +149,27 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.VehicleReportUseId >= filter.VehicleReportUseId.Value);
+                    Query = Query.And(p => p.VehicleReportUseId == filter.VehicleReportUseId.Value);
                 }
-                else { Query = p => p.VehicleReportUseId >= filter.VehicleReportUseId.Value; }
+                else { Query = p => p.VehicleReportUseId == filter.VehicleReportUseId.Value; }
             }
 
             if (filter.SolvedByAdminUserId.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.SolvedByAdminUserId >= filter.SolvedByAdminUserId.Value);
+                    Query = Query.And(p => p.SolvedByAdminUserId == filter.SolvedByAdminUserId.Value);
                 }
-                else { Query = p => p.SolvedByAdminUserId >= filter.SolvedByAdminUserId.Value; }
+                else { Query = p => p.SolvedByAdminUserId == filter.SolvedByAdminUserId.Value; }
             }
 
             if (filter.AmountGasoline.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.AmountGasoline >= filter.AmountGasoline.Value);
+                    Query = Query.And(p => p.AmountGasoline == filter.AmountGasoline.Value);
                 }
-                else { Query = p => p.AmountGasoline >= filter.AmountGasoline.Value; }
+                else { Query = p => p.AmountGasoline == filter.AmountGasoline.Value; }
             }
 
 
@@ -292,9 +292,13 @@ namespace Application.Services
                         ExpenseDate = DateTime.Now,
                         ERPFolio = Guid.NewGuid().ToString()
                     };
+
+                    
+
                     expensesRequest.Vehicles.Add(vehicleExists);
                     vehicleExists.CurrentKM = vehicleReportRequest.GasolineCurrentKM.Value;
                     await _unitOfWork.VehicleRepo.Update(vehicleExists);
+
                 }
 
                 //Verificar si se agregara a un reporte de uso
@@ -320,6 +324,41 @@ namespace Application.Services
                 if (expensesRequest != null)
                 {
                     entidadR.Expenses.Add(expensesRequest);
+                    var Ima = new List<PhotosOfSpending>();
+
+                    foreach (var image in vehicleReportRequest.ReportImages)
+                    {
+                        //Validar imagenes y Guardar las imagenes en el blobstorage
+                        if (image.ContentType.Contains("image"))
+                        {
+                            //Manipular el nombre de archivo
+                            var uploadDate = DateTime.UtcNow;
+                            Random rndm = new Random();
+                            string FileExtn = System.IO.Path.GetExtension(image.FileName);
+                            var filePath = $"CARGA_GASOLINA/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{expensesRequest.TypesOfExpensesId}{rndm.Next(1, 1000)}{FileExtn}";
+                            var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.ExpenseAttachments, filePath);
+
+                            //Agregar la imagen en BD
+                            var newImage = new PhotosOfSpending()
+                            {
+                                FilePath = filePath,
+                                FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.ExpenseAttachments, filePath),
+                                Expenses = expensesRequest
+                            };
+
+                            //expensesRequest.PhotosOfSpending.Add(newImage);
+                            await _unitOfWork.PhotosOfSpendingRepo.Add(newImage);
+                            Ima.Add(newImage);
+                        }
+                        else
+                        {
+                            response.success = false;
+                            response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 11);
+
+                            return response;
+                        }
+                    }
+
                 }
 
                 //Agregar los gastos al reporte
@@ -332,6 +371,7 @@ namespace Application.Services
                         response.AddError("Gasto no existe", $"El Id de gasto {expenseId} no existe", 10);
                     }
                     entidadR.Expenses.Add(expense);
+
                 }
 
                 //Mappear y guardar la entidad
