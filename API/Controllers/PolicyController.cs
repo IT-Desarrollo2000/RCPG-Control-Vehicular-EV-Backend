@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
+using Domain.Entities.Registered_Cars;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -63,7 +64,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PolicyDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] PolicyRequest policyRequest)
+        public async Task<IActionResult> Post([FromForm] PolicyRequest policyRequest)
         {
             var entidad = await _policyService.PostPolicy(policyRequest);
 
@@ -83,7 +84,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PolicyDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
-        public async Task<IActionResult> UpdatePolicy([FromBody] PolicyUpdateRequest request)
+        public async Task<IActionResult> UpdatePolicy([FromForm] PolicyUpdateRequest request)
         {
             var entidad = await _policyService.PutPolicy(request);
 
@@ -118,5 +119,51 @@ namespace API.Controllers
             }
 
         }
+
+        //POST
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PhotosOfPolicy))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Route("AddPolicyImage")]
+        [HttpPost]
+        public async Task<IActionResult> AddPolicyImage([FromForm] PolicyImagesRequest policyImagesRequest, int PolicyId)
+        {
+            var entidad = await _policyService.AddPolicyImage(policyImagesRequest, PolicyId);
+
+            if (entidad.success)
+            {
+                return Ok(entidad);
+            }
+            else
+            {
+                return BadRequest(entidad);
+            }
+
+        }
+
+        //Delete
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PhotosOfPolicy))]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpDelete]
+        [Route("DeletePolicyImage")]
+        public async Task<IActionResult> DeletePolicyImages(int PolicyId)
+        {
+            var existe = await _policyService.DeletePolicyImages(PolicyId);
+
+            if (existe.success)
+            {
+                return Ok(existe);
+            }
+            else
+            {
+                return NotFound(existe);
+            }
+
+        }
+
+
     }
 }

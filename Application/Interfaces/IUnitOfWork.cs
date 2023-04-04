@@ -30,6 +30,7 @@ namespace Application.Interfaces
         IRepository<Policy> PolicyRepo { get; }
         IRepository<MaintenanceProgress> MaintenanceProgressRepo { get; }
         IRepository<MaintenanceProgressImages> MaintenanceProgressImageRepot { get; }
+        IRepository<PhotosOfPolicy> PhotosOfPolicyRepo { get; }
 
         void Dispose();
         void SaveChanges();
