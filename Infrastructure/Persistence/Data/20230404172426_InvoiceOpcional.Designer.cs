@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230404172426_InvoiceOpcional")]
+    partial class InvoiceOpcional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1004,8 +1007,8 @@ namespace Infrastructure.Persistence.Data
                     b.Property<int?>("GasolineCurrentKM")
                         .HasColumnType("int");
 
-                    b.Property<double?>("GasolineLoadAmount")
-                        .HasColumnType("float");
+                    b.Property<int?>("GasolineLoadAmount")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsResolved")
                         .HasColumnType("bit");
@@ -1115,12 +1118,6 @@ namespace Infrastructure.Persistence.Data
 
                     b.Property<int?>("InitialCheckListId")
                         .HasColumnType("int");
-
-                    b.Property<double?>("InitialLatitude")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("InitialLongitude")
-                        .HasColumnType("float");
 
                     b.Property<double?>("InitialMileage")
                         .HasColumnType("float");

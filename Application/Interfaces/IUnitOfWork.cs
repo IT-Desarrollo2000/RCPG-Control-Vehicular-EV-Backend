@@ -19,6 +19,7 @@ namespace Application.Interfaces
         IRepository<Checklist> ChecklistRepo { get; }
         IRepository<Expenses> ExpensesRepo { get; }
         IRepository<TypesOfExpenses> TypesOfExpensesRepo { get; }
+        IRepository<Invoices> InvoicesRepo { get; }
         IRepository<VehicleMaintenance> VehicleMaintenanceRepo { get; }
         IRepository<VehicleMaintenanceWorkshop> MaintenanceWorkshopRepo { get; }
         IRepository<VehicleImage> VehicleImageRepo { get; }
