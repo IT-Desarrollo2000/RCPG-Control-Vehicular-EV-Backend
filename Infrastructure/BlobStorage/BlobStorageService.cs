@@ -62,7 +62,7 @@ namespace Infrastructure.BlobStorage
         public async Task<string> UploadFileToBlobAsync(IFormFile file, string container, string path)
         {
             var blobContainer = _blobServiceClient.GetBlobContainerClient(container);
-            await blobContainer.CreateIfNotExistsAsync();
+            await blobContainer.CreateIfNotExistsAsync(PublicAccessType.Blob);
 
             var blobClient = blobContainer.GetBlobClient(path);
 

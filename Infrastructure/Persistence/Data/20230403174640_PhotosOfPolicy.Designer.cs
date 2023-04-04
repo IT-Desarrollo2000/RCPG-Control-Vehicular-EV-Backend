@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230403174640_PhotosOfPolicy")]
+    partial class PhotosOfPolicy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -546,49 +549,6 @@ namespace Infrastructure.Persistence.Data
                         .HasFilter("[VehicleServiceId] IS NOT NULL");
 
                     b.ToTable("Expenses");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.Invoices", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ExpensesId")
-                        .IsRequired()
-                        .HasColumnType("int");
-
-                    b.Property<string>("FilePath1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FilePath2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileURL1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileURL2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Folio")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("InvoicedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExpensesId");
-
-                    b.ToTable("Invoices");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.MaintenanceProgress", b =>
@@ -1594,17 +1554,6 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("VehicleService");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.Invoices", b =>
-                {
-                    b.HasOne("Domain.Entities.Registered_Cars.Expenses", "Expenses")
-                        .WithMany("Invoices")
-                        .HasForeignKey("ExpensesId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Expenses");
-                });
-
             modelBuilder.Entity("Domain.Entities.Registered_Cars.MaintenanceProgress", b =>
                 {
                     b.HasOne("Domain.Entities.Identity.AppUser", "AdminUser")
@@ -1955,8 +1904,6 @@ namespace Infrastructure.Persistence.Data
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Expenses", b =>
                 {
-                    b.Navigation("Invoices");
-
                     b.Navigation("PhotosOfSpending");
                 });
 

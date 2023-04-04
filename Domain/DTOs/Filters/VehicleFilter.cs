@@ -1,9 +1,11 @@
-﻿using Domain.Enums;
+﻿using Domain.Entities.Departament;
+using Domain.Enums;
 
 namespace Domain.DTOs.Filters
 {
     public class VehicleFilter
     {
+
         public string? Name { get; set; }
         public string? Serial { get; set; }
         public bool? IsUtilitary { get; set; }
@@ -21,8 +23,9 @@ namespace Domain.DTOs.Filters
         public bool? IsClean { get; set; }
         public decimal? MinDesiredPerformance { get; set; }
         public decimal? MaxDesiredPerformance { get; set; }
-        public DateTime? CreatedBefore { get; set; }
+        public DateTime? CreatedBefore { get; set; } 
         public DateTime? CreatedAfter { get; set; }
+        public int? AssignedDepartmentsId  { get; set; }
         public int PageSize { get; set; }
         public int PageNumber { get; set; }
     }
