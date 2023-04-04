@@ -22,7 +22,7 @@ namespace API.Controllers
             this._registeredVehiclesServices = registeredVehiclesServices;
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+       // [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<VehiclesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
