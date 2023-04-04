@@ -5,6 +5,7 @@ using Domain.CustomEntities;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
+using Domain.Entities.Departament;
 using Domain.Entities.Registered_Cars;
 using Domain.Enums;
 using Microsoft.Extensions.Options;
@@ -37,6 +38,7 @@ namespace Application.Services
             string properties = "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy";
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
+            var departament = new Departaments();
 
             if (filter.CreatedAfter.HasValue)
             {
@@ -200,6 +202,16 @@ namespace Application.Services
                 }
                 else { Query = p => p.DesiredPerformance <= filter.MaxDesiredPerformance.Value; }
             }
+
+            if (filter.AssignedDepartmentsId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.AssignedDepartments.Select(num => num.Id).FirstOrDefault() == filter.AssignedDepartmentsId.Value);
+                }
+                else{Query = p => p.AssignedDepartments.Select(num => num.Id).FirstOrDefault() == filter.AssignedDepartmentsId.Value;}
+            }
+
 
             if (Query != null)
             {
