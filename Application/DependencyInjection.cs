@@ -24,6 +24,7 @@ namespace Application
             services.AddTransient<IChecklistServices, ChecklistServices>();
             services.AddTransient<IExpensesServices, ExpensesServices>();
             services.AddTransient<ITypeOfExpensesServices, TypeOfExpensesServices>();
+            services.AddTransient<IInvoicesServices, InvoicesServices>();
             services.AddTransient<IVehicleMaintenanceService, VehicleMaintenanceServices>();
             services.AddTransient<IMaintenanceWorkshopService, MaintenanceWorkshopServices>();
             services.AddTransient<IRegisteredVehiclesServices, RegisteredVehiclesServices>();
