@@ -33,6 +33,7 @@ namespace Infrastructure.Repositories
         private readonly IRepository<Policy> _PolicyRepo;
         private readonly IRepository<MaintenanceProgress> _MaintenanceProgressRepo;
         private readonly IRepository<MaintenanceProgressImages> _MaintenanceProgressImagesRepo;
+        private readonly IRepository<PhotosOfPolicy> _PhotosOfPolicyRepo;
 
         public UnitOfWork(CVContext context)
         {
@@ -61,6 +62,7 @@ namespace Infrastructure.Repositories
         public IRepository<Policy> PolicyRepo => _PolicyRepo ?? new BaseRepository<Policy>(_context);
         public IRepository<MaintenanceProgress> MaintenanceProgressRepo => _MaintenanceProgressRepo ?? new BaseRepository<MaintenanceProgress>(_context);
         public IRepository<MaintenanceProgressImages> MaintenanceProgressImageRepot => _MaintenanceProgressImagesRepo ?? new BaseRepository<MaintenanceProgressImages>(_context);
+        public IRepository<PhotosOfPolicy> PhotosOfPolicyRepo => _PhotosOfPolicyRepo ?? new BaseRepository<PhotosOfPolicy>(_context);
 
         //FUNCIONES DEL SERVICIO
         public void Dispose()
