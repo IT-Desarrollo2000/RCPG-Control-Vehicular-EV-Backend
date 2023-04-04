@@ -9,5 +9,6 @@
         public string ExpenseAttachments { get; set; }
         public string VehicleReports { get; set; }
         public string MaintenanceProgressImages { get; set; }
+        public string PolicyImages { get; set; }
     }
 }
