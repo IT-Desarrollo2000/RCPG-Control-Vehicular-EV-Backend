@@ -47,6 +47,7 @@ namespace Infrastructure.Persistence
         public virtual DbSet<Expenses> Expenses { get; set; }
         public virtual DbSet<TypesOfExpenses> TypesOfExpenses { get; set; }
         public virtual DbSet<PhotosOfSpending> PhotosOfSpendings { get; set; }
+        public virtual DbSet<Invoices> Invoices { get; set; }
 
 
         //Vehicle Maintenance With Vehicle MaintenanceWorkShop

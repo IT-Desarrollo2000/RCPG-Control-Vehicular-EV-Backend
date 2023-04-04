@@ -22,10 +22,16 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(p => p.ExpensesId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasMany(i => i.Invoices)
+                .WithOne(it => it.Expenses)
+                .HasForeignKey(it => it.ExpensesId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasOne(m => m.VehicleMaintenanceWorkshop)
                 .WithMany(mx => mx.Expenses)
                 .HasForeignKey(m => m.VehicleMaintenanceWorkshopId)
                 .OnDelete(DeleteBehavior.Restrict);
+
 
             builder.HasOne(m => m.VehicleMaintenance)
                 .WithMany(ms => ms.Expenses)
