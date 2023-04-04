@@ -22,6 +22,7 @@
         public virtual VehicleService? VehicleService { get; set; }
         public virtual VehicleReport? VehicleReport { get; set; }
         public virtual VehicleMaintenanceWorkshop? VehicleMaintenanceWorkshop { get; set; }
+        public virtual ICollection<Invoices> Invoices { get; set; }
         public virtual ICollection<Vehicle> Vehicles { get; set; }
         public virtual ICollection<PhotosOfSpending> PhotosOfSpending { get; set; }
     }

@@ -23,6 +23,7 @@ namespace Infrastructure.Repositories
         private readonly IRepository<Checklist> _ChecklistRepo;
         private readonly IRepository<Expenses> _ExpensesRepo;
         private readonly IRepository<TypesOfExpenses> _TypesOfExpensesRepo;
+        private readonly IRepository<Invoices> _InvoicesRepo;
         private readonly IRepository<PhotosOfSpending> _PhotosOfSpendingRepo;
         private readonly IRepository<VehicleMaintenance> _VehicleMaintenanceRepo;
         private readonly IRepository<VehicleMaintenanceWorkshop> _MaintenanceWorkshopRepo;
@@ -52,6 +53,7 @@ namespace Infrastructure.Repositories
         public IRepository<Checklist> ChecklistRepo => _ChecklistRepo ?? new BaseRepository<Checklist>(_context);
         public IRepository<Expenses> ExpensesRepo => _ExpensesRepo ?? new BaseRepository<Expenses>(_context);
         public IRepository<TypesOfExpenses> TypesOfExpensesRepo => _TypesOfExpensesRepo ?? new BaseRepository<TypesOfExpenses>(_context);
+        public IRepository<Invoices> InvoicesRepo => _InvoicesRepo ?? new BaseRepository<Invoices>(_context);
         public IRepository<PhotosOfSpending> PhotosOfSpendingRepo => _PhotosOfSpendingRepo ?? new BaseRepository<PhotosOfSpending>(_context);
         public IRepository<VehicleMaintenance> VehicleMaintenanceRepo => _VehicleMaintenanceRepo ?? new BaseRepository<VehicleMaintenance>(_context);
         public IRepository<VehicleMaintenanceWorkshop> MaintenanceWorkshopRepo => _MaintenanceWorkshopRepo ?? new BaseRepository<VehicleMaintenanceWorkshop>(_context);
