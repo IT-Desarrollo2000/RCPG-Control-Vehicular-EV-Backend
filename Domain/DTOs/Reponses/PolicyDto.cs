@@ -8,7 +8,7 @@ namespace Domain.DTOs.Reponses
         public string PolicyNumber { get; set; }
         public DateTime ExpirationDate { get; set; }
         public string NameCompany { get; set; }
-        public ICollection<PhotosOfPolicy> PhotosOfPolicies { get; set; }
+        public List<PhotosOfPolicyDto> PhotosOfPolicies { get; set; }
         public int? VehicleId { get; set; }
         public UnrelatedVehiclesDto Vehicle { get; set; }
     }

@@ -215,6 +215,13 @@ namespace Infrastructure.Mappings
 
             //Admin Users
             CreateMap<AppUser, AdminUserDto>();
+
+            //PhotosOfPolicy
+            CreateMap<PhotosOfPolicy, PhotosOfPolicyDto>().ReverseMap();    
+
+            //PhotosOfCirculationCard
+            CreateMap<PhotosOfCirculationCard, PhotosOfCirculationCardDto>().ReverseMap();
+
         }
     }
 }

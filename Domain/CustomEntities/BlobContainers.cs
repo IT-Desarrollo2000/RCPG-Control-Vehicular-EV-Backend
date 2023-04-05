@@ -11,5 +11,6 @@
         public string MaintenanceProgressImages { get; set; }
         public string PolicyImages { get; set; }
         public string ExpenseInvoices { get; set; }
+        public string VehicleCirculationCard { get; set; }
     }
 }

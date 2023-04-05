@@ -33,6 +33,7 @@ namespace Domain.DTOs.Reponses
         public List<VehicleImageDto> VehicleImages { get; set; }
         public List<ChecklistDto> Checklists { get; set; }
         public List<DepartamentDto> AssignedDepartments { get; set; }
+        public List<PhotosOfCirculationCardDto> PhotosOfCirculationCards { get; set; }
         public string VehicleQRId { get; set; }
         public string? VehicleObservation { get; set; }
         public ShortPolicyDto? Policy { get; set; }

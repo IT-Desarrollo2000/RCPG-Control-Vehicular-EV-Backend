@@ -15,6 +15,7 @@ namespace Domain.Entities.Registered_Cars
             this.VehicleMaintenances = new HashSet<VehicleMaintenance>();
             this.VehicleReports = new HashSet<VehicleReport>();
             this.VehicleReportsUses = new HashSet<VehicleReportUse>();
+            this.PhotosOfCirculationCards = new HashSet<PhotosOfCirculationCard>();
         }
         public string Name { get; set; }
         public string Serial { get; set; }
@@ -42,6 +43,7 @@ namespace Domain.Entities.Registered_Cars
         public string? FuelCardNumber { get; set; }
         public string? VehicleResponsibleName { get; set; }
 
+        
         public virtual ICollection<Departaments> AssignedDepartments { get; set; }
         public virtual ICollection<VehicleImage> VehicleImages { get; set; }
         public virtual ICollection<VehicleService> VehicleServices { get; set; }
@@ -50,5 +52,6 @@ namespace Domain.Entities.Registered_Cars
         public virtual ICollection<VehicleMaintenance> VehicleMaintenances { get; set; }
         public virtual ICollection<VehicleReport> VehicleReports { get; set; }
         public virtual ICollection<VehicleReportUse> VehicleReportsUses { get; set; }
+        public virtual ICollection<PhotosOfCirculationCard> PhotosOfCirculationCards { get; set; }
     }
 }

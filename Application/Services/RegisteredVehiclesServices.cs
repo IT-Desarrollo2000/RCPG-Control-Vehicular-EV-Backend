@@ -8,6 +8,7 @@ using Domain.DTOs.Requests;
 using Domain.Entities.Departament;
 using Domain.Entities.Registered_Cars;
 using Domain.Enums;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
 
@@ -35,7 +36,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy";
+            string properties = "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards";
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
             var departament = new Departaments();
@@ -294,6 +295,42 @@ namespace Application.Services
                     }
                 }
 
+                //Guardar Tarjeta Card
+                var Ima = new List<PhotosOfCirculationCard>();
+                foreach(var photo in vehicleRequest.CirculationCard)
+                {
+                    //Validar Imagenes y Guardar las imagenes en el blobstorage
+                    if(photo.ContentType.Contains("image"))
+                    {
+                        //Manipular el nombre del archivo
+                        var uploadDate = DateTime.Now;
+                        Random rndm = new Random();
+                        string FileExtn = System.IO.Path.GetExtension(photo.FileName);
+                        var filePath = $"FOTOS_CIRCULATIONCARD/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{uploadDate.Hour}{uploadDate.Minute}{rndm.Next(1, 1000)}{FileExtn}";
+                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(photo, _azureBlobContainers.Value.VehicleCirculationCard, filePath);
+
+                        //agregar la imagen a la bd
+                        var newImage = new PhotosOfCirculationCard()
+                        {
+                            FilePath = filePath,
+                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.VehicleCirculationCard, filePath),
+                            Vehicle= entity
+
+                        };
+
+                        await _unitOfWork.PhotosOfCirculationCardRepo.Add(newImage);
+                        Ima.Add(newImage);
+
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 4);
+                        return response;
+                    }
+
+                }
+
                 //Guardar los cambios
                 await _unitOfWork.SaveChangesAsync();
 
@@ -320,7 +357,7 @@ namespace Application.Services
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
             try
             {
-                var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.VehicleQRId == qrId, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company");
+                var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.VehicleQRId == qrId, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,PhotosOfCirculationCards");
                 var veh = entity.FirstOrDefault();
 
                 if(veh == null)
@@ -347,7 +384,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehiclesDto>> GetVehicleById(int id)
         {
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
-            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy");
+            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards");
 
             var veh = entity.FirstOrDefault();
 
@@ -463,6 +500,14 @@ namespace Application.Services
                 {
                     await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.RegisteredCars, photo.FilePath);
                     await _unitOfWork.VehicleImageRepo.Delete(photo.Id);
+                }
+
+                //Borrar fotos de vehiculo
+                var CirculationCard = await _unitOfWork.PhotosOfCirculationCardRepo.Get(filter: vehicle => vehicle.VehicleId == id);
+                foreach (var photo in CirculationCard)
+                {
+                    await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.VehicleCirculationCard, photo.FilePath);
+                    await _unitOfWork.PhotosOfCirculationCardRepo.Delete(photo.Id);
                 }
 
                 await _unitOfWork.VehicleRepo.Delete(id);
@@ -714,6 +759,99 @@ namespace Application.Services
 
             }
         }
+
+        public async Task<GenericResponse<PhotosOfCirculationCard>> AddCirculationCardImage( CirculationCardRequest circulationCardRequest, int vehicleId)
+        {
+            GenericResponse<PhotosOfCirculationCard> response = new GenericResponse<PhotosOfCirculationCard>();
+            try
+            {
+                //VERIFICAR quee exista Vehiculo
+                var vehicle = await _unitOfWork.VehicleRepo.GetById(vehicleId);
+                if (vehicle == null) return null;
+
+                var Ima = new List<PhotosOfCirculationCard>();
+                foreach (var image in circulationCardRequest.ImageFile)
+                {
+                    //Validar Imagenes y Guardar las imagenes en el blobstorage
+                    if (image.ContentType.Contains("image"))
+                    {
+                        //Manipular el nombre del archivo
+                        var uploadDate = DateTime.Now;
+                        Random rndm = new Random();
+                        string FileExtn = System.IO.Path.GetExtension(image.FileName);
+                        var filePath = $"FOTOS_CIRCULATIONCARD/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{uploadDate.Hour}{uploadDate.Minute}{rndm.Next(1, 1000)}{FileExtn}";
+                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.VehicleCirculationCard, filePath);
+
+                        //agregar la imagen a la bd
+                        var newImage = new PhotosOfCirculationCard()
+                        {
+                            FilePath = filePath,
+                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.VehicleCirculationCard, filePath),
+                            Vehicle = vehicle
+
+                        };
+
+                        await _unitOfWork.PhotosOfCirculationCardRepo.Add(newImage);
+                        Ima.Add(newImage);
+                        await _unitOfWork.SaveChangesAsync();
+
+                        response.success = true;
+                        response.Data = newImage;
+
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 2);
+                        return response;
+                    }
+
+
+                }
+
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 3);
+
+                return response;
+
+            }
+
+        }
+
+        public async Task<GenericResponse<bool>> DeleteCirculationCardImage (int VehicleId)
+        {
+            GenericResponse<bool> response = new GenericResponse<bool> ();
+            try
+            {
+                //Borrar fotos 
+                var vehicle = await _unitOfWork.PhotosOfCirculationCardRepo.Get(filter: vehicle => vehicle.VehicleId == VehicleId);
+                if (vehicle == null) return null;
+
+                foreach(var photo in vehicle)
+                {
+                    await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.VehicleCirculationCard, photo.FilePath);
+                    await _unitOfWork.PhotosOfCirculationCardRepo.Delete(photo.Id);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+                response.success = true;
+                response.Data = true;
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
 
         public async Task<GenericResponse<PerformanceDto>> Performance(PerformanceRequest performanceRequest)
         {
