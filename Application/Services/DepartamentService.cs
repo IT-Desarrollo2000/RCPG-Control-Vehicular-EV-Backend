@@ -61,7 +61,7 @@ namespace Application.Services
         }
 
         //POST
-        public async Task<GenericResponse<DepartamentDto>> PostDepartament([FromBody] DepartamentRequest departamentRequest)
+        public async Task<GenericResponse<DepartamentDto>> PostDepartament(DepartamentRequest departamentRequest)
         {
             GenericResponse<DepartamentDto> response = new GenericResponse<DepartamentDto>();
             try
@@ -94,7 +94,7 @@ namespace Application.Services
         }
 
         //PUT
-        public async Task<GenericResponse<DepartamentDto>> PutDepartament(int id, [FromBody] DepartamentRequest departamentRequest)
+        public async Task<GenericResponse<DepartamentDto>> PutDepartament(int id, DepartamentRequest departamentRequest)
         {
             GenericResponse<DepartamentDto> response = new GenericResponse<DepartamentDto>();
             try
@@ -152,6 +152,26 @@ namespace Application.Services
                 return response;
             }
             catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
+        //Departamentos por Supervisor
+        public async Task<GenericResponse<List<DepartamentDto>>> DepartmentsBySupervisor(int supervisorId)
+        {
+            GenericResponse<List<DepartamentDto>> response = new GenericResponse<List<DepartamentDto>>();
+            try
+            {
+                var entidad = await _unitOfWork.Departaments.Get(p => p.Supervisors.Any(s => s.Id == supervisorId), includeProperties: "Company,AssignedVehicles,Supervisors,Expenses");
+                var DepartamentDTO = _mapper.Map<List<DepartamentDto>>(entidad);
+                response.success = true;
+                response.Data = DepartamentDTO;
+                return response;
+            }
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);

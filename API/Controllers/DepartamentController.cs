@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +20,7 @@ namespace API.Controllers
         }
 
         //GETALL
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(DepartamentDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -38,7 +39,7 @@ namespace API.Controllers
         }
 
         //GETBYID
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(DepartamentDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet("{id:int}", Name = "obtenerDepartament")]
@@ -147,6 +148,27 @@ namespace API.Controllers
                 return NotFound();
             }
 
+        }
+
+        //GETBYID
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<List<DepartamentDto>>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetBySupervisor")]
+        public async Task<IActionResult> GetBySupervisor(int supervisorId)
+        {
+            var entidad = await _departamentServices.DepartmentsBySupervisor(supervisorId);
+            
+            if (entidad.success)
+            {
+                return Ok(entidad);
+            }
+            else
+            {
+                return BadRequest(entidad);
+
+            }
         }
     }
 }
