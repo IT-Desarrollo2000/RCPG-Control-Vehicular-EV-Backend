@@ -96,8 +96,6 @@ namespace Infrastructure.Mappings
             CreateMap<InvoicesDto, Invoices>().ReverseMap();
             CreateMap<Invoices, InvoicesRequest>().ReverseMap();
 
- 
-
             //TypesOfExpenses
             CreateMap<TypesOfExpenses, TypesOfExpensesDto>().ReverseMap();
             CreateMap<TypesOfExpenses, TypesOfExpensesRequest>().ReverseMap();
@@ -217,6 +215,13 @@ namespace Infrastructure.Mappings
 
             //Admin Users
             CreateMap<AppUser, AdminUserDto>();
+
+            //PhotosOfPolicy
+            CreateMap<PhotosOfPolicy, PhotosOfPolicyDto>().ReverseMap();    
+
+            //PhotosOfCirculationCard
+            CreateMap<PhotosOfCirculationCard, PhotosOfCirculationCardDto>().ReverseMap();
+
         }
     }
 }

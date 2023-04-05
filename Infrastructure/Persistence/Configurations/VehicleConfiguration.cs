@@ -41,6 +41,12 @@ namespace Infrastructure.Persistence.Configurations
                     .HasForeignKey<Policy>(r => r.VehicleId)
                     .IsRequired(false)
                     .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(ur => ur.PhotosOfCirculationCards)
+                    .WithOne(u => u.Vehicle)
+                    .HasForeignKey(ur => ur.VehicleId)
+                    .IsRequired(false)
+                    .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
