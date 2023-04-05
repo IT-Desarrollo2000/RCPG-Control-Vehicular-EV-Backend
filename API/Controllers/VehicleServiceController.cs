@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Application.Services;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
@@ -186,5 +187,24 @@ namespace API.Controllers
 
         }
 
+        //GET BY DEPARTMENTID
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet("GetByDepartment")]
+        public async Task<IActionResult> GetByDepartment(int departmentId)
+        {
+            var entidad = await _vehicleServiService.GetServicesByDepartment(departmentId);
+            if (entidad.success)
+            {
+                return Ok(entidad);
+            }
+            else
+            {
+                return BadRequest(entidad);
+
+            }
+
+        }
     }
 }

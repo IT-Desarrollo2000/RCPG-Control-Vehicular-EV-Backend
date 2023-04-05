@@ -96,8 +96,6 @@ namespace Infrastructure.Mappings
             CreateMap<InvoicesDto, Invoices>().ReverseMap();
             CreateMap<Invoices, InvoicesRequest>().ReverseMap();
 
- 
-
             //TypesOfExpenses
             CreateMap<TypesOfExpenses, TypesOfExpensesDto>().ReverseMap();
             CreateMap<TypesOfExpenses, TypesOfExpensesRequest>().ReverseMap();

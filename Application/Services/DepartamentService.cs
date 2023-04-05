@@ -25,7 +25,7 @@ namespace Application.Services
             GenericResponse<List<DepartamentDto>> response = new GenericResponse<List<DepartamentDto>>();
             try
             {
-                var entidades = await _unitOfWork.Departaments.Get(includeProperties: "Company,AssignedVehicles,Supervisors");
+                var entidades = await _unitOfWork.Departaments.Get(includeProperties: "Company,AssignedVehicles,Supervisors,Expenses");
                 var dtos = _mapper.Map<List<DepartamentDto>>(entidades);
                 response.success = true;
                 response.Data = dtos;
@@ -45,7 +45,7 @@ namespace Application.Services
             GenericResponse<DepartamentDto> response = new GenericResponse<DepartamentDto>();
             try 
             { 
-                var entidad = await _unitOfWork.Departaments.Get(p => p.Id == Id, includeProperties: "Company,AssignedVehicles,Supervisors");
+                var entidad = await _unitOfWork.Departaments.Get(p => p.Id == Id, includeProperties: "Company,AssignedVehicles,Supervisors,Expenses");
                 var result = entidad.FirstOrDefault();
                 var DepartamentDTO = _mapper.Map<DepartamentDto>(result);
                 response.success = true;

@@ -8,6 +8,7 @@
         public DateTime ExpenseDate { get; set; }
         public GetVehicleMaintenanceWorkshopDto VehicleMaintenanceWorkshop { get; set; }
         public string ERPFolio { get; set; }
+        public int? DepartmentId { get; set; }
         //public List<PhotosOfSpending> PhotosOfSpending { get; set; }
     }
 }

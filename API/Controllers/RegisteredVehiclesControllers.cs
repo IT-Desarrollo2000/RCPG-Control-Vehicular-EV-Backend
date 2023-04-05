@@ -22,7 +22,7 @@ namespace API.Controllers
             this._registeredVehiclesServices = registeredVehiclesServices;
         }
 
-       // [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<VehiclesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -207,6 +207,17 @@ namespace API.Controllers
         public async Task<IActionResult> GetLastMaintenances(int VehicleId)
         {
             var result = await _registeredVehiclesServices.GetLatestMaintenanceDto(VehicleId);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<List<VehiclesDto>>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetDepartmentVehicles")]
+        public async Task<IActionResult> GetDepartmentVehicles(int departmentId)
+        {
+            var result = await _registeredVehiclesServices.GetVehiclesByDepartment(departmentId);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
     }
