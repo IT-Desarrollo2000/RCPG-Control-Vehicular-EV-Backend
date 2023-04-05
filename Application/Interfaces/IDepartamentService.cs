@@ -8,6 +8,7 @@ namespace Application.Interfaces
     public interface IDepartamentServices
     {
         Task<GenericResponse<DepartamentDto>> DeleteDepartament(int id);
+        Task<GenericResponse<List<DepartamentDto>>> DepartmentsBySupervisor(int supervisorId);
         Task<GenericResponse<List<DepartamentDto>>> GetDepartamentALL();
         Task<GenericResponse<DepartamentDto>> GetDepartamentById(int Id);
         Task<GenericResponse<DepartamentDto>> PostDepartament([FromBody] DepartamentRequest departamentRequest);

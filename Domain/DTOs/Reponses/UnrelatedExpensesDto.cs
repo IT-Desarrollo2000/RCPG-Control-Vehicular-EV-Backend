@@ -16,5 +16,6 @@
         public int? VehicleReportId { get; set; }
         public int invoiced { get; set; }
         public List<PhotosOfSpendingDto> PhotosOfSpending { get; set; }
+        public int? DepartmentId { get; set; }
     }
 }

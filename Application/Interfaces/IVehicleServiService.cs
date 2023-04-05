@@ -10,6 +10,7 @@ namespace Application.Interfaces
     public interface IVehicleServiService
     {
         Task<GenericResponse<VehicleServiceDto>> DeleteVehicleService(int Id);
+        Task<GenericResponse<List<VehicleServiceDto>>> GetServicesByDepartment(int departmentId);
         Task<PagedList<VehicleServiceDto>> GetVehicleServiceAll(VehicleServiceFilter filter);
         Task<GenericResponse<VehicleServiceDto>> GetVehicleServiceById(int Id);
         Task<GenericResponse<VehicleServiceDto>> MarkAsCanceled(VehicleServiceCanceledRequest request);

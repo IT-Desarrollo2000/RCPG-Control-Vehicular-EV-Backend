@@ -425,5 +425,26 @@ namespace Application.Services
             return response;
         }
 
+        //Obtener reportes por departamento
+        public async Task<GenericResponse<List<VehicleServiceDto>>> GetServicesByDepartment(int departmentId)
+        {
+            GenericResponse<List<VehicleServiceDto>> response = new GenericResponse<List<VehicleServiceDto>>();
+            try
+            {
+                var reports = await _unitOfWork.VehicleServiceRepo.Get(r => r.Vehicle.AssignedDepartments.Any(d => d.Id == departmentId), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+
+                var dto = _mapper.Map<List<VehicleServiceDto>>(reports);
+                response.success = true;
+                response.Data = dto;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
     }
 }

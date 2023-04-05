@@ -232,5 +232,25 @@ namespace API.Controllers
             var result = await _vehicleReportUseService.DeleteVehicleReportUse(id);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
+
+        //GET BY DEPARTMENTID
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet("GetByDepartment")]
+        public async Task<IActionResult> GetByDepartment(int departmentId)
+        {
+            var entidad = await _vehicleReportUseService.GetUseReportByDepartment(departmentId);
+            if (entidad.success)
+            {
+                return Ok(entidad);
+            }
+            else
+            {
+                return BadRequest(entidad);
+
+            }
+
+        }
     }
 }

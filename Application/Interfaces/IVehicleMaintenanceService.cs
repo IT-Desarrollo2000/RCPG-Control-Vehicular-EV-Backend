@@ -14,6 +14,7 @@ namespace Application.Interfaces
         Task<GenericResponse<bool>> DeleteProgress(int ProgressId);
         Task<GenericResponse<VehicleMaintenanceDto>> DeleteVehicleManintenance(int Id);
         Task<GenericResponse<VehicleMaintenanceDto>> FinalizeMaintenance(FinalizeMaintenanceRequest request);
+        Task<GenericResponse<List<VehicleMaintenanceDto>>> GetMaintenanceByDepartment(int departmentId);
         Task<GenericResponse<MaintenanceExpenseSummaryDto>> GetMaintenanceExpenseSummary(int MaintenanceId);
         Task<PagedList<VehicleMaintenanceDto>> GetVehicleMaintenanceAll(VehicleMaintenanceFilter filter);
         Task<GenericResponse<VehicleMaintenanceDto>> GetVehicleMaintenanceById(int Id);
