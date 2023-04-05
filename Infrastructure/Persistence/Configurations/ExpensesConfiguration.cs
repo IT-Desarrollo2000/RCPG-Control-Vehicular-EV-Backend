@@ -39,6 +39,12 @@ namespace Infrastructure.Persistence.Configurations
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(e => e.Department)
+                .WithMany(d => d.Expenses)
+                .HasForeignKey(e => e.DepartmentId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.Property(v => v.Cost).HasColumnType("decimal(18,2)");
         }
     }

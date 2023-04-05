@@ -22,6 +22,7 @@ namespace Application.Interfaces
         Task<GenericResponse<VehiclesDto>> GetVehicleById(int id);
         Task<GenericResponse<VehiclesDto>> GetVehicleByQRId(string qrId);
         Task<PagedList<VehiclesDto>> GetVehicles(VehicleFilter filter);
+        Task<GenericResponse<List<VehiclesDto>>> GetVehiclesByDepartment(int departmentId);
         Task<GenericResponse<VehiclesDto>> MarkVehicleAsInactive(int VehicleId);
         Task<GenericResponse<VehiclesDto>> MarkVehicleAsSaved(int VehicleId);
         Task<GenericResponse<PerformanceDto>> Performance(PerformanceRequest performanceRequest);

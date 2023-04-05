@@ -184,7 +184,6 @@ namespace Application.Services
                 }
                 else { Query = p => p.Serial == filter.Serial; }
             }
-
             
             if (filter.MinDesiredPerformance.HasValue)
             {
@@ -393,6 +392,26 @@ namespace Application.Services
             response.success = true;
             response.Data = map;
             return response;
+        }
+
+        public async Task<GenericResponse<List<VehiclesDto>>> GetVehiclesByDepartment(int departmentId)
+        {
+            GenericResponse<List<VehiclesDto>> response = new GenericResponse<List<VehiclesDto>>();
+            try
+            {
+                var vehicles = await _unitOfWork.VehicleRepo.Get(v => v.AssignedDepartments.Any(d => d.Id == departmentId));
+                var map = _mapper.Map<List<VehiclesDto>>(vehicles);
+                response.success = true;
+                response.Data = map;
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
         }
 
         public async Task<GenericResponse<bool>> DeleteVehicles(int id)

@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities.Registered_Cars
+﻿using Domain.Entities.Departament;
+
+namespace Domain.Entities.Registered_Cars
 {
     public class Expenses : BaseEntity
     {
@@ -17,6 +19,8 @@
         public int? VehicleMaintenanceWorkshopId { get; set; }
         public int? VehicleMaintenanceId { get; set; }
         public int? VehicleServiceId { get; set; }
+        public int? DepartmentId { get; set; }
+        public virtual Departaments? Department { get; set; }
         public string? Comment { get; set; }
         public virtual VehicleMaintenance? VehicleMaintenance { get; set; }
         public virtual VehicleService? VehicleService { get; set; }

@@ -8,8 +8,9 @@ namespace Domain.Entities.Departament
     {
         public Departaments()
         {
-            this.AssignedVehicles = new HashSet<Vehicle>();
-            this.Supervisors = new HashSet<AppUser>();
+            AssignedVehicles = new HashSet<Vehicle>();
+            Supervisors = new HashSet<AppUser>();
+            Expenses = new HashSet<Expenses>();
         }
 
         public string Name { get; set; }
@@ -17,5 +18,6 @@ namespace Domain.Entities.Departament
         public virtual Companies Company { get; set; }
         public virtual ICollection<Vehicle> AssignedVehicles { get; set; }
         public virtual ICollection<AppUser> Supervisors { get; set; }
+        public virtual ICollection<Expenses> Expenses { get; set; }
     }
 }
