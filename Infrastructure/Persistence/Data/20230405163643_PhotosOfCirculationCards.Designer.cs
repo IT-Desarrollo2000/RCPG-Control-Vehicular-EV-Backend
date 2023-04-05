@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230405163643_PhotosOfCirculationCards")]
+    partial class PhotosOfCirculationCards
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -503,9 +506,6 @@ namespace Infrastructure.Persistence.Data
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ERPFolio")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -535,8 +535,6 @@ namespace Infrastructure.Persistence.Data
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("TypesOfExpensesId");
 
@@ -1595,11 +1593,6 @@ namespace Infrastructure.Persistence.Data
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Expenses", b =>
                 {
-                    b.HasOne("Domain.Entities.Departament.Departaments", "Department")
-                        .WithMany("Expenses")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Entities.Registered_Cars.TypesOfExpenses", "TypesOfExpenses")
                         .WithMany("Expenses")
                         .HasForeignKey("TypesOfExpensesId")
@@ -1624,8 +1617,6 @@ namespace Infrastructure.Persistence.Data
                         .WithOne("Expense")
                         .HasForeignKey("Domain.Entities.Registered_Cars.Expenses", "VehicleServiceId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Department");
 
                     b.Navigation("TypesOfExpenses");
 
@@ -1964,11 +1955,6 @@ namespace Infrastructure.Persistence.Data
             modelBuilder.Entity("Domain.Entities.Company.Companies", b =>
                 {
                     b.Navigation("Departaments");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Departament.Departaments", b =>
-                {
-                    b.Navigation("Expenses");
                 });
 
             modelBuilder.Entity("Domain.Entities.Identity.AppRole", b =>

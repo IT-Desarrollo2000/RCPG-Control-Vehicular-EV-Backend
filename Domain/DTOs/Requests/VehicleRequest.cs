@@ -10,6 +10,7 @@ namespace Domain.DTOs.Requests
         {
             DepartmentsToAssign = new List<int>();
             Images = new List<IFormFile>();
+            CirculationCard = new List<IFormFile?>();
         }
 
         [Required]
@@ -51,6 +52,7 @@ namespace Domain.DTOs.Requests
         public bool IsClean { get; set; } 
         public List<int> DepartmentsToAssign { get; set; }
         public List<IFormFile> Images { get; set; }
+        public List<IFormFile?> CirculationCard { get; set; }
 
     }
 
@@ -59,4 +61,19 @@ namespace Domain.DTOs.Requests
         [Required]
         public IFormFile ImageFile { get; set; }
     }
+
+
+    public class CirculationCardRequest
+    {
+        public CirculationCardRequest() 
+        {
+            ImageFile = new List<IFormFile?>();  
+        }
+
+        [Required]
+        public List<IFormFile?> ImageFile { get; set; }
+    }
+
+
+
 }
