@@ -11,6 +11,8 @@ namespace Domain.DTOs.Reponses
         public int Id { get; set; }
         public int? VehicleId { get; set; }
         public string PolicyNumber { get; set; }
+        public string NameCompany { get; set; }
+        public List<PhotosOfPolicyDto> PhotosOfPolicies { get; set; }
         public DateTime ExpirationDate { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }

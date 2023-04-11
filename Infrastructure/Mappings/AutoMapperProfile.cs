@@ -47,7 +47,9 @@ namespace Infrastructure.Mappings
 
             //Vehicle
             CreateMap<Vehicle, VehicleRequest>().ReverseMap();
-            CreateMap<Vehicle, VehiclesDto>().ReverseMap();
+            CreateMap<Vehicle, VehiclesDto>()
+                .ForMember(s => s.PhotosOfPolicies, o => o.MapFrom(s => s.Policy.PhotosOfPolicies))
+                .ReverseMap();
             CreateMap<VehicleRequest, VehiclesDto>().ReverseMap();
             CreateMap<Vehicle, UnrelatedVehiclesDto>().ReverseMap();
             CreateMap<VehicleImage, VehicleImageDto>().ReverseMap();
@@ -217,7 +219,8 @@ namespace Infrastructure.Mappings
             CreateMap<AppUser, AdminUserDto>();
 
             //PhotosOfPolicy
-            CreateMap<PhotosOfPolicy, PhotosOfPolicyDto>().ReverseMap();    
+            CreateMap<PhotosOfPolicy, PhotosOfPolicyDto>().ReverseMap();
+
 
             //PhotosOfCirculationCard
             CreateMap<PhotosOfCirculationCard, PhotosOfCirculationCardDto>().ReverseMap();
