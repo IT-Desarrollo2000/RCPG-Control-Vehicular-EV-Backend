@@ -282,10 +282,10 @@ namespace Application.Services
         }
 
         //AddImageIndivual
-        public async Task<GenericResponse<PhotosOfPolicy>> AddPolicyImage (PolicyImagesRequest policyImagesRequest, int policyId)
+        public async Task<GenericResponse<List<PhotosOfPolicy>>> AddPolicyImage (PolicyImagesRequest policyImagesRequest, int policyId)
         {
-            GenericResponse<PhotosOfPolicy> response = new GenericResponse<PhotosOfPolicy>();
-
+            GenericResponse<List<PhotosOfPolicy>> response = new GenericResponse<List<PhotosOfPolicy>>();
+            var Ima = new List<PhotosOfPolicy>();
             try
             {
                 //VERIFICAR QUE exista la poliza
@@ -294,7 +294,7 @@ namespace Application.Services
 
 
 
-                var Ima = new List<PhotosOfPolicy>();
+                
                 foreach (var image in policyImagesRequest.Images)
                 {
                     //Validar Imagenes y Guardar las imagenes en el blobstorage
@@ -320,7 +320,7 @@ namespace Application.Services
                         await _unitOfWork.SaveChangesAsync();
 
                         response.success = true;
-                        response.Data = newImage;
+                       // response.Data = newImage;
 
                     }
                     else
@@ -332,7 +332,9 @@ namespace Application.Services
                     }
 
                 }
-
+                var dtos = _mapper.Map<List<PhotosOfPolicy>>(Ima);
+                response.success = true;
+                response.Data = Ima;
                 return response;
 
             }

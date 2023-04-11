@@ -8,7 +8,7 @@ namespace Application.Interfaces
 {
     public interface IPolicyService
     {
-        Task<GenericResponse<PhotosOfPolicy>> AddPolicyImage(PolicyImagesRequest policyImagesRequest, int policyId);
+        Task<GenericResponse<List<PhotosOfPolicy>>> AddPolicyImage(PolicyImagesRequest policyImagesRequest, int policyId);
         Task<GenericResponse<PolicyDto>> DeletePolicy(int Id);
         Task<GenericResponse<bool>> DeletePolicyImages(int PolicyId);
         Task<GenericResponse<List<PolicyDto>>> GetPolicyAll();
