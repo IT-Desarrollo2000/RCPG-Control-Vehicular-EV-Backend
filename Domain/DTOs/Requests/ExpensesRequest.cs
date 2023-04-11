@@ -20,7 +20,7 @@ namespace Domain.DTOs.Requests
         public List<IFormFile> Attachments { get; set; }
         public int? VehicleReportId { get; set; }
         public string? Comment { get; set; }
-
+        public int? DepartmentId { get; set; }
     }
 
     public class ExpensePhotoRequest

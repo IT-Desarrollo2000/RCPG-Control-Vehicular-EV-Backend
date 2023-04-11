@@ -11,6 +11,7 @@ namespace Application.Interfaces
         Task<GenericResponse<VehicleReportImage>> AddReportImage(VehicleImageRequest request, int reportId);
         Task<GenericResponse<bool>> DeleteReportImage(int reportImageId);
         Task<GenericResponse<bool>> DeleteVehicleReport(int Id);
+        Task<GenericResponse<List<VehicleReportDto>>> GetReportsByDepartment(int departmentId);
         Task<PagedList<VehicleReportDto>> GetVehicleReportAll(VehicleReportFilter filter);
         Task<GenericResponse<VehicleReportDto>> GetVehicleReportById(int Id);
         Task<GenericResponse<VehicleReportDto>> ManageReportStatus(SolvedReportRequest request);

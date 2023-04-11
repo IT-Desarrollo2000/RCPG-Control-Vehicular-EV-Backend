@@ -22,7 +22,7 @@ namespace API.Controllers
             this._registeredVehiclesServices = registeredVehiclesServices;
         }
 
-       // [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<VehiclesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -207,6 +207,45 @@ namespace API.Controllers
         public async Task<IActionResult> GetLastMaintenances(int VehicleId)
         {
             var result = await _registeredVehiclesServices.GetLatestMaintenanceDto(VehicleId);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PhotosOfCirculationCard>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPost]
+        [Route("Vehicle/{vehicleId:int}/AddCirculationCardImage")]
+        public async Task<IActionResult> AddCirculationCard([FromForm] CirculationCardRequest circulationCardRequest, int vehicleId)
+        {
+            var result = await _registeredVehiclesServices.AddCirculationCardImage(circulationCardRequest, vehicleId);
+            if (result == null) return NotFound("No se encontro el vehiculo especificado");
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpDelete]
+        [Route("Vehicle/CirculationCardImage")]
+        public async Task<IActionResult> DeleteCirculationCard(int VehicleId)
+        {
+            var result = await _registeredVehiclesServices.DeleteCirculationCardImage(VehicleId);
+            if (result == null) { return NotFound($"No existe vehiculo con el Id {VehicleId}"); }
+            if (result.success) { return Ok(result); }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+        
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<List<VehiclesDto>>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetDepartmentVehicles")]
+        public async Task<IActionResult> GetDepartmentVehicles(int departmentId)
+        {
+            var result = await _registeredVehiclesServices.GetVehiclesByDepartment(departmentId);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
     }

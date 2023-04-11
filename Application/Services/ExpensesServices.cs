@@ -27,13 +27,13 @@ namespace Application.Services
             _azureBlobContainers = azureBlobContainers;
             _blobStorageService = blobStorageService;
         }
-        public async Task<GenericResponse<ExpensesDto>> PostExpenses(ExpensesRequest expensesRequest)
+        public async Task<GenericResponse<ExpensesDto>> PostExpenses(ExpensesRequest request)
         {
             GenericResponse<ExpensesDto> response = new GenericResponse<ExpensesDto>();
             try
             {
                 var dtoexpens = new List<Vehicle>();
-                foreach (var vehicleid in expensesRequest.VehicleIds)
+                foreach (var vehicleid in request.VehicleIds)
                 {
                     var existevehicleid = await _unitOfWork.VehicleRepo.Get(v => v.Id == vehicleid);
                     var resultExpenses = existevehicleid.FirstOrDefault();
@@ -48,44 +48,56 @@ namespace Application.Services
                 }
 
                 //Verificar que exista el tipo de gasto
-                var existetypeOfExpenses = await _unitOfWork.TypesOfExpensesRepo.Get(v => v.Id == expensesRequest.TypesOfExpensesId);
+                var existetypeOfExpenses = await _unitOfWork.TypesOfExpensesRepo.Get(v => v.Id == request.TypesOfExpensesId);
                 var resultType = existetypeOfExpenses.FirstOrDefault();
-
 
                 if (resultType == null)
                 {
                     response.success = false;
-                    response.AddError("No existe el tipo de gastos", $"No existe tipo de gastos con el id{expensesRequest.TypesOfExpensesId} solicitado", 3);
+                    response.AddError("No existe el tipo de gastos", $"No existe tipo de gastos con el id{request.TypesOfExpensesId} solicitado", 3);
                     return response;
                 }
+
+                //Verificar si el departamento tiene valor y existe
+                if (request.DepartmentId.HasValue)
+                {
+                    var exists = await _unitOfWork.Departaments.GetById(request.DepartmentId.Value);
+                    if(exists == null)
+                    {
+                        response.success = false;
+                        response.AddError("No existe departamento", $"No existe departamento con el id{request.DepartmentId.Value} solicitado", 7);
+                        return response;
+                    }
+                }
+
                 //Mapear entidad
-                var entity = _mapper.Map<Expenses>(expensesRequest);
+                var entity = _mapper.Map<Expenses>(request);
                 entity.Vehicles = dtoexpens;
 
                 //Verificar que exista el report
-                if (expensesRequest.VehicleReportId.HasValue)
+                if (request.VehicleReportId.HasValue)
                 {
-                    var report = await _unitOfWork.VehicleReportRepo.GetById(expensesRequest.VehicleReportId.Value);
+                    var report = await _unitOfWork.VehicleReportRepo.GetById(request.VehicleReportId.Value);
 
                     if (report == null)
                     {
 
                         response.success = false;
-                        response.AddError("Reporte no encontrado", $"El reporte con ID {expensesRequest.VehicleReportId.Value} solicitado no existe", 4);
+                        response.AddError("Reporte no encontrado", $"El reporte con ID {request.VehicleReportId.Value} solicitado no existe", 4);
                         return response;
                     }
                     entity.VehicleReport = report;
                 }
 
-                if (expensesRequest.VehicleMaintenanceWorkshopId.HasValue)
+                if (request.VehicleMaintenanceWorkshopId.HasValue)
                 {
-                    var existeworkshops = await _unitOfWork.MaintenanceWorkshopRepo.Get(v => v.Id == expensesRequest.VehicleMaintenanceWorkshopId);
+                    var existeworkshops = await _unitOfWork.MaintenanceWorkshopRepo.Get(v => v.Id == request.VehicleMaintenanceWorkshopId);
                     var resultworkshop = existeworkshops.FirstOrDefault();
 
                     if (resultworkshop == null)
                     {
                         response.success = false;
-                        response.AddError("No existe el taller", $"No existe taller con el id{expensesRequest.VehicleMaintenanceWorkshopId} solicitado", 5);
+                        response.AddError("No existe el taller", $"No existe taller con el id{request.VehicleMaintenanceWorkshopId} solicitado", 5);
                         return response;
                     }
 
@@ -100,7 +112,7 @@ namespace Application.Services
                 //Guardar las fotos
                 var images = new List<PhotosOfSpending>();
 
-                foreach (var photo in expensesRequest.Attachments)
+                foreach (var photo in request.Attachments)
                 {
                     //Validar imagenes y Guardar las imagenes en el blobstorage
                     if (photo.ContentType.Contains("image"))
@@ -151,7 +163,7 @@ namespace Application.Services
         public async Task<GenericResponse<ExpensesDto>> GetExpensesById(int id)
         {
             GenericResponse<ExpensesDto> response = new GenericResponse<ExpensesDto>();
-            var entity = await _unitOfWork.ExpensesRepo.Get(filter: a => a.Id == id, includeProperties: "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop");
+            var entity = await _unitOfWork.ExpensesRepo.Get(filter: a => a.Id == id, includeProperties: "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop,Department");
             var check = entity.FirstOrDefault();
             var map = _mapper.Map<ExpensesDto>(check);
             response.success = true;
@@ -159,7 +171,7 @@ namespace Application.Services
             return response;
         }
 
-        public async Task<GenericResponse<Expenses>> PutExpenses(ExpenseUpdateRequest expensesRequest, int id)
+        public async Task<GenericResponse<Expenses>> PutExpenses(ExpenseUpdateRequest request, int id)
         {
 
             GenericResponse<Expenses> response = new GenericResponse<Expenses>();
@@ -170,51 +182,51 @@ namespace Application.Services
                 var expenses = result.FirstOrDefault();
                 if (expenses == null) return null;
 
-                if (expensesRequest.TypesOfExpensesId.HasValue)
+                if (request.TypesOfExpensesId.HasValue)
                 {
-                    var typeOfExpense = await _unitOfWork.TypesOfExpensesRepo.GetById(expensesRequest.TypesOfExpensesId.Value);
+                    var typeOfExpense = await _unitOfWork.TypesOfExpensesRepo.GetById(request.TypesOfExpensesId.Value);
                     if (typeOfExpense == null)
                     {
-                        response.AddError("Tipo de gasto no encontrado", $"El tipo de gasto con Id {expensesRequest.TypesOfExpensesId.Value} no existe", 7);
+                        response.AddError("Tipo de gasto no encontrado", $"El tipo de gasto con Id {request.TypesOfExpensesId.Value} no existe", 7);
                         response.success = false;
                         return response;
                     }
-                    expenses.TypesOfExpensesId = expensesRequest.TypesOfExpensesId.Value;
+                    expenses.TypesOfExpensesId = request.TypesOfExpensesId.Value;
                 }
 
-                if (expensesRequest.Cost.HasValue)
+                if (request.Cost.HasValue)
                 {
-                    expenses.Cost = expensesRequest.Cost.Value;
+                    expenses.Cost = request.Cost.Value;
                 }
 
-                if (expensesRequest.Invoiced.HasValue)
+                if (request.Invoiced.HasValue)
                 {
-                    expenses.Invoiced = expensesRequest.Invoiced.Value;
+                    expenses.Invoiced = request.Invoiced.Value;
                 }
 
-                if (expensesRequest.ExpenseDate.HasValue)
+                if (request.ExpenseDate.HasValue)
                 {
-                    expenses.ExpenseDate = expensesRequest.ExpenseDate.Value;
+                    expenses.ExpenseDate = request.ExpenseDate.Value;
                 }
 
-                if (expensesRequest.VehicleMaintenanceWorkshopId.HasValue)
+                if (request.VehicleMaintenanceWorkshopId.HasValue)
                 {
-                    var workshop = await _unitOfWork.MaintenanceWorkshopRepo.GetById(expensesRequest.VehicleMaintenanceWorkshopId.Value);
+                    var workshop = await _unitOfWork.MaintenanceWorkshopRepo.GetById(request.VehicleMaintenanceWorkshopId.Value);
                     if (workshop == null)
                     {
-                        response.AddError("Taller no encontrado", $"El taller con Id {expensesRequest.VehicleMaintenanceWorkshopId.Value} no existe", 8);
+                        response.AddError("Taller no encontrado", $"El taller con Id {request.VehicleMaintenanceWorkshopId.Value} no existe", 8);
                         response.success = false;
                         return response;
                     }
-                    expenses.VehicleMaintenanceWorkshopId = expensesRequest.VehicleMaintenanceWorkshopId.Value;
+                    expenses.VehicleMaintenanceWorkshopId = request.VehicleMaintenanceWorkshopId.Value;
                 }
 
-                if (expensesRequest.VehicleReportId.HasValue)
+                if (request.VehicleReportId.HasValue)
                 {
-                    var report = await _unitOfWork.VehicleReportRepo.GetById(expensesRequest.VehicleReportId.Value);
+                    var report = await _unitOfWork.VehicleReportRepo.GetById(request.VehicleReportId.Value);
                     if (report == null)
                     {
-                        response.AddError("Reporte no encontrado", $"El reporte con Id {expensesRequest.VehicleReportId.Value} no existe", 9);
+                        response.AddError("Reporte no encontrado", $"El reporte con Id {request.VehicleReportId.Value} no existe", 9);
                         response.success = false;
                         return response;
                     }
@@ -222,7 +234,19 @@ namespace Application.Services
                     expenses.VehicleReportId = report.Id;
                 }
 
-                expenses.Comment = expensesRequest.Comment;
+                if (request.DepartmentId.HasValue)
+                {
+                    var exists = await _unitOfWork.Departaments.GetById(request.DepartmentId.Value);
+                    if (exists == null)
+                    {
+                        response.success = false;
+                        response.AddError("No existe departamento", $"No existe departamento con el id{request.DepartmentId.Value} solicitado", 7);
+                        return response;
+                    }
+                    expenses.DepartmentId = request.DepartmentId.Value;
+                }
+
+                expenses.Comment = request.Comment;
 
                 await _unitOfWork.ExpensesRepo.Update(expenses);
                 await _unitOfWork.SaveChangesAsync();
@@ -277,7 +301,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop";
+            string properties = "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop,Department";
             IEnumerable<Expenses> expenses = null;
             Expression<Func<Expenses, bool>> Query = null;
 
@@ -348,9 +372,9 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.VehicleMaintenanceWorkshopId <= filter.VehicleMaintenanceWorkshopId);
+                    Query = Query.And(p => p.VehicleMaintenanceWorkshopId == filter.VehicleMaintenanceWorkshopId.Value);
                 }
-                else { Query = p => p.VehicleMaintenanceWorkshopId <= filter.VehicleMaintenanceWorkshopId; }
+                else { Query = p => p.VehicleMaintenanceWorkshopId == filter.VehicleMaintenanceWorkshopId.Value; }
             }
 
             if (!string.IsNullOrEmpty(filter.ERPFolio))
@@ -362,6 +386,14 @@ namespace Application.Services
                 else { Query = p => p.ERPFolio.Contains(filter.ERPFolio); }
             }
 
+            if (filter.DepartmentId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.DepartmentId <= filter.DepartmentId.Value);
+                }
+                else { Query = p => p.DepartmentId <= filter.DepartmentId.Value; }
+            }
 
             if (Query != null)
             {

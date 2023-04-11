@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -1122,6 +1123,27 @@ namespace Application.Services
                     if (vehicleType == VehicleType.MOTOCICLETA) { return true; } else { return false; }
                 default:
                     return true;
+            }
+        }
+
+        //Obtener los viajes pertenecientes a un departamento
+        public async Task<GenericResponse<List<VehicleReportUseDto>>> GetUseReportByDepartment(int departmentId)
+        {
+            GenericResponse< List<VehicleReportUseDto>> response = new GenericResponse<List<VehicleReportUseDto>> ();
+            try
+            {
+                var reports = await _unitOfWork.VehicleReportUseRepo.Get(r => r.Vehicle.AssignedDepartments.Any(d => d.Id == departmentId), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+
+                var VehicleReportUseDto = _mapper.Map<List<VehicleReportUseDto>>(reports);
+                response.success = true;
+                response.Data = VehicleReportUseDto;
+                return response;
+            }
+            catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
             }
         }
     }

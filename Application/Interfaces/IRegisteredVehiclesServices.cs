@@ -8,8 +8,10 @@ namespace Application.Interfaces
 {
     public interface IRegisteredVehiclesServices
     {
+        Task<GenericResponse<PhotosOfCirculationCard>> AddCirculationCardImage(CirculationCardRequest circulationCardRequest, int vehicleId);
         Task<GenericResponse<VehicleImage>> AddVehicleImage(VehicleImageRequest request, int vehicleId);
         Task<GenericResponse<VehiclesDto>> AddVehicles(VehicleRequest vehicleRequest);
+        Task<GenericResponse<bool>> DeleteCirculationCardImage(int VehicleId);
         Task<GenericResponse<bool>> DeleteVehicleImage(int VehicleImageId);
         Task<GenericResponse<bool>> DeleteVehicles(int id);
         Task<GenericResponse<List<GetExpensesDto>>> GetExpenses(int VehicleId);
@@ -20,6 +22,7 @@ namespace Application.Interfaces
         Task<GenericResponse<VehiclesDto>> GetVehicleById(int id);
         Task<GenericResponse<VehiclesDto>> GetVehicleByQRId(string qrId);
         Task<PagedList<VehiclesDto>> GetVehicles(VehicleFilter filter);
+        Task<GenericResponse<List<VehiclesDto>>> GetVehiclesByDepartment(int departmentId);
         Task<GenericResponse<VehiclesDto>> MarkVehicleAsInactive(int VehicleId);
         Task<GenericResponse<VehiclesDto>> MarkVehicleAsSaved(int VehicleId);
         Task<GenericResponse<PerformanceDto>> Performance(PerformanceRequest performanceRequest);

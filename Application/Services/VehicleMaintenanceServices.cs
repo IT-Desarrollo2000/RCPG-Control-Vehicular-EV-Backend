@@ -685,6 +685,27 @@ namespace Application.Services
                 return response;
             }
         }
+
+        //Obtener reportes por departamento
+        public async Task<GenericResponse<List<VehicleMaintenanceDto>>> GetMaintenanceByDepartment(int departmentId)
+        {
+            GenericResponse<List<VehicleMaintenanceDto>> response = new GenericResponse<List<VehicleMaintenanceDto>>();
+            try
+            {
+                var reports = await _unitOfWork.VehicleMaintenanceRepo.Get(r => r.Vehicle.AssignedDepartments.Any(d => d.Id == departmentId), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+
+                var dto = _mapper.Map<List<VehicleMaintenanceDto>>(reports);
+                response.success = true;
+                response.Data = dto;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
     }
 }
 

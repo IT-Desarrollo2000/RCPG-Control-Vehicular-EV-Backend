@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230405180623_ExpenseDepartment")]
+    partial class ExpenseDepartment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -664,38 +667,6 @@ namespace Infrastructure.Persistence.Data
                     b.HasIndex("ProgressId");
 
                     b.ToTable("MaintenanceProgressImages");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.PhotosOfCirculationCard", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileURL")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("PhotosOfCirculationCard");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.PhotosOfPolicy", b =>
@@ -1685,16 +1656,6 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("Progress");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.PhotosOfCirculationCard", b =>
-                {
-                    b.HasOne("Domain.Entities.Registered_Cars.Vehicle", "Vehicle")
-                        .WithMany("PhotosOfCirculationCards")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Vehicle");
-                });
-
             modelBuilder.Entity("Domain.Entities.Registered_Cars.PhotosOfPolicy", b =>
                 {
                     b.HasOne("Domain.Entities.Registered_Cars.Policy", "Policy")
@@ -2037,8 +1998,6 @@ namespace Infrastructure.Persistence.Data
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Vehicle", b =>
                 {
                     b.Navigation("Checklists");
-
-                    b.Navigation("PhotosOfCirculationCards");
 
                     b.Navigation("Policy");
 
