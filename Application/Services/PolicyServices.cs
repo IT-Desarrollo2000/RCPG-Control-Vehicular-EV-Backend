@@ -110,7 +110,7 @@ namespace Application.Services
                 foreach (var image in policyRequest.Images)
                 {
                     //Validar Imagenes y Guardar las imagenes en el blobstorage
-                    if (image.ContentType.Contains("image"))
+                    if (image.ContentType.Contains("pdf"))
                     {
                         //Manipular el nombre del archivo
                         var uploadDate = DateTime.Now;
@@ -206,7 +206,7 @@ namespace Application.Services
                 foreach (var image in request.Images)
                 {
                     //Validar Imagenes y Guardar las imagenes en el blobstorage
-                    if (image.ContentType.Contains("image"))
+                    if (image.ContentType.Contains("pdf"))
                     {
                         //Manipular el nombre del archivo
                         var uploadDate = DateTime.Now;
@@ -298,7 +298,7 @@ namespace Application.Services
                 foreach (var image in policyImagesRequest.Images)
                 {
                     //Validar Imagenes y Guardar las imagenes en el blobstorage
-                    if (image.ContentType.Contains("image"))
+                    if (image.ContentType.Contains("pdf"))
                     {
                         //Manipular el nombre del archivo
                         var uploadDate = DateTime.Now;

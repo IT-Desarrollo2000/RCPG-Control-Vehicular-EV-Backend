@@ -486,7 +486,7 @@ namespace Application.Services
             }
 
         }
-
+        
         public async Task<GenericResponse<List<GraphicsPerfomanceDto>>> GetAllPerfomance(int VehicleId)
         {
             GenericResponse<List<GraphicsPerfomanceDto>> response = new GenericResponse<List<GraphicsPerfomanceDto>>();
