@@ -62,6 +62,7 @@ namespace Infrastructure
                 .AddDefaultTokenProviders();
 
             //Context and Repositories
+            ///DEBUG
             services.AddDbContext<CVContext>(options => options.UseSqlServer(configuration.GetConnectionString("AzureDB")));
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
