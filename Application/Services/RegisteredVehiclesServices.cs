@@ -11,6 +11,7 @@ using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
+using System.Runtime.Intrinsics.X86;
 
 namespace Application.Services
 {
@@ -36,7 +37,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards";
+            string properties = "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies";
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
             var departament = new Departaments();
@@ -357,7 +358,7 @@ namespace Application.Services
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
             try
             {
-                var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.VehicleQRId == qrId, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,PhotosOfCirculationCards");
+                var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.VehicleQRId == qrId, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,PhotosOfCirculationCards,Policy.PhotosOfPolicies");
                 var veh = entity.FirstOrDefault();
 
                 if(veh == null)
@@ -384,7 +385,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehiclesDto>> GetVehicleById(int id)
         {
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
-            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards");
+            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies");
 
             var veh = entity.FirstOrDefault();
 
@@ -718,8 +719,7 @@ namespace Application.Services
                 else
                 {
                     response.success = false;
-                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen",2);
-
+                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 2);
                     return response;
                 }
             }
@@ -760,16 +760,17 @@ namespace Application.Services
             }
         }
 
-        public async Task<GenericResponse<PhotosOfCirculationCard>> AddCirculationCardImage( CirculationCardRequest circulationCardRequest, int vehicleId)
+        public async Task<GenericResponse<List<PhotosOfCirculationCard>>> AddCirculationCardImage( CirculationCardRequest circulationCardRequest, int vehicleId)
         {
-            GenericResponse<PhotosOfCirculationCard> response = new GenericResponse<PhotosOfCirculationCard>();
+            GenericResponse<List<PhotosOfCirculationCard>> response = new GenericResponse<List<PhotosOfCirculationCard>>();
+            var Ima = new List<PhotosOfCirculationCard>();
             try
             {
                 //VERIFICAR quee exista Vehiculo
                 var vehicle = await _unitOfWork.VehicleRepo.GetById(vehicleId);
                 if (vehicle == null) return null;
 
-                var Ima = new List<PhotosOfCirculationCard>();
+               
                 foreach (var image in circulationCardRequest.ImageFile)
                 {
                     //Validar Imagenes y Guardar las imagenes en el blobstorage
@@ -796,7 +797,7 @@ namespace Application.Services
                         await _unitOfWork.SaveChangesAsync();
 
                         response.success = true;
-                        response.Data = newImage;
+                        //response.Data = newImage;
 
                     }
                     else
@@ -809,6 +810,9 @@ namespace Application.Services
 
                 }
 
+                var dtos = _mapper.Map<List<PhotosOfCirculationCard>>(Ima);
+                response.success = true;
+                response.Data = Ima;
                 return response;
 
             }
@@ -837,10 +841,10 @@ namespace Application.Services
                     await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.VehicleCirculationCard, photo.FilePath);
                     await _unitOfWork.PhotosOfCirculationCardRepo.Delete(photo.Id);
                     await _unitOfWork.SaveChangesAsync();
+
                 }
 
                 response.success = true;
-                response.Data = true;
                 return response;
 
             }

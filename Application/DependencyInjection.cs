@@ -41,11 +41,11 @@ namespace Application
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Tokenkey"])),
                 ValidateIssuer = false,
                 ValidateAudience = false,
-                ValidateLifetime = false,
+                ValidateLifetime = true,
                 RequireExpirationTime = true,
-                RequireSignedTokens= true
+                RequireSignedTokens= true,
                 //Si el token es menor a 5 Min
-                //, ClockSkew = TimeSpan.Zero
+                ClockSkew = TimeSpan.Zero
             };
 
             services.AddSingleton(tokenValidationParameters);

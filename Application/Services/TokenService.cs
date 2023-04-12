@@ -60,7 +60,7 @@ namespace Application.Services
                 IsUsed = false,
                 UserId = user.Id,
                 AddedDate = DateTime.UtcNow,
-                ExpiryDate = DateTime.UtcNow.AddYears(1),
+                ExpiryDate = DateTime.UtcNow.AddMonths(1),
                 IsRevoked = false,
                 Token = RandomString(25) + Guid.NewGuid()
             };
@@ -85,10 +85,10 @@ namespace Application.Services
             {
                 // This validation function will make sure that the token meets the validation parameters
                 // and its an actual jwt token not just a random string
-                var principal = jwtTokenHandler.ValidateToken(tokenRequest.Token, tokenValidationParameters, out var validatedToken);
+                var principal = jwtTokenHandler.ReadJwtToken(tokenRequest.Token);
 
                 // Now we need to check if the token has a valid security algorithm
-                if (validatedToken is JwtSecurityToken jwtSecurityToken)
+                if (principal is JwtSecurityToken jwtSecurityToken)
                 {
                     var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
 
@@ -178,7 +178,10 @@ namespace Application.Services
             }
             catch (Exception ex)
             {
-                return null;
+                var error = new AuthResult();
+                error.Success = false;
+                error.Messages.Add(ex.Message);
+                return error;
             }
         }
 

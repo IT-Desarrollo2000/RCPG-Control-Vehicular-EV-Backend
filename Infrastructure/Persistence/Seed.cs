@@ -13,7 +13,7 @@ namespace Infrastructure.Persistence
         public static async Task SeedUsers(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, IUnitOfWork unitOfWork)
         {
             //SI HAY USUARIOS ACTIVOS EL SEED NO CORRE, COMENTAR CREACION DE SUPER ADMIN PARA CORRER EL SEED CON ROLES EXTRA
-             if (await userManager.Users.AnyAsync(x => x.UserName == "CVAdmin")) return;
+            if (await userManager.Users.AnyAsync(x => x.UserName == "CVAdmin")) return;
 
             var user = new AppUser()
             {

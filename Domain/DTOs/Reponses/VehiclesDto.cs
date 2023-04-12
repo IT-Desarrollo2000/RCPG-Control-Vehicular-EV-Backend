@@ -34,6 +34,7 @@ namespace Domain.DTOs.Reponses
         public List<ChecklistDto> Checklists { get; set; }
         public List<DepartamentDto> AssignedDepartments { get; set; }
         public List<PhotosOfCirculationCardDto> PhotosOfCirculationCards { get; set; }
+        public List<PhotosOfPolicyDto> PhotosOfPolicies { get; set; }
         public string VehicleQRId { get; set; }
         public string? VehicleObservation { get; set; }
         public ShortPolicyDto? Policy { get; set; }
@@ -44,4 +45,7 @@ namespace Domain.DTOs.Reponses
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
     }
+
 }
+
+
