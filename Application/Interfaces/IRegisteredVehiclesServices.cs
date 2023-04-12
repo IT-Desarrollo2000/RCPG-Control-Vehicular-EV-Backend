@@ -8,7 +8,7 @@ namespace Application.Interfaces
 {
     public interface IRegisteredVehiclesServices
     {
-        Task<GenericResponse<PhotosOfCirculationCard>> AddCirculationCardImage(CirculationCardRequest circulationCardRequest, int vehicleId);
+        Task<GenericResponse<List<PhotosOfCirculationCard>>> AddCirculationCardImage(CirculationCardRequest circulationCardRequest, int vehicleId);
         Task<GenericResponse<VehicleImage>> AddVehicleImage(VehicleImageRequest request, int vehicleId);
         Task<GenericResponse<VehiclesDto>> AddVehicles(VehicleRequest vehicleRequest);
         Task<GenericResponse<bool>> DeleteCirculationCardImage(int VehicleId);
