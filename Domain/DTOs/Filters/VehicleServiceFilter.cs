@@ -7,6 +7,7 @@ namespace Domain.DTOs.Filters
         public int? ServiceUserId { get; set; }
         public int? WorkShopId { get; set; }
         public int? VehicleId { get; set; }
+        public DateTime? NextService { get; set; }
         public VehicleServiceStatus? Status { get; set; }
         public VehicleServiceType? TypeService { get; set; }
 

@@ -16,10 +16,13 @@ namespace Domain.DTOs.Filters
         public FuelType? FuelType { get; set; }
         public VehicleType? VehicleType { get; set; }
         public VehicleStatus? VehicleStatus { get; set; }
+        public int? ServicePeriodMonths { get; set; }
+        public int? ServicePeriodKM { get; set; }
         public OwnershipType? OwnershipType { get; set; }
         public string? OwnersName { get; set; }
         public string? CarRegistrationPlate { get; set; }
         public bool? IsClean { get; set; }
+        public string? FuelCardNumber { get; set; }
         public decimal? MinDesiredPerformance { get; set; }
         public decimal? MaxDesiredPerformance { get; set; }
         public DateTime? CreatedBefore { get; set; } 

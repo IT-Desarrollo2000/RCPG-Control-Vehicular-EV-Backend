@@ -31,7 +31,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("LicenceExpirations")]
-        public async Task<IActionResult> GetLicencesExpirations([FromQuery] LicenceExpStopLight request)
+        public async Task<IActionResult> GetLicencesExpirations([FromQuery] LicenseByDepartmentRequest request)
         {
             var result = await _utilitesService.GetLicencesExpirations(request);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
@@ -42,7 +42,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("PolicyExpirations")]
-        public async Task<IActionResult> GetPoliciesExpiration([FromQuery] LicenceExpStopLight request)
+        public async Task<IActionResult> GetPoliciesExpiration([FromQuery] LicenseByDepartmentRequest request)
         {
             var result = await _utilitesService.GetPoliciesExpiration(request);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
@@ -53,9 +53,9 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("ServicesStoplight")]
-        public async Task<IActionResult> GetServices()
+        public async Task<IActionResult> GetServices([FromQuery] ServicesByDepartmentRequest request)
         {
-            var result = await _utilitesService.GetMaintenanceSpotlight();
+            var result = await _utilitesService.GetMaintenanceSpotlight( request);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
         
@@ -65,9 +65,9 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetAllVehicleActive")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] ServicesByDepartmentRequest request)
         {
-            var users = await _utilitesService.GetAllVehiclesActive();
+            var users = await _utilitesService.GetAllVehiclesActive( request);
             if (users.success)
             {
                 return Ok(users);

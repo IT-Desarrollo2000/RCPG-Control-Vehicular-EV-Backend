@@ -88,9 +88,9 @@ namespace Application.Services
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.VehicleId <= filter.VehicleId.Value);
+                    Query = Query.And(p => p.VehicleId == filter.VehicleId.Value);
                 }
-                else { Query = p => p.VehicleId <= filter.VehicleId.Value; }
+                else { Query = p => p.VehicleId == filter.VehicleId.Value; }
             }
 
             if (filter.CirculationCard.HasValue)
