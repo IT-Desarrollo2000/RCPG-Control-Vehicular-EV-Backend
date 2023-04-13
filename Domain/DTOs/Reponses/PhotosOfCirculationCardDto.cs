@@ -8,6 +8,7 @@ namespace Domain.DTOs.Reponses
 {
     public class PhotosOfCirculationCardDto
     {
+        public int Id { get; set; }
         public string FilePath { get; set; }
         public string FileURL { get; set; }
         public int VehicleId { get; set; }
