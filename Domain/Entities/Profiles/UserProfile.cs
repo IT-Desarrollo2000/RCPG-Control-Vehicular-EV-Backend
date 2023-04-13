@@ -1,3 +1,5 @@
+using Domain.DTOs.Reponses;
+using Domain.DTOs.Requests;
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.Registered_Cars;
