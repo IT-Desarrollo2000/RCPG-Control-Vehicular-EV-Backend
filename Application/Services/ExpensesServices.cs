@@ -368,6 +368,24 @@ namespace Application.Services
                 else { Query = p => p.Vehicles.Any(v => v.Id == filter.VehicleId); }
             }
 
+            if (filter.InvoicesId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.Invoices.Any(v => v.Id == filter.InvoicesId));
+                }
+                else { Query = p => p.Invoices.Any(v => v.Id == filter.InvoicesId); }
+            }
+
+            if (filter.VehicleReportId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.VehicleReportId == filter.VehicleReportId.Value);
+                }
+                else { Query = p => p.VehicleReportId == filter.VehicleReportId.Value; }
+            }
+
             if (filter.VehicleMaintenanceWorkshopId.HasValue)
             {
                 if (Query != null)
@@ -375,6 +393,24 @@ namespace Application.Services
                     Query = Query.And(p => p.VehicleMaintenanceWorkshopId == filter.VehicleMaintenanceWorkshopId.Value);
                 }
                 else { Query = p => p.VehicleMaintenanceWorkshopId == filter.VehicleMaintenanceWorkshopId.Value; }
+            }
+
+            if (filter.VehicleMaintenanceId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.VehicleMaintenanceId == filter.VehicleMaintenanceId.Value);
+                }
+                else { Query = p => p.VehicleMaintenanceId == filter.VehicleMaintenanceId.Value; }
+            }
+
+            if (filter.VehicleMaintenanceId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.VehicleMaintenanceId == filter.VehicleMaintenanceId.Value);
+                }
+                else { Query = p => p.VehicleMaintenanceId == filter.VehicleMaintenanceId.Value; }
             }
 
             if (!string.IsNullOrEmpty(filter.ERPFolio))
