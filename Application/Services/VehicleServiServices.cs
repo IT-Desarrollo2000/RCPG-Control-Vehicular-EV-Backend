@@ -49,6 +49,14 @@ namespace Application.Services
                 }
                 else { Query = p => p.ServiceUserId >= filter.ServiceUserId.Value; }
             }
+            if (filter.NextService.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.NextService >= filter.NextService.Value);
+                }
+                else { Query = p => p.NextService >= filter.NextService.Value; }
+            }
 
             if (filter.WorkShopId.HasValue)
             {

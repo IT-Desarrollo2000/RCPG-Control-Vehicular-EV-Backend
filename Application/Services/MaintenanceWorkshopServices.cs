@@ -80,6 +80,33 @@ namespace Application.Services
                 else { Query = p => p.Telephone.Contains(filter.Telephone); }
             }
 
+            if (filter.VehicleMaintenancesId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.VehicleMaintenances.Any(v => v.Id == filter.VehicleMaintenancesId));
+                }
+                else { Query = p => p.VehicleMaintenances.Any(v => v.Id == filter.VehicleMaintenancesId); }
+            }
+
+            if (filter.VehicleServiceId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.VehicleService.Any(v => v.Id == filter.VehicleServiceId));
+                }
+                else { Query = p => p.VehicleService.Any(v => v.Id == filter.VehicleServiceId); }
+            }
+
+            if (filter.ExpensesId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.Expenses.Any(v => v.Id == filter.ExpensesId));
+                }
+                else { Query = p => p.Expenses.Any(v => v.Id == filter.ExpensesId); }
+            }
+
             if (Query != null)
             {
                 userApprovals = await _unitOfWork.MaintenanceWorkshopRepo.Get(filter: Query, includeProperties: "VehicleMaintenances,Expenses");

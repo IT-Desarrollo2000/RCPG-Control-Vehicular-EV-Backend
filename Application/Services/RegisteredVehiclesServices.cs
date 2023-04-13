@@ -87,6 +87,24 @@ namespace Application.Services
                 else { Query = p => p.FuelCapacity == filter.FuelCapacity.Value; }
             }
 
+            if (filter.ServicePeriodMonths.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.ServicePeriodMonths >= filter.ServicePeriodMonths.Value);
+                }
+                else { Query = p => p.ServicePeriodMonths >= filter.ServicePeriodMonths.Value; }
+            }
+
+            if (filter.ServicePeriodKM.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.ServicePeriodKM <= filter.ServicePeriodKM.Value);
+                }
+                else { Query = p => p.ServicePeriodKM <= filter.ServicePeriodKM.Value; }
+            }
+
             if (filter.CurrentFuel.HasValue)
             {
                 if (Query != null)
@@ -175,6 +193,15 @@ namespace Application.Services
                     Query = Query.And(p => p.IsClean == filter.IsClean.Value);
                 }
                 else { Query = p => p.IsClean == filter.IsClean.Value; }
+            }
+
+            if (!string.IsNullOrEmpty(filter.FuelCardNumber))
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.FuelCardNumber.Contains(filter.FuelCardNumber));
+                }
+                else { Query = p => p.FuelCardNumber.Contains(filter.FuelCardNumber); }
             }
 
             if (!string.IsNullOrEmpty(filter.Serial))
