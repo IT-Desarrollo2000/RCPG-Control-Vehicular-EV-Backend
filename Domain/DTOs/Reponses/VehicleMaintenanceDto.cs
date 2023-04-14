@@ -37,7 +37,7 @@ namespace Domain.DTOs.Reponses
         public List<MaintenanceProgressDto> MaintenanceProgress { get; set; }
 
         public List<int?> ExpenseId { get; set; }
-        public ICollection<ExpensesDto> Expenses { get; set; }
+        public ICollection<ExpensesForMaintenanceDto> Expenses { get; set; }
 
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
