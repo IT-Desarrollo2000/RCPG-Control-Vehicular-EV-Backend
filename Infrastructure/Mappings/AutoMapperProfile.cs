@@ -97,6 +97,7 @@ namespace Infrastructure.Mappings
             CreateMap<InvoicesDto, InvoicesRequest>().ReverseMap();
             CreateMap<InvoicesDto, Invoices>().ReverseMap();
             CreateMap<Invoices, InvoicesRequest>().ReverseMap();
+            CreateMap<ExpensesForMaintenanceDto, Expenses>().ReverseMap();
 
             //TypesOfExpenses
             CreateMap<TypesOfExpenses, TypesOfExpensesDto>().ReverseMap();
@@ -117,6 +118,7 @@ namespace Infrastructure.Mappings
             CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopDto>().ReverseMap();
             CreateMap<VehicleMaintenanceWorkshop, GetVehicleMaintenanceWorkshopDto>().ReverseMap();
             CreateMap<MaintenanceWorkShopSlimDto, VehicleMaintenanceWorkshop>().ReverseMap();
+            CreateMap<MaintenanceWorkshopForMaintenanceDto, VehicleMaintenanceWorkshop>().ReverseMap();
 
             //VehicleReport
             CreateMap<VehicleReport, VehicleReportRequest>().ReverseMap();

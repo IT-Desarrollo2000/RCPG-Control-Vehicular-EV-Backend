@@ -42,7 +42,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Expenses,Expenses.PhotosOfSpending,Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress,MaintenanceProgress.ProgressImages,MaintenanceProgress.AdminUser,MaintenanceProgress.MobileUser";
+            string properties = "Expenses,Expenses.PhotosOfSpending,Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress,MaintenanceProgress.ProgressImages,MaintenanceProgress.AdminUser,MaintenanceProgress.MobileUser,Vehicle.AssignedDepartments";
             IEnumerable<VehicleMaintenance> maintenances = null;
             Expression<Func<VehicleMaintenance, bool>> Query = null;
 
@@ -162,7 +162,7 @@ namespace Application.Services
             var workshop = new MaintenanceWorkShopSlimDto();
             var report = new VehicleReportSlimDto();
             var main = new List<MaintenanceProgressDto>();
-            var exp =  new List<ExpensesDto>();
+            var exp =  new List<ExpensesForMaintenanceDto>();
 
             GenericResponse<VehicleMaintenanceDto> response = new GenericResponse<VehicleMaintenanceDto>();
             var profile = await _unitOfWork.VehicleMaintenanceRepo.Get(filter: p => p.Id == Id, includeProperties: "Expenses,Expenses.PhotosOfSpending,Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress,MaintenanceProgress.ProgressImages,MaintenanceProgress.AdminUser,MaintenanceProgress.MobileUser");
@@ -692,7 +692,7 @@ namespace Application.Services
             GenericResponse<List<VehicleMaintenanceDto>> response = new GenericResponse<List<VehicleMaintenanceDto>>();
             try
             {
-                var reports = await _unitOfWork.VehicleMaintenanceRepo.Get(r => r.Vehicle.AssignedDepartments.Any(d => d.Id == departmentId), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+                var reports = await _unitOfWork.VehicleMaintenanceRepo.Get(r => r.Vehicle.AssignedDepartments.Any(d => d.Id == departmentId), includeProperties: "Expenses,Expenses.PhotosOfSpending,Vehicle,WorkShop,Report,ApprovedByUser,MaintenanceProgress,MaintenanceProgress.ProgressImages,MaintenanceProgress.AdminUser,MaintenanceProgress.MobileUser,Vehicle.AssignedDepartments");
 
                 var dto = _mapper.Map<List<VehicleMaintenanceDto>>(reports);
                 response.success = true;

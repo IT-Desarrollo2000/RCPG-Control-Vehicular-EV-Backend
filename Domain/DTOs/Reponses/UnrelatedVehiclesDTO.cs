@@ -12,6 +12,7 @@ namespace Domain.DTOs.Reponses
         public string Brand { get; set; }
         public int ModelYear { get; set; }
         public int FuelCapacity { get; set; }
+        public List<DepartamentDto> AssignedDepartments { get; set; }
         public int CurrentKM { get; set; }
         public int InitialKM { get; set; }
         public CurrentFuel CurrentFuel { get; set; }
