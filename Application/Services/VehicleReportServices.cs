@@ -41,7 +41,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses,Expenses.PhotosOfSpending,Maintenances";
+            string properties = "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses,Expenses.PhotosOfSpending,Maintenances,Vehicle.AssignedDepartments";
             IEnumerable<VehicleReport> userApprovals = null;
             Expression<Func<VehicleReport, bool>> Query = null;
 
@@ -694,7 +694,7 @@ namespace Application.Services
             GenericResponse<List<VehicleReportDto>> response = new GenericResponse<List<VehicleReportDto>>();
             try
             {
-                var reports = await _unitOfWork.VehicleReportRepo.Get(r => r.Vehicle.AssignedDepartments.Any(d => d.Id == departmentId), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+                var reports = await _unitOfWork.VehicleReportRepo.Get(r => r.Vehicle.AssignedDepartments.Any(d => d.Id == departmentId), includeProperties: "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses,Expenses.PhotosOfSpending,Maintenances,Vehicle.AssignedDepartments");
 
                 var dto = _mapper.Map<List<VehicleReportDto>>(reports);
                 response.success = true;

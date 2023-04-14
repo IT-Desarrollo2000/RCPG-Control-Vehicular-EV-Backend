@@ -37,7 +37,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "ServiceUser,Vehicle,Expense";
+            string properties = "ServiceUser,Vehicle,Expense,Vehicle.AssignedDepartments";
             IEnumerable<VehicleService> userApprovals = null;
             Expression<Func<VehicleService, bool>> Query = null;
 
@@ -439,7 +439,7 @@ namespace Application.Services
             GenericResponse<List<VehicleServiceDto>> response = new GenericResponse<List<VehicleServiceDto>>();
             try
             {
-                var reports = await _unitOfWork.VehicleServiceRepo.Get(r => r.Vehicle.AssignedDepartments.Any(d => d.Id == departmentId), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+                var reports = await _unitOfWork.VehicleServiceRepo.Get(r => r.Vehicle.AssignedDepartments.Any(d => d.Id == departmentId), includeProperties: "ServiceUser,Vehicle,Expense,Vehicle.AssignedDepartments");
 
                 var dto = _mapper.Map<List<VehicleServiceDto>>(reports);
                 response.success = true;

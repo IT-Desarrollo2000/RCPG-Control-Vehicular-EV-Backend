@@ -28,6 +28,7 @@ namespace Domain.DTOs.Reponses
         public int VehicleId { get; set; }
         public string VehicleName { get; set; }
         public ChecklistDto Checklist { get; set; }
+        public VehiclesDto Vehicle{ get; set; }
         public List<VehicleReportSlimDto> VehicleReport { get; set; }
         public int DriverUserId { get; set; }
         public string DriverName { get; set; }

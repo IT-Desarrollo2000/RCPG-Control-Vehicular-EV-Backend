@@ -427,7 +427,7 @@ namespace Application.Services
             GenericResponse<List<VehiclesDto>> response = new GenericResponse<List<VehiclesDto>>();
             try
             {
-                var vehicles = await _unitOfWork.VehicleRepo.Get(v => v.AssignedDepartments.Any(d => d.Id == departmentId));
+                var vehicles = await _unitOfWork.VehicleRepo.Get(v => v.AssignedDepartments.Any(d => d.Id == departmentId), includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies");
                 var map = _mapper.Map<List<VehiclesDto>>(vehicles);
                 response.success = true;
                 response.Data = map;
