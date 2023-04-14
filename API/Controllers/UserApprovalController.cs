@@ -21,7 +21,7 @@ namespace API.Controllers
             _approvalServices = userApprovalServices;
         }
 
-        [Authorize(Roles = "Administrator, AdminUser")]
+        [Authorize(Roles = "Administrator, AdminUser, Supervisor")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<UserApproval>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -52,7 +52,7 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        [Authorize(Roles = "Administrator, AdminUser")]
+        [Authorize(Roles = "Administrator, AdminUser, Supervisor")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<UserApproval>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -66,7 +66,7 @@ namespace API.Controllers
             return Ok(approval);
         }
 
-        [Authorize(Roles = "Administrator, AdminUser, AppUser")]
+        [Authorize(Roles = "Administrator, AdminUser, AppUser, Supervisor")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<UserApproval>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
@@ -80,7 +80,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        [Authorize(Roles = "Administrator, AdminUser")]
+        [Authorize(Roles = "Administrator, AdminUser, Supervisor")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<UserApproval>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
@@ -94,7 +94,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        [Authorize(Roles = "Administrator, AdminUser")]
+        [Authorize(Roles = "Administrator, AdminUser, Supervisor")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete]
