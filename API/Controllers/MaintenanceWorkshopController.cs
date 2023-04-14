@@ -23,7 +23,7 @@ namespace API.Controllers
         }
 
         //GETALL
-        [Authorize(Roles = "Administrator, AdminUser")]
+        [Authorize(Roles = "Administrator, AdminUser, Supervisor")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<MaintenanceWorkshopDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
