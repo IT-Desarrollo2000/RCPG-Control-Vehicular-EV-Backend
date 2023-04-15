@@ -16,6 +16,7 @@ namespace Domain.DTOs.Reponses
         public bool Invoiced { get; set; }
         public DateTime ExpenseDate { get; set; }
         public List<VehiclesDto> Vehicles { get; set; }
+        public List<InvoicesDto> Invoices { get; set; } 
         public string MechanicalWorkshop { get; set; }
         public string ERPFolio { get; set; }
         public int? VehicleMaintenanceWorkshopId { get; set; }
