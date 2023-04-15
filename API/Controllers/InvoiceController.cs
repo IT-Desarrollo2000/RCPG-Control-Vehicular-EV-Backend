@@ -60,7 +60,7 @@ namespace API.Controllers
         public async Task<IActionResult> AddInvoices(int expensesId, [FromForm] InvoicesRequest invoicesRequest)
         {
             var result = await _invoicesServices.AddInvoices(expensesId, invoicesRequest);
-            if (result.Data == null) { return NotFound($"No existe gasto con el Id {expensesId}"); }
+
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
