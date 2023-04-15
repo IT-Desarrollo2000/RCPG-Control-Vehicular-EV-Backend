@@ -34,7 +34,7 @@ namespace Application.Services
                         switch (request.StopLight)
                         {
                             case LicenceExpStopLight.EXPIRADOS:
-                                var explicences = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate <= DateTime.UtcNow && u.DepartmentId == item);
+                                var explicences = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate <= DateTime.UtcNow && u.DepartmentId == item, includeProperties: "Department");
                                 
                                 foreach (var licence in explicences)
                                 {
@@ -52,7 +52,7 @@ namespace Application.Services
                                 break;
                                 
                             case LicenceExpStopLight.TRES_MESES:
-                                var licences3mQuery = await _unitOfWork.UserProfileRepo.Get(l => l.LicenceExpirationDate != null && l.DepartmentId == item);
+                                var licences3mQuery = await _unitOfWork.UserProfileRepo.Get(l => l.LicenceExpirationDate != null && l.DepartmentId == item, includeProperties: "Department");
                                 var licences3m = licences3mQuery.Where(u => (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays <= 90 && (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays > 0);
                                 foreach (var licence in licences3m)
                                 {
@@ -70,7 +70,7 @@ namespace Application.Services
                                 break;
 
                             case LicenceExpStopLight.SEIS_MESES:
-                                var licences6mQuery = await _unitOfWork.UserProfileRepo.Get(l => l.LicenceExpirationDate != null && l.DepartmentId == item);
+                                var licences6mQuery = await _unitOfWork.UserProfileRepo.Get(l => l.LicenceExpirationDate != null && l.DepartmentId == item, includeProperties: "Department");
                                 var licences6m = licences6mQuery.Where(u => (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays <= 180 && (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays > 90);
 
                                 foreach (var licence in licences6m)
@@ -89,7 +89,7 @@ namespace Application.Services
                                 break;
 
                             case LicenceExpStopLight.DOCE_MESES:
-                                var licences12mQuery = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate != null && u.DepartmentId == item);
+                                var licences12mQuery = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate != null && u.DepartmentId == item, includeProperties: "Department");
                                 var licences12m = licences12mQuery.Where(u => (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays > 180);
                                 foreach (var licence in licences12m)
                                 {
@@ -118,7 +118,7 @@ namespace Application.Services
                     switch (request.StopLight)
                 {
                     case LicenceExpStopLight.EXPIRADOS:
-                        var explicences = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate <= DateTime.UtcNow);
+                        var explicences = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate <= DateTime.UtcNow, includeProperties: "Department");
                         var dtos = new List<LicenceExpiredDto>();
                         foreach (var licence in explicences)
                         {
@@ -136,7 +136,7 @@ namespace Application.Services
 
                         return response;
                     case LicenceExpStopLight.TRES_MESES:
-                        var licences3mQuery = await _unitOfWork.UserProfileRepo.Get(l => l.LicenceExpirationDate != null);
+                        var licences3mQuery = await _unitOfWork.UserProfileRepo.Get(l => l.LicenceExpirationDate != null, includeProperties: "Department");
                         var licences3m = licences3mQuery.Where(u => (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays <= 90 && (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays > 0);
                         var dtos1 = new List<LicenceExpiredDto>();
                         foreach (var licence in licences3m)
@@ -155,7 +155,7 @@ namespace Application.Services
 
                         return response;
                     case LicenceExpStopLight.SEIS_MESES:
-                        var licences6mQuery = await _unitOfWork.UserProfileRepo.Get(l => l.LicenceExpirationDate != null);
+                        var licences6mQuery = await _unitOfWork.UserProfileRepo.Get(l => l.LicenceExpirationDate != null, includeProperties: "Department");
                         var licences6m = licences6mQuery.Where(u => (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays <= 180 && (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays > 90);
 
                         var dtos2 = new List<LicenceExpiredDto>();
@@ -175,7 +175,7 @@ namespace Application.Services
 
                         return response;
                     case LicenceExpStopLight.DOCE_MESES:
-                        var licences12mQuery = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate != null);
+                        var licences12mQuery = await _unitOfWork.UserProfileRepo.Get(u => u.LicenceExpirationDate != null, includeProperties: "Department");
                         var licences12m = licences12mQuery.Where(u => (u.LicenceExpirationDate.Value - DateTime.UtcNow).TotalDays > 180);
 
                         var dtos3 = new List<LicenceExpiredDto>();
@@ -216,18 +216,15 @@ namespace Application.Services
 
             try
             {
-
+                var dtos = new List<PolicyExpiredDto>();
                 if (request.DepartmentId.Count() > 0)
                 {
-
-                    var dtos = new List<PolicyExpiredDto>();
                     foreach (var item in request.DepartmentId)
                     {
-
                         switch (request.StopLight)
                         {
                             case LicenceExpStopLight.EXPIRADOS:
-                                var expPolicies = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate <= DateTime.UtcNow && u.Vehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle");
+                                var expPolicies = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate <= DateTime.UtcNow && u.Vehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
 
                                 foreach (var policy in expPolicies)
                                 {
@@ -239,13 +236,9 @@ namespace Application.Services
 
                                     dtos.Add(dto);
                                 }
-
-                                response.Data = dtos;
-                                response.success = true;
-
                                 break;
                             case LicenceExpStopLight.TRES_MESES:
-                                var policy3mQuery = await _unitOfWork.PolicyRepo.Get(u => u.Vehicle.AssignedDepartments.Any(r => r.Id == item),includeProperties: "Vehicle");
+                                var policy3mQuery = await _unitOfWork.PolicyRepo.Get(u => u.Vehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
                                 var policy3m = policy3mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays <= 90 && (u.ExpirationDate - DateTime.UtcNow).TotalDays > 0);
 
                                 foreach (var policy in policy3m)
@@ -258,13 +251,9 @@ namespace Application.Services
 
                                     dtos.Add(dto);
                                 }
-
-                                response.Data = dtos;
-                                response.success = true;
-
                                 break;
                             case LicenceExpStopLight.SEIS_MESES:
-                                var policy6mQuery = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate >= DateTime.UtcNow.AddMonths(6) && u.ExpirationDate <= DateTime.UtcNow.AddMonths(12) && u.Vehicle.AssignedDepartments.Any(r => r.Id == item),includeProperties: "Vehicle");
+                                var policy6mQuery = await _unitOfWork.PolicyRepo.Get(u => u.Vehicle.AssignedDepartments.Any(r => r.Id == item),includeProperties: "Vehicle,Vehicle.AssignedDepartments");
                                 var policy6m = policy6mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays <= 180 && (u.ExpirationDate - DateTime.UtcNow).TotalDays > 90);
                                 foreach (var policy in policy6m)
                                 {
@@ -276,13 +265,9 @@ namespace Application.Services
 
                                     dtos.Add(dto);
                                 }
-
-                                response.Data = dtos;
-                                response.success = true;
-
                                 break;
                             case LicenceExpStopLight.DOCE_MESES:
-                                var policy12mQuery = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate >= DateTime.UtcNow.AddMonths(12) && u.Vehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle");
+                                var policy12mQuery = await _unitOfWork.PolicyRepo.Get(u => u.Vehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
                                 var policy12m = policy12mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays > 180);
                                 foreach (var policy in policy12m)
                                 {
@@ -294,18 +279,83 @@ namespace Application.Services
 
                                     dtos.Add(dto);
                                 }
-
-                                response.Data = dtos;
-                                response.success = true;
-
                                 break;
                             default:
-                                response.success = false;
                                 break;
 
                         }                      
                     }                    
+                } 
+                else
+                {
+                    switch (request.StopLight)
+                    {
+                        case LicenceExpStopLight.EXPIRADOS:
+                            var expPolicies = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate <= DateTime.UtcNow, includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+
+                            foreach (var policy in expPolicies)
+                            {
+                                var dto = _mapper.Map<PolicyExpiredDto>(policy);
+                                dto.StatusName = "Expirado";
+                                dto.StatusMessage = "La poliza se encuentra expirada";
+                                dto.StatusColor = "#e41212";
+                                dto.ExpirationType = LicenceExpStopLight.EXPIRADOS;
+
+                                dtos.Add(dto);
+                            }
+
+                            break;
+                        case LicenceExpStopLight.TRES_MESES:
+                            var policy3mQuery = await _unitOfWork.PolicyRepo.Get(includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+                            var policy3m = policy3mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays <= 90 && (u.ExpirationDate - DateTime.UtcNow).TotalDays > 0);
+
+                            foreach (var policy in policy3m)
+                            {
+                                var dto = _mapper.Map<PolicyExpiredDto>(policy);
+                                dto.StatusName = "3 MESES";
+                                dto.StatusMessage = "Poliza con 3 meses de vigencia";
+                                dto.StatusColor = "#efbc38";
+                                dto.ExpirationType = LicenceExpStopLight.TRES_MESES;
+
+                                dtos.Add(dto);
+                            }
+                            break;
+                        case LicenceExpStopLight.SEIS_MESES:
+                            var policy6mQuery = await _unitOfWork.PolicyRepo.Get(includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+                            var policy6m = policy6mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays <= 180 && (u.ExpirationDate - DateTime.UtcNow).TotalDays > 90);
+                            foreach (var policy in policy6m)
+                            {
+                                var dto = _mapper.Map<PolicyExpiredDto>(policy);
+                                dto.StatusName = "6 MESES";
+                                dto.StatusMessage = "Poliza con 6 meses de vigencia";
+                                dto.StatusColor = "#f3d132";
+                                dto.ExpirationType = LicenceExpStopLight.SEIS_MESES;
+
+                                dtos.Add(dto);
+                            }
+                            break;
+                        case LicenceExpStopLight.DOCE_MESES:
+                            var policy12mQuery = await _unitOfWork.PolicyRepo.Get(includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+                            var policy12m = policy12mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays > 180);
+                            foreach (var policy in policy12m)
+                            {
+                                var dto = _mapper.Map<PolicyExpiredDto>(policy);
+                                dto.StatusName = "12 MESES";
+                                dto.StatusMessage = "Poliza con 6 meses o mas de vigencia";
+                                dto.StatusColor = "#3ee80b";
+                                dto.ExpirationType = LicenceExpStopLight.DOCE_MESES;
+
+                                dtos.Add(dto);
+                            }
+                            break;
+                        default:
+                            break;
+
+                    }
                 }
+
+                response.Data = dtos;
+                response.success = true;
                 return response;
             }
             catch (Exception ex)
@@ -324,7 +374,6 @@ namespace Application.Services
             {
                 if (request.DepartmentId.Count() > 0)
                 {
-
                     //Lista de vehiculos de pronto servicio
                     List<MaintenanceSpotlightDto> dtos = new List<MaintenanceSpotlightDto>();
                     foreach (var item in request.DepartmentId)
@@ -556,13 +605,13 @@ namespace Application.Services
                         return response;
                     }
 
-                } else
+                } 
+                else
                 {
 
                     {
                         //Obtener los autos
                         var vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: "VehicleServices");
-
 
                         //Lista de vehiculos de pronto servicio
                         List<MaintenanceSpotlightDto> dtos = new List<MaintenanceSpotlightDto>();
@@ -801,7 +850,6 @@ namespace Application.Services
             }
         }
 
-        //GetAllVehicleStatus
         public async Task<GenericResponse<List<GetVehicleActiveDto>>> GetAllVehiclesActive(ServicesByDepartmentRequest request)
         {
             GenericResponse<List<GetVehicleActiveDto>> response = new GenericResponse<List<GetVehicleActiveDto>>();

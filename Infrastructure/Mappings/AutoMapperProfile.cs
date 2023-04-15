@@ -201,14 +201,16 @@ namespace Infrastructure.Mappings
                 .ForMember(p => p.VehicleId, o => o.MapFrom(p => p.Vehicle.Id))
                 .ForMember(p => p.PolicyId, o => o.MapFrom(p => p.Id))
                 .ForMember(p => p.PolicyNumber, o => o.MapFrom(p => p.PolicyNumber))
-                .ForMember(p => p.PolicyExpirationDate, o => o.MapFrom(p => p.ExpirationDate));
-
+                .ForMember(p => p.PolicyExpirationDate, o => o.MapFrom(p => p.ExpirationDate))
+                .ForMember(p => p.VehicleDepartments, o => o.MapFrom(p => p.Vehicle.AssignedDepartments));
             //Licence
             CreateMap<UserProfile, LicenceExpiredDto>()
                 .ForMember(l => l.UserProfileId, o => o.MapFrom(l => l.Id))
                 .ForMember(l => l.UserFullName, o => o.MapFrom(l => l.FullName))
                 .ForMember(l => l.LicenceExpirationDate, o => o.MapFrom(l => l.LicenceExpirationDate))
-                .ForMember(l => l.LicenceType, o => o.MapFrom(l => l.LicenceType));
+                .ForMember(l => l.LicenceType, o => o.MapFrom(l => l.LicenceType))
+                .ForMember(l => l.DepartmentId, o => o.MapFrom(l => l.DepartmentId))
+                .ForMember(l => l.DepartmentName, o => o.MapFrom(l => l.Department.Name));
 
             //MaintenanceProgress
             CreateMap<MaintenanceProgress, MaintenanceProgressDto>()

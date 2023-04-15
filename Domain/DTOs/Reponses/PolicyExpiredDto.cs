@@ -16,6 +16,7 @@ namespace Domain.DTOs.Reponses
         public string PolicyNumber { get; set; }
         public int? VehicleId { get; set; }
         public string? VehicleName { get; set; }
+        public List<int> VehicleDepartments { get; set; }
         public LicenceExpStopLight ExpirationType { get; set; }
         public DateTime PolicyExpirationDate { get; set; }
     }
