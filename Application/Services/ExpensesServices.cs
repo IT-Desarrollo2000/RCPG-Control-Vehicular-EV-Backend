@@ -163,7 +163,7 @@ namespace Application.Services
         public async Task<GenericResponse<ExpensesDto>> GetExpensesById(int id)
         {
             GenericResponse<ExpensesDto> response = new GenericResponse<ExpensesDto>();
-            var entity = await _unitOfWork.ExpensesRepo.Get(filter: a => a.Id == id, includeProperties: "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop,Department");
+            var entity = await _unitOfWork.ExpensesRepo.Get(filter: a => a.Id == id, includeProperties: "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop,Department,Invoices");
             var check = entity.FirstOrDefault();
             var map = _mapper.Map<ExpensesDto>(check);
             response.success = true;
@@ -301,7 +301,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop,Department";
+            string properties = "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop,Department,Invoices";
             IEnumerable<Expenses> expenses = null;
             Expression<Func<Expenses, bool>> Query = null;
 
