@@ -46,7 +46,7 @@ namespace Application.Services
                     return response;
                 }
 
-                if (request.FilePath1 != null && request.FilePath1.ContentType.Contains("image"))
+                if (request.FilePath1 != null)
                 {
                     var uploadDate = DateTime.UtcNow;
                     Random rndm = new Random();
@@ -59,7 +59,7 @@ namespace Application.Services
                 }
 
 
-                if (request.FilePath2 != null && request.FilePath2.ContentType.Contains("image"))
+                if (request.FilePath2 != null)
                 {
                     var uploadDate = DateTime.UtcNow;
                     Random rndm = new Random();
