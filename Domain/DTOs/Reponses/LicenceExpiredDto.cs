@@ -19,5 +19,7 @@ namespace Domain.DTOs.Reponses
         public LicenceType LicenceType { get; set; }
         public LicenceExpStopLight ExpirationType { get; set; }
         public DateTime LicenceExpirationDate { get; set; }
+        public int? DepartmentId { get; set; }
+        public string? DepartmentName { get; set;}
     }
 }

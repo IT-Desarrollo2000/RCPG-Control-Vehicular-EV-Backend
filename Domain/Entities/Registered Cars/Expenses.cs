@@ -20,6 +20,8 @@ namespace Domain.Entities.Registered_Cars
         public int? VehicleMaintenanceId { get; set; }
         public int? VehicleServiceId { get; set; }
         public int? DepartmentId { get; set; }
+        //public int? PolicyId { get; set; }
+        //public virtual Policy? Policy { get; set; }
         public virtual Departaments? Department { get; set; }
         public string? Comment { get; set; }
         public virtual VehicleMaintenance? VehicleMaintenance { get; set; }

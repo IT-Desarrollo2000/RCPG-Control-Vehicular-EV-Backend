@@ -85,13 +85,6 @@ namespace Application.Services
 
                 if (resultPolicyVehicle == null)
                 {
-                    /*
-                    await _unitOfWork.PolicyRepo.Add(entidad);
-                    await _unitOfWork.SaveChangesAsync();
-                    response.success = true;
-                    var PolicyDto = _mapper.Map<PolicyDto>(entidad);
-                    response.Data = PolicyDto;
-                    return response;*/
                     Policy.PolicyNumber = policyRequest.PolicyNumber;
                     Policy.ExpirationDate = (DateTime)policyRequest.ExpirationDate;
                     Policy.NameCompany = policyRequest.NameCompany;
@@ -378,7 +371,10 @@ namespace Application.Services
             }
         }
 
-
-
+        //CREAR POLIZA APARTIR DE UN GASTO
+        /*public async Task<GenericResponse<PolicyDto>> PolicyExpense(PolicyExpenseRequest request)
+        {
+              
+        }*/
     }
 }

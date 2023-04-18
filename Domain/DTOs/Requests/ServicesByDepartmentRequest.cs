@@ -12,6 +12,6 @@ namespace Domain.DTOs.Requests
         {
             DepartmentId = new List<int>();
         }
-        public List<int>? DepartmentId { get; set; }
+        public List<int> DepartmentId { get; set; }
     }
 }

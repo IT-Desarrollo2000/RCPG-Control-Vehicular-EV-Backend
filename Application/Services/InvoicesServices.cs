@@ -46,7 +46,7 @@ namespace Application.Services
                     return response;
                 }
 
-                if (request.FilePath1 != null && request.FilePath1.ContentType.Contains("image"))
+                if (request.FilePath1 != null)
                 {
                     var uploadDate = DateTime.UtcNow;
                     Random rndm = new Random();
@@ -57,16 +57,9 @@ namespace Application.Services
                     entity.FilePath1 = filePath;
                     entity.FileURL1 = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.ExpenseInvoices, filePath);
                 }
-                else
-                {
-                    response.success = false;
-                    response.AddError("Invalid File Type", "El archivo no corresponde a un tipo de imagen", 3);
-
-                    return response;
-                }
 
 
-                if (request.FilePath2 != null && request.FilePath2.ContentType.Contains("image"))
+                if (request.FilePath2 != null)
                 {
                     var uploadDate = DateTime.UtcNow;
                     Random rndm = new Random();
@@ -76,13 +69,6 @@ namespace Application.Services
 
                     entity.FilePath2 = filePath;
                     entity.FileURL2 = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.ExpenseInvoices, filePath);
-                }
-                else
-                {
-                    response.success = false;
-                    response.AddError("Invalid File Type", "El archivo no corresponde a un tipo de imagen", 3);
-
-                    return response;
                 }
 
                 entity.ExpensesId = ExpensesId;
