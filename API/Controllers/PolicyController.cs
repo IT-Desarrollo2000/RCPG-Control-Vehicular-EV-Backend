@@ -121,7 +121,7 @@ namespace API.Controllers
         }
 
         //POST
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+       // [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PhotosOfPolicy))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [Route("AddPolicyImage")]
@@ -142,7 +142,7 @@ namespace API.Controllers
         }
 
         //Delete
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+       //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PhotosOfPolicy))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]

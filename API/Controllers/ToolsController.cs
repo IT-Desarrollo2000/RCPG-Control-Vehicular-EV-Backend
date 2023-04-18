@@ -84,9 +84,9 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetAllPerfomance")]
-        public async Task<IActionResult> GetAllPerfomance(int VehicleId)
+        public async Task<IActionResult> GetAllPerfomance(int VehicleId, [FromQuery]AssignedDepartament assignedDepartament)
         {
-            var users = await _utilitesService.GetAllPerfomance(VehicleId);
+            var users = await _utilitesService.GetAllPerfomance(VehicleId, assignedDepartament);
             if (users.success)
             {
                 return Ok(users);
@@ -103,9 +103,9 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetAllTotalPerfomance")]
-        public async Task<IActionResult> GetAllTotalPerfomance(int VehicleId)
+        public async Task<IActionResult> GetAllTotalPerfomance(int VehicleId,[FromQuery]AssignedDepartament assignedDepartament)
         {
-            var users = await _utilitesService.GetTotalPerfomance(VehicleId);
+            var users = await _utilitesService.GetTotalPerfomance(VehicleId, assignedDepartament);
             if (users.success)
             {
                 return Ok(users);
@@ -122,9 +122,9 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("ListTotalPerfomance")]
-        public async Task<IActionResult> GetlistTotalPerfomance([FromForm] ListTotalPerfomanceDto listTotalPerfomanceDto)
+        public async Task<IActionResult> GetlistTotalPerfomance([FromForm] ListTotalPerfomanceDto listTotalPerfomanceDto, [FromForm] AssignedDepartament assignedDepartament)
         {
-            var users = await _utilitesService.GetListTotalPerfomance(listTotalPerfomanceDto);
+            var users = await _utilitesService.GetListTotalPerfomance(listTotalPerfomanceDto, assignedDepartament);
             if (users.success)
             {
                 return Ok(users);
@@ -141,9 +141,9 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetUserTravel")]
-        public async Task<ActionResult<List<GetUserForTravelDto>>> GetUserTravel()
+        public async Task<ActionResult<List<GetUserForTravelDto>>> GetUserTravel([FromQuery] AssignedDepartament assignedDepartament)
         {
-            var users = await _utilitesService.GetUserForTravel();
+            var users = await _utilitesService.GetUserForTravel( assignedDepartament);
             if (users.success)
             {
                 return Ok(users);
@@ -160,9 +160,9 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetTotalServiceMaintenance")]
-        public async Task<IActionResult> GetServiceMaintenance()
+        public async Task<IActionResult> GetServiceMaintenance([FromQuery] AssignedDepartament assignedDepartament)
         {
-            var users = await _utilitesService.GetServiceMaintenance();
+            var users = await _utilitesService.GetServiceMaintenance(assignedDepartament);
             if (users.success)
             {
                 return Ok(users);
