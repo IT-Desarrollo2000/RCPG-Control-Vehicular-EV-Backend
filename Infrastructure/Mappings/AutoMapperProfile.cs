@@ -58,7 +58,9 @@ namespace Infrastructure.Mappings
                 .ForMember(s => s.VehicleName, o => o.MapFrom(s => s.Name));
             CreateMap<Vehicle, GetServicesMaintenance>().ReverseMap()
                 .ForMember(s => s.Id, o => o.MapFrom( s => s.VehicleId))
-                .ForMember(s => s.Name, o => o.MapFrom(s => s.NameVehicle)).ReverseMap();
+                .ForMember(s => s.Name, o => o.MapFrom(s => s.NameVehicle))
+                .ForMember(s => s.AssignedDepartments, o => o.MapFrom(s => s.AssignedDepartments))
+                .ReverseMap();
 
 
             //VehicleService
