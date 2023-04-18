@@ -84,6 +84,18 @@ namespace Infrastructure.Persistence
 
                 await unitOfWork.TypesOfExpensesRepo.Add(newType);
             }
+
+            var policyExpense = await unitOfWork.TypesOfExpensesRepo.Get(e => e.Name == "Polizas");
+            if (policyExpense.SingleOrDefault() == null)
+            {
+                var newType = new TypesOfExpenses()
+                {
+                    Name = "Polizas",
+                    Description = "Gasto generado por Polizas"
+                };
+
+                await unitOfWork.TypesOfExpensesRepo.Add(newType);
+            }
             await unitOfWork.SaveChangesAsync();
         }
     }

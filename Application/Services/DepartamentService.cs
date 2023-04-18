@@ -4,6 +4,7 @@ using Domain.CustomEntities;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Departament;
+using Domain.Entities.Profiles;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Application.Services
@@ -172,6 +173,25 @@ namespace Application.Services
                 return response;
             }
             catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<List<UserProfile>>> GetDeparmentUsers(int id)
+        {
+            GenericResponse<List<UserProfile>> response = new GenericResponse<List<UserProfile>>();
+
+            try
+            {
+                var users = await _unitOfWork.UserProfileRepo.Get(u => u.DepartmentId == id);
+                response.success = true;
+                response.Data = users.ToList();
+                return response;
+            }
+            catch(Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
