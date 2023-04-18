@@ -28,5 +28,7 @@ namespace Domain.DTOs.Reponses
         public string? Comment { get; set; }
         public int? DepartmentId { get; set; }
         public DepartamentDto Department { get; set; }
+        public int? PolicyId { get; set; }
+        public PolicyDto? Policy { get; set; }
     }
 }

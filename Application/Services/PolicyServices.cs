@@ -59,7 +59,7 @@ namespace Application.Services
         }
 
         //POST
-        public async Task<GenericResponse<PolicyDto>> PostPolicy([FromForm] PolicyRequest policyRequest)
+        public async Task<GenericResponse<PolicyDto>> PostPolicy(PolicyRequest policyRequest)
         {
 
             GenericResponse<PolicyDto> response = new GenericResponse<PolicyDto>();
@@ -370,11 +370,5 @@ namespace Application.Services
 
             }
         }
-
-        //CREAR POLIZA APARTIR DE UN GASTO
-        /*public async Task<GenericResponse<PolicyDto>> PolicyExpense(PolicyExpenseRequest request)
-        {
-              
-        }*/
     }
 }

@@ -9,7 +9,7 @@
         public ICollection<PhotosOfPolicy> PhotosOfPolicies { get; set; }
         public int? VehicleId { get; set; }
         public virtual Vehicle? Vehicle { get; set; }
-        //public int? ExpenseId { get; set; }
-        //public virtual Expenses Expense { get; set; }
+        public int? ExpenseId { get; set; }
+        public virtual Expenses? Expense { get; set; }
     }
 }

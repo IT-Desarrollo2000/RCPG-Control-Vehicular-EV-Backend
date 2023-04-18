@@ -206,8 +206,8 @@ namespace Infrastructure.Mappings
                 .ForMember(p => p.VehicleId, o => o.MapFrom(p => p.Vehicle.Id))
                 .ForMember(p => p.PolicyId, o => o.MapFrom(p => p.Id))
                 .ForMember(p => p.PolicyNumber, o => o.MapFrom(p => p.PolicyNumber))
-                .ForMember(p => p.PolicyExpirationDate, o => o.MapFrom(p => p.ExpirationDate));
-                //.ForMember(p => p.VehicleDepartments, o => o.MapFrom(p => p.Vehicle.AssignedDepartments));
+                .ForMember(p => p.PolicyExpirationDate, o => o.MapFrom(p => p.ExpirationDate))
+                .ForMember(p => p.VehicleDepartments, o => o.MapFrom(p => p.Vehicle.AssignedDepartments));
             //Licence
             CreateMap<UserProfile, LicenceExpiredDto>()
                 .ForMember(l => l.UserProfileId, o => o.MapFrom(l => l.Id))

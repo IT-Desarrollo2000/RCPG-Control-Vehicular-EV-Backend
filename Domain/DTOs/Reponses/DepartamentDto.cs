@@ -24,6 +24,5 @@ namespace Domain.DTOs.Reponses
     public class DepartmentVehicleDto
     {
         public int Id { get; set; }
-        public int Name { get; set; }
     }
 }

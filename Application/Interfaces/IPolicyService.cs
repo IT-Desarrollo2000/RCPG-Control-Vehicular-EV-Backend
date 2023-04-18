@@ -13,7 +13,7 @@ namespace Application.Interfaces
         Task<GenericResponse<bool>> DeletePolicyImages(int PolicyId);
         Task<GenericResponse<List<PolicyDto>>> GetPolicyAll();
         Task<GenericResponse<PolicyDto>> GetPolicyById(int Id);
-        Task<GenericResponse<PolicyDto>> PostPolicy([FromForm] PolicyRequest policyRequest);
+        Task<GenericResponse<PolicyDto>> PostPolicy(PolicyRequest policyRequest);
         Task<GenericResponse<PolicyDto>> PutPolicy(PolicyUpdateRequest request);
     }
 }
