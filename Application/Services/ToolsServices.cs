@@ -379,11 +379,11 @@ namespace Application.Services
                     foreach (var item in request.DepartmentId)
                     {
                         //Obtener los autos
-                        var vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: "VehicleServices");
+                        var vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: "VehicleServices,AssignedDepartments");
 
                         foreach (var vehicle in vehicles)
                         {
-                            var lastServicesQuery = await _unitOfWork.VehicleServiceRepo.Get(filter: s => s.Status == VehicleServiceStatus.FINALIZADO && s.VehicleId == vehicle.Id && s.Vehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle");
+                            var lastServicesQuery = await _unitOfWork.VehicleServiceRepo.Get(filter: s => s.Status == VehicleServiceStatus.FINALIZADO && s.VehicleId == vehicle.Id && s.Vehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
                             var lastServices = lastServicesQuery.LastOrDefault();
 
                             //Verificar si ya cuenta con un servicio previo
@@ -611,13 +611,13 @@ namespace Application.Services
 
                     {
                         //Obtener los autos
-                        var vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: "VehicleServices");
+                        var vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: "VehicleServices,AssignedDepartments");
 
                         //Lista de vehiculos de pronto servicio
                         List<MaintenanceSpotlightDto> dtos = new List<MaintenanceSpotlightDto>();
                         foreach (var vehicle in vehicles)
                         {
-                            var lastServicesQuery = await _unitOfWork.VehicleServiceRepo.Get(filter: s => s.Status == VehicleServiceStatus.FINALIZADO && s.VehicleId == vehicle.Id, includeProperties: "Vehicle");
+                            var lastServicesQuery = await _unitOfWork.VehicleServiceRepo.Get(filter: s => s.Status == VehicleServiceStatus.FINALIZADO && s.VehicleId == vehicle.Id, includeProperties: "Vehicle,Vehicle.AssignedDepartments");
                             var lastServices = lastServicesQuery.LastOrDefault();
 
                             //Verificar si ya cuenta con un servicio previo
@@ -859,7 +859,7 @@ namespace Application.Services
                 {
                     foreach(var item in request.DepartmentId)
                     {
-                        var VehicleA = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == ReportUseType.ViajeNormal || status.StatusReportUse == ReportUseType.ViajeRapido && status.Vehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle,UserProfile,Destinations");
+                        var VehicleA = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => (status.StatusReportUse == ReportUseType.ViajeNormal || status.StatusReportUse == ReportUseType.ViajeRapido) && status.Vehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle,UserProfile,Destinations,Vehicle.AssignedDepartments");
                         if (VehicleA == null)
                         {
                             response.success = false;
@@ -876,7 +876,7 @@ namespace Application.Services
                 }
                 else
                 {
-                    var VehicleA = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == ReportUseType.ViajeNormal || status.StatusReportUse == ReportUseType.ViajeRapido, includeProperties: "Vehicle,UserProfile,Destinations");
+                    var VehicleA = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == ReportUseType.ViajeNormal || status.StatusReportUse == ReportUseType.ViajeRapido, includeProperties: "Vehicle,UserProfile,Destinations,Vehicle.AssignedDepartments");
                     if (VehicleA == null)
                     {
                         response.success = false;
