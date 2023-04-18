@@ -37,6 +37,10 @@ namespace Application.Services
                         response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
                         response.success = false;
                         return response;
+                    case "POLIZAS":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
+                        response.success = false;
+                        return response;
                     default:
                         break;
                 }
@@ -106,6 +110,28 @@ namespace Application.Services
                 var type = result.FirstOrDefault();
                 if (type == null) return null;
 
+                switch (type.Name.ToUpper())
+                {
+                    case "CARGA GASOLINA":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede modificar", 2);
+                        response.success = false;
+                        return response;
+                    case "MANTENIMIENTO CORRECTIVO":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede modificar", 2);
+                        response.success = false;
+                        return response;
+                    case "MANTENIMIENTO PREVENTIVO":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede modificar", 2);
+                        response.success = false;
+                        return response;
+                    case "POLIZAS":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede modificar", 2);
+                        response.success = false;
+                        return response;
+                    default:
+                        break;
+                }
+
                 type.Name = typesOfExpensesRequest.Name;
                 type.Description = typesOfExpensesRequest.Description;
 
@@ -131,17 +157,21 @@ namespace Application.Services
                 var type = await _unitOfWork.TypesOfExpensesRepo.GetById(id);
                 if (type == null) return null;
 
-                switch (type.Name)
+                switch (type.Name.ToUpper())
                 {
-                    case "Carga Gasolina":
+                    case "CARGA GASOLINA":
                         response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
                         response.success = false;
                         return response;
-                    case "Mantenimiento Correctivo":
+                    case "MANTENIMIENTO CORRECTIVO":
                         response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
                         response.success = false;
                         return response;
-                    case "Mantenimiento Preventivo":
+                    case "MANTENIMIENTO PREVENTIVO":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
+                        response.success = false;
+                        return response;
+                    case "POLIZAS":
                         response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
                         response.success = false;
                         return response;
