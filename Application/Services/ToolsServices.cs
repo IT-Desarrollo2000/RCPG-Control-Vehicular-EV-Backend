@@ -1575,7 +1575,7 @@ namespace Application.Services
                             var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
                             var Total = new TotalPerfomanceDto()
                             {
-                                VehicleId = Ren.Select(d => d.Id).FirstOrDefault(),
+                                VehicleId = Ren.Select(d => d.VehicleId).FirstOrDefault(),
                                 VehicleName = Name,
                                 TotalMileageTraveled = sum / Ren.Count(),
                                 TotalPerfomance = sum2 / Ren.Count(),
@@ -1830,6 +1830,7 @@ namespace Application.Services
                             var resultado = user.Select(vehicle => vehicle.Vehicle.AssignedDepartments.ToList()).ToList();
                             var L = list.LastOrDefault();
 
+                            //depart =    
                          
 
                             if (L == null)
