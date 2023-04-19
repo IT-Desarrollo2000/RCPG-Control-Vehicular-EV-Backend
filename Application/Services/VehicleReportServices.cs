@@ -41,7 +41,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses,Expenses.PhotosOfSpending,Maintenances,Vehicle.AssignedDepartments";
+            string properties = "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses,Expenses.PhotosOfSpending,Maintenances,Vehicle.AssignedDepartments,Expenses.VehicleMaintenanceWorkshop";
             IEnumerable<VehicleReport> userApprovals = null;
             Expression<Func<VehicleReport, bool>> Query = null;
 
@@ -193,7 +193,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehicleReportDto>> GetVehicleReportById(int Id)
         {
             GenericResponse<VehicleReportDto> response = new GenericResponse<VehicleReportDto>();
-            var profile = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses,Expenses.PhotosOfSpending,Maintenances");
+            var profile = await _unitOfWork.VehicleReportRepo.Get(filter: p => p.Id == Id, includeProperties: "Expenses.VehicleMaintenanceWorkshop,Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses,Expenses.PhotosOfSpending,Maintenances");
             var result = profile.FirstOrDefault();
             var VehicleReportDto = _mapper.Map<VehicleReportDto>(result);
             response.success = true;
@@ -694,7 +694,7 @@ namespace Application.Services
             GenericResponse<List<VehicleReportDto>> response = new GenericResponse<List<VehicleReportDto>>();
             try
             {
-                var reports = await _unitOfWork.VehicleReportRepo.Get(r => r.Vehicle.AssignedDepartments.Any(d => d.Id == departmentId), includeProperties: "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses,Expenses.PhotosOfSpending,Maintenances,Vehicle.AssignedDepartments");
+                var reports = await _unitOfWork.VehicleReportRepo.Get(r => r.Vehicle.AssignedDepartments.Any(d => d.Id == departmentId), includeProperties: "Vehicle,MobileUser,AdminUser,VehicleReportImages,Expenses,VehicleReportUses,SolvedByAdminUser,Expenses.TypesOfExpenses,Expenses.PhotosOfSpending,Maintenances,Vehicle.AssignedDepartments,Expenses.VehicleMaintenanceWorkshop");
 
                 var dto = _mapper.Map<List<VehicleReportDto>>(reports);
                 response.success = true;

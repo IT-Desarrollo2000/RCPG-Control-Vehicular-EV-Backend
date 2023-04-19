@@ -13,9 +13,11 @@
         public DateTime ExpenseDate { get; set; }
         public string ERPFolio { get; set; }
         public int? VehicleMaintenanceWorkshopId { get; set; }
+        public string? WorkShopName { get; set; }
         public int? VehicleReportId { get; set; }
         public int invoiced { get; set; }
         public List<PhotosOfSpendingDto> PhotosOfSpending { get; set; }
         public int? DepartmentId { get; set; }
+        public string? Comment { get; set; }
     }
 }

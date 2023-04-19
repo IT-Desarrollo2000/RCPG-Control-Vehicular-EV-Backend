@@ -2,6 +2,10 @@
 {
     public class Policy : BaseEntity
     {
+        public Policy()
+        {
+            PhotosOfPolicies = new HashSet<PhotosOfPolicy>();
+        }
 
         public string PolicyNumber { get; set; }
         public DateTime ExpirationDate { get; set; }

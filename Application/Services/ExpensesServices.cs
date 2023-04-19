@@ -613,7 +613,7 @@ namespace Application.Services
                     else
                     {
                         response.success = false;
-                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 5);
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo PDF", 5);
 
                         return response;
                     }
@@ -650,6 +650,9 @@ namespace Application.Services
                         return response;
                     }
                 }
+
+                await _unitOfWork.ExpensesRepo.Add(newExpense);
+                await _unitOfWork.SaveChangesAsync();
 
                 response.success = true;
                 response.Data = _mapper.Map<ExpensesDto>(newExpense);
