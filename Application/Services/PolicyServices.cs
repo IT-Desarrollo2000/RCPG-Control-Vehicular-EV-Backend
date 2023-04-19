@@ -89,6 +89,7 @@ namespace Application.Services
                     Policy.ExpirationDate = (DateTime)policyRequest.ExpirationDate;
                     Policy.NameCompany = policyRequest.NameCompany;
                     Policy.VehicleId = policyRequest.VehicleId;
+                    Policy.CurrentVehicleId = policyRequest.VehicleId;
                     await _unitOfWork.PolicyRepo.Add(Policy);
                 }
                 else
@@ -180,13 +181,12 @@ namespace Application.Services
                         response.AddError("Error", "El vehiculo especificado no existe", 6);
                         return response;
                     }
-                    policy.VehicleId = request.VehicleId.Value;
+                    policy.CurrentVehicleId = request.VehicleId.Value;
                 }
 
                 policy.PolicyNumber = request.PolicyNumber ?? policy.PolicyNumber;
                 policy.ExpirationDate = request.ExpirationDate ?? policy.ExpirationDate;
                 policy.NameCompany = request.NameCompany ?? policy.NameCompany;
-                //await _unitOfWork.PolicyRepo.Update(policy);
 
                 var policyIma = await _unitOfWork.PhotosOfPolicyRepo.Get(filter: policy => policy.PolicyId == request.PolicyId);    
                 foreach ( var photo in policyIma)
@@ -229,6 +229,7 @@ namespace Application.Services
 
                 }
 
+                await _unitOfWork.PolicyRepo.Update(policy);
                 await _unitOfWork.SaveChangesAsync();
                 response.success = true;
                 var dto = _mapper.Map<PolicyDto>(policy);

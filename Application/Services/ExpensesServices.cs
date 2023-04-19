@@ -566,6 +566,10 @@ namespace Application.Services
                     return response;
                 }
 
+                //Eliminar la poliza si el coche ya cuenta con una
+                vehicle.Policy = null;
+                vehicle.PolicyId = null;
+
                 //Generar Poliza
                 var newPolicy = new Policy
                 {

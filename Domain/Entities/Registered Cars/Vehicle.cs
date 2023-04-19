@@ -39,11 +39,13 @@ namespace Domain.Entities.Registered_Cars
         public string? VehicleObservation { get ; set; }
         public string? CarRegistrationPlate { get; set; }
         public bool IsClean { get; set; } 
+        public int? PolicyId { get; set; }
         public virtual Policy? Policy { get; set; }
         public string? FuelCardNumber { get; set; }
         public string? VehicleResponsibleName { get; set; }
 
         
+        public virtual ICollection<Policy> Policies { get; set; }
         public virtual ICollection<Departaments> AssignedDepartments { get; set; }
         public virtual ICollection<VehicleImage> VehicleImages { get; set; }
         public virtual ICollection<VehicleService> VehicleServices { get; set; }
