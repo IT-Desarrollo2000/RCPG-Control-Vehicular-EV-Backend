@@ -18,6 +18,12 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(ur => ur.PolicyId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(p => p.Vehicle)
+                .WithMany(v => v.Policies)
+                .HasForeignKey(p => p.VehicleId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

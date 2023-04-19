@@ -15,5 +15,7 @@
         public virtual Vehicle? Vehicle { get; set; }
         public int? ExpenseId { get; set; }
         public virtual Expenses? Expense { get; set; }
+        public int? CurrentVehicleId { get; set; }
+        public virtual Vehicle? CurrentVehicle { get; set; }
     }
 }
