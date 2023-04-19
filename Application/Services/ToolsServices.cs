@@ -7,6 +7,7 @@ using Domain.Entities.Registered_Cars;
 using Domain.DTOs.Requests;
 using Domain.Enums;
 using System;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services
 {
@@ -1570,7 +1571,7 @@ namespace Application.Services
 
 
                             }
-                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.VehicleId == Ren.Select(d => d.Id).FirstOrDefault());
+                            var images = await _unitOfWork.VehicleImageRepo.Get(v => v.Vehicle.AssignedDepartments.Select(num => num.Id).FirstOrDefault() == departamento);
                             var ImagesDto = _mapper.Map<List<VehicleImageDto>>(images);
                             var Total = new TotalPerfomanceDto()
                             {
@@ -1730,7 +1731,8 @@ namespace Application.Services
         {
             GenericResponse<List<GetUserForTravelDto>> response = new GenericResponse<List<GetUserForTravelDto>>();
             var list = new List<GetUserForTravelDto>();
-            List<string> NameU = new List<string>();
+            var depart = new List<DepartamentDto>();
+            var asig = new List<DepartamentDto>();
             try
             {
                 if( assignedDepartament.AssignedDepartaments.Count > 0)
@@ -1808,6 +1810,7 @@ namespace Application.Services
                     foreach (var usuario in travel)
                     {
                         var user = await _unitOfWork.VehicleReportUseRepo.Get(filter: user => user.UserProfileId == usuario.UserProfileId && user.StatusReportUse == ReportUseType.Finalizado, includeProperties: "Vehicle,UserProfile,Vehicle.AssignedDepartments");
+                        
 
                         if (usuario.UserProfileId == null)
                         {
@@ -1827,7 +1830,7 @@ namespace Application.Services
                             var resultado = user.Select(vehicle => vehicle.Vehicle.AssignedDepartments.ToList()).ToList();
                             var L = list.LastOrDefault();
 
-                           //var dto = _mapper.Map<List<DepartamentDto>>(resultado.Select(x => x.Select(z => z.Id).ToList()));
+                         
 
                             if (L == null)
                             {
@@ -1839,8 +1842,8 @@ namespace Application.Services
                                     UserDriverId = usuario.UserProfileId ?? 0,
                                     UserName = usuario.UserProfile.FullName,
                                     TripNumber = user.Count(),
-                                    ProfileImageURL = usuario.UserProfile.ProfileImageUrl,
-                                    //AssignedDepartments =
+                                    ProfileImageURL = usuario.UserProfile.ProfileImageUrl
+                                    //AssignedDepartments = depart
                                     
 
                                 };
@@ -1871,6 +1874,7 @@ namespace Application.Services
                                     UserName = usuario.UserProfile.FullName,
                                     TripNumber = user.Count(),
                                     ProfileImageURL = usuario.UserProfile.ProfileImageUrl
+                                   // AssignedDepartments = depart
                                 };
 
                                 list.Add(add);
