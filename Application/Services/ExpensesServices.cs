@@ -164,7 +164,7 @@ namespace Application.Services
         public async Task<GenericResponse<ExpensesDto>> GetExpensesById(int id)
         {
             GenericResponse<ExpensesDto> response = new GenericResponse<ExpensesDto>();
-            var entity = await _unitOfWork.ExpensesRepo.Get(filter: a => a.Id == id, includeProperties: "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop,Department,Invoices");
+            var entity = await _unitOfWork.ExpensesRepo.Get(filter: a => a.Id == id, includeProperties: "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop,Department,Invoices,Policy");
             var check = entity.FirstOrDefault();
             var map = _mapper.Map<ExpensesDto>(check);
             response.success = true;
@@ -302,7 +302,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop,Department,Invoices";
+            string properties = "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop,Department,Invoices,Policy";
             IEnumerable<Expenses> expenses = null;
             Expression<Func<Expenses, bool>> Query = null;
 
@@ -570,10 +570,13 @@ namespace Application.Services
                 vehicle.Policy = null;
                 vehicle.PolicyId = null;
 
+                await _unitOfWork.VehicleRepo.Update(vehicle);
+
                 //Generar Poliza
                 var newPolicy = new Policy
                 {
-                    VehicleId = vehicle.Id,
+                    CurrentVehicle = vehicle,
+                    Vehicle = vehicle,
                     PolicyNumber = request.PolicyNumber,
                     ExpirationDate = request.PolicyExpirationDate,
                     NameCompany = request.PolicyCompanyName
@@ -591,6 +594,9 @@ namespace Application.Services
                     ERPFolio = Guid.NewGuid().ToString(),
                     Policy = newPolicy
                 };
+
+                //Asignar el auto al gasto
+                newExpense.Vehicles.Add(vehicle);
 
                 //Guardar las imagenes de la poliza
                 foreach (var image in request.PolicyAttachments)
