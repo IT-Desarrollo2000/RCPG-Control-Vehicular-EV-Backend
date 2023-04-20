@@ -8,6 +8,8 @@ using Domain.DTOs.Requests;
 using Domain.Enums;
 using System;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Collections.Immutable;
+using AutoMapper.Internal;
 
 namespace Application.Services
 {
@@ -1732,7 +1734,7 @@ namespace Application.Services
             GenericResponse<List<GetUserForTravelDto>> response = new GenericResponse<List<GetUserForTravelDto>>();
             var list = new List<GetUserForTravelDto>();
             var depart = new List<DepartamentDto>();
-            var asig = new List<DepartamentDto>();
+            var Nam = new List<string>();
             try
             {
                 if( assignedDepartament.AssignedDepartaments.Count > 0)
@@ -1745,8 +1747,11 @@ namespace Application.Services
 
                         foreach(var viaje in viajes)
                         {
-                            var nombre = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == ReportUseType.Finalizado && status.Vehicle.AssignedDepartments.Select(num => num.Id).FirstOrDefault() == departamento && status.UserProfileId == viaje.UserProfileId, includeProperties: "Vehicle,UserProfile");
+                            var nombre = await _unitOfWork.VehicleReportUseRepo.Get(filter: status => status.StatusReportUse == ReportUseType.Finalizado && status.Vehicle.AssignedDepartments.Select(num => num.Id).FirstOrDefault() == departamento && status.UserProfileId == viaje.UserProfileId, includeProperties: "Vehicle,UserProfile,Vehicle.AssignedDepartments");
                             var result =  nombre.Select(num => num.Vehicle.Name).ToList();
+                            var asig = nombre.SelectMany(dep => dep.Vehicle.AssignedDepartments).ToList();
+                            var Tasig = asig.Distinct().ToList();
+                            depart = _mapper.Map<List<DepartamentDto>>(Tasig);
                             var count =  nombre.Count();
                             var contador = list.LastOrDefault();
                             if ( contador == null)
@@ -1756,9 +1761,9 @@ namespace Application.Services
                                     VehicleName = result,
                                     UserDriverId = viaje.UserProfileId ?? 0,
                                     UserName = viaje.UserProfile.FullName,
-                                    Department =  departamento.Value,
                                     TripNumber = count,
-                                    ProfileImageURL = viaje.UserProfile.ProfileImageUrl
+                                    ProfileImageURL = viaje.UserProfile.ProfileImageUrl,
+                                    AssignedDepartments = depart
 
                                 };
 
@@ -1776,9 +1781,9 @@ namespace Application.Services
                                     VehicleName = result,
                                     UserDriverId = viaje.UserProfileId ?? 0,
                                     UserName = viaje.UserProfile.FullName,
-                                    Department = departamento.Value,
                                     TripNumber = count,
-                                    ProfileImageURL = viaje.UserProfile.ProfileImageUrl
+                                    ProfileImageURL = viaje.UserProfile.ProfileImageUrl,
+                                    AssignedDepartments = depart
 
                                 };
 
@@ -1808,7 +1813,7 @@ namespace Application.Services
                     }
 
                     foreach (var usuario in travel)
-                    {
+                         {
                         var user = await _unitOfWork.VehicleReportUseRepo.Get(filter: user => user.UserProfileId == usuario.UserProfileId && user.StatusReportUse == ReportUseType.Finalizado, includeProperties: "Vehicle,UserProfile,Vehicle.AssignedDepartments");
                         
 
@@ -1827,11 +1832,14 @@ namespace Application.Services
                         {
                             var nombres = await _unitOfWork.VehicleReportUseRepo.Get(filter: user => user.UserProfileId == usuario.UserProfileId && user.StatusReportUse == ReportUseType.Finalizado, includeProperties: "Vehicle,UserProfile,Vehicle.AssignedDepartments");
                             var resulv = nombres.Select(nom => nom.Vehicle.Name).ToList();
-                            var resultado = user.Select(vehicle => vehicle.Vehicle.AssignedDepartments.ToList()).ToList();
+                            //var resultado = user.Select(vehicle => vehicle.Vehicle.AssignedDepartments);
+                            var eje = user.SelectMany(n => n.Vehicle.AssignedDepartments).ToList();
+                            var d = eje.Distinct().ToList();
                             var L = list.LastOrDefault();
+                            //var prueba = await _unitOfWork.VehicleRepo.Get(filter : things => things.VehicleReportsUses.se)
+                            depart = _mapper.Map<List<DepartamentDto>>(d);
+                            //depart.AddRange();
 
-                            //depart =    
-                         
 
                             if (L == null)
                             {
@@ -1843,8 +1851,8 @@ namespace Application.Services
                                     UserDriverId = usuario.UserProfileId ?? 0,
                                     UserName = usuario.UserProfile.FullName,
                                     TripNumber = user.Count(),
-                                    ProfileImageURL = usuario.UserProfile.ProfileImageUrl
-                                    //AssignedDepartments = depart
+                                    ProfileImageURL = usuario.UserProfile.ProfileImageUrl,
+                                    AssignedDepartments = depart
                                     
 
                                 };
@@ -1874,8 +1882,8 @@ namespace Application.Services
                                     UserDriverId = usuario.UserProfileId ?? 0,
                                     UserName = usuario.UserProfile.FullName,
                                     TripNumber = user.Count(),
-                                    ProfileImageURL = usuario.UserProfile.ProfileImageUrl
-                                   // AssignedDepartments = depart
+                                    ProfileImageURL = usuario.UserProfile.ProfileImageUrl,
+                                    AssignedDepartments = depart
                                 };
 
                                 list.Add(add);

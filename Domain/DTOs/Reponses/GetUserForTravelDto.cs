@@ -17,7 +17,6 @@ namespace Domain.DTOs.Reponses
         public int UserDriverId { get; set; } = 0;
         public string UserName { get; set; }
         public int TripNumber { get; set; }
-        public int Department  { get; set; }
         public string? ProfileImageURL { get; set; }
         public List<DepartamentDto> AssignedDepartments { get; set; }
         public string? error { get; set; }
