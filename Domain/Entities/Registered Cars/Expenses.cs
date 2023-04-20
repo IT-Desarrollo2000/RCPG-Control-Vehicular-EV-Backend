@@ -7,6 +7,7 @@ namespace Domain.Entities.Registered_Cars
         public Expenses()
         {
             Vehicles = new HashSet<Vehicle>();
+            PhotosOfSpending = new HashSet<PhotosOfSpending>();
         }
         public int TypesOfExpensesId { get; set; }
         public virtual TypesOfExpenses TypesOfExpenses { get; set; }

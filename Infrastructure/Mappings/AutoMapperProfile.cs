@@ -96,7 +96,8 @@ namespace Infrastructure.Mappings
             CreateMap<GetExpensesDtoList, Expenses>().ReverseMap();
             CreateMap<GetExpensesDtoList, Vehicle>().ReverseMap();
             CreateMap<Expenses, UnrelatedExpensesDto>()
-                .ForMember(e => e.TypesOfExpensesName, o => o.MapFrom(e => e.TypesOfExpenses.Name));
+                .ForMember(e => e.TypesOfExpensesName, o => o.MapFrom(e => e.TypesOfExpenses.Name))
+                .ForMember(e => e.WorkShopName, o => o.MapFrom(e => e.VehicleMaintenanceWorkshop.Name));
             CreateMap<PhotosOfSpendingDto, PhotosOfSpending>().ReverseMap();
             CreateMap<InvoicesDto, InvoicesRequest>().ReverseMap();
             CreateMap<InvoicesDto, Invoices>().ReverseMap();
