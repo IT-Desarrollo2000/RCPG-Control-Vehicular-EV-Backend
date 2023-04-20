@@ -37,7 +37,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies";
+            string properties = "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies,Policies";
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
             var departament = new Departaments();
@@ -385,7 +385,7 @@ namespace Application.Services
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
             try
             {
-                var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.VehicleQRId == qrId, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,PhotosOfCirculationCards,Policy.PhotosOfPolicies");
+                var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.VehicleQRId == qrId, includeProperties: "Policies,VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,PhotosOfCirculationCards,Policy.PhotosOfPolicies");
                 var veh = entity.FirstOrDefault();
 
                 if(veh == null)

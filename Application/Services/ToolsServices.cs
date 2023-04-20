@@ -227,7 +227,7 @@ namespace Application.Services
                         switch (request.StopLight)
                         {
                             case LicenceExpStopLight.EXPIRADOS:
-                                var expPolicies = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate <= DateTime.UtcNow && u.Vehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+                                var expPolicies = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate <= DateTime.UtcNow && u.CurrentVehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
 
                                 foreach (var policy in expPolicies)
                                 {
@@ -241,7 +241,7 @@ namespace Application.Services
                                 }
                                 break;
                             case LicenceExpStopLight.TRES_MESES:
-                                var policy3mQuery = await _unitOfWork.PolicyRepo.Get(u => u.Vehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+                                var policy3mQuery = await _unitOfWork.PolicyRepo.Get(u => u.CurrentVehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
                                 var policy3m = policy3mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays <= 90 && (u.ExpirationDate - DateTime.UtcNow).TotalDays > 0);
 
                                 foreach (var policy in policy3m)
@@ -256,7 +256,7 @@ namespace Application.Services
                                 }
                                 break;
                             case LicenceExpStopLight.SEIS_MESES:
-                                var policy6mQuery = await _unitOfWork.PolicyRepo.Get(u => u.Vehicle.AssignedDepartments.Any(r => r.Id == item),includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+                                var policy6mQuery = await _unitOfWork.PolicyRepo.Get(u => u.CurrentVehicle.AssignedDepartments.Any(r => r.Id == item),includeProperties: "Vehicle,Vehicle.AssignedDepartments");
                                 var policy6m = policy6mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays <= 180 && (u.ExpirationDate - DateTime.UtcNow).TotalDays > 90);
                                 foreach (var policy in policy6m)
                                 {
@@ -270,7 +270,7 @@ namespace Application.Services
                                 }
                                 break;
                             case LicenceExpStopLight.DOCE_MESES:
-                                var policy12mQuery = await _unitOfWork.PolicyRepo.Get(u => u.Vehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+                                var policy12mQuery = await _unitOfWork.PolicyRepo.Get(u => u.CurrentVehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
                                 var policy12m = policy12mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays > 180);
                                 foreach (var policy in policy12m)
                                 {
