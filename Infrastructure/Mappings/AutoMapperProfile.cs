@@ -44,6 +44,8 @@ namespace Infrastructure.Mappings
             CreateMap<Departaments, UnrelatedDepartamentDto>();
             CreateMap<Vehicle, DepartmentVehicleDto>();
             CreateMap<DepartamentDto, UnrelatedDepartamentDto>();
+            CreateMap<Departaments, ShortDepartmentDto>()
+                .ForMember(d => d.CompanyName, o => o.MapFrom(d => d.Company.Name));
 
             //Vehicle
             CreateMap<Vehicle, VehicleRequest>().ReverseMap();
