@@ -9,6 +9,7 @@ namespace Application.Interfaces
     {
         Task<GenericResponse<bool>> DeleteCompany(int id);
         Task<GenericResponse<List<CompanyDto>>> GetCompanyAll();
+        Task<GenericResponse<CompanyDto>> GetCompanyByDepartmentId(int id);
         Task<GenericResponse<CompanyDto>> GetCompanyById(int Id);
         Task<GenericResponse<CompanyDto>> PostCompany([FromBody] CompanyRequest companyRequest);
         Task<GenericResponse<CompanyDto>> PutCompany(int id, [FromBody] CompanyRequest companyRequest);
