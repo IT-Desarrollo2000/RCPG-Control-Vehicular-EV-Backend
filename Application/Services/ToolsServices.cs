@@ -296,7 +296,7 @@ namespace Application.Services
                     switch (request.StopLight)
                     {
                         case LicenceExpStopLight.EXPIRADOS:
-                            var expPolicies = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate <= DateTime.UtcNow, includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+                            var expPolicies = await _unitOfWork.PolicyRepo.Get(u => u.ExpirationDate <= DateTime.UtcNow && u.CurrentVehicleId != null, includeProperties: "Vehicle,Vehicle.AssignedDepartments");
 
                             foreach (var policy in expPolicies)
                             {
@@ -311,7 +311,7 @@ namespace Application.Services
 
                             break;
                         case LicenceExpStopLight.TRES_MESES:
-                            var policy3mQuery = await _unitOfWork.PolicyRepo.Get(includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+                            var policy3mQuery = await _unitOfWork.PolicyRepo.Get(u => u.CurrentVehicleId != null, includeProperties: "Vehicle,Vehicle.AssignedDepartments");
                             var policy3m = policy3mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays <= 90 && (u.ExpirationDate - DateTime.UtcNow).TotalDays > 0);
 
                             foreach (var policy in policy3m)
@@ -326,7 +326,7 @@ namespace Application.Services
                             }
                             break;
                         case LicenceExpStopLight.SEIS_MESES:
-                            var policy6mQuery = await _unitOfWork.PolicyRepo.Get(includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+                            var policy6mQuery = await _unitOfWork.PolicyRepo.Get(u => u.CurrentVehicleId != null, includeProperties: "Vehicle,Vehicle.AssignedDepartments");
                             var policy6m = policy6mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays <= 180 && (u.ExpirationDate - DateTime.UtcNow).TotalDays > 90);
                             foreach (var policy in policy6m)
                             {
@@ -340,7 +340,7 @@ namespace Application.Services
                             }
                             break;
                         case LicenceExpStopLight.DOCE_MESES:
-                            var policy12mQuery = await _unitOfWork.PolicyRepo.Get(includeProperties: "Vehicle,Vehicle.AssignedDepartments");
+                            var policy12mQuery = await _unitOfWork.PolicyRepo.Get(u => u.CurrentVehicleId != null, includeProperties: "Vehicle,Vehicle.AssignedDepartments");
                             var policy12m = policy12mQuery.Where(u => (u.ExpirationDate - DateTime.UtcNow).TotalDays > 180);
                             foreach (var policy in policy12m)
                             {
@@ -384,7 +384,7 @@ namespace Application.Services
                     foreach (var item in request.DepartmentId)
                     {
                         //Obtener los autos
-                        var vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: "VehicleServices,AssignedDepartments");
+                        var vehicles = await _unitOfWork.VehicleRepo.Get(s => s.AssignedDepartments.Any(r => r.Id == item), includeProperties: "VehicleServices,AssignedDepartments");
 
                         foreach (var vehicle in vehicles)
                         {
@@ -499,117 +499,117 @@ namespace Application.Services
                                     dto.NextServiceKMDiff = lastServices.NextServiceKM - lastServices.Vehicle.CurrentKM;
                                     dtos.Add(dto);
                                 }
-                                else
+                            }
+                            else
+                            {
+                                double differenceKM = vehicle.InitialKM / vehicle.ServicePeriodKM;
+                                double periodAmountKM = Math.Ceiling((double)vehicle.CurrentKM / vehicle.ServicePeriodKM) * vehicle.ServicePeriodKM;
+                                double KMForNextService = periodAmountKM - vehicle.CurrentKM;
+                                if (vehicle.InitialKM == vehicle.CurrentKM)
                                 {
-                                    double differenceKM = vehicle.InitialKM / vehicle.ServicePeriodKM;
-                                    double periodAmountKM = Math.Ceiling((double)vehicle.CurrentKM / vehicle.ServicePeriodKM) * vehicle.ServicePeriodKM;
-                                    double KMForNextService = periodAmountKM - vehicle.CurrentKM;
-                                    if (vehicle.InitialKM == vehicle.CurrentKM)
-                                    {
-                                        MaintenanceSpotlightDto dtoNope = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                        dtoNope.StatusMessage = "No requiere de servicio";
-                                        dtoNope.StatusName = "OK";
-                                        dtoNope.StatusColor = "#3ee80b";
-                                        dtoNope.AlertType = StopLightAlert.VERDE;
-                                        dtoNope.Type = VehicleServiceType.Kilometraje;
-                                        dtoNope.NextServiceKMDiff = KMForNextService;
-                                        dtos.Add(dtoNope);
-                                    }
-                                    else if (KMForNextService <= 500)
-                                    {
-                                        MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                        dtored.Type = VehicleServiceType.Kilometraje;
-                                        dtored.StatusMessage = "Es requerido llevar el vehiculo a servicio";
-                                        dtored.StatusName = "SERVICIO NECESARIO!!";
-                                        dtored.StatusColor = "#e41212";
-                                        dtored.AlertType = StopLightAlert.ROJO;
-                                        dtored.NextServiceKMDiff = KMForNextService;
-                                        dtos.Add(dtored);
-                                    }
-                                    else if (KMForNextService <= 900 && KMForNextService > 500)
-                                    {
-                                        MaintenanceSpotlightDto dtoOrange = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                        dtoOrange.StatusMessage = "El vehiculo requiere de servicio pronto";
-                                        dtoOrange.StatusName = "ATENCIÓN!!";
-                                        dtoOrange.StatusColor = "#f3d132";
-                                        dtoOrange.AlertType = StopLightAlert.NARANJA;
-                                        dtoOrange.Type = VehicleServiceType.Kilometraje;
-                                        dtoOrange.NextServiceKMDiff = KMForNextService;
-                                        dtos.Add(dtoOrange);
-                                    }
-                                    else if (KMForNextService <= 1500 && KMForNextService > 900)
-                                    {
-                                        MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                        dtoyellow.StatusMessage = "El vehiculo esta proximo a requerir servicio";
-                                        dtoyellow.StatusName = "ATENCIÓN";
-                                        dtoyellow.StatusColor = "#f3d132";
-                                        dtoyellow.AlertType = StopLightAlert.AMARILLO;
-                                        dtoyellow.Type = VehicleServiceType.Kilometraje;
-                                        dtoyellow.NextServiceKMDiff = KMForNextService;
-                                        dtos.Add(dtoyellow);
-                                    }
-                                    else if (KMForNextService > 1500)
-                                    {
+                                    MaintenanceSpotlightDto dtoNope = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                    dtoNope.StatusMessage = "No requiere de servicio";
+                                    dtoNope.StatusName = "OK";
+                                    dtoNope.StatusColor = "#3ee80b";
+                                    dtoNope.AlertType = StopLightAlert.VERDE;
+                                    dtoNope.Type = VehicleServiceType.Kilometraje;
+                                    dtoNope.NextServiceKMDiff = KMForNextService;
+                                    dtos.Add(dtoNope);
+                                }
+                                else if (KMForNextService <= 500)
+                                {
+                                    MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                    dtored.Type = VehicleServiceType.Kilometraje;
+                                    dtored.StatusMessage = "Es requerido llevar el vehiculo a servicio";
+                                    dtored.StatusName = "SERVICIO NECESARIO!!";
+                                    dtored.StatusColor = "#e41212";
+                                    dtored.AlertType = StopLightAlert.ROJO;
+                                    dtored.NextServiceKMDiff = KMForNextService;
+                                    dtos.Add(dtored);
+                                }
+                                else if (KMForNextService <= 900 && KMForNextService > 500)
+                                {
+                                    MaintenanceSpotlightDto dtoOrange = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                    dtoOrange.StatusMessage = "El vehiculo requiere de servicio pronto";
+                                    dtoOrange.StatusName = "ATENCIÓN!!";
+                                    dtoOrange.StatusColor = "#f3d132";
+                                    dtoOrange.AlertType = StopLightAlert.NARANJA;
+                                    dtoOrange.Type = VehicleServiceType.Kilometraje;
+                                    dtoOrange.NextServiceKMDiff = KMForNextService;
+                                    dtos.Add(dtoOrange);
+                                }
+                                else if (KMForNextService <= 1500 && KMForNextService > 900)
+                                {
+                                    MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                    dtoyellow.StatusMessage = "El vehiculo esta proximo a requerir servicio";
+                                    dtoyellow.StatusName = "ATENCIÓN";
+                                    dtoyellow.StatusColor = "#f3d132";
+                                    dtoyellow.AlertType = StopLightAlert.AMARILLO;
+                                    dtoyellow.Type = VehicleServiceType.Kilometraje;
+                                    dtoyellow.NextServiceKMDiff = KMForNextService;
+                                    dtos.Add(dtoyellow);
+                                }
+                                else if (KMForNextService > 1500)
+                                {
+                                    MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                    dto.StatusMessage = "No requiere de servicio";
+                                    dto.StatusName = "OK";
+                                    dto.StatusColor = "#3ee80b";
+                                    dto.AlertType = StopLightAlert.VERDE;
+                                    dto.Type = VehicleServiceType.Kilometraje;
+                                    dto.NextServiceKMDiff = KMForNextService;
+                                    dtos.Add(dto);
+                                }
+
+                                var pan = vehicle.CreatedDate.Value.AddMonths(vehicle.ServicePeriodMonths) - DateTime.UtcNow;
+
+                                switch (pan.TotalDays)
+                                {
+                                    case double d when d > 180:
                                         MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                        dto.Type = VehicleServiceType.Fecha;
                                         dto.StatusMessage = "No requiere de servicio";
                                         dto.StatusName = "OK";
                                         dto.StatusColor = "#3ee80b";
                                         dto.AlertType = StopLightAlert.VERDE;
-                                        dto.Type = VehicleServiceType.Kilometraje;
-                                        dto.NextServiceKMDiff = KMForNextService;
                                         dtos.Add(dto);
-                                    }
-
-                                    var pan = vehicle.CreatedDate.Value.AddMonths(vehicle.ServicePeriodMonths) - DateTime.UtcNow;
-
-                                    switch (pan.TotalDays)
-                                    {
-                                        case double d when d > 180:
-                                            MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                            dto.Type = VehicleServiceType.Fecha;
-                                            dto.StatusMessage = "No requiere de servicio";
-                                            dto.StatusName = "OK";
-                                            dto.StatusColor = "#3ee80b";
-                                            dto.AlertType = StopLightAlert.VERDE;
-                                            dtos.Add(dto);
-                                            break;
-                                        case double d when d >= 90 && d <= 180:
-                                            MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                            dtoyellow.Type = VehicleServiceType.Fecha;
-                                            dtoyellow.StatusMessage = "El vehiculo requiere de servicio pronto";
-                                            dtoyellow.StatusName = "ATENCIÓN";
-                                            dtoyellow.StatusColor = "#f3d132";
-                                            dtoyellow.AlertType = StopLightAlert.AMARILLO;
-                                            dtos.Add(dtoyellow);
-                                            break;
-                                        case double d when d >= 30 && d < 90:
-                                            MaintenanceSpotlightDto dtogreen = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                            dtogreen.Type = VehicleServiceType.Fecha;
-                                            dtogreen.StatusMessage = "El vehiculo requiere de servicio";
-                                            dtogreen.StatusName = "ATENCIÓN!!";
-                                            dtogreen.StatusColor = "#efbc38";
-                                            dtogreen.AlertType = StopLightAlert.NARANJA;
-                                            dtos.Add(dtogreen);
-                                            break;
-                                        case double d when d < 30:
-                                            MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                            dtored.Type = VehicleServiceType.Fecha;
-                                            dtored.StatusMessage = "Es requerido llevar el vehiculo a servicio";
-                                            dtored.StatusName = "SERVICIO NECESARIO!!";
-                                            dtored.StatusColor = "#e41212";
-                                            dtored.AlertType = StopLightAlert.ROJO;
-                                            dtos.Add(dtored);
-                                            break;
-                                    }
+                                        break;
+                                    case double d when d >= 90 && d <= 180:
+                                        MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                        dtoyellow.Type = VehicleServiceType.Fecha;
+                                        dtoyellow.StatusMessage = "El vehiculo requiere de servicio pronto";
+                                        dtoyellow.StatusName = "ATENCIÓN";
+                                        dtoyellow.StatusColor = "#f3d132";
+                                        dtoyellow.AlertType = StopLightAlert.AMARILLO;
+                                        dtos.Add(dtoyellow);
+                                        break;
+                                    case double d when d >= 30 && d < 90:
+                                        MaintenanceSpotlightDto dtogreen = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                        dtogreen.Type = VehicleServiceType.Fecha;
+                                        dtogreen.StatusMessage = "El vehiculo requiere de servicio";
+                                        dtogreen.StatusName = "ATENCIÓN!!";
+                                        dtogreen.StatusColor = "#efbc38";
+                                        dtogreen.AlertType = StopLightAlert.NARANJA;
+                                        dtos.Add(dtogreen);
+                                        break;
+                                    case double d when d < 30:
+                                        MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                        dtored.Type = VehicleServiceType.Fecha;
+                                        dtored.StatusMessage = "Es requerido llevar el vehiculo a servicio";
+                                        dtored.StatusName = "SERVICIO NECESARIO!!";
+                                        dtored.StatusColor = "#e41212";
+                                        dtored.AlertType = StopLightAlert.ROJO;
+                                        dtos.Add(dtored);
+                                        break;
                                 }
                             }
                         }
-                        response.success = true;
-                        response.Data = dtos;
-
-                        return response;
                     }
 
+                    response.success = true;
+                    response.Data = dtos;
+
+                    return response;
                 } 
                 else
                 {
@@ -733,108 +733,108 @@ namespace Application.Services
                                     dto.NextServiceKMDiff = lastServices.NextServiceKM - lastServices.Vehicle.CurrentKM;
                                     dtos.Add(dto);
                                 }
-                                else
+                            }
+                            else
+                            {
+                                double differenceKM = vehicle.InitialKM / vehicle.ServicePeriodKM;
+                                double periodAmountKM = Math.Ceiling((double)vehicle.CurrentKM / vehicle.ServicePeriodKM) * vehicle.ServicePeriodKM;
+                                double KMForNextService = periodAmountKM - vehicle.CurrentKM;
+                                if (vehicle.InitialKM == vehicle.CurrentKM)
                                 {
-                                    double differenceKM = vehicle.InitialKM / vehicle.ServicePeriodKM;
-                                    double periodAmountKM = Math.Ceiling((double)vehicle.CurrentKM / vehicle.ServicePeriodKM) * vehicle.ServicePeriodKM;
-                                    double KMForNextService = periodAmountKM - vehicle.CurrentKM;
-                                    if (vehicle.InitialKM == vehicle.CurrentKM)
-                                    {
-                                        MaintenanceSpotlightDto dtoNope = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                        dtoNope.StatusMessage = "No requiere de servicio";
-                                        dtoNope.StatusName = "OK";
-                                        dtoNope.StatusColor = "#3ee80b";
-                                        dtoNope.AlertType = StopLightAlert.VERDE;
-                                        dtoNope.Type = VehicleServiceType.Kilometraje;
-                                        dtoNope.NextServiceKMDiff = KMForNextService;
-                                        dtos.Add(dtoNope);
-                                    }
-                                    else if (KMForNextService <= 500)
-                                    {
-                                        MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                        dtored.Type = VehicleServiceType.Kilometraje;
-                                        dtored.StatusMessage = "Es requerido llevar el vehiculo a servicio";
-                                        dtored.StatusName = "SERVICIO NECESARIO!!";
-                                        dtored.StatusColor = "#e41212";
-                                        dtored.AlertType = StopLightAlert.ROJO;
-                                        dtored.NextServiceKMDiff = KMForNextService;
-                                        dtos.Add(dtored);
-                                    }
-                                    else if (KMForNextService <= 900 && KMForNextService > 500)
-                                    {
-                                        MaintenanceSpotlightDto dtoOrange = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                        dtoOrange.StatusMessage = "El vehiculo requiere de servicio pronto";
-                                        dtoOrange.StatusName = "ATENCIÓN!!";
-                                        dtoOrange.StatusColor = "#f3d132";
-                                        dtoOrange.AlertType = StopLightAlert.NARANJA;
-                                        dtoOrange.Type = VehicleServiceType.Kilometraje;
-                                        dtoOrange.NextServiceKMDiff = KMForNextService;
-                                        dtos.Add(dtoOrange);
-                                    }
-                                    else if (KMForNextService <= 1500 && KMForNextService > 900)
-                                    {
-                                        MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                        dtoyellow.StatusMessage = "El vehiculo esta proximo a requerir servicio";
-                                        dtoyellow.StatusName = "ATENCIÓN";
-                                        dtoyellow.StatusColor = "#f3d132";
-                                        dtoyellow.AlertType = StopLightAlert.AMARILLO;
-                                        dtoyellow.Type = VehicleServiceType.Kilometraje;
-                                        dtoyellow.NextServiceKMDiff = KMForNextService;
-                                        dtos.Add(dtoyellow);
-                                    }
-                                    else if (KMForNextService > 1500)
-                                    {
+                                    MaintenanceSpotlightDto dtoNope = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                    dtoNope.StatusMessage = "No requiere de servicio";
+                                    dtoNope.StatusName = "OK";
+                                    dtoNope.StatusColor = "#3ee80b";
+                                    dtoNope.AlertType = StopLightAlert.VERDE;
+                                    dtoNope.Type = VehicleServiceType.Kilometraje;
+                                    dtoNope.NextServiceKMDiff = KMForNextService;
+                                    dtos.Add(dtoNope);
+                                }
+                                else if (KMForNextService <= 500)
+                                {
+                                    MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                    dtored.Type = VehicleServiceType.Kilometraje;
+                                    dtored.StatusMessage = "Es requerido llevar el vehiculo a servicio";
+                                    dtored.StatusName = "SERVICIO NECESARIO!!";
+                                    dtored.StatusColor = "#e41212";
+                                    dtored.AlertType = StopLightAlert.ROJO;
+                                    dtored.NextServiceKMDiff = KMForNextService;
+                                    dtos.Add(dtored);
+                                }
+                                else if (KMForNextService <= 900 && KMForNextService > 500)
+                                {
+                                    MaintenanceSpotlightDto dtoOrange = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                    dtoOrange.StatusMessage = "El vehiculo requiere de servicio pronto";
+                                    dtoOrange.StatusName = "ATENCIÓN!!";
+                                    dtoOrange.StatusColor = "#f3d132";
+                                    dtoOrange.AlertType = StopLightAlert.NARANJA;
+                                    dtoOrange.Type = VehicleServiceType.Kilometraje;
+                                    dtoOrange.NextServiceKMDiff = KMForNextService;
+                                    dtos.Add(dtoOrange);
+                                }
+                                else if (KMForNextService <= 1500 && KMForNextService > 900)
+                                {
+                                    MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                    dtoyellow.StatusMessage = "El vehiculo esta proximo a requerir servicio";
+                                    dtoyellow.StatusName = "ATENCIÓN";
+                                    dtoyellow.StatusColor = "#f3d132";
+                                    dtoyellow.AlertType = StopLightAlert.AMARILLO;
+                                    dtoyellow.Type = VehicleServiceType.Kilometraje;
+                                    dtoyellow.NextServiceKMDiff = KMForNextService;
+                                    dtos.Add(dtoyellow);
+                                }
+                                else if (KMForNextService > 1500)
+                                {
+                                    MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                    dto.StatusMessage = "No requiere de servicio";
+                                    dto.StatusName = "OK";
+                                    dto.StatusColor = "#3ee80b";
+                                    dto.AlertType = StopLightAlert.VERDE;
+                                    dto.Type = VehicleServiceType.Kilometraje;
+                                    dto.NextServiceKMDiff = KMForNextService;
+                                    dtos.Add(dto);
+                                }
+
+                                var times = vehicle.CreatedDate.Value.AddMonths(vehicle.ServicePeriodMonths) - DateTime.UtcNow;
+
+                                switch (times.TotalDays)
+                                {
+                                    case double d when d > 180:
                                         MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                        dto.Type = VehicleServiceType.Fecha;
                                         dto.StatusMessage = "No requiere de servicio";
                                         dto.StatusName = "OK";
                                         dto.StatusColor = "#3ee80b";
                                         dto.AlertType = StopLightAlert.VERDE;
-                                        dto.Type = VehicleServiceType.Kilometraje;
-                                        dto.NextServiceKMDiff = KMForNextService;
                                         dtos.Add(dto);
-                                    }
-
-                                    var times = vehicle.CreatedDate.Value.AddMonths(vehicle.ServicePeriodMonths) - DateTime.UtcNow;
-
-                                    switch (times.TotalDays)
-                                    {
-                                        case double d when d > 180:
-                                            MaintenanceSpotlightDto dto = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                            dto.Type = VehicleServiceType.Fecha;
-                                            dto.StatusMessage = "No requiere de servicio";
-                                            dto.StatusName = "OK";
-                                            dto.StatusColor = "#3ee80b";
-                                            dto.AlertType = StopLightAlert.VERDE;
-                                            dtos.Add(dto);
-                                            break;
-                                        case double d when d >= 90 && d <= 180:
-                                            MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                            dtoyellow.Type = VehicleServiceType.Fecha;
-                                            dtoyellow.StatusMessage = "El vehiculo requiere de servicio pronto";
-                                            dtoyellow.StatusName = "ATENCIÓN";
-                                            dtoyellow.StatusColor = "#f3d132";
-                                            dtoyellow.AlertType = StopLightAlert.AMARILLO;
-                                            dtos.Add(dtoyellow);
-                                            break;
-                                        case double d when d >= 30 && d < 90:
-                                            MaintenanceSpotlightDto dtogreen = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                            dtogreen.Type = VehicleServiceType.Fecha;
-                                            dtogreen.StatusMessage = "El vehiculo requiere de servicio";
-                                            dtogreen.StatusName = "ATENCIÓN!!";
-                                            dtogreen.StatusColor = "#efbc38";
-                                            dtogreen.AlertType = StopLightAlert.NARANJA;
-                                            dtos.Add(dtogreen);
-                                            break;
-                                        case double d when d < 30:
-                                            MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
-                                            dtored.Type = VehicleServiceType.Fecha;
-                                            dtored.StatusMessage = "Es requerido llevar el vehiculo a servicio";
-                                            dtored.StatusName = "SERVICIO NECESARIO!!";
-                                            dtored.StatusColor = "#e41212";
-                                            dtored.AlertType = StopLightAlert.ROJO;
-                                            dtos.Add(dtored);
-                                            break;
-                                    }
+                                        break;
+                                    case double d when d >= 90 && d <= 180:
+                                        MaintenanceSpotlightDto dtoyellow = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                        dtoyellow.Type = VehicleServiceType.Fecha;
+                                        dtoyellow.StatusMessage = "El vehiculo requiere de servicio pronto";
+                                        dtoyellow.StatusName = "ATENCIÓN";
+                                        dtoyellow.StatusColor = "#f3d132";
+                                        dtoyellow.AlertType = StopLightAlert.AMARILLO;
+                                        dtos.Add(dtoyellow);
+                                        break;
+                                    case double d when d >= 30 && d < 90:
+                                        MaintenanceSpotlightDto dtogreen = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                        dtogreen.Type = VehicleServiceType.Fecha;
+                                        dtogreen.StatusMessage = "El vehiculo requiere de servicio";
+                                        dtogreen.StatusName = "ATENCIÓN!!";
+                                        dtogreen.StatusColor = "#efbc38";
+                                        dtogreen.AlertType = StopLightAlert.NARANJA;
+                                        dtos.Add(dtogreen);
+                                        break;
+                                    case double d when d < 30:
+                                        MaintenanceSpotlightDto dtored = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
+                                        dtored.Type = VehicleServiceType.Fecha;
+                                        dtored.StatusMessage = "Es requerido llevar el vehiculo a servicio";
+                                        dtored.StatusName = "SERVICIO NECESARIO!!";
+                                        dtored.StatusColor = "#e41212";
+                                        dtored.AlertType = StopLightAlert.ROJO;
+                                        dtos.Add(dtored);
+                                        break;
                                 }
                             }
                         }
@@ -844,7 +844,6 @@ namespace Application.Services
                         return response;
                     }
                 }
-                return response;
             }
             catch (Exception ex)
             {

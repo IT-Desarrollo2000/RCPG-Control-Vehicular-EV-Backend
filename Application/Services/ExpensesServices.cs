@@ -566,6 +566,17 @@ namespace Application.Services
                     return response;
                 }
 
+                //Verificar si ya existe una poliza con el vehiculo asignado
+                var oldPolicyQ = await _unitOfWork.PolicyRepo.Get(p => p.CurrentVehicleId == vehicle.Id);
+                var oldPolicy = oldPolicyQ.LastOrDefault();
+                if(oldPolicy != null)
+                {
+                    oldPolicy.CurrentVehicleId = null;
+                    oldPolicy.Vehicle = null;
+
+                    await _unitOfWork.PolicyRepo.Update(oldPolicy);
+                }
+
                 //Eliminar la poliza si el coche ya cuenta con una
                 vehicle.Policy = null;
                 vehicle.PolicyId = null;
@@ -575,7 +586,9 @@ namespace Application.Services
                 //Generar Poliza
                 var newPolicy = new Policy
                 {
+                    CurrentVehicleId = vehicle.Id,
                     CurrentVehicle = vehicle,
+                    VehicleId = vehicle.Id,
                     Vehicle = vehicle,
                     PolicyNumber = request.PolicyNumber,
                     ExpirationDate = request.PolicyExpirationDate,
@@ -585,7 +598,7 @@ namespace Application.Services
                 //Generar el gasto
                 var newExpense = new Expenses
                 {
-                    Invoiced = true,
+                    Invoiced = request.Invoiced,
                     ExpenseDate = request.ExpenseDate,
                     Comment = request.Comment,
                     Cost = request.Cost,
