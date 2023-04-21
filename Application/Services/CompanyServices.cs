@@ -24,7 +24,6 @@ namespace Application.Services
         {
             GenericResponse<List<CompanyDto>> response = new GenericResponse<List<CompanyDto>>();
             var entidades = await _unitOfWork.Companies.Get(includeProperties: "Departaments,Departaments.AssignedVehicles,Departaments.Supervisors");
-            //if(entidades == null) return null;
             var dtos = _mapper.Map<List<CompanyDto>>(entidades);
             response.success = true;
             response.Data = dtos;
@@ -43,6 +42,18 @@ namespace Application.Services
             response.Data = CompanyDTO;
             return response;
 
+        }
+
+        //GET BY DEPARTMENT
+        public async Task<GenericResponse<CompanyDto>> GetCompanyByDepartmentId(int id)
+        {
+            GenericResponse<CompanyDto> response = new GenericResponse<CompanyDto>();
+            var profile = await _unitOfWork.Companies.Get(filter: p => p.Departaments.Any(x => x.Id == id), includeProperties: "Departaments,Departaments.AssignedVehicles,Departaments.Supervisors");
+            var result = profile.LastOrDefault();
+            var CompanyDTO = _mapper.Map<CompanyDto>(result);
+            response.success = true;
+            response.Data = CompanyDTO;
+            return response;
         }
 
         //POST
