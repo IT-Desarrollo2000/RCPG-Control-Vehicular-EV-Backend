@@ -9,6 +9,7 @@ namespace Domain.DTOs.Reponses
         public VehiclesDto()
         {
             VehicleImages = new List<VehicleImageDto>();
+            Policies = new List<ShortPolicyDto>();
         }
 
         public int Id { get; set; }
@@ -44,6 +45,7 @@ namespace Domain.DTOs.Reponses
         public string? VehicleResponsibleName { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
+        public List<ShortPolicyDto> Policies { get; set; }
     }
 
 }

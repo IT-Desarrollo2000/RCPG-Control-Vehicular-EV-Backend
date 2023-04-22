@@ -59,7 +59,7 @@ namespace Application.Services
         }
 
         //POST
-        public async Task<GenericResponse<PolicyDto>> PostPolicy([FromForm] PolicyRequest policyRequest)
+        public async Task<GenericResponse<PolicyDto>> PostPolicy(PolicyRequest policyRequest)
         {
 
             GenericResponse<PolicyDto> response = new GenericResponse<PolicyDto>();
@@ -85,17 +85,11 @@ namespace Application.Services
 
                 if (resultPolicyVehicle == null)
                 {
-                    /*
-                    await _unitOfWork.PolicyRepo.Add(entidad);
-                    await _unitOfWork.SaveChangesAsync();
-                    response.success = true;
-                    var PolicyDto = _mapper.Map<PolicyDto>(entidad);
-                    response.Data = PolicyDto;
-                    return response;*/
                     Policy.PolicyNumber = policyRequest.PolicyNumber;
                     Policy.ExpirationDate = (DateTime)policyRequest.ExpirationDate;
                     Policy.NameCompany = policyRequest.NameCompany;
                     Policy.VehicleId = policyRequest.VehicleId;
+                    Policy.CurrentVehicleId = policyRequest.VehicleId;
                     await _unitOfWork.PolicyRepo.Add(Policy);
                 }
                 else
@@ -187,55 +181,69 @@ namespace Application.Services
                         response.AddError("Error", "El vehiculo especificado no existe", 6);
                         return response;
                     }
-                    policy.VehicleId = request.VehicleId.Value;
+                    policy.CurrentVehicleId = request.VehicleId.Value;
                 }
 
                 policy.PolicyNumber = request.PolicyNumber ?? policy.PolicyNumber;
                 policy.ExpirationDate = request.ExpirationDate ?? policy.ExpirationDate;
                 policy.NameCompany = request.NameCompany ?? policy.NameCompany;
-                //await _unitOfWork.PolicyRepo.Update(policy);
 
-                var policyIma = await _unitOfWork.PhotosOfPolicyRepo.Get(filter: policy => policy.PolicyId == request.PolicyId);    
-                foreach ( var photo in policyIma)
+                if(request.Images.Count > 0)
                 {
-                    await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.PolicyImages, photo.FilePath);
-                    await _unitOfWork.PhotosOfPolicyRepo.Delete(photo.Id);
-                }
-
-                var Ima = new List<PhotosOfPolicy>();
-                foreach (var image in request.Images)
-                {
-                    //Validar Imagenes y Guardar las imagenes en el blobstorage
-                    if (image.ContentType.Contains("pdf"))
+                    var policyIma = await _unitOfWork.PhotosOfPolicyRepo.Get(filter: policy => policy.PolicyId == request.PolicyId);
+                    foreach (var photo in policyIma)
                     {
-                        //Manipular el nombre del archivo
-                        var uploadDate = DateTime.Now;
-                        Random rndm = new Random();
-                        string FileExtn = System.IO.Path.GetExtension(image.FileName);
-                        var filePath = $"FOTOS_POLIZA/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{uploadDate.Hour}{uploadDate.Minute}{rndm.Next(1, 1000)}{FileExtn}";
-                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.PolicyImages, filePath);
+                        await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.PolicyImages, photo.FilePath);
+                        await _unitOfWork.PhotosOfPolicyRepo.Delete(photo.Id);
+                    }
 
-                        //agregar la imagen a la bd
-                        var newImage = new PhotosOfPolicy()
+                    var Ima = new List<PhotosOfPolicy>();
+                    foreach (var image in request.Images)
+                    {
+                        //Validar Imagenes y Guardar las imagenes en el blobstorage
+                        if (image.ContentType.Contains("pdf"))
                         {
-                            FilePath = filePath,
-                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.PolicyImages, filePath),
-                            Policy = policy
-                        };
+                            //Manipular el nombre del archivo
+                            var uploadDate = DateTime.Now;
+                            Random rndm = new Random();
+                            string FileExtn = System.IO.Path.GetExtension(image.FileName);
+                            var filePath = $"FOTOS_POLIZA/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{uploadDate.Hour}{uploadDate.Minute}{rndm.Next(1, 1000)}{FileExtn}";
+                            var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.PolicyImages, filePath);
 
-                        await _unitOfWork.PhotosOfPolicyRepo.Add(newImage);
-                        Ima.Add(newImage);
-                    }
-                    else
-                    {
-                        response.success = false;
-                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 5);
+                            //agregar la imagen a la bd
+                            var newImage = new PhotosOfPolicy()
+                            {
+                                FilePath = filePath,
+                                FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.PolicyImages, filePath),
+                                Policy = policy
+                            };
 
-                        return response;
+                            await _unitOfWork.PhotosOfPolicyRepo.Add(newImage);
+                            Ima.Add(newImage);
+                        }
+                        else
+                        {
+                            response.success = false;
+                            response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 5);
+
+                            return response;
+                        }
+
                     }
 
                 }
+                else
+                {
+                    await _unitOfWork.SaveChangesAsync();
+                    response.success = true;
+                    var Dto = _mapper.Map<PolicyDto>(policy);
+                    response.Data = Dto;
+                    return response;
 
+                }
+      
+
+                await _unitOfWork.PolicyRepo.Update(policy);
                 await _unitOfWork.SaveChangesAsync();
                 response.success = true;
                 var dto = _mapper.Map<PolicyDto>(policy);
@@ -377,8 +385,5 @@ namespace Application.Services
 
             }
         }
-
-
-
     }
 }

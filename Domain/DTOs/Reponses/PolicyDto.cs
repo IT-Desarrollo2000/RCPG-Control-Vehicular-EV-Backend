@@ -11,5 +11,7 @@ namespace Domain.DTOs.Reponses
         public List<PhotosOfPolicyDto> PhotosOfPolicies { get; set; }
         public int? VehicleId { get; set; }
         public UnrelatedVehiclesDto Vehicle { get; set; }
+        public int? CurrentVehicleId { get; set; }
+        public UnrelatedVehiclesDto CurrentVehicle { get; set; }
     }
 }

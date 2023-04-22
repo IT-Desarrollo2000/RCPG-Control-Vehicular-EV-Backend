@@ -37,8 +37,8 @@ namespace Infrastructure.Persistence.Configurations
                    .HasForeignKey(bu => bu.VehicleId);
 
             builder.HasOne(ru => ru.Policy)
-                    .WithOne(r => r.Vehicle)
-                    .HasForeignKey<Policy>(r => r.VehicleId)
+                    .WithOne(r => r.CurrentVehicle)
+                    .HasForeignKey<Policy>(r => r.CurrentVehicleId)
                     .IsRequired(false)
                     .OnDelete(DeleteBehavior.Restrict);
 

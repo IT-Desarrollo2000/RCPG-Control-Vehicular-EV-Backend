@@ -8,6 +8,7 @@ using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Application.Services
 {
@@ -163,7 +164,7 @@ namespace Application.Services
         public async Task<GenericResponse<ExpensesDto>> GetExpensesById(int id)
         {
             GenericResponse<ExpensesDto> response = new GenericResponse<ExpensesDto>();
-            var entity = await _unitOfWork.ExpensesRepo.Get(filter: a => a.Id == id, includeProperties: "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop,Department,Invoices");
+            var entity = await _unitOfWork.ExpensesRepo.Get(filter: a => a.Id == id, includeProperties: "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop,Department,Invoices,Policy");
             var check = entity.FirstOrDefault();
             var map = _mapper.Map<ExpensesDto>(check);
             response.success = true;
@@ -301,7 +302,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop,Department,Invoices";
+            string properties = "Vehicles,PhotosOfSpending,TypesOfExpenses,VehicleReport,VehicleMaintenanceWorkshop,Department,Invoices,Policy";
             IEnumerable<Expenses> expenses = null;
             Expression<Func<Expenses, bool>> Query = null;
 
@@ -524,6 +525,166 @@ namespace Application.Services
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);
 
+                return response;
+            }
+        }
+
+        //CREAR POLIZA APARTIR DE UN GASTO
+        public async Task<GenericResponse<ExpensesDto>> PolicyExpense(PolicyExpenseRequest request)
+        {
+            GenericResponse<ExpensesDto> response = new GenericResponse<ExpensesDto>();
+            try
+            {
+                //Verificar que si exista el vehiculo especificado
+                var vehicle = await _unitOfWork.VehicleRepo.GetById(request.VehicleId);
+                if(vehicle == null)
+                {
+                    response.success=false;
+                    response.AddError("Vehiculo no encontrado", $"El vehiculo con Id {request.VehicleId}", 2);
+                    return response;
+                }
+
+                //Si se envio un departamento verificar su existencia
+                if(request.DepartmentId.HasValue)
+                {
+                    var department = await _unitOfWork.Departaments.GetById(request.DepartmentId.Value);
+                    if(department == null)
+                    {
+                        response.success = false;
+                        response.AddError("Departamento no encontrado", $"El Departamento con Id {request.DepartmentId.Value}", 3);
+                        return response;
+                    }
+                }
+
+                //Buscar el tipo de gasto asociado a polizas
+                var typeOfExp = await _unitOfWork.TypesOfExpensesRepo.Get(e => e.Name.ToUpper() == "POLIZAS");
+                var exist = typeOfExp.FirstOrDefault();
+                if(exist == null)
+                {
+                    response.success = false;
+                    response.AddError("Tipo de gasto no encontrado", $"El Tipo de gasto Polizas no se encuentra en el sistema", 4);
+                    return response;
+                }
+
+                //Verificar si ya existe una poliza con el vehiculo asignado
+                var oldPolicyQ = await _unitOfWork.PolicyRepo.Get(p => p.CurrentVehicleId == vehicle.Id);
+                var oldPolicy = oldPolicyQ.LastOrDefault();
+                if(oldPolicy != null)
+                {
+                    oldPolicy.CurrentVehicleId = null;
+                    oldPolicy.Vehicle = null;
+
+                    await _unitOfWork.PolicyRepo.Update(oldPolicy);
+                }
+
+                //Eliminar la poliza si el coche ya cuenta con una
+                vehicle.Policy = null;
+                vehicle.PolicyId = null;
+
+                await _unitOfWork.VehicleRepo.Update(vehicle);
+
+                //Generar Poliza
+                var newPolicy = new Policy
+                {
+                    CurrentVehicleId = vehicle.Id,
+                    CurrentVehicle = vehicle,
+                    VehicleId = vehicle.Id,
+                    Vehicle = vehicle,
+                    PolicyNumber = request.PolicyNumber,
+                    ExpirationDate = request.PolicyExpirationDate,
+                    NameCompany = request.PolicyCompanyName
+                };
+
+                //Generar el gasto
+                var newExpense = new Expenses
+                {
+                    Invoiced = request.Invoiced,
+                    ExpenseDate = request.ExpenseDate,
+                    Comment = request.Comment,
+                    Cost = request.Cost,
+                    TypesOfExpenses = exist,
+                    DepartmentId = request.DepartmentId ?? null,
+                    ERPFolio = Guid.NewGuid().ToString(),
+                    Policy = newPolicy
+                };
+
+                //Asignar el auto al gasto
+                newExpense.Vehicles.Add(vehicle);
+
+                //Guardar las imagenes de la poliza
+                foreach (var image in request.PolicyAttachments)
+                {
+                    //Validar Imagenes y Guardar las imagenes en el blobstorage
+                    if (image.ContentType.Contains("pdf"))
+                    {
+                        //Manipular el nombre del archivo
+                        var uploadDate = DateTime.Now;
+                        Random rndm = new Random();
+                        string FileExtn = System.IO.Path.GetExtension(image.FileName);
+                        var filePath = $"FOTOS_POLIZA/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{uploadDate.Hour}{uploadDate.Minute}{rndm.Next(1, 1000)}{FileExtn}";
+                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.PolicyImages, filePath);
+
+                        //agregar la imagen a la bd
+                        var newImage = new PhotosOfPolicy()
+                        {
+                            FilePath = filePath,
+                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.PolicyImages, filePath)
+                        };
+
+                        newPolicy.PhotosOfPolicies.Add(newImage);
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo PDF", 5);
+
+                        return response;
+                    }
+
+                }
+
+                //Guardar las imagenes del gasto
+                foreach (var photo in request.ExpenseAttachments)
+                {
+                    //Validar imagenes y Guardar las imagenes en el blobstorage
+                    if (photo.ContentType.Contains("image"))
+                    {
+                        //Manipular el nombre de archivo
+                        var uploadDate = DateTime.UtcNow;
+                        Random rndm = new Random();
+                        string FileExtn = System.IO.Path.GetExtension(photo.FileName);
+                        var filePath = $"Expense_Policy/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{exist.Id}{rndm.Next(1, 1000)}{FileExtn}";
+                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(photo, _azureBlobContainers.Value.ExpenseAttachments, filePath);
+
+                        //Agregar la imagen en BD
+                        var newImage = new PhotosOfSpending()
+                        {
+                            FilePath = filePath,
+                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.ExpenseAttachments, filePath)
+                        };
+
+                        newExpense.PhotosOfSpending.Add(newImage);
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 6);
+
+                        return response;
+                    }
+                }
+
+                await _unitOfWork.ExpensesRepo.Add(newExpense);
+                await _unitOfWork.SaveChangesAsync();
+
+                response.success = true;
+                response.Data = _mapper.Map<ExpensesDto>(newExpense);
+                return response;
+            }
+            catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
                 return response;
             }
         }

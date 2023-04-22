@@ -131,6 +131,17 @@ namespace API.Controllers
             else { return BadRequest(result); }
         }
 
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ExpensesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPost]
+        [Route("PolicyExpense")]
+        public async Task<IActionResult> PolicyExpense([FromForm] PolicyExpenseRequest request)
+        {
+            var result = await _expensesServices.PolicyExpense(request);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
     }
 
 }

@@ -62,6 +62,25 @@ namespace API.Controllers
                 return NotFound(entidad);
 
             }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(CompanyDto))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [Route("{departmentId:int}")]
+        [HttpGet]
+        public async Task<ActionResult<CompanyDto>> GetByDepartment(int departmentId)
+        {
+            var entidad = await _companyServices.GetCompanyByDepartmentId(departmentId);
+
+            if(entidad.success)
+            {
+                return Ok(entidad);
+            }
+            else
+            {
+                return BadRequest(entidad);
+            }
 
         }
 

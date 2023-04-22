@@ -10,6 +10,10 @@ namespace Domain.DTOs.Reponses
 {
     public class MaintenanceSpotlightDto
     {
+        public MaintenanceSpotlightDto()
+        {
+            VehicleDepartments = new List<UnrelatedDepartamentDto>();
+        }
         public int VehicleId { get; set; }
         public string VehicleName { get; set; }
         public VehicleStatus VehicleStatus { get; set; }
@@ -26,5 +30,6 @@ namespace Domain.DTOs.Reponses
         public int? NextServiceKM { get; set; }
         public DateTime? LastServiceDate { get; set; }
         public double? NextServiceKMDiff { get; set; }
+        public List<UnrelatedDepartamentDto> VehicleDepartments { get; set; }
     }
 }

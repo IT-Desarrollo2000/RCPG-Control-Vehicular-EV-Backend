@@ -8,6 +8,11 @@ namespace Domain.DTOs.Reponses
 {
     public class GraphicsPerfomanceDto
     {
+        public GraphicsPerfomanceDto() 
+        {
+            AssignedDepartments = new List<DepartamentDto>();
+        }
+
         public int VehicleId { get; set; }
         public string VehicleName { get; set; }
         public double CurrentKm { get; set; }
@@ -15,6 +20,7 @@ namespace Domain.DTOs.Reponses
         public double GasolineLoadAmount { get; set; }
         public double MileageTraveled { get; set; }
         public double Perfomance { get; set; }
+        public List<DepartamentDto> AssignedDepartments { get; set; }
         public string? error { get; set; }
     }
 
@@ -23,6 +29,7 @@ namespace Domain.DTOs.Reponses
         public TotalPerfomanceDto()
         {
             Images = new List<VehicleImageDto>();
+            AssignedDepartments = new List<DepartamentDto>();
         }
         public int VehicleId { get; set;}
         public string? VehicleName { get; set; }
@@ -31,6 +38,7 @@ namespace Domain.DTOs.Reponses
         public double TotalPerfomance { get; set; }
         public double DesiredPerfomance { get; set; }
         public double? PerformanceDifference { get; set; }
+        public List<DepartamentDto> AssignedDepartments { get; set; }
         public bool success { get; set; } = true;
         public string? error { get; set; }
     }
@@ -56,5 +64,16 @@ namespace Domain.DTOs.Reponses
 
         public List<int> VehicleId { get; set; }
 
+    }
+
+    public class AssignedDepartament
+    {
+        public AssignedDepartament()
+        {
+            AssignedDepartaments = new List<int?>();
+        }
+
+
+        public List<int?> AssignedDepartaments { get; set; }
     }
 }

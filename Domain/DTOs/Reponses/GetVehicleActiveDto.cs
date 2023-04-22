@@ -4,6 +4,10 @@ namespace Domain.DTOs.Reponses
 {
     public class GetVehicleActiveDto
     {
+        public GetVehicleActiveDto()
+        {
+            VehicleDepartments = new List<UnrelatedDepartamentDto>();
+        }
         public int VehicleId { get; set; }
         public string VehicleName { get; set; }
         public int DriverUserId { get; set; }
@@ -11,6 +15,7 @@ namespace Domain.DTOs.Reponses
         public double? InitialLatitude { get; set; }
         public double? InitialLongitude { get; set; }
         public VehicleStatus VehicleStatus { get; set; }
+        public List<UnrelatedDepartamentDto> VehicleDepartments { get; set; }
         public ICollection<UnrelatedDestinationOfReportUseDto> Destinations { get; set; } //ojo
     }
 }

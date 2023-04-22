@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230418181242_PolicyExpense")]
+    partial class PolicyExpense
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -780,9 +783,6 @@ namespace Infrastructure.Persistence.Data
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CurrentVehicleId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ExpenseId")
                         .HasColumnType("int");
 
@@ -805,11 +805,9 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CurrentVehicleId")
+                    b.HasIndex("VehicleId")
                         .IsUnique()
-                        .HasFilter("[CurrentVehicleId] IS NOT NULL");
-
-                    b.HasIndex("VehicleId");
+                        .HasFilter("[VehicleId] IS NOT NULL");
 
                     b.ToTable("Policy");
                 });
@@ -901,9 +899,6 @@ namespace Infrastructure.Persistence.Data
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OwnershipType")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PolicyId")
                         .HasColumnType("int");
 
                     b.Property<string>("Serial")
@@ -1744,16 +1739,10 @@ namespace Infrastructure.Persistence.Data
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Policy", b =>
                 {
-                    b.HasOne("Domain.Entities.Registered_Cars.Vehicle", "CurrentVehicle")
-                        .WithOne("Policy")
-                        .HasForeignKey("Domain.Entities.Registered_Cars.Policy", "CurrentVehicleId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Entities.Registered_Cars.Vehicle", "Vehicle")
-                        .WithMany("Policies")
-                        .HasForeignKey("VehicleId");
-
-                    b.Navigation("CurrentVehicle");
+                        .WithOne("Policy")
+                        .HasForeignKey("Domain.Entities.Registered_Cars.Policy", "VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Vehicle");
                 });
@@ -2072,8 +2061,6 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("Checklists");
 
                     b.Navigation("PhotosOfCirculationCards");
-
-                    b.Navigation("Policies");
 
                     b.Navigation("Policy");
 

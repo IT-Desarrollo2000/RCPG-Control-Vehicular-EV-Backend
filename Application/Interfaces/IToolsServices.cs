@@ -17,11 +17,13 @@ namespace Application.Interfaces
         Task<GenericResponse<List<MaintenanceSpotlightDto>>> GetMaintenanceSpotlight(ServicesByDepartmentRequest request);
         Task<GenericResponse<List<PolicyExpiredDto>>> GetPoliciesExpiration(LicenseByDepartmentRequest request);
         Task<GenericResponse<List<GetVehicleActiveDto>>> GetAllVehiclesActive(ServicesByDepartmentRequest request);
-        Task<GenericResponse<TotalPerfomanceDto>> GetTotalPerfomance(int VehicleId);
-        Task<GenericResponse<List<GraphicsPerfomanceDto>>> GetAllPerfomance(int VehicleId);
-        Task<GenericResponse<List<GetUserForTravelDto>>> GetUserForTravel();
-        Task<GenericResponse<PerformanceReviewDto>> GetListTotalPerfomance(ListTotalPerfomanceDto listTotalPerfomanceDto);
-        Task<GenericResponse<List<GetServicesMaintenance>>> GetServiceMaintenance();
+        
+        
+        Task<GenericResponse<List<TotalPerfomanceDto>>> GetTotalPerfomance(int VehicleId, AssignedDepartament assignedDepartament);
+        Task<GenericResponse<List<GraphicsPerfomanceDto>>> GetAllPerfomance(int VehicleId, AssignedDepartament assignedDepartament);
+        Task<GenericResponse<List<GetUserForTravelDto>>> GetUserForTravel(AssignedDepartament assignedDepartament);
+        Task<GenericResponse<PerformanceReviewDto>> GetListTotalPerfomance(ListTotalPerfomanceDto listTotalPerfomanceDto, AssignedDepartament assignedDepartament);
+        Task<GenericResponse<List<GetServicesMaintenance>>> GetServiceMaintenance(AssignedDepartament assignedDepartament);
         Task<GenericResponse<UserInTravelDto>> IsUserInTravel(int userProfileId);
     }
 }

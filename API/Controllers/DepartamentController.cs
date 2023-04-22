@@ -170,5 +170,23 @@ namespace API.Controllers
 
             }
         }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(DepartamentDto))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetDepartmentUsers")]
+        public async Task<ActionResult<DepartamentDto>> GetDepartmentUsers(int departmentId)
+        {
+            var entidad = await _departamentServices.GetDeparmentUsers(departmentId);
+            if (!entidad.success)
+            {
+                return BadRequest(entidad);
+            }
+            else
+            {
+                return Ok(entidad);
+            }
+        }
     }
 }
