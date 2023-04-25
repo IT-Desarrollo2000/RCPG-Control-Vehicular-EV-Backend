@@ -17,6 +17,8 @@ namespace Infrastructure.Mappings
             ///User profile Mappings
             CreateMap<UserProfileRequest, UserProfile>().ReverseMap();
             CreateMap<UserProfile, ProfileDto>().ReverseMap();
+            CreateMap<UserProfile, UserProfileDto>()
+                .ForMember(u => u.Email, o => o.MapFrom(u => u.User.Email));
 
             //UserMapping
             CreateMap<WebAdmUserRegistrationRequest, AppUser>();
