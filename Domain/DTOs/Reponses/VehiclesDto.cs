@@ -10,6 +10,7 @@ namespace Domain.DTOs.Reponses
         {
             VehicleImages = new List<VehicleImageDto>();
             Policies = new List<ShortPolicyDto>();
+            AssignedDepartments = new List<ShortDepartmentDto>();
         }
 
         public int Id { get; set; }
@@ -33,7 +34,7 @@ namespace Domain.DTOs.Reponses
         public int? InitialKM { get; set; }
         public List<VehicleImageDto> VehicleImages { get; set; }
         public List<ChecklistDto> Checklists { get; set; }
-        public List<DepartamentDto> AssignedDepartments { get; set; }
+        public List<ShortDepartmentDto> AssignedDepartments { get; set; }
         public List<PhotosOfCirculationCardDto> PhotosOfCirculationCards { get; set; }
         public List<PhotosOfPolicyDto> PhotosOfPolicies { get; set; }
         public string VehicleQRId { get; set; }

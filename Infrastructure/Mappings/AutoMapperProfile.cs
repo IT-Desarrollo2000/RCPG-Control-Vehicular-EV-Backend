@@ -17,6 +17,8 @@ namespace Infrastructure.Mappings
             ///User profile Mappings
             CreateMap<UserProfileRequest, UserProfile>().ReverseMap();
             CreateMap<UserProfile, ProfileDto>().ReverseMap();
+            CreateMap<UserProfile, UserProfileDto>()
+                .ForMember(u => u.Email, o => o.MapFrom(u => u.User.Email));
 
             //UserMapping
             CreateMap<WebAdmUserRegistrationRequest, AppUser>();
@@ -44,6 +46,8 @@ namespace Infrastructure.Mappings
             CreateMap<Departaments, UnrelatedDepartamentDto>();
             CreateMap<Vehicle, DepartmentVehicleDto>();
             CreateMap<DepartamentDto, UnrelatedDepartamentDto>();
+            CreateMap<Departaments, ShortDepartmentDto>()
+                .ForMember(d => d.CompanyName, o => o.MapFrom(d => d.Company.Name));
 
             //Vehicle
             CreateMap<Vehicle, VehicleRequest>().ReverseMap();

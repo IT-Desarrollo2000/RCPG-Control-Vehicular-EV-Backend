@@ -4,6 +4,11 @@ namespace Domain.DTOs.Reponses
 {
     public class UnrelatedVehiclesDto
     {
+        public UnrelatedVehiclesDto()
+        {
+            AssignedDepartments = new List<ShortDepartmentDto>();
+        }
+
         public int Id { get; set; }
         public string Name { get; set; }
         public string Serial { get; set; }
@@ -12,7 +17,7 @@ namespace Domain.DTOs.Reponses
         public string Brand { get; set; }
         public int ModelYear { get; set; }
         public int FuelCapacity { get; set; }
-        public List<DepartamentDto> AssignedDepartments { get; set; }
+        public List<ShortDepartmentDto> AssignedDepartments { get; set; }
         public int CurrentKM { get; set; }
         public int InitialKM { get; set; }
         public CurrentFuel CurrentFuel { get; set; }
@@ -28,5 +33,6 @@ namespace Domain.DTOs.Reponses
         public string? VehicleObservation { get; set; }
         public string? FuelCardNumber { get; set; }
         public string? VehicleResponsibleName { get; set; }
+        public string? CarRegistrationPlate { get; set; }
     }
 }
