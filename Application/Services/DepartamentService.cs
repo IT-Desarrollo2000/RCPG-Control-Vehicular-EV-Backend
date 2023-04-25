@@ -186,7 +186,7 @@ namespace Application.Services
 
             try
             {
-                var users = await _unitOfWork.UserProfileRepo.Get(u => u.DepartmentId == id);
+                var users = await _unitOfWork.UserProfileRepo.Get(u => u.DepartmentId == id, includeProperties: "User");
                 response.success = true;
                 response.Data = users.ToList();
                 return response;

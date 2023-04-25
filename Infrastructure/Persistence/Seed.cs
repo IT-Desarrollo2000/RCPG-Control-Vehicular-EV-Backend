@@ -18,7 +18,7 @@ namespace Infrastructure.Persistence
             var user = new AppUser()
             {
                 UserName = "CVAdmin",
-                Email = "danicabhern@gmail.com",
+                Email = "it.desarrollo2000@gmail.com",
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true
             };

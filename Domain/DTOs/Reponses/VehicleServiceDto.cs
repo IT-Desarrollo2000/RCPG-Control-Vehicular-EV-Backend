@@ -22,6 +22,6 @@ namespace Domain.DTOs.Reponses
         public string? Comment { get; set; }
         public int? ExpenseId { get; set; }
         public ExpensesDto Expense { get; set; }
-
+        public DateTime? CreatedDate { get; set; }
     }
 }
