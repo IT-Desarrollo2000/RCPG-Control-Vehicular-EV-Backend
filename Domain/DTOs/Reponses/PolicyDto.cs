@@ -13,5 +13,6 @@ namespace Domain.DTOs.Reponses
         public UnrelatedVehiclesDto Vehicle { get; set; }
         public int? CurrentVehicleId { get; set; }
         public UnrelatedVehiclesDto CurrentVehicle { get; set; }
+        public decimal? PolicyCostValue { get; set; }
     }
 }
