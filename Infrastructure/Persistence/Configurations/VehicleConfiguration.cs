@@ -37,16 +37,22 @@ namespace Infrastructure.Persistence.Configurations
                    .HasForeignKey(bu => bu.VehicleId);
 
             builder.HasOne(ru => ru.Policy)
-                    .WithOne(r => r.CurrentVehicle)
-                    .HasForeignKey<Policy>(r => r.CurrentVehicleId)
-                    .IsRequired(false)
-                    .OnDelete(DeleteBehavior.Restrict);
+                .WithOne(r => r.CurrentVehicle)
+                .HasForeignKey<Policy>(r => r.CurrentVehicleId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(ur => ur.PhotosOfCirculationCards)
-                    .WithOne(u => u.Vehicle)
-                    .HasForeignKey(ur => ur.VehicleId)
-                    .IsRequired(false)
-                    .OnDelete(DeleteBehavior.Restrict);
+                .WithOne(u => u.Vehicle)
+                .HasForeignKey(ur => ur.VehicleId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(p => p.Propietary)
+                .WithMany(v => v.Vehicles)
+                .HasForeignKey(p => p.PropietaryId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -664,6 +664,8 @@ namespace Application.Services
                     veh.InitialKM = request.InitialKM.Value;
                 }
 
+                veh.MotorSerialNumber = request.MotorSerialNumber ?? veh.MotorSerialNumber;
+
                 foreach (var department in request.DepartmentsToRemove)
                 {
                     var exists = veh.AssignedDepartments.Where(d => d.Id == department).FirstOrDefault();

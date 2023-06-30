@@ -15,6 +15,7 @@ namespace Domain.DTOs.Requests
         public string NameCompany { get; set; }
         public int? VehicleId { get; set; }
         public List<IFormFile?> Images { get; set; }
+        public decimal? PolicyCostValue { get; set; }
     }
 
 

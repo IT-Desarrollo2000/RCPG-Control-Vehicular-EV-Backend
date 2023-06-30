@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230622162848_PolicyCostValue")]
+    partial class PolicyCostValue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -393,45 +396,6 @@ namespace Infrastructure.Persistence.Data
                         .IsUnique();
 
                     b.ToTable("UserProfiles");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Propietary.Propietary", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CompanyName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsMoralPerson")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SurnameM")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SurnameP")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Propietaries");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Checklist", b =>
@@ -926,9 +890,6 @@ namespace Infrastructure.Persistence.Data
                     b.Property<int>("InitialKM")
                         .HasColumnType("int");
 
-                    b.Property<string>("InvoiceNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsClean")
                         .HasColumnType("bit");
 
@@ -937,9 +898,6 @@ namespace Infrastructure.Persistence.Data
 
                     b.Property<int>("ModelYear")
                         .HasColumnType("int");
-
-                    b.Property<string>("MotorSerialNumber")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -952,9 +910,6 @@ namespace Infrastructure.Persistence.Data
                         .HasColumnType("int");
 
                     b.Property<int?>("PolicyId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PropietaryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Serial")
@@ -987,8 +942,6 @@ namespace Infrastructure.Persistence.Data
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PropietaryId");
 
                     b.ToTable("Vehicles");
                 });
@@ -1811,16 +1764,6 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.Vehicle", b =>
-                {
-                    b.HasOne("Domain.Entities.Propietary.Propietary", "Propietary")
-                        .WithMany("Vehicles")
-                        .HasForeignKey("PropietaryId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Propietary");
-                });
-
             modelBuilder.Entity("Domain.Entities.Registered_Cars.VehicleImage", b =>
                 {
                     b.HasOne("Domain.Entities.Registered_Cars.Vehicle", "Vehicle")
@@ -2097,11 +2040,6 @@ namespace Infrastructure.Persistence.Data
                     b.Navigation("VehicleReportUses");
 
                     b.Navigation("VehicleReports");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Propietary.Propietary", b =>
-                {
-                    b.Navigation("Vehicles");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Checklist", b =>

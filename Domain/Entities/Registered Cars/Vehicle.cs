@@ -43,7 +43,10 @@ namespace Domain.Entities.Registered_Cars
         public virtual Policy? Policy { get; set; }
         public string? FuelCardNumber { get; set; }
         public string? VehicleResponsibleName { get; set; }
-
+        public string? MotorSerialNumber { get; set; }
+        public string? InvoiceNumber { get; set; }
+        public int? PropietaryId { get; set; }
+        public virtual Propietary.Propietary Propietary { get; set; }
         
         public virtual ICollection<Policy> Policies { get; set; }
         public virtual ICollection<Departaments> AssignedDepartments { get; set; }

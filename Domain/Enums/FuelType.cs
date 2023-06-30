@@ -4,6 +4,7 @@
     {
         GASOLINA_REGULAR = 1,
         GASOLINA_PREMIUM = 2,
-        DIESEL = 3
+        DIESEL = 3,
+        ELECTRICO = 4
     }
 }

@@ -47,6 +47,7 @@ namespace Domain.DTOs.Reponses
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public List<ShortPolicyDto> Policies { get; set; }
+        public string? MotorSerialNumber { get; set; }
     }
 
 }
