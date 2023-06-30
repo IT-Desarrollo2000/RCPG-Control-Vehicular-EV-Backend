@@ -37,5 +37,6 @@ namespace Domain.DTOs.Reponses
         public string? MotorSerialNumber { get; set; }
         public string? InvoiceNumber { get; set; }
         public int? PropietaryId { get; set; }
+        public PropietaryDto? Propietary { get; set; }
     }
 }
