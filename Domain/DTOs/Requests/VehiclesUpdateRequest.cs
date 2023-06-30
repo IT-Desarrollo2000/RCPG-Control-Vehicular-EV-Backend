@@ -34,5 +34,7 @@ namespace Domain.DTOs.Requests
         public string? FuelCardNumber { get; set; }
         public string? VehicleResponsibleName { get; set; }
         public string? MotorSerialNumber { get; set; }
+        public string? InvoiceNumber { get; set; }
+        public int? PropietaryId { get; set; }
     }
 }

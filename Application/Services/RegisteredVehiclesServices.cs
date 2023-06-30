@@ -37,7 +37,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies,Policies";
+            string properties = "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies,Policies,Propietary";
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
             var departament = new Departaments();
@@ -184,6 +184,24 @@ namespace Application.Services
                     Query = Query.And(p => p.CarRegistrationPlate.Contains(filter.CarRegistrationPlate));
                 }
                 else { Query = p => p.CarRegistrationPlate.Contains(filter.CarRegistrationPlate); }
+            }
+
+            if (!string.IsNullOrEmpty(filter.InvoiceNumber))
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.InvoiceNumber.Contains(filter.InvoiceNumber));
+                }
+                else { Query = p => p.InvoiceNumber.Contains(filter.InvoiceNumber); }
+            }
+
+            if (filter.PropietaryId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.PropietaryId == filter.PropietaryId.Value);
+                }
+                else { Query = p => p.PropietaryId == filter.PropietaryId.Value; }
             }
 
             if (filter.IsClean.HasValue)
@@ -412,7 +430,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehiclesDto>> GetVehicleById(int id)
         {
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
-            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies");
+            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies,Propietary");
 
             var veh = entity.FirstOrDefault();
 
@@ -588,6 +606,17 @@ namespace Application.Services
                 {
                     veh.Color = request.Color;
                 }
+
+                if (!string.IsNullOrEmpty(request.InvoiceNumber))
+                {
+                    veh.InvoiceNumber = request.InvoiceNumber;
+                }
+
+                if (request.PropietaryId.HasValue)
+                {
+                    veh.PropietaryId = request.PropietaryId.Value;
+                }
+
 
                 if (request.ModelYear.HasValue)
                 {

@@ -22,7 +22,7 @@ namespace API.Controllers
             this._registeredVehiclesServices = registeredVehiclesServices;
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<VehiclesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -53,7 +53,7 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -76,7 +76,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return NotFound(result); }
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
@@ -111,7 +111,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<Vehicle>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
@@ -122,7 +122,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete]

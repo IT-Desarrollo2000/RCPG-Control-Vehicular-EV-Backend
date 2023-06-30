@@ -2,6 +2,7 @@
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
+using Domain.Entities.Propietary;
 using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
 
@@ -33,6 +34,7 @@ namespace Application.Interfaces
         IRepository<MaintenanceProgressImages> MaintenanceProgressImageRepot { get; }
         IRepository<PhotosOfPolicy> PhotosOfPolicyRepo { get; }
         IRepository<PhotosOfCirculationCard> PhotosOfCirculationCardRepo { get; }
+        IRepository<Propietary> PropietaryRepo { get; }
 
         void Dispose();
         void SaveChanges();

@@ -5,6 +5,7 @@ using Domain.Entities.Company;
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
+using Domain.Entities.Propietary;
 using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
 
@@ -113,6 +114,11 @@ namespace Infrastructure.Mappings
             CreateMap<TypesOfExpenses, TypesOfExpensesRequest>().ReverseMap();
             CreateMap<TypesOfExpensesDto, TypesOfExpensesRequest>().ReverseMap();
             CreateMap<GetTypesOfExpensesDto, TypesOfExpenses>().ReverseMap();
+
+            //Propietary
+            CreateMap<Propietary, PropietaryDto>().ReverseMap();
+            CreateMap<Propietary, PropietaryRequest>().ReverseMap();
+            CreateMap<PropietaryDto, PropietaryRequest>().ReverseMap();
 
             //VehicleMaintenance
             CreateMap<VehicleMaintenance, VehicleMaintenanceRequest>().ReverseMap();
