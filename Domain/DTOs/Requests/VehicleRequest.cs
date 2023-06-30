@@ -54,6 +54,8 @@ namespace Domain.DTOs.Requests
         public List<IFormFile> Images { get; set; }
         public List<IFormFile?> CirculationCard { get; set; }
         public string? MotorSerialNumber { get; set; }
+        public string? InvoiceNumber { get; set; }
+        public int? PropietaryId { get; set; }
 
     }
 

@@ -23,6 +23,8 @@ namespace Domain.DTOs.Filters
         public string? CarRegistrationPlate { get; set; }
         public bool? IsClean { get; set; }
         public string? FuelCardNumber { get; set; }
+        public string? InvoiceNumber { get; set; }
+        public int? PropietaryId { get; set; }
         public decimal? MinDesiredPerformance { get; set; }
         public decimal? MaxDesiredPerformance { get; set; }
         public DateTime? CreatedBefore { get; set; } 

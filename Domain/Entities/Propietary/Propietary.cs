@@ -1,4 +1,5 @@
-﻿using Domain.Entities.Registered_Cars;
+﻿using Domain.Entities.Departament;
+using Domain.Entities.Registered_Cars;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,10 @@ namespace Domain.Entities.Propietary
 {
     public class Propietary : BaseEntity
     {
+        public Propietary()
+        {
+            this.Vehicles = new HashSet<Vehicle>();
+        }
         public string DisplayName { get; set; }
         public string Name { get; set; }
         public string? SurnameP { get; set; }
