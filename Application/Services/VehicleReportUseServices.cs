@@ -1115,6 +1115,8 @@ namespace Application.Services
                         case VehicleType.VAN:
                         case VehicleType.CAMION:
                         case VehicleType.MULTIPROPOSITO:
+                        case VehicleType.URVAN:
+                        case VehicleType.CAMIONETA_CARGA:
                             return false;
                         default:
                             return true;

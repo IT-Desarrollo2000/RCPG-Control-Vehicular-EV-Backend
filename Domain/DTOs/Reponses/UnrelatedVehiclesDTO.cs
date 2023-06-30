@@ -34,5 +34,6 @@ namespace Domain.DTOs.Reponses
         public string? FuelCardNumber { get; set; }
         public string? VehicleResponsibleName { get; set; }
         public string? CarRegistrationPlate { get; set; }
+        public string? MotorSerialNumber { get; set; }
     }
 }

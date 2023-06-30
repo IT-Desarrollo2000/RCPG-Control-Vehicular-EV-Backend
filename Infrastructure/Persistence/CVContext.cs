@@ -2,6 +2,7 @@ using Domain.Entities.Company;
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
+using Domain.Entities.Propietary;
 using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
 using Infrastructure.Persistence.Configurations;
@@ -66,6 +67,9 @@ namespace Infrastructure.Persistence
 
         //Policy
         public virtual DbSet<Policy> Policy { get; set; }
+
+        //Propietary
+        public virtual DbSet<Propietary> Propietaries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
