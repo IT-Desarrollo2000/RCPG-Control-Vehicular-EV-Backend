@@ -27,7 +27,7 @@ namespace Domain.DTOs.Reponses
         public int? VehicleServiceId { get; set; }
         public string? Comment { get; set; }
         public int? DepartmentId { get; set; }
-        public DepartamentDto Department { get; set; }
+        public ShortDepartmentDto Department { get; set; }
         public int? PolicyId { get; set; }
         public PolicyDto? Policy { get; set; }
     }

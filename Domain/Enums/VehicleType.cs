@@ -15,6 +15,9 @@
         PICKUP = 11,
         CAMION = 12,
         MULTIPROPOSITO = 13,
-        MOTOCICLETA = 14
+        MOTOCICLETA = 14,
+        URVAN = 15,
+        MINI_ELECTRICO = 16,
+        CAMIONETA_CARGA = 17 
     }
 }

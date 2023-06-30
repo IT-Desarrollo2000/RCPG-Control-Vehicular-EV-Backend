@@ -28,34 +28,52 @@ namespace Application.Services
         public async Task<GenericResponse<List<PolicyDto>>> GetPolicyAll()
         {
             GenericResponse<List<PolicyDto>> response = new GenericResponse<List<PolicyDto>>();
-            var entidades = await _unitOfWork.PolicyRepo.Get(includeProperties: "Vehicle,PhotosOfPolicies");
-            //if(entidades == null) return null;
-            var dtos = _mapper.Map<List<PolicyDto>>(entidades);
-            response.success = true;
-            response.Data = dtos;
-            return response;
+            try
+            {
+
+                var entidades = await _unitOfWork.PolicyRepo.Get(includeProperties: "Vehicle,PhotosOfPolicies");
+                //if(entidades == null) return null;
+                var dtos = _mapper.Map<List<PolicyDto>>(entidades);
+                response.success = true;
+                response.Data = dtos;
+                return response;
+            }
+            catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
         }
 
         //GETALLBYID
         public async Task<GenericResponse<PolicyDto>> GetPolicyById(int Id)
         {
             GenericResponse<PolicyDto> response = new GenericResponse<PolicyDto>();
-            var profile = await _unitOfWork.PolicyRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,PhotosOfPolicies");
-            var result = profile.FirstOrDefault();
-
-            if (result == null)
+            try
             {
-                response.success = false;
-                response.AddError("No existe Policy", $"No existe Policy con el Id {Id} solicitado", 2);
+                var profile = await _unitOfWork.PolicyRepo.Get(filter: p => p.Id == Id, includeProperties: "Vehicle,PhotosOfPolicies");
+                var result = profile.FirstOrDefault();
+
+                if (result == null)
+                {
+                    response.success = false;
+                    response.AddError("No existe Policy", $"No existe Policy con el Id {Id} solicitado", 2);
+                    return response;
+                }
+
+
+                var PolicyDTO = _mapper.Map<PolicyDto>(result);
+                response.success = true;
+                response.Data = PolicyDTO;
                 return response;
             }
-
-
-            var PolicyDTO = _mapper.Map<PolicyDto>(result);
-            response.success = true;
-            response.Data = PolicyDTO;
-            return response;
-
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
         }
 
         //POST
@@ -63,98 +81,104 @@ namespace Application.Services
         {
 
             GenericResponse<PolicyDto> response = new GenericResponse<PolicyDto>();
-
-            var Policy = _mapper.Map<Policy>(policyRequest);
-            
-            if (policyRequest.VehicleId.HasValue)
+            try
             {
-                var existeVehicle = await _unitOfWork.VehicleRepo.Get(p => p.Id == policyRequest.VehicleId);
-                var resultVehicle = existeVehicle.FirstOrDefault();
+                var Policy = _mapper.Map<Policy>(policyRequest);
 
-                if (resultVehicle == null)
+                if (policyRequest.VehicleId.HasValue)
                 {
-                    response.success = false;
-                    response.AddError("No existe Vehicle", $"No existe Vehicle con el Id {policyRequest.VehicleId} para cargar", 3);
+                    var existeVehicle = await _unitOfWork.VehicleRepo.Get(p => p.Id == policyRequest.VehicleId);
+                    var resultVehicle = existeVehicle.FirstOrDefault();
+
+                    if (resultVehicle == null)
+                    {
+                        response.success = false;
+                        response.AddError("No existe Vehicle", $"No existe Vehicle con el Id {policyRequest.VehicleId} para cargar", 3);
+                        return response;
+                    }
+
+
+
+                    var existePolicyVehicle = await _unitOfWork.PolicyRepo.Get(filter: p => p.VehicleId == policyRequest.VehicleId);
+                    var resultPolicyVehicle = existePolicyVehicle.FirstOrDefault();
+
+                    if (resultPolicyVehicle == null)
+                    {
+                        Policy.PolicyNumber = policyRequest.PolicyNumber;
+                        Policy.ExpirationDate = (DateTime)policyRequest.ExpirationDate;
+                        Policy.NameCompany = policyRequest.NameCompany;
+                        Policy.VehicleId = policyRequest.VehicleId;
+                        Policy.CurrentVehicleId = policyRequest.VehicleId;
+                        await _unitOfWork.PolicyRepo.Add(Policy);
+                    }
+                    else
+                    {
+
+                        response.success = false;
+                        response.AddError("No se puede asignar la misma poliza a otro vehiculo", $"No se puede poner {policyRequest.VehicleId} para cargar", 4);
+                        return response;
+                    }
+
+                    var Ima = new List<PhotosOfPolicy>();
+                    foreach (var image in policyRequest.Images)
+                    {
+                        //Validar Imagenes y Guardar las imagenes en el blobstorage
+                        if (image.ContentType.Contains("pdf"))
+                        {
+                            //Manipular el nombre del archivo
+                            var uploadDate = DateTime.Now;
+                            Random rndm = new Random();
+                            string FileExtn = System.IO.Path.GetExtension(image.FileName);
+                            var filePath = $"FOTOS_POLIZA/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{uploadDate.Hour}{uploadDate.Minute}{rndm.Next(1, 1000)}{FileExtn}";
+                            var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.PolicyImages, filePath);
+
+                            //agregar la imagen a la bd
+                            var newImage = new PhotosOfPolicy()
+                            {
+                                FilePath = filePath,
+                                FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.PolicyImages, filePath),
+                                Policy = Policy
+                            };
+
+                            await _unitOfWork.PhotosOfPolicyRepo.Add(newImage);
+                            Ima.Add(newImage);
+                        }
+                        else
+                        {
+                            response.success = false;
+                            response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 5);
+
+                            return response;
+                        }
+
+                    }
+
+                    //Guardar Cambios
+                    await _unitOfWork.SaveChangesAsync();
+                    response.success = true;
+                    var PolicyDto = _mapper.Map<PolicyDto>(policyRequest);
+                    response.Data = PolicyDto;
                     return response;
-                }
 
-
-
-                var existePolicyVehicle = await _unitOfWork.PolicyRepo.Get(filter: p => p.VehicleId == policyRequest.VehicleId);
-                var resultPolicyVehicle = existePolicyVehicle.FirstOrDefault();
-
-                if (resultPolicyVehicle == null)
-                {
-                    Policy.PolicyNumber = policyRequest.PolicyNumber;
-                    Policy.ExpirationDate = (DateTime)policyRequest.ExpirationDate;
-                    Policy.NameCompany = policyRequest.NameCompany;
-                    Policy.VehicleId = policyRequest.VehicleId;
-                    Policy.CurrentVehicleId = policyRequest.VehicleId;
-                    await _unitOfWork.PolicyRepo.Add(Policy);
                 }
                 else
                 {
 
-                    response.success = false;
-                    response.AddError("No se puede asignar la misma poliza a otro vehiculo", $"No se puede poner {policyRequest.VehicleId} para cargar", 4);
+                    var entidad = _mapper.Map<Policy>(policyRequest);
+                    await _unitOfWork.PolicyRepo.Add(entidad);
+                    await _unitOfWork.SaveChangesAsync();
+                    response.success = true;
+                    var PolicyDto = _mapper.Map<PolicyDto>(entidad);
+                    response.Data = PolicyDto;
                     return response;
                 }
-
-                var Ima = new List<PhotosOfPolicy>();
-                foreach (var image in policyRequest.Images)
-                {
-                    //Validar Imagenes y Guardar las imagenes en el blobstorage
-                    if (image.ContentType.Contains("pdf"))
-                    {
-                        //Manipular el nombre del archivo
-                        var uploadDate = DateTime.Now;
-                        Random rndm = new Random();
-                        string FileExtn = System.IO.Path.GetExtension(image.FileName);
-                        var filePath = $"FOTOS_POLIZA/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{uploadDate.Hour}{uploadDate.Minute}{rndm.Next(1, 1000)}{FileExtn}";
-                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(image, _azureBlobContainers.Value.PolicyImages, filePath);
-
-                        //agregar la imagen a la bd
-                        var newImage = new PhotosOfPolicy()
-                        {
-                            FilePath = filePath,
-                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.PolicyImages, filePath),
-                            Policy = Policy
-                        };
-
-                        await _unitOfWork.PhotosOfPolicyRepo.Add(newImage);
-                        Ima.Add(newImage);
-                    }
-                    else
-                    {
-                        response.success = false;
-                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 5);
-
-                        return response;
-                    }
-
-                }
-
-                //Guardar Cambios
-                await _unitOfWork.SaveChangesAsync();
-                response.success = true;
-                var PolicyDto = _mapper.Map<PolicyDto>(policyRequest);
-                response.Data= PolicyDto;
-                return response;
-
             }
-            else
+            catch(Exception ex)
             {
-
-                var entidad = _mapper.Map<Policy>(policyRequest);
-                await _unitOfWork.PolicyRepo.Add(entidad);
-                await _unitOfWork.SaveChangesAsync();
-                response.success = true;
-                var PolicyDto = _mapper.Map<PolicyDto>(entidad);
-                response.Data = PolicyDto;
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
                 return response;
             }
-
-
         }
 
         //Put
@@ -187,6 +211,7 @@ namespace Application.Services
                 policy.PolicyNumber = request.PolicyNumber ?? policy.PolicyNumber;
                 policy.ExpirationDate = request.ExpirationDate ?? policy.ExpirationDate;
                 policy.NameCompany = request.NameCompany ?? policy.NameCompany;
+                policy.PolicyCostValue = request.PolicyCostValue ?? policy.PolicyCostValue;
 
                 if(request.Images.Count > 0)
                 {
@@ -262,31 +287,40 @@ namespace Application.Services
         public async Task<GenericResponse<PolicyDto>> DeletePolicy(int Id)
         {
             GenericResponse<PolicyDto> response = new GenericResponse<PolicyDto>();
-            var entidad = await _unitOfWork.PolicyRepo.Get(filter: p => p.Id == Id);
-            var result = entidad.FirstOrDefault();
-            if (result == null)
+            try
             {
-                response.success = false;
-                response.AddError("No existe registro de Policy", $"No existe registro de Policy con el Id {Id} solicitado", 7);
+                var entidad = await _unitOfWork.PolicyRepo.Get(filter: p => p.Id == Id);
+                var result = entidad.FirstOrDefault();
+                if (result == null)
+                {
+                    response.success = false;
+                    response.AddError("No existe registro de Policy", $"No existe registro de Policy con el Id {Id} solicitado", 7);
+                    return response;
+                }
+
+                //Borrar Fotos de la poliza
+                var policyIma = await _unitOfWork.PhotosOfPolicyRepo.Get(filter: policy => policy.PolicyId == Id);
+                foreach (var photo in policyIma)
+                {
+                    await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.PolicyImages, photo.FilePath);
+                    await _unitOfWork.PhotosOfPolicyRepo.Delete(photo.Id);
+                }
+
+                var existe = await _unitOfWork.PolicyRepo.Delete(Id);
+                await _unitOfWork.SaveChangesAsync();
+
+                var PolicyDTO = _mapper.Map<PolicyDto>(result);
+                response.success = true;
+                response.Data = PolicyDTO;
+
                 return response;
             }
-
-            //Borrar Fotos de la poliza
-            var policyIma = await _unitOfWork.PhotosOfPolicyRepo.Get(filter: policy => policy.PolicyId == Id);
-            foreach (var photo in policyIma)
+            catch(Exception ex)
             {
-                await _blobStorageService.DeleteFileFromBlobAsync(_azureBlobContainers.Value.PolicyImages, photo.FilePath);
-                await _unitOfWork.PhotosOfPolicyRepo.Delete(photo.Id);
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
             }
-
-            var existe = await _unitOfWork.PolicyRepo.Delete(Id);
-            await _unitOfWork.SaveChangesAsync();
-
-            var PolicyDTO = _mapper.Map<PolicyDto>(result);
-            response.success = true;
-            response.Data = PolicyDTO;
-
-            return response;
         }
 
         //AddImageIndivual

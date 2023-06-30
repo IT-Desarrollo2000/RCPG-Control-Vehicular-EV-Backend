@@ -24,6 +24,8 @@ namespace Infrastructure.Persistence.Configurations
                 .HasForeignKey(p => p.VehicleId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(v => v.PolicyCostValue).HasColumnType("decimal(18,2)");
         }
     }
 }

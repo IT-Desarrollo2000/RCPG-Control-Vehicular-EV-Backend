@@ -15,7 +15,7 @@ namespace Domain.DTOs.Reponses
         [Required]
         public string Name { get; set; }
         public int CompanyId { get; set; }
-        public virtual UnrelatedCompanyDto Company { get; set; }
+        public UnrelatedCompanyDto Company { get; set; }
         public List<DepartmentVehicleDto> AssignedVehicles { get; set; }
         public List<AdminUserDto> Supervisors { get; set; }
         public List<ExpensesDto> Expenses { get; set; }
@@ -24,5 +24,13 @@ namespace Domain.DTOs.Reponses
     public class DepartmentVehicleDto
     {
         public int Id { get; set; }
+    }
+
+    public class ShortDepartmentDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int CompanyId { get; set; }
+        public string CompanyName { get; set; }
     }
 }

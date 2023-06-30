@@ -159,7 +159,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations,FinishedByDriver,FinishedByAdmin";
+            string properties = "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations,FinishedByDriver,FinishedByAdmin,Vehicle.AssignedDepartments";
             IEnumerable<VehicleReportUse> useReports = null;
             Expression<Func<VehicleReportUse, bool>> Query = null;
 
@@ -278,7 +278,7 @@ namespace Application.Services
             GenericResponse<VehicleReportUseDto> response = new GenericResponse<VehicleReportUseDto>();
             try
             {
-                var useReport = await _unitOfWork.VehicleReportUseRepo.Get(filter: p => p.VehicleId == VehicleId && (p.StatusReportUse == ReportUseType.ViajeNormal || p.StatusReportUse == ReportUseType.ViajeRapido), includeProperties: "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations,FinishedByDriver,FinishedByAdmin");
+                var useReport = await _unitOfWork.VehicleReportUseRepo.Get(filter: p => p.VehicleId == VehicleId && (p.StatusReportUse == ReportUseType.ViajeNormal || p.StatusReportUse == ReportUseType.ViajeRapido), includeProperties: "Vehicle,Checklist,VehicleReport,UserProfile,AppUser,Destinations,FinishedByDriver,FinishedByAdmin,Vehicle.AssignedDepartments");
                 var result = useReport.LastOrDefault();
 
                 if (result == null)
@@ -1115,6 +1115,8 @@ namespace Application.Services
                         case VehicleType.VAN:
                         case VehicleType.CAMION:
                         case VehicleType.MULTIPROPOSITO:
+                        case VehicleType.URVAN:
+                        case VehicleType.CAMIONETA_CARGA:
                             return false;
                         default:
                             return true;

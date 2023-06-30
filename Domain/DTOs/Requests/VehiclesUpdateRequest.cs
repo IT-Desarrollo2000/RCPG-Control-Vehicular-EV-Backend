@@ -33,5 +33,6 @@ namespace Domain.DTOs.Requests
         public List<int> DepartmentsToRemove { get; set; }
         public string? FuelCardNumber { get; set; }
         public string? VehicleResponsibleName { get; set; }
+        public string? MotorSerialNumber { get; set; }
     }
 }
