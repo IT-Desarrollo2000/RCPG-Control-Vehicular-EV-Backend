@@ -3,6 +3,7 @@ using Domain.Entities.Company;
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
 using Domain.Entities.Profiles;
+using Domain.Entities.Propietary;
 using Domain.Entities.Registered_Cars;
 using Domain.Entities.User_Approvals;
 using Infrastructure.Persistence;
@@ -36,6 +37,7 @@ namespace Infrastructure.Repositories
         private readonly IRepository<MaintenanceProgressImages> _MaintenanceProgressImagesRepo;
         private readonly IRepository<PhotosOfPolicy> _PhotosOfPolicyRepo;
         private readonly IRepository<PhotosOfCirculationCard> _PhotosOfCirculationCardRepo;
+        private readonly IRepository<Propietary> _propietaryRepo;
 
         public UnitOfWork(CVContext context)
         {
@@ -67,6 +69,7 @@ namespace Infrastructure.Repositories
         public IRepository<MaintenanceProgressImages> MaintenanceProgressImageRepot => _MaintenanceProgressImagesRepo ?? new BaseRepository<MaintenanceProgressImages>(_context);
         public IRepository<PhotosOfPolicy> PhotosOfPolicyRepo => _PhotosOfPolicyRepo ?? new BaseRepository<PhotosOfPolicy>(_context);
         public IRepository<PhotosOfCirculationCard> PhotosOfCirculationCardRepo => _PhotosOfCirculationCardRepo ?? new BaseRepository<PhotosOfCirculationCard>(_context);
+        public IRepository<Propietary> PropietaryRepo => _propietaryRepo ?? new BaseRepository<Propietary>(_context);
 
         //FUNCIONES DEL SERVICIO
         public void Dispose()

@@ -17,5 +17,6 @@
         public virtual Expenses? Expense { get; set; }
         public int? CurrentVehicleId { get; set; }
         public virtual Vehicle? CurrentVehicle { get; set; }
+        public decimal? PolicyCostValue { get; set; }
     }
 }

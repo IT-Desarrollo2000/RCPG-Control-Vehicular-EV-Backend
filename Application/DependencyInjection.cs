@@ -33,6 +33,7 @@ namespace Application
             services.AddTransient<IVehicleReportUseService, VehicleReportUseServices>();
             services.AddTransient<IPolicyService, PolicyServices>();
             services.AddTransient<IToolsServices, ToolsServices>();
+            services.AddTransient<IPropietaryServices, PropietaryServices>();
 
             //Parametros para validación de tokens
             var tokenValidationParameters = new TokenValidationParameters

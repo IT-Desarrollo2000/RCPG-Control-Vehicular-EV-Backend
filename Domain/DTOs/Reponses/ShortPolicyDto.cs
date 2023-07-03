@@ -16,5 +16,6 @@ namespace Domain.DTOs.Reponses
         public DateTime ExpirationDate { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
+        public decimal? PolicyCostValue { get; set; }
     }
 }
