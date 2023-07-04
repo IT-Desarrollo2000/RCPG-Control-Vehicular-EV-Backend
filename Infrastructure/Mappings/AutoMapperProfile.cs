@@ -68,6 +68,8 @@ namespace Infrastructure.Mappings
                 .ForMember(s => s.AssignedDepartments, o => o.MapFrom(s => s.AssignedDepartments))
                 .ForMember(s => s.Name, o => o.MapFrom(s => s.NameVehicle)).ReverseMap();
             CreateMap<Vehicle, DepartmentVehicleDtoo>();
+            CreateMap<Policy, ExportPolicyDto>().ReverseMap();
+            CreateMap<Vehicle, VehicleExportDto>().ReverseMap();
 
             //VehicleService
             CreateMap<VehicleService, VehicleServiceRequest>().ReverseMap();

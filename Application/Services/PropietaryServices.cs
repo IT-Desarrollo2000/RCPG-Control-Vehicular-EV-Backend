@@ -209,7 +209,12 @@ namespace Application.Services
             try
             {
                 var check = await _unitOfWork.PropietaryRepo.GetById(id);
-                if (check == null) return null;
+                if (check == null)
+                {
+                    response.AddError("Not Found", $"No se encontro el propietario con Id {id}", 2);
+                    response.success = false;
+                    return response;
+                }
                 var exists = await _unitOfWork.PropietaryRepo.Delete(id);
                 await _unitOfWork.SaveChangesAsync();
                 var checkdto = _mapper.Map<Propietary>(check);
