@@ -63,9 +63,9 @@ namespace Infrastructure
 
             //Context and Repositories
             ///PRODUCTION
-            services.AddDbContext<CVContext>(options => options.UseSqlServer(configuration.GetConnectionString("AzureDB")));
+            //services.AddDbContext<CVContext>(options => options.UseSqlServer(configuration.GetConnectionString("AzureDB")));
             ///DEBUG
-            //services.AddDbContext<CVContext>(options => options.UseSqlServer(configuration.GetConnectionString("DebugDB")));
+            services.AddDbContext<CVContext>(options => options.UseSqlServer(configuration.GetConnectionString("DebugDB")));
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
