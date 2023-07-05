@@ -25,7 +25,7 @@ namespace API.Controllers
             this._propietaryServices = propietaryServices;
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<PropietaryDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -57,7 +57,7 @@ namespace API.Controllers
         }
 
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PropietaryDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -69,7 +69,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return NotFound(result); }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PropietaryDto>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
@@ -80,7 +80,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<Propietary>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
@@ -91,7 +91,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete]
@@ -99,7 +99,6 @@ namespace API.Controllers
         public async Task<IActionResult> DeletePropietary(int id)
         {
             var result = await _propietaryServices.DeletePropietary(id);
-            if (result == null) { return NotFound($"No existe propietario con el Id {id}"); }
             if (result.success) { return Ok(result); }
             else
             {

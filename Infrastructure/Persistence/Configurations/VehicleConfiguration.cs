@@ -52,7 +52,7 @@ namespace Infrastructure.Persistence.Configurations
                 .WithMany(v => v.Vehicles)
                 .HasForeignKey(p => p.PropietaryId)
                 .IsRequired(false)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
