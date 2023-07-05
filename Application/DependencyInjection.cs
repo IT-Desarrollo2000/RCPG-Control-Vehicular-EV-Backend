@@ -35,6 +35,7 @@ namespace Application
             services.AddTransient<IToolsServices, ToolsServices>();
             services.AddTransient<IPropietaryServices, PropietaryServices>();
             services.AddTransient<IImportExportServices, ImportExportServices>();
+            services.AddTransient<IAdditionalInformationService,AdditionalInformationServices>();
 
             //Parametros para validación de tokens
             var tokenValidationParameters = new TokenValidationParameters
