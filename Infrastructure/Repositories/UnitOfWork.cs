@@ -38,6 +38,7 @@ namespace Infrastructure.Repositories
         private readonly IRepository<PhotosOfPolicy> _PhotosOfPolicyRepo;
         private readonly IRepository<PhotosOfCirculationCard> _PhotosOfCirculationCardRepo;
         private readonly IRepository<Propietary> _propietaryRepo;
+        private readonly IRepository<AdditionalInformation> _AdditionalInformationRepo;
 
         public UnitOfWork(CVContext context)
         {
@@ -70,10 +71,12 @@ namespace Infrastructure.Repositories
         public IRepository<PhotosOfPolicy> PhotosOfPolicyRepo => _PhotosOfPolicyRepo ?? new BaseRepository<PhotosOfPolicy>(_context);
         public IRepository<PhotosOfCirculationCard> PhotosOfCirculationCardRepo => _PhotosOfCirculationCardRepo ?? new BaseRepository<PhotosOfCirculationCard>(_context);
         public IRepository<Propietary> PropietaryRepo => _propietaryRepo ?? new BaseRepository<Propietary>(_context);
+        public IRepository<AdditionalInformation> AdditionalInformatioRepo => _AdditionalInformationRepo ?? new BaseRepository<AdditionalInformation>(_context);
 
         //FUNCIONES DEL SERVICIO
         public void Dispose()
         {
+            if (_context != null)
             if (_context != null)
             {
                 _context.Dispose();

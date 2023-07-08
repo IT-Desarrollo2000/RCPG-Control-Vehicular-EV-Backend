@@ -30,6 +30,8 @@ namespace Domain.Entities.Registered_Cars
         public FuelType FuelType { get; set; }
         public VehicleType VehicleType { get; set; }
         public VehicleStatus VehicleStatus { get; set; }
+        public int? AdditionalInformationId { get; set; }
+        public virtual AdditionalInformation? AdditionalInformation { get; set; }
         public int ServicePeriodMonths { get; set; }
         public int ServicePeriodKM { get; set; }
         public OwnershipType OwnershipType { get; set; }
@@ -58,5 +60,6 @@ namespace Domain.Entities.Registered_Cars
         public virtual ICollection<VehicleReport> VehicleReports { get; set; }
         public virtual ICollection<VehicleReportUse> VehicleReportsUses { get; set; }
         public virtual ICollection<PhotosOfCirculationCard> PhotosOfCirculationCards { get; set; }
+       
     }
 }
