@@ -11,6 +11,7 @@ namespace Domain.DTOs.Filters
     {
         public DateTime? CreatedAfterDate { get; set; }
         public DateTime? CreatedBeforeDate { get; set; }
+        public int? VehicleId { get; set; }
         public VehicleTypeAdditionalInformation? VehicleType { get; set; }
         public string? Models { get; set; }
         public string? LWH { get; set; }

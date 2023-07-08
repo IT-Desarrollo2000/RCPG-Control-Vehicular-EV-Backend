@@ -9,6 +9,7 @@ namespace Domain.DTOs.Requests
 {
     public class AdditionalInformationRequest
     {
+        public int VehicleId { get; set; }
         public VehicleTypeAdditionalInformation VehicleType { get; set; }
         public string? Models { get; set; }
         public string? LWH { get; set; }

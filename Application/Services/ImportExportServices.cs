@@ -163,9 +163,9 @@ namespace Application.Services
             return pagedData;
         }
 
-        public async Task<GenericResponse<VehicleImportDto>> ImportVehicles()
-        {
+        //public async Task<GenericResponse<VehicleImportDto>> ImportVehicles()
+        //{
 
-        }
+        //}
     }
 }
