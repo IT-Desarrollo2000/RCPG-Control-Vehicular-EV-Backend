@@ -38,7 +38,6 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            //var vehicleData = await _unitOfWork.VehicleRepo.Get(includeProperties: "Policy,Propietary,VehicleImages,Checklists,AssignedDepartments,PhotosOfCirculationCards");
             string properties = "Policy,Propietary,VehicleImages,Checklists,AssignedDepartments,PhotosOfCirculationCards";
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
@@ -100,6 +99,73 @@ namespace Application.Services
             var pagedData = PagedList<VehicleExportDto>.Create(dtos, filter.PageNumber, filter.PageSize);
 
             return pagedData;
+        }
+
+        public async Task<PagedList<PolicyExportDto>> ExportVehiclePolicyData(VehicleExportFilter filter)
+        {
+            filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
+            filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
+
+            string properties = "Policy,Propietary,VehicleImages,Checklists,AssignedDepartments,PhotosOfCirculationCards";
+            IEnumerable<Vehicle> vehicles = null;
+            Expression<Func<Vehicle, bool>> Query = null;
+
+            if (filter.CurrentFuel.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.CurrentFuel == filter.CurrentFuel.Value);
+                }
+                else { Query = p => p.CurrentFuel == filter.CurrentFuel.Value; }
+            }
+
+            if (filter.OwnershipType.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.OwnershipType == filter.OwnershipType.Value);
+                }
+                else { Query = p => p.OwnershipType == filter.OwnershipType.Value; }
+            }
+
+            if (filter.VehicleType.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.VehicleType == filter.VehicleType.Value);
+                }
+                else { Query = p => p.VehicleType == filter.VehicleType.Value; }
+            }
+
+            if (filter.FuelType.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.FuelType == filter.FuelType.Value);
+                }
+                else { Query = p => p.FuelType == filter.FuelType.Value; }
+            }
+
+            if (Query != null)
+            {
+                Query = Query.And(p => p.Policy != null);
+                vehicles = await _unitOfWork.VehicleRepo.Get(filter: Query, includeProperties: properties);
+            }
+            else
+            {
+                vehicles = await _unitOfWork.VehicleRepo.Get(filter: v => v.Policy != null, includeProperties: properties);
+            }
+
+            var dtos = _mapper.Map<List<PolicyExportDto>>(vehicles);
+
+            var pagedData = PagedList<PolicyExportDto>.Create(dtos, filter.PageNumber, filter.PageSize);
+
+            return pagedData;
+        }
+
+        public async Task<GenericResponse<VehicleImportDto>> ImportVehicles()
+        {
+
         }
     }
 }

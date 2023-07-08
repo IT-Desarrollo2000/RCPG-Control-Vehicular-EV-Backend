@@ -15,7 +15,7 @@ namespace Application.Extensions
 
             using (var package = new ExcelPackage())
             {
-                var worksheet = package.Workbook.Worksheets.Add("Vehiculos");
+                var worksheet = package.Workbook.Worksheets.Add("ExportedData");
                 worksheet.Cells.LoadFromCollection(data, true);
 
                 return package.GetAsByteArray();

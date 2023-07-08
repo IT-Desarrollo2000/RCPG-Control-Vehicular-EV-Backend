@@ -59,7 +59,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("ExportVehicleDataExcel")]
-        public async Task<IActionResult> GetVehicleExportDataExcel([FromQuery] VehicleExportFilter filter)
+        public async Task<IActionResult> ExportVehicleDataExcel([FromQuery] VehicleExportFilter filter)
         { 
             try
             {
@@ -67,9 +67,61 @@ namespace API.Controllers
 
                 byte[] fileContents = ExcelExporter.ExportToExcel(exportData);
 
-                return File(fileContents, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "RCPG_VEHICULAR_EXPORT.xlsx");
+                return File(fileContents, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "RCPG_VEHICULAR_VEHICLE_EXPORT.xlsx");
             }
             catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("ExportPolicyData")]
+        public async Task<IActionResult> ExportPolicyData([FromQuery] VehicleExportFilter filter)
+        {
+            var exportData = await _importExportServices.ExportVehiclePolicyData(filter);
+
+            var metadata = new Metadata()
+            {
+                TotalCount = exportData.TotalCount,
+                PageSize = exportData.PageSize,
+                CurrentPage = exportData.CurrentPage,
+                TotalPages = exportData.TotalPages,
+                HasNextPage = exportData.HasNextPage,
+                HasPreviousPage = exportData.HasPreviousPage
+            };
+
+            var response = new GenericResponse<IEnumerable<PolicyExportDto>>(exportData)
+            {
+                Meta = metadata,
+                success = true,
+                Data = exportData
+            };
+
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
+
+            return Ok(response);
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("ExportPolicyDataExcel")]
+        public async Task<IActionResult> ExportPolicyDataExcel([FromQuery] VehicleExportFilter filter)
+        {
+            try
+            {
+                var exportData = await _importExportServices.ExportVehiclePolicyData(filter);
+
+                byte[] fileContents = ExcelExporter.ExportToExcel(exportData);
+
+                return File(fileContents, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "RCPG_VEHICULAR_POLICY_EXPORT.xlsx");
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
