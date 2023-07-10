@@ -57,6 +57,15 @@ namespace Application.Services
                 else { Query = p => p.CreatedDate <= filter.CreatedBeforeDate.Value; }
             }
 
+            if (filter.VehicleId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.Vehicles.Any(x=> x.Id == filter.VehicleId.Value));
+                }
+                else { Query = (p => p.Vehicles.Any(x => x.Id == filter.VehicleId.Value)); }
+            }
+
             if (filter.VehicleType.HasValue)
             {
                 if (Query != null)
@@ -661,17 +670,26 @@ namespace Application.Services
         } 
         
 
-        public async Task<GenericResponse<AdditionalInformationDto>> PostAdditionalInformation(AdditionalInformationRequest additionalInformationRequest)
+        public async Task<GenericResponse<AdditionalInformationDto>> PostAdditionalInformation( AdditionalInformationRequest additionalInformationRequest)
         {
             GenericResponse<AdditionalInformationDto> response = new GenericResponse<AdditionalInformationDto>();
             try
             {
                 var entity = _mapper.Map<AdditionalInformation>(additionalInformationRequest);
+                var existevehicleid = await _unitOfWork.VehicleRepo.Get(v => v.Id == additionalInformationRequest.VehicleId);
+
+                if (existevehicleid == null)
+                {
+                    response.success = false;
+                    response.AddError("No existe vehiculo", $"No existe vehiculo con el id{additionalInformationRequest.VehicleId} solicitado", 2);
+                    return response;
+                }
+                entity.Vehicles.Add(existevehicleid.FirstOrDefault());
                 await _unitOfWork.AdditionalInformatioRepo.Add(entity);
                 await _unitOfWork.SaveChangesAsync();
                 response.success = true;
-                var adddto = _mapper.Map<AdditionalInformationDto>(entity);
-                response.Data = adddto;
+                var authordto = _mapper.Map<AdditionalInformationDto>(entity);
+                response.Data = authordto;
 
                 return response;
             }
