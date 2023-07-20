@@ -1,6 +1,8 @@
 ﻿using Application.Interfaces;
+using Application.Services;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
+using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.User_Approvals;
 using Microsoft.AspNetCore.Authorization;
@@ -52,9 +54,9 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        [Authorize(Roles = "Administrator, AdminUser, Supervisor")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<UserApproval>))]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        //[Authorize(Roles = "Administrator, AdminUser, Supervisor")]
+        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<UserApproval>))]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetById")]
         public async Task<IActionResult> GetApprovalById(int ApprovalId)
@@ -66,9 +68,9 @@ namespace API.Controllers
             return Ok(approval);
         }
 
-        [Authorize(Roles = "Administrator, AdminUser, AppUser, Supervisor")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<UserApproval>))]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        //[Authorize(Roles = "Administrator, AdminUser, AppUser, Supervisor")]
+        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<UserApproval>))]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("Create")]
         public async Task<IActionResult> CreateApproval([FromForm] ApprovalCreationRequest request)
@@ -80,9 +82,9 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
 
-        [Authorize(Roles = "Administrator, AdminUser, Supervisor")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<UserApproval>))]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        //[Authorize(Roles = "Administrator, AdminUser, Supervisor")]
+        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<UserApproval>))]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("Manage")]
         public async Task<IActionResult> ManageApproval([FromBody] ApprovalManagementRequest request)
@@ -103,6 +105,17 @@ namespace API.Controllers
         {
             var result = await _approvalServices.DeleteApproval(ApprovalId);
 
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        //[Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ProfileDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPut]
+        [Route("PutCanDriveInHighway")]
+        public async Task<IActionResult> PutCanDriveInHighway(CanDriveInHighwayUpdateDto CanDriveInHighwayUpdateDto)
+        {
+            var result = await _approvalServices.PutCanDriveInHighway(CanDriveInHighwayUpdateDto);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
     }

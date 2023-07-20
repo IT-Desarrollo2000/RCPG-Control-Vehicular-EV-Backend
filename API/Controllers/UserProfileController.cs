@@ -62,7 +62,7 @@ namespace API.Controllers
             if (result.success) { return Ok(result); } else { return BadRequest(result); };
         }
 
-        [Authorize(Roles = "Administrator, AdminUser")]
+        //[Authorize(Roles = "Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ProfileDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
@@ -74,7 +74,7 @@ namespace API.Controllers
             return Ok(user);
         }
 
-        [Authorize(Roles = "AppUser, Administrator")]
+        //[Authorize(Roles = "AppUser, Administrator")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ProfileDto))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
