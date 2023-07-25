@@ -11,7 +11,7 @@ namespace Application.Interfaces
 {
     public interface IImportExportServices
     {
-        Task<PagedList<PolicyExportDto>> ExportVehiclePolicyData(VehicleExportFilter filter);
+        Task<PagedList<PolicyExportDto>> ExportVehiclePolicyData(PolicyExportFilter filter);
         Task<PagedList<VehicleExportDto>> ExportVehiclesData(VehicleExportFilter filter);
     }
 }

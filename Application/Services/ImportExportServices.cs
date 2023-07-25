@@ -5,6 +5,7 @@ using Domain.CustomEntities;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
 using Domain.Entities.Registered_Cars;
+using Domain.Enums;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -101,7 +102,7 @@ namespace Application.Services
             return pagedData;
         }
 
-        public async Task<PagedList<PolicyExportDto>> ExportVehiclePolicyData(VehicleExportFilter filter)
+        public async Task<PagedList<PolicyExportDto>> ExportVehiclePolicyData(PolicyExportFilter filter)
         {
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
@@ -110,15 +111,7 @@ namespace Application.Services
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
 
-            if (filter.CurrentFuel.HasValue)
-            {
-                if (Query != null)
-                {
-                    Query = Query.And(p => p.CurrentFuel == filter.CurrentFuel.Value);
-                }
-                else { Query = p => p.CurrentFuel == filter.CurrentFuel.Value; }
-            }
-
+            
             if (filter.OwnershipType.HasValue)
             {
                 if (Query != null)
@@ -137,15 +130,7 @@ namespace Application.Services
                 else { Query = p => p.VehicleType == filter.VehicleType.Value; }
             }
 
-            if (filter.FuelType.HasValue)
-            {
-                if (Query != null)
-                {
-                    Query = Query.And(p => p.FuelType == filter.FuelType.Value);
-                }
-                else { Query = p => p.FuelType == filter.FuelType.Value; }
-            }
-
+            
             if (Query != null)
             {
                 Query = Query.And(p => p.Policy != null);
@@ -156,16 +141,36 @@ namespace Application.Services
                 vehicles = await _unitOfWork.VehicleRepo.Get(filter: v => v.Policy != null, includeProperties: properties);
             }
 
-            var dtos = _mapper.Map<List<PolicyExportDto>>(vehicles);
+            var dtos = new List<PolicyExportDto>();
+
+            switch (filter.StopLight)
+            {
+                case LicenceExpStopLight.EXPIRADOS:
+                    vehicles = vehicles.Where(u => u.Policy.ExpirationDate <= DateTime.UtcNow);
+                    break;
+                case LicenceExpStopLight.TRES_MESES:
+                    vehicles = vehicles.Where(u => (u.Policy.ExpirationDate - DateTime.UtcNow).TotalDays <= 90 && (u.Policy.ExpirationDate - DateTime.UtcNow).TotalDays > 0);
+                    break;
+                case LicenceExpStopLight.SEIS_MESES:
+                    vehicles = vehicles.Where(u => (u.Policy.ExpirationDate - DateTime.UtcNow).TotalDays <= 180 && (u.Policy.ExpirationDate - DateTime.UtcNow).TotalDays > 90);
+                    break;
+                case LicenceExpStopLight.DOCE_MESES:
+                    vehicles = vehicles.Where(u => (u.Policy.ExpirationDate - DateTime.UtcNow).TotalDays > 180);
+                    break;
+                default:
+                    break;
+            }
+
+            dtos = _mapper.Map<List<PolicyExportDto>>(vehicles);
 
             var pagedData = PagedList<PolicyExportDto>.Create(dtos, filter.PageNumber, filter.PageSize);
 
             return pagedData;
         }
 
-        //public async Task<GenericResponse<VehicleImportDto>> ImportVehicles()
-        //{
+        /*public async Task<GenericResponse<VehicleImportDto>> ImportVehicles()
+        {
 
-        //}
+        }*/
     }
 }
