@@ -80,7 +80,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("ExportPolicyData")]
-        public async Task<IActionResult> ExportPolicyData([FromQuery] VehicleExportFilter filter)
+        public async Task<IActionResult> ExportPolicyData([FromQuery] PolicyExportFilter filter)
         {
             var exportData = await _importExportServices.ExportVehiclePolicyData(filter);
 
@@ -111,7 +111,7 @@ namespace API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("ExportPolicyDataExcel")]
-        public async Task<IActionResult> ExportPolicyDataExcel([FromQuery] VehicleExportFilter filter)
+        public async Task<IActionResult> ExportPolicyDataExcel([FromQuery] PolicyExportFilter filter)
         {
             try
             {
