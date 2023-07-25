@@ -8,6 +8,8 @@
         public string SurnameP { get; set; }
         public string SurnameM { get; set; }
         public string? ProfileImageUrl { get; set; }
+
+        public bool? CanDriveInHighway { get; set; }
         public DateTime? ProfileImageUploadDate { get; set; }
     }
 }
