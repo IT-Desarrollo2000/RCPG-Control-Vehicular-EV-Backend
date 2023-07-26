@@ -76,7 +76,9 @@ namespace Infrastructure.Mappings
                 .ForMember(v => v.ExpirationDate, o => o.MapFrom(p => p.Policy.ExpirationDate))
                 .ForMember(v => v.NameCompany, o => o.MapFrom(p => p.Policy.NameCompany))
                 .ForMember(v => v.PolicyCostValue, o => o.MapFrom(p => p.Policy.PolicyCostValue));
-
+            CreateMap<Vehicle, VehicleImportExpertRequest>().ReverseMap();
+            CreateMap<VehicleImportExpertRequest, Policy>().ReverseMap();
+            CreateMap<VehicleImportExportDto, Vehicle>().ReverseMap();
             //VehicleService
             CreateMap<VehicleService, VehicleServiceRequest>().ReverseMap();
             CreateMap<VehicleServiceRequest, VehicleServiceDto>().ReverseMap();

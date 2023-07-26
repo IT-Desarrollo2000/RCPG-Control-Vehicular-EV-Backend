@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
+using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
 using Domain.Enums;
 using Microsoft.Extensions.Options;
@@ -168,9 +169,85 @@ namespace Application.Services
             return pagedData;
         }
 
-        /*public async Task<GenericResponse<VehicleImportDto>> ImportVehicles()
+        public async Task<GenericResponse<VehicleImportExportDto>> ImportVehicles(VehicleImportExpertRequest vehicleImportExpertRequest)
         {
 
-        }*/
+            GenericResponse<VehicleImportExportDto> response = new GenericResponse<VehicleImportExportDto>();
+            try
+            {
+                var entity = _mapper.Map<Vehicle>(vehicleImportExpertRequest);
+                entity.FuelCapacity = vehicleImportExpertRequest.FuelCapacity ?? 30;
+                entity.CurrentFuel = vehicleImportExpertRequest.CurrentFuel ?? CurrentFuel.MEDIUM;
+                entity.FuelType = vehicleImportExpertRequest.FuelType ?? FuelType.GASOLINA_REGULAR;
+                entity.ServicePeriodMonths = vehicleImportExpertRequest.ServicePeriodMonths ?? 6;
+                entity.ServicePeriodKM = vehicleImportExpertRequest.ServicePeriodKM ?? 10000;
+                entity.DesiredPerformance = vehicleImportExpertRequest.DesiredPerformance ?? 8;
+
+
+                var propietary = await _unitOfWork.PropietaryRepo.GetById(vehicleImportExpertRequest.PropietaryId);
+                if (propietary == null)
+                {
+                    response.success = false;
+                    response.AddError("Not Found", $"No se encontro el propietario con Id {vehicleImportExpertRequest.PropietaryId}", 2);
+
+                    return response;
+                }
+                entity.Propietary = propietary;
+                
+
+                foreach (var id in vehicleImportExpertRequest.DepartmentsToAssign)
+                {
+                    var department = await _unitOfWork.Departaments.GetById(id);
+                    if (department == null)
+                    {
+                        response.success = false;
+                        response.AddError("Not Found", $"No se encontro el departamento con Id {id}", 3);
+
+                        return response;
+                    }
+                    entity.AssignedDepartments.Add(department);
+                }
+
+                if (!string.IsNullOrEmpty(vehicleImportExpertRequest.PolicyNumber))
+                {
+                    var newpolicy = _mapper.Map<Policy>(vehicleImportExpertRequest);
+                    entity.Policy = newpolicy;
+                }
+
+                Checklist newch = new Checklist
+                {
+                    CirculationCard = true,
+                    CarInsurancePolicy = true,
+                    HydraulicTires = true,
+                    TireRefurmishment = true,
+                    JumperCable = true,
+                    SecurityDice = true,
+                    Extinguisher = true,
+                    CarJack = true,
+                    CarJackKey = true,
+                    ToolBag = true,
+                    SafetyTriangle = true
+
+                };
+                //Generar ID de QR
+                entity.VehicleQRId = System.Guid.NewGuid().ToString();
+                entity.InitialKM = vehicleImportExpertRequest.CurrentKM;
+
+                entity.Checklists.Add(newch);
+                await _unitOfWork.VehicleRepo.Add(entity);
+                await _unitOfWork.SaveChangesAsync();
+                response.success = true;
+                var VehicleDto = _mapper.Map<VehicleImportExportDto>(entity);
+                response.Data = VehicleDto;
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
     }
 }
