@@ -4,6 +4,7 @@ using Application.Services;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
+using Domain.DTOs.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -125,6 +126,17 @@ namespace API.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleImportExportDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPost]
+        [Route("ImportVehicles")]
+        public async Task<IActionResult> ImportVehicles([FromForm] VehicleImportExpertRequest vehicleImportExpertRequest)
+        {
+            var result = await _importExportServices.ImportVehicles(vehicleImportExpertRequest);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
     }
 }
