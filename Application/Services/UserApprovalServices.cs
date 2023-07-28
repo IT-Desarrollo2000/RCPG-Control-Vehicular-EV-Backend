@@ -312,7 +312,7 @@ namespace Application.Services
                     //Modificar el perfil
                     _mapper.Map(result, profile);
                     profile.IsVerified = true;
-                    profile.CanDriveInHighway= true;
+                    profile.CanDriveInHighway = request.CanDriveInHighway;
 
                     //Modificar la solicitud
                     result.ApprovalDate = DateTime.UtcNow;
