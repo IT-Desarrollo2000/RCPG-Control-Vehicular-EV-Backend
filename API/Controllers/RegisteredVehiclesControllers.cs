@@ -248,5 +248,36 @@ namespace API.Controllers
             var result = await _registeredVehiclesServices.GetVehiclesByDepartment(departmentId);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<SpecialVehicleDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetVehicleInfo")]
+        public async Task<IActionResult> GetFilteredVehicles([FromQuery] SpecialVehicleFilter filter)
+        {
+            var vehicles = await _registeredVehiclesServices.GetFilteredVehicles(filter);
+
+            var metadata = new Metadata()
+            {
+                TotalCount = vehicles.TotalCount,
+                PageSize = vehicles.PageSize,
+                CurrentPage = vehicles.CurrentPage,
+                TotalPages = vehicles.TotalPages,
+                HasNextPage = vehicles.HasNextPage,
+                HasPreviousPage = vehicles.HasPreviousPage
+            };
+
+            var response = new GenericResponse<IEnumerable<SpecialVehicleDto>>(vehicles)
+            {
+                Meta = metadata,
+                success = true,
+                Data = vehicles
+            };
+
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
+
+            return Ok(response);
+        }
     }
 }

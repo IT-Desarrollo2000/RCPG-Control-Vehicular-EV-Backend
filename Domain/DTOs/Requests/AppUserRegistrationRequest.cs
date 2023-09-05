@@ -12,6 +12,7 @@ namespace Domain.DTOs.Requests
         public string LastNameM { get; set; }
         public SocialNetworkType RegistrationType { get; set; }
         public string? FirebaseUID { get; set; }
+        
 
         //Para registro de conductores
         public IFormFile DriversLicenceFrontFile { get; set; }

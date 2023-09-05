@@ -10,6 +10,7 @@ using Domain.Entities.Registered_Cars;
 using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System.Drawing.Drawing2D;
 using System.Linq.Expressions;
 using System.Runtime.Intrinsics.X86;
 
@@ -271,6 +272,95 @@ namespace Application.Services
             var dtos = _mapper.Map<IEnumerable<VehiclesDto>>(vehicles);
 
             var result = PagedList<VehiclesDto>.Create(dtos, filter.PageNumber, filter.PageSize);
+
+            return result;
+        }
+
+        public async Task<PagedList<SpecialVehicleDto>> GetFilteredVehicles(SpecialVehicleFilter filter)
+        {
+            filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
+            filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
+
+            string properties = "VehicleImages,AssignedDepartments,AssignedDepartments.Company,Policy,Policy.PhotosOfPolicies,Propietary,VehicleServices,VehicleServices.ServiceUser,VehicleMaintenances,VehicleMaintenances.WorkShop,VehicleMaintenances.ApprovedByUser";
+            IEnumerable<Vehicle> vehicles = null;
+            Expression<Func<Vehicle, bool>> Query = null;
+            var departament = new Departaments();
+
+            if (filter.DepartmentId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.AssignedDepartments.Any(d => d.Id == filter.DepartmentId.Value));
+                }
+                else { Query = p => p.AssignedDepartments.Any(d => d.Id == filter.DepartmentId.Value); }
+            }
+
+            if (filter.PropietaryId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.PropietaryId == filter.PropietaryId.Value);
+                }
+                else { Query = p => p.PropietaryId == filter.PropietaryId.Value; }
+            }
+
+            if (filter.ModelYear.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.ModelYear == filter.ModelYear.Value);
+                }
+                else { Query = p => p.ModelYear == filter.ModelYear.Value; }
+            }
+
+            if (!string.IsNullOrEmpty(filter.VehicleResponsibleName))
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.VehicleResponsibleName.Contains(filter.VehicleResponsibleName));
+                }
+                else { Query = p => p.VehicleResponsibleName.Contains(filter.VehicleResponsibleName); }
+            }
+
+            if (!string.IsNullOrEmpty(filter.Brand))
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.Brand.Contains(filter.Brand));
+                }
+                else { Query = p => p.Brand.Contains(filter.Brand); }
+            }
+
+            if (!string.IsNullOrEmpty(filter.SerialNumber))
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.Serial == filter.SerialNumber);
+                }
+                else { Query = p => p.Serial == filter.SerialNumber; }
+            }
+
+            if (!string.IsNullOrEmpty(filter.ModelName))
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.Name.Contains(filter.ModelName));
+                }
+                else { Query = p => p.Name.Contains(filter.ModelName); }
+            }
+
+            if (Query != null)
+            {
+                vehicles = await _unitOfWork.VehicleRepo.Get(filter: Query, includeProperties: properties);
+            }
+            else
+            {
+                vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: properties);
+            }
+
+            var dtos = _mapper.Map<IEnumerable<SpecialVehicleDto>>(vehicles);
+
+            var result = PagedList<SpecialVehicleDto>.Create(dtos, filter.PageNumber, filter.PageSize);
 
             return result;
         }
