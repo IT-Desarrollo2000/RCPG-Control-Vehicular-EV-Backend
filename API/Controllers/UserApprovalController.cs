@@ -1,6 +1,8 @@
 ﻿using Application.Interfaces;
+using Application.Services;
 using Domain.CustomEntities;
 using Domain.DTOs.Filters;
+using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.User_Approvals;
 using Microsoft.AspNetCore.Authorization;
@@ -103,6 +105,17 @@ namespace API.Controllers
         {
             var result = await _approvalServices.DeleteApproval(ApprovalId);
 
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<ProfileDto>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPut]
+        [Route("PutCanDriveInHighway")]
+        public async Task<IActionResult> PutCanDriveInHighway(CanDriveInHighwayUpdateDto CanDriveInHighwayUpdateDto)
+        {
+            var result = await _approvalServices.PutCanDriveInHighway(CanDriveInHighwayUpdateDto);
             if (result.success) { return Ok(result); } else { return BadRequest(result); }
         }
     }

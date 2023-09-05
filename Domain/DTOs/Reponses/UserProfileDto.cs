@@ -25,6 +25,7 @@ namespace Domain.DTOs.Reponses
 
         //Relacionados al conductor
         public bool IsVerified { get; set; }
+        public bool? CanDriveInHighway { get; set; }
         public string? DriversLicenceFrontUrl { get; set; }
         public string? DriversLicenceBackUrl { get; set; }
         public string? DriversLicenceFrontPath { get; set; }

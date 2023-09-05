@@ -68,6 +68,18 @@ namespace Infrastructure.Mappings
                 .ForMember(s => s.AssignedDepartments, o => o.MapFrom(s => s.AssignedDepartments))
                 .ForMember(s => s.Name, o => o.MapFrom(s => s.NameVehicle)).ReverseMap();
             CreateMap<Vehicle, DepartmentVehicleDtoo>();
+            CreateMap<Vehicle, VehicleExportDto>().ReverseMap();
+            CreateMap<Vehicle, PolicyExportDto>()
+                .ForMember(v => v.VehicleId, o => o.MapFrom(p => p.Id))
+                .ForMember(v => v.PolicyId, o => o.MapFrom(p => p.Policy.Id))
+                .ForMember(v => v.PolicyNumber, o => o.MapFrom(p => p.Policy.PolicyNumber))
+                .ForMember(v => v.ExpirationDate, o => o.MapFrom(p => p.Policy.ExpirationDate))
+                .ForMember(v => v.NameCompany, o => o.MapFrom(p => p.Policy.NameCompany))
+                .ForMember(v => v.PolicyCostValue, o => o.MapFrom(p => p.Policy.PolicyCostValue));
+            CreateMap<Vehicle, VehicleImportExpertRequest>().ReverseMap();
+            CreateMap<VehicleImportExpertRequest, Policy>().ReverseMap();
+            CreateMap<VehicleImportExportDto, Vehicle>().ReverseMap();
+            CreateMap<Vehicle, SpecialVehicleDto>();
 
             //VehicleService
             CreateMap<VehicleService, VehicleServiceRequest>().ReverseMap();
@@ -86,11 +98,19 @@ namespace Infrastructure.Mappings
                 .ForMember(m => m.CurrentKM, o => o.MapFrom(m => m.Vehicle.CurrentKM))
                 .ForMember(m => m.VehicleStatus, o => o.MapFrom(m => m.Vehicle.VehicleStatus))
                 .ForMember(m => m.VehicleDepartments, o => o.MapFrom(m => m.Vehicle.AssignedDepartments));
+            CreateMap<VehicleService, VehicleServiceShortDto>()
+                .ForMember(s => s.ServiceUserName, o => o.MapFrom(s => s.ServiceUser.UserName))
+                .ForMember(s => s.ServiceUserId, o => o.MapFrom(s => s.ServiceUserId));
 
             //Checklist
             CreateMap<Checklist, ChecklistDto>().ReverseMap();
             CreateMap<ChecklistDto, CreationChecklistDto>().ReverseMap();
             CreateMap<Checklist, CreationChecklistDto>().ReverseMap();
+
+            //AdditionalInformation
+            CreateMap<AdditionalInformation, AdditionalInformationDto>().ReverseMap();
+            CreateMap<AdditionalInformationDto, AdditionalInformationRequest>().ReverseMap();
+            CreateMap<AdditionalInformation, AdditionalInformationRequest>().ReverseMap();
 
             //Expenses
             CreateMap<Expenses, ExpensesDto>().ReverseMap();
@@ -126,6 +146,8 @@ namespace Infrastructure.Mappings
             CreateMap<VehicleMaintenance, VehicleMaintenanceDto>()
                 .ForMember(m => m.ApprovedByAdminName, o => o.MapFrom(m => m.ApprovedByUser.UserName));
             CreateMap<Expenses, ExpenseSummary>();
+            CreateMap<VehicleMaintenance, VehicleMaintenanceShortDto>()
+                .ForMember(m => m.ApprovedByAdminName, o => o.MapFrom(m => m.ApprovedByUser.UserName));;
 
             //MaintenanceWorkshops
             CreateMap<VehicleMaintenanceWorkshop, MaintenanceWorkshopRequest>().ReverseMap();
@@ -219,6 +241,8 @@ namespace Infrastructure.Mappings
                 .ForMember(p => p.PolicyNumber, o => o.MapFrom(p => p.PolicyNumber))
                 .ForMember(p => p.PolicyExpirationDate, o => o.MapFrom(p => p.ExpirationDate))
                 .ForMember(p => p.VehicleDepartments, o => o.MapFrom(p => p.Vehicle.AssignedDepartments));
+            CreateMap<Policy, ExportPolicyDto>().ReverseMap();
+
             //Licence
             CreateMap<UserProfile, LicenceExpiredDto>()
                 .ForMember(l => l.UserProfileId, o => o.MapFrom(l => l.Id))

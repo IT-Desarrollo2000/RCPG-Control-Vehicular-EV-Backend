@@ -9,6 +9,7 @@ using Domain.Entities.Departament;
 using Domain.Entities.User_Approvals;
 using Microsoft.Extensions.Options;
 using System.Linq.Expressions;
+using Domain.DTOs.Reponses;
 
 namespace Application.Services
 {
@@ -311,6 +312,7 @@ namespace Application.Services
                     //Modificar el perfil
                     _mapper.Map(result, profile);
                     profile.IsVerified = true;
+                    profile.CanDriveInHighway = request.CanDriveInHighway;
 
                     //Modificar la solicitud
                     result.ApprovalDate = DateTime.UtcNow;
@@ -390,5 +392,32 @@ namespace Application.Services
             }
         }
 
+        public async Task<GenericResponse<ProfileDto>> PutCanDriveInHighway(CanDriveInHighwayUpdateDto CanDriveInHighwayUpdateDto)
+        {
+
+            GenericResponse<ProfileDto> response = new GenericResponse<ProfileDto>();
+            try
+            {
+                var result = await _unitOfWork.UserProfileRepo.Get(r => r.Id == CanDriveInHighwayUpdateDto.ProfileId);
+                var check = result.FirstOrDefault();
+                if (check == null) return null;
+
+                check.CanDriveInHighway = CanDriveInHighwayUpdateDto.CanDriveInHighway ?? CanDriveInHighwayUpdateDto.CanDriveInHighway;
+
+
+                await _unitOfWork.UserProfileRepo.Update(check);
+                await _unitOfWork.SaveChangesAsync();
+                var map = _mapper.Map<ProfileDto>(check);
+                response.success = true;
+                response.Data = map;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
     }
 }

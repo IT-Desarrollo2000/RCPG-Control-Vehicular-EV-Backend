@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230703184649_nullablePropietary")]
+    partial class nullablePropietary
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -321,9 +324,6 @@ namespace Infrastructure.Persistence.Data
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool?>("CanDriveInHighway")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -435,217 +435,6 @@ namespace Infrastructure.Persistence.Data
                     b.HasKey("Id");
 
                     b.ToTable("Propietaries");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.AdditionalInformation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("AdjustableSeat")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("AluminiumWheel")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("AndroidInch9")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("AntiGlareInsideRearViewMirror")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("AutoInductionHeadlamp")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("AutoStart")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("AutomaticSteeringWheelReturn")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Battery")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("BatteryCapacity")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("BluetoothTelephone")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("BrakeBooster")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("BrakeSystem")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("BrakingDistance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("CentralControlSystem")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ChargeTime")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("ColorfulAmbientLamp")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("CopilotHandle")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CrusingRangeWithUsingAC")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("DigitalReversingRader")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("EPS")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("ElectricDoorsWindows")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("FailureIndicationOfDrivingSystem")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("FoldableRearViewMirror")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("FrameType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FrontSuspension")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("FullAutomaticAC")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Heater")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("HighMountedBrakeLamp")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("InermittentWindshieldWiper")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Instrument")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IntelligentChargingSystem")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IntelligentProtectionOfController")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IntelligentVehicleNavigation")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LEDDigitalInstrument")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LEDHeadlamp")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LEDTailight")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LWH")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Loudspeaker")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("MaxCruisingRange")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("MaxSpeed")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("MinTurningRadius")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Models")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MotorType")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("OperatingCruisingRange")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("Passenger")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PowerConsumption")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PowerInterFace12V")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PowerOutputMode")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("PreventSlipping")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("RadioMP3")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal?>("RatedPower")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("ReadingLamp")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("RearSuspension")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("RearViewCamera")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("RotationsOfSteeringWheel")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("SafetyBelt3Point")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("SeatBletWarning")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SpeedRatioOrReducer")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("SystemVoltage")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("UnladdenMass")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("VehicleType")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WheelBase")
-                        .HasColumnType("int");
-
-                    b.Property<string>("WheelSize")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WheelTrack")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AdditionalInformation");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Checklist", b =>
@@ -1105,9 +894,6 @@ namespace Infrastructure.Persistence.Data
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AdditionalInformationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Brand")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1204,8 +990,6 @@ namespace Infrastructure.Persistence.Data
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AdditionalInformationId");
 
                     b.HasIndex("PropietaryId");
 
@@ -2032,17 +1816,10 @@ namespace Infrastructure.Persistence.Data
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Vehicle", b =>
                 {
-                    b.HasOne("Domain.Entities.Registered_Cars.AdditionalInformation", "AdditionalInformation")
-                        .WithMany("Vehicles")
-                        .HasForeignKey("AdditionalInformationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Domain.Entities.Propietary.Propietary", "Propietary")
                         .WithMany("Vehicles")
                         .HasForeignKey("PropietaryId")
                         .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("AdditionalInformation");
 
                     b.Navigation("Propietary");
                 });
@@ -2326,11 +2103,6 @@ namespace Infrastructure.Persistence.Data
                 });
 
             modelBuilder.Entity("Domain.Entities.Propietary.Propietary", b =>
-                {
-                    b.Navigation("Vehicles");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Registered_Cars.AdditionalInformation", b =>
                 {
                     b.Navigation("Vehicles");
                 });

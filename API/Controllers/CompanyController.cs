@@ -23,10 +23,10 @@ namespace API.Controllers
 
         //GETALL
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(CompanyDto))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
-        public async Task<ActionResult<List<CompanyDto>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
             var users = await _companyServices.GetCompanyAll();
             if (users.success)
@@ -42,10 +42,11 @@ namespace API.Controllers
 
         //GETBYID
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(CompanyDto))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [HttpGet("{id:int}", Name = "obtenerGenero")]
-        public async Task<ActionResult<CompanyDto>> Get(int id)
+        [Route("GetById")]
+        [HttpGet]
+        public async Task<IActionResult> Get(int id)
         {
             var entidad = await _companyServices.GetCompanyById(id);
 

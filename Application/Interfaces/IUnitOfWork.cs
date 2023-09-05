@@ -35,6 +35,7 @@ namespace Application.Interfaces
         IRepository<PhotosOfPolicy> PhotosOfPolicyRepo { get; }
         IRepository<PhotosOfCirculationCard> PhotosOfCirculationCardRepo { get; }
         IRepository<Propietary> PropietaryRepo { get; }
+        IRepository<AdditionalInformation> AdditionalInformatioRepo { get; }
 
         void Dispose();
         void SaveChanges();
