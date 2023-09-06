@@ -1,4 +1,5 @@
 using Domain.Entities.Departament;
+using Domain.Entities.Municipality;
 using Domain.Entities.Registered_Cars;
 using Domain.Enums;
 
@@ -51,6 +52,11 @@ namespace Domain.DTOs.Reponses
         public string? InvoiceNumber { get; set; }
         public int? PropietaryId { get; set; }
         public PropietaryDto? Propietary { get; set; }
+        public int? MunicipalityId { get; set; }
+        public virtual Municipalities? Municipalities { get; set; }
+        public decimal? SubTotal { get; set; }
+        public decimal? IVA { get; set; }
+        public decimal? Total { get; set; }
     }
 
 }

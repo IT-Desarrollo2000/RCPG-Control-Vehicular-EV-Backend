@@ -56,6 +56,12 @@ namespace Domain.DTOs.Requests
         public string? MotorSerialNumber { get; set; }
         public string? InvoiceNumber { get; set; }
         public int? PropietaryId { get; set; }
+        public int? MunicipalityId { get; set; }
+        public decimal? SubTotal { get; set; }
+        public decimal? IVA { get; set; }
+        public decimal? Total { get; set; }
+        public bool? ResponsiveLetter { get; set; }
+        public bool? DuplicateKey { get; set; }
 
     }
 

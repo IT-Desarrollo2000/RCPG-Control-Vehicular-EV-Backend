@@ -60,6 +60,15 @@ namespace Infrastructure.Persistence.Configurations
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(a => a.Municipalities)
+                   .WithMany(v => v.Vehicles)
+                   .HasForeignKey(a => a.MunicipalityId)
+                   .IsRequired(false)
+                   .OnDelete (DeleteBehavior.Restrict);
+
+            builder.Property( v => v.SubTotal).HasColumnType("decimal(18,2)");
+            builder.Property( v => v.IVA).HasColumnType("decimal(18,2)");
+            builder.Property( v => v.Total).HasColumnType("decimal(18,2)");
         }
     }
 }

@@ -1,5 +1,7 @@
 using Domain.Entities.Departament;
+using Domain.Entities.Municipality;
 using Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities.Registered_Cars
 {
@@ -49,7 +51,13 @@ namespace Domain.Entities.Registered_Cars
         public string? InvoiceNumber { get; set; }
         public int? PropietaryId { get; set; }
         public virtual Propietary.Propietary Propietary { get; set; }
-        
+        public int? MunicipalityId { get; set; }
+        public virtual Municipalities? Municipalities { get; set; }
+        public decimal? SubTotal { get; set; }
+        public decimal? IVA { get; set; }
+        public decimal? Total { get; set; }
+        public bool? ResponsiveLetter { get; set; }
+        public bool? DuplicateKey { get; set; }
         public virtual ICollection<Policy> Policies { get; set; }
         public virtual ICollection<Departaments> AssignedDepartments { get; set; }
         public virtual ICollection<VehicleImage> VehicleImages { get; set; }
@@ -60,6 +68,6 @@ namespace Domain.Entities.Registered_Cars
         public virtual ICollection<VehicleReport> VehicleReports { get; set; }
         public virtual ICollection<VehicleReportUse> VehicleReportsUses { get; set; }
         public virtual ICollection<PhotosOfCirculationCard> PhotosOfCirculationCards { get; set; }
-       
+
     }
 }
