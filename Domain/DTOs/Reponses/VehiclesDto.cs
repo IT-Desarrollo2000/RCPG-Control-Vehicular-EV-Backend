@@ -57,6 +57,8 @@ namespace Domain.DTOs.Reponses
         public decimal? SubTotal { get; set; }
         public decimal? IVA { get; set; }
         public decimal? Total { get; set; }
+        public bool? ResponsiveLetter { get; set; }
+        public bool? DuplicateKey { get; set; }
     }
 
 }
