@@ -82,11 +82,11 @@ namespace Application.Services
 
             if (Query != null)
             {
-                vehicles = await _unitOfWork.VehicleRepo.Get(filter: Query, includeProperties: properties);
+                vehicles = await _unitOfWork.VehicleRepo.Get(filter: Query, includeProperties: properties, orderBy: v => v.OrderBy(x => x.ModelYear));
             }
             else
             {
-                vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: properties);
+                vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: properties, orderBy: v => v.OrderBy(x => x.ModelYear));
             }
 
             var dtos = _mapper.Map<List<VehicleExportDto>>(vehicles);
