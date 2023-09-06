@@ -91,12 +91,12 @@ namespace Application.Services
 
             var dtos = _mapper.Map<List<VehicleExportDto>>(vehicles);
 
-            foreach (var dto in dtos)
+            /*foreach (var dto in dtos)
             {
                 var lastCheckListQ = await _unitOfWork.ChecklistRepo.Get(c => c.VehicleId == dto.Id);
                 var lastCheckList = lastCheckListQ.LastOrDefault();
                 dto.Checklist = _mapper.Map<ChecklistDto>(lastCheckList);
-            }
+            }*/
 
             var pagedData = PagedList<VehicleExportDto>.Create(dtos, filter.PageNumber, filter.PageSize);
 

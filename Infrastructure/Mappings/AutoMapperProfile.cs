@@ -68,7 +68,18 @@ namespace Infrastructure.Mappings
                 .ForMember(s => s.AssignedDepartments, o => o.MapFrom(s => s.AssignedDepartments))
                 .ForMember(s => s.Name, o => o.MapFrom(s => s.NameVehicle)).ReverseMap();
             CreateMap<Vehicle, DepartmentVehicleDtoo>();
-            CreateMap<Vehicle, VehicleExportDto>().ReverseMap();
+            CreateMap<Vehicle, SpecialVehicleDto>();
+
+            //Import Export
+            CreateMap<Vehicle, VehicleImportExpertRequest>().ReverseMap();
+            CreateMap<VehicleImportExpertRequest, Policy>().ReverseMap();
+            CreateMap<VehicleImportExportDto, Vehicle>().ReverseMap();
+            CreateMap<Vehicle, VehicleExportDto>()
+                .ForMember(v => v.PropietaryName, opt => opt.MapFrom(p => p.Propietary.DisplayName))
+                .ForMember(v => v.CurrentPolicy, opt => opt.MapFrom(p => p.Policy.PolicyNumber))
+                .ForMember(v => v.ExpirationDate, opt => opt.MapFrom(p => p.Policy.ExpirationDate))
+                .ForMember(v => v.NameCompany, opt => opt.MapFrom(p => p.Policy.NameCompany))
+                .ForMember(v => v.PolicyCostValue, opt => opt.MapFrom(p => p.Policy.PolicyCostValue));
             CreateMap<Vehicle, PolicyExportDto>()
                 .ForMember(v => v.VehicleId, o => o.MapFrom(p => p.Id))
                 .ForMember(v => v.PolicyId, o => o.MapFrom(p => p.Policy.Id))
@@ -76,10 +87,6 @@ namespace Infrastructure.Mappings
                 .ForMember(v => v.ExpirationDate, o => o.MapFrom(p => p.Policy.ExpirationDate))
                 .ForMember(v => v.NameCompany, o => o.MapFrom(p => p.Policy.NameCompany))
                 .ForMember(v => v.PolicyCostValue, o => o.MapFrom(p => p.Policy.PolicyCostValue));
-            CreateMap<Vehicle, VehicleImportExpertRequest>().ReverseMap();
-            CreateMap<VehicleImportExpertRequest, Policy>().ReverseMap();
-            CreateMap<VehicleImportExportDto, Vehicle>().ReverseMap();
-            CreateMap<Vehicle, SpecialVehicleDto>();
 
             //VehicleService
             CreateMap<VehicleService, VehicleServiceRequest>().ReverseMap();
