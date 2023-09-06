@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20230906152212_Vehicle-Municipality")]
+    partial class VehicleMunicipality
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1182,9 +1185,6 @@ namespace Infrastructure.Persistence.Data
                     b.Property<decimal>("DesiredPerformance")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<bool?>("DuplicateKey")
-                        .HasColumnType("bit");
-
                     b.Property<int>("FuelCapacity")
                         .HasColumnType("int");
 
@@ -1233,9 +1233,6 @@ namespace Infrastructure.Persistence.Data
 
                     b.Property<int?>("PropietaryId")
                         .HasColumnType("int");
-
-                    b.Property<bool?>("ResponsiveLetter")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Serial")
                         .IsRequired()

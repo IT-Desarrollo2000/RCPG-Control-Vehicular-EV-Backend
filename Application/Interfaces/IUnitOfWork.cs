@@ -1,9 +1,12 @@
 ﻿using Domain.Entities.Company;
+using Domain.Entities.Country;
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
+using Domain.Entities.Municipality;
 using Domain.Entities.Profiles;
 using Domain.Entities.Propietary;
 using Domain.Entities.Registered_Cars;
+using Domain.Entities.State;
 using Domain.Entities.User_Approvals;
 
 namespace Application.Interfaces
@@ -34,8 +37,11 @@ namespace Application.Interfaces
         IRepository<MaintenanceProgressImages> MaintenanceProgressImageRepot { get; }
         IRepository<PhotosOfPolicy> PhotosOfPolicyRepo { get; }
         IRepository<PhotosOfCirculationCard> PhotosOfCirculationCardRepo { get; }
-        IRepository<Propietary> PropietaryRepo { get; }
+        IRepository<Countries> CountriesRepo { get; }
+        IRepository<States> StatesRepo { get; }
+        IRepository<Municipalities> Municipalities { get; }
         IRepository<AdditionalInformation> AdditionalInformatioRepo { get; }
+        IRepository<Propietary> PropietaryRepo { get; }
 
         void Dispose();
         void SaveChanges();

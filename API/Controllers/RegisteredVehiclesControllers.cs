@@ -23,7 +23,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(PagedList<VehiclesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("")]
@@ -54,7 +54,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetVehicleById/{id}")]
@@ -66,7 +66,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetByQR/{QRId}")]
@@ -77,7 +77,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("AddVehicles")]
@@ -88,7 +88,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PerformanceDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("Performance")]
@@ -100,7 +100,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PerformanceDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("PerformanceList")]
@@ -112,7 +112,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<Vehicle>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("PutVehicles")]
@@ -139,7 +139,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehicleImageDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("Vehicle/{vehicleId:int}/AddImage")]
@@ -167,7 +167,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("MarkAsInactive")]
@@ -178,7 +178,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("MarkAsSaved")]
@@ -189,7 +189,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPut]
         [Route("Reactivate")]
@@ -200,7 +200,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser, AppUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<VehiclesDto>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("Maintenances/{VehicleId:int}")]
@@ -211,7 +211,7 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<PhotosOfCirculationCard>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpPost]
         [Route("Vehicle/{vehicleId:int}/AddCirculationCardImage")]
@@ -239,7 +239,7 @@ namespace API.Controllers
         }
         
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<List<VehiclesDto>>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpGet]
         [Route("GetDepartmentVehicles")]

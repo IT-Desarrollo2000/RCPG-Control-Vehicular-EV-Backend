@@ -1,10 +1,13 @@
 using Application.Interfaces;
 using Domain.Entities.Company;
+using Domain.Entities.Country;
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
+using Domain.Entities.Municipality;
 using Domain.Entities.Profiles;
 using Domain.Entities.Propietary;
 using Domain.Entities.Registered_Cars;
+using Domain.Entities.State;
 using Domain.Entities.User_Approvals;
 using Infrastructure.Persistence;
 
@@ -39,6 +42,9 @@ namespace Infrastructure.Repositories
         private readonly IRepository<PhotosOfCirculationCard> _PhotosOfCirculationCardRepo;
         private readonly IRepository<Propietary> _propietaryRepo;
         private readonly IRepository<AdditionalInformation> _AdditionalInformationRepo;
+        private readonly IRepository<Countries> _CountriesRepo;
+        private readonly IRepository<States> _StatesRepo;
+        private readonly IRepository<Municipalities> _MunicipalitiesRepo; 
 
         public UnitOfWork(CVContext context)
         {
@@ -72,6 +78,9 @@ namespace Infrastructure.Repositories
         public IRepository<PhotosOfCirculationCard> PhotosOfCirculationCardRepo => _PhotosOfCirculationCardRepo ?? new BaseRepository<PhotosOfCirculationCard>(_context);
         public IRepository<Propietary> PropietaryRepo => _propietaryRepo ?? new BaseRepository<Propietary>(_context);
         public IRepository<AdditionalInformation> AdditionalInformatioRepo => _AdditionalInformationRepo ?? new BaseRepository<AdditionalInformation>(_context);
+        public IRepository<Countries> CountriesRepo => _CountriesRepo ?? new BaseRepository<Countries>(_context);
+        public IRepository<States> StatesRepo => _StatesRepo ?? new BaseRepository<States>(_context);
+        public IRepository<Municipalities> Municipalities => _MunicipalitiesRepo ?? new BaseRepository<Municipalities>(_context);
 
         //FUNCIONES DEL SERVICIO
         public void Dispose()

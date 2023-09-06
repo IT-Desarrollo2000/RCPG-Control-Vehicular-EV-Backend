@@ -812,6 +812,12 @@ namespace Application.Services
 
                 veh.FuelCardNumber = request.FuelCardNumber ?? veh.FuelCardNumber;
                 veh.VehicleResponsibleName = request.VehicleResponsibleName ?? veh.VehicleResponsibleName;
+                veh.MunicipalityId = request.MunicipalityId ?? veh.MunicipalityId;
+                veh.SubTotal = request.SubTotal ?? veh.SubTotal;
+                veh.IVA = request.IVA ?? veh.IVA;
+                veh.Total = request.Total ?? veh.Total;
+                veh.ResponsiveLetter = request.ResponsiveLetter ?? veh.ResponsiveLetter;
+                veh.DuplicateKey = request.DuplicateKey ?? veh.DuplicateKey;   
 
                 await _unitOfWork.VehicleRepo.Update(veh);
                 await _unitOfWork.SaveChangesAsync();

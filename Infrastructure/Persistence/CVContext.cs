@@ -1,14 +1,18 @@
 using Domain.Entities.Company;
+using Domain.Entities.Country;
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
+using Domain.Entities.Municipality;
 using Domain.Entities.Profiles;
 using Domain.Entities.Propietary;
 using Domain.Entities.Registered_Cars;
+using Domain.Entities.State;
 using Domain.Entities.User_Approvals;
 using Infrastructure.Persistence.Configurations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Ess;
 
 namespace Infrastructure.Persistence
 {
@@ -72,6 +76,17 @@ namespace Infrastructure.Persistence
         //Propietary
         public virtual DbSet<Propietary> Propietaries { get; set; }
 
+        //Country
+        public virtual DbSet<Countries> Countries { get; set; }
+
+        //State
+        public virtual DbSet<States> States { get; set; }
+
+        //Municipality
+        public virtual DbSet<Municipalities> Municipalities { get; set; }
+
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -95,6 +110,8 @@ namespace Infrastructure.Persistence
             builder.ApplyConfiguration(new MaintenanceProgressConfiguration());
             builder.ApplyConfiguration(new ProgressImagesConfig());
             builder.ApplyConfiguration(new AdditionalInformationConfiguration());
+            builder.ApplyConfiguration(new CountryConfiguration());
+            builder.ApplyConfiguration(new StateConfiguration());
         }
     }
 }
