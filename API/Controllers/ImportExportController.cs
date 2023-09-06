@@ -65,6 +65,10 @@ namespace API.Controllers
             try
             {
                 var exportData = await _importExportServices.ExportVehiclesData(filter);
+                if(exportData.Count() == 0 || exportData == null)
+                {
+                    return NotFound("No hay información para mostrar");
+                }
 
                 byte[] fileContents = ExcelExporter.ExportToExcel(exportData);
 
@@ -117,7 +121,10 @@ namespace API.Controllers
             try
             {
                 var exportData = await _importExportServices.ExportVehiclePolicyData(filter);
-
+                if (exportData.Count() == 0 || exportData == null)
+                {
+                    return NotFound("No hay información para mostrar");
+                }
                 byte[] fileContents = ExcelExporter.ExportToExcel(exportData);
 
                 return File(fileContents, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "RCPG_VEHICULAR_POLICY_EXPORT.xlsx");
