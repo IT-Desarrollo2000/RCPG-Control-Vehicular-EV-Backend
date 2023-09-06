@@ -38,7 +38,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies,Policies,Propietary";
+            string properties = "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies,Policies,Propietary,Municipalities";
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
             var departament = new Departaments();
@@ -203,6 +203,15 @@ namespace Application.Services
                     Query = Query.And(p => p.PropietaryId == filter.PropietaryId.Value);
                 }
                 else { Query = p => p.PropietaryId == filter.PropietaryId.Value; }
+            }
+
+            if (filter.MunicipalityId.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.MunicipalityId == filter.MunicipalityId.Value);
+                }
+                else { Query = p => p.MunicipalityId == filter.MunicipalityId.Value; }
             }
 
             if (filter.IsClean.HasValue)
@@ -493,7 +502,7 @@ namespace Application.Services
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
             try
             {
-                var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.VehicleQRId == qrId, includeProperties: "Policies,VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,PhotosOfCirculationCards,Policy.PhotosOfPolicies");
+                var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.VehicleQRId == qrId, includeProperties: "Policies,VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,PhotosOfCirculationCards,Policy.PhotosOfPolicies,Municipalities");
                 var veh = entity.FirstOrDefault();
 
                 if(veh == null)
@@ -520,7 +529,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehiclesDto>> GetVehicleById(int id)
         {
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
-            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies,Propietary");
+            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies,Propietary,Municipalities");
 
             var veh = entity.FirstOrDefault();
 

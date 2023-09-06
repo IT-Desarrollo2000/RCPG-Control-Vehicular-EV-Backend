@@ -25,6 +25,7 @@ namespace Domain.DTOs.Filters
         public string? FuelCardNumber { get; set; }
         public string? InvoiceNumber { get; set; }
         public int? PropietaryId { get; set; }
+        public int? MunicipalityId { get; set; }
         public decimal? MinDesiredPerformance { get; set; }
         public decimal? MaxDesiredPerformance { get; set; }
         public DateTime? CreatedBefore { get; set; } 
