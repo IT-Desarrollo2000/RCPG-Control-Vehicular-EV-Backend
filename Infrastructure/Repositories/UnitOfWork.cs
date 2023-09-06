@@ -80,7 +80,7 @@ namespace Infrastructure.Repositories
         public IRepository<AdditionalInformation> AdditionalInformatioRepo => _AdditionalInformationRepo ?? new BaseRepository<AdditionalInformation>(_context);
         public IRepository<Countries> CountriesRepo => _CountriesRepo ?? new BaseRepository<Countries>(_context);
         public IRepository<States> StatesRepo => _StatesRepo ?? new BaseRepository<States>(_context);
-        public IRepository<Municipalities> Municipalities => _MunicipalitiesRepo ?? new BaseRepository<Municipalities>(_context);
+        public IRepository<Municipalities> MunicipalitiesRepo => _MunicipalitiesRepo ?? new BaseRepository<Municipalities>(_context);
 
         //FUNCIONES DEL SERVICIO
         public void Dispose()

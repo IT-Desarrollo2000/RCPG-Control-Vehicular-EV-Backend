@@ -41,7 +41,7 @@ namespace Application.Interfaces
         IRepository<AdditionalInformation> AdditionalInformatioRepo { get; }
         IRepository<Countries> CountriesRepo { get; }
         IRepository<States> StatesRepo { get; }
-        IRepository<Municipalities> Municipalities { get; }
+        IRepository<Municipalities> MunicipalitiesRepo { get; }
 
         void Dispose();
         void SaveChanges();

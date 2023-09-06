@@ -117,7 +117,7 @@ namespace Application.Services
                     }
                 }
 
-                var municipalities = await _unitOfWork.Municipalities.Get(m => m.Vehicles.Any(v => v.Id == dto.Id), includeProperties: "Vehicles,States");
+                var municipalities = await _unitOfWork.MunicipalitiesRepo.Get(m => m.Vehicles.Any(v => v.Id == dto.Id), includeProperties: "Vehicles,States");
                 var municipality = municipalities.LastOrDefault();
                 if (municipality != null)
                 {
