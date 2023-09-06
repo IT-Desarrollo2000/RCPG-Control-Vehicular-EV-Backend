@@ -214,6 +214,24 @@ namespace Application.Services
                 else { Query = p => p.MunicipalityId == filter.MunicipalityId.Value; }
             }
 
+            if (filter.ResponsiveLetter.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.ResponsiveLetter == filter.ResponsiveLetter.Value);
+                }
+                else { Query = p => p.ResponsiveLetter == filter.ResponsiveLetter.Value; }
+            }
+
+            if (filter.DuplicateKey.HasValue)
+            {
+                if (Query != null)
+                {
+                    Query = Query.And(p => p.DuplicateKey == filter.DuplicateKey.Value);
+                }
+                else { Query = p => p.DuplicateKey == filter.DuplicateKey.Value; }
+            }
+
             if (filter.IsClean.HasValue)
             {
                 if (Query != null)
