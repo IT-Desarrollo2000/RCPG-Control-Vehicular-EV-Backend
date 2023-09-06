@@ -37,11 +37,11 @@ namespace Application.Interfaces
         IRepository<MaintenanceProgressImages> MaintenanceProgressImageRepot { get; }
         IRepository<PhotosOfPolicy> PhotosOfPolicyRepo { get; }
         IRepository<PhotosOfCirculationCard> PhotosOfCirculationCardRepo { get; }
+        IRepository<Propietary> PropietaryRepo { get; }
+        IRepository<AdditionalInformation> AdditionalInformatioRepo { get; }
         IRepository<Countries> CountriesRepo { get; }
         IRepository<States> StatesRepo { get; }
         IRepository<Municipalities> Municipalities { get; }
-        IRepository<AdditionalInformation> AdditionalInformatioRepo { get; }
-        IRepository<Propietary> PropietaryRepo { get; }
 
         void Dispose();
         void SaveChanges();

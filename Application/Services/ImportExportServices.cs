@@ -40,7 +40,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "Policy,Propietary,VehicleImages,Checklists,AssignedDepartments,PhotosOfCirculationCards";
+            string properties = "Policy,Propietary,AssignedDepartments,Municipalities";
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
 
@@ -91,12 +91,39 @@ namespace Application.Services
 
             var dtos = _mapper.Map<List<VehicleExportDto>>(vehicles);
 
-            /*foreach (var dto in dtos)
+            foreach (var dto in dtos)
             {
-                var lastCheckListQ = await _unitOfWork.ChecklistRepo.Get(c => c.VehicleId == dto.Id);
-                var lastCheckList = lastCheckListQ.LastOrDefault();
-                dto.Checklist = _mapper.Map<ChecklistDto>(lastCheckList);
-            }*/
+                //Agregar ultima fecha de servicio
+                var lastServiceDate = await _unitOfWork.VehicleServiceRepo.Get(x => x.VehicleId == dto.Id);
+                if(lastServiceDate.Count() > 0 && lastServiceDate.LastOrDefault().CreatedDate.HasValue)
+                {
+                    dto.LastServiceDate = DateOnly.FromDateTime(lastServiceDate.LastOrDefault().CreatedDate.Value);
+                }
+                
+                var nextServiceDate = await _unitOfWork.VehicleServiceRepo.Get(x => x.VehicleId == dto.Id);
+                
+                if (lastServiceDate.Count() > 0 && lastServiceDate.LastOrDefault().NextService.HasValue)
+                {
+                    dto.NextServiceDate = DateOnly.FromDateTime(lastServiceDate.LastOrDefault().NextService.Value);
+                }
+
+                //Agregar departamentos
+                var deparments = await _unitOfWork.Departaments.Get(x => x.AssignedVehicles.Any(x => x.Id == dto.Id), includeProperties: "Company");
+                if(deparments != null)
+                {
+                    foreach(var department in deparments)
+                    {
+                        dto.Departments += $"{department.Company.Name} - {department.Name},";
+                    }
+                }
+
+                var municipalities = await _unitOfWork.Municipalities.Get(m => m.Vehicles.Any(v => v.Id == dto.Id), includeProperties: "Vehicles,States");
+                var municipality = municipalities.LastOrDefault();
+                if (municipality != null)
+                {
+                    dto.Location = $"{municipality.Name}, {municipality.States.Name}";
+                }
+            }
 
             var pagedData = PagedList<VehicleExportDto>.Create(dtos, filter.PageNumber, filter.PageSize);
 

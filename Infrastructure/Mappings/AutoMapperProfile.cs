@@ -76,8 +76,9 @@ namespace Infrastructure.Mappings
             CreateMap<VehicleImportExportDto, Vehicle>().ReverseMap();
             CreateMap<Vehicle, VehicleExportDto>()
                 .ForMember(v => v.PropietaryName, opt => opt.MapFrom(p => p.Propietary.DisplayName))
+                .ForMember(v => v.OwnersName, opt => opt.MapFrom(p => p.Propietary.CompanyName))
                 .ForMember(v => v.CurrentPolicy, opt => opt.MapFrom(p => p.Policy.PolicyNumber))
-                .ForMember(v => v.ExpirationDate, opt => opt.MapFrom(p => p.Policy.ExpirationDate))
+                .ForMember(v => v.ExpirationDate, opt => opt.MapFrom(p => DateOnly.FromDateTime(p.Policy.ExpirationDate)))
                 .ForMember(v => v.NameCompany, opt => opt.MapFrom(p => p.Policy.NameCompany))
                 .ForMember(v => v.PolicyCostValue, opt => opt.MapFrom(p => p.Policy.PolicyCostValue));
             CreateMap<Vehicle, PolicyExportDto>()

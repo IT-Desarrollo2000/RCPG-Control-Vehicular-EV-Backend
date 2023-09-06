@@ -65,7 +65,6 @@ namespace API.Controllers
             try
             {
                 var exportData = await _importExportServices.ExportVehiclesData(filter);
-
                 byte[] fileContents = ExcelExporter.ExportToExcel(exportData);
 
                 return File(fileContents, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "RCPG_VEHICULAR_VEHICLE_EXPORT.xlsx");

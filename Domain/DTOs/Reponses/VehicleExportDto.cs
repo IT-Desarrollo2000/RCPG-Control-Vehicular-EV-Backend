@@ -16,7 +16,7 @@ namespace Domain.DTOs.Reponses
     {
         public VehicleExportDto() 
         { 
-            AssignedDepartments = new List<ShortDepartmentDto>();
+
         }
         [DisplayName("N° VEHICULO")]
         public int Id { get; set; }
@@ -52,10 +52,12 @@ namespace Domain.DTOs.Reponses
         public OwnershipType OwnershipType { get; set; }
         [DisplayName("NOMBRE DEL PROPIETARIO")]
         public string? OwnersName { get; set; }
+        [DisplayName("PROPIETARIO LEGAL")]
+        public string? PropietaryName { get; set; }
         [DisplayName("RESPONSABLE DEL VEHÍCULO")]
         public string? VehicleResponsibleName { get; set; }
-        [DisplayName("DEPARTAMENTO ASIGNADO")]
-        public List<ShortDepartmentDto> AssignedDepartments { get; set; }
+        [DisplayName("DEPARTAMENTOS ASIGNADO")]
+        public string? Departments { get; set; }
         [DisplayName("UBICACIÓN")]
         public string? Location { get; set; }
         [DisplayName("CARTA RESPONSIVA")]
@@ -65,21 +67,24 @@ namespace Domain.DTOs.Reponses
         [DisplayName("PÓLIZA ACTUAL")]
         public string? CurrentPolicy { get; set; }
         [DisplayName("FECHA DE VENCIMIENTO DE PÓLIZA ACTUAL")]
-        public DateTime ExpirationDate { get; set; }
-        [DisplayName("COSTO DE PÓLIZA ACTUAL")]
-        public decimal? PolicyCostValue { get; set; }
+        public DateOnly? ExpirationDate { get; set; }
         [DisplayName("ASEGURADORA ACTUAL")]
         public string NameCompany { get; set; }
+        [DisplayName("COSTO DE PÓLIZA ACTUAL")]
+        public decimal? PolicyCostValue { get; set; }
+        [DisplayName("FECHA ULTIMO SERVICIO")]
+        public DateOnly? LastServiceDate { get; set; }
+        [DisplayName("FECHA PROXIMO SERVICIO")]
+        public DateOnly? NextServiceDate { get; set; }
         [DisplayName("SUBTOTAL")]
-        public decimal? Subtotal { get; set; }
+        public decimal? SubTotal { get; set; }
         [DisplayName("IVA")]
         public decimal? IVA { get; set; }
         [DisplayName("TOTAL")]
         public decimal? Total { get; set; }
         [DisplayName("NÚMERO DE FACTURA")]
         public string? InvoiceNumber { get; set; }
-        [DisplayName("PROPIETARIO LEGAL")]
-        public string? PropietaryName { get; set; }
+        
         [DisplayName("OBSERVACIONES")]
         public string? VehicleObservation { get; set; }
         [DisplayName("ES UTILITARIO")]
