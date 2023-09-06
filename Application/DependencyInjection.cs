@@ -36,6 +36,9 @@ namespace Application
             services.AddTransient<IPropietaryServices, PropietaryServices>();
             services.AddTransient<IImportExportServices, ImportExportServices>();
             services.AddTransient<IAdditionalInformationService,AdditionalInformationServices>();
+            services.AddTransient<ICountriesServices, CountriesServices>();
+            services.AddTransient<IStatesServices,StatesServices>();
+            services.AddTransient<IMunicipalitiesServices, MunicipalitiesServices>();
 
             //Parametros para validación de tokens
             var tokenValidationParameters = new TokenValidationParameters

@@ -2,11 +2,14 @@ using AutoMapper;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Company;
+using Domain.Entities.Country;
 using Domain.Entities.Departament;
 using Domain.Entities.Identity;
+using Domain.Entities.Municipality;
 using Domain.Entities.Profiles;
 using Domain.Entities.Propietary;
 using Domain.Entities.Registered_Cars;
+using Domain.Entities.State;
 using Domain.Entities.User_Approvals;
 
 namespace Infrastructure.Mappings
@@ -276,6 +279,15 @@ namespace Infrastructure.Mappings
 
             //PhotosOfCirculationCard
             CreateMap<PhotosOfCirculationCard, PhotosOfCirculationCardDto>().ReverseMap();
+
+            //Country
+            CreateMap<Countries, CountriesDto>().ReverseMap();
+
+            //State
+            CreateMap<States, StatesDto>().ReverseMap();
+
+            //Municipalities
+            CreateMap<Municipalities, MunicipalitiesDto>().ReverseMap();
 
         }
     }
