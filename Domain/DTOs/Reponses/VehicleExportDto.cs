@@ -3,9 +3,12 @@ using Domain.Entities.Registered_Cars;
 using Domain.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Domain.DTOs.Reponses
 {
@@ -13,45 +16,79 @@ namespace Domain.DTOs.Reponses
     {
         public VehicleExportDto() 
         { 
-            AssignedDepartments = new List<ShortDepartmentDto>();
-            VehicleImages = new List<VehicleImageDto>();
-            PhotosOfCirculationCards = new List<PhotosOfCirculationCardDto>();
-        }
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Serial { get; set; }
-        public bool IsUtilitary { get; set; }
-        public string Color { get; set; }
-        public string Brand { get; set; }
-        public int ModelYear { get; set; }
-        public int FuelCapacity { get; set; }
-        public int CurrentKM { get; set; }
-        public int InitialKM { get; set; }
-        public CurrentFuel CurrentFuel { get; set; }
-        public FuelType FuelType { get; set; }
-        public VehicleType VehicleType { get; set; }
-        public VehicleStatus VehicleStatus { get; set; }
-        public int ServicePeriodMonths { get; set; }
-        public int ServicePeriodKM { get; set; }
-        public OwnershipType OwnershipType { get; set; }
-        public string? OwnersName { get; set; }
-        public decimal DesiredPerformance { get; set; }
-        public string VehicleQRId { get; set; }
-        public string? VehicleObservation { get; set; }
-        public string? CarRegistrationPlate { get; set; }
-        public bool IsClean { get; set; }
-        public int? PolicyId { get; set; }
-        public string? FuelCardNumber { get; set; }
-        public string? VehicleResponsibleName { get; set; }
-        public string? MotorSerialNumber { get; set; }
-        public string? InvoiceNumber { get; set; }
-        public PropietaryDto? Propietary { get; set; }
-        public ExportPolicyDto? Policy { get; set; }
-        public ChecklistDto Checklist { get; set; }
-        public List<ShortDepartmentDto> AssignedDepartments { get; set;}
-        public List<VehicleImageDto> VehicleImages { get; set;}
-        public List<PhotosOfCirculationCardDto> PhotosOfCirculationCards { get; set;}
 
+        }
+        [DisplayName("N° VEHICULO")]
+        public int Id { get; set; }
+        [DisplayName("MARCA")]
+        public string Brand { get; set; }
+        [DisplayName("DESCRIPCIÓN")]
+        public string Name { get; set; }
+        [DisplayName("AÑO")]
+        public int ModelYear { get; set; }
+        [DisplayName("COLOR")]
+        public string Color { get; set; }
+        [DisplayName("MÚMERO DE SERIE")]
+        public string Serial { get; set; }
+        [DisplayName("MÚMERO DE MOTOR")]
+        public string? MotorSerialNumber { get; set; }
+        [DisplayName("TIPO DE VEHÍCULO")]
+        public VehicleType VehicleType { get; set; }
+        [DisplayName("PLACAS")]
+        public string? CarRegistrationPlate { get; set; }
+        [DisplayName("ESTATUS DEL VEHÍCULO")]
+        public VehicleStatus VehicleStatus { get; set; }
+        [DisplayName("TIPO DE COMBUSTIBLE")]
+        public FuelType FuelType { get; set; }
+        [DisplayName("CAPACIDAD DE COMBUSTIBLE")]
+        public int FuelCapacity { get; set; }
+        [DisplayName("KILOMETRAJE ACTUAL")]
+        public int CurrentKM { get; set; }
+        [DisplayName("PERIODO DE SERVICIO (MESES)")]
+        public int ServicePeriodMonths { get; set; }
+        [DisplayName("PERIODO DE SERVICIO (KM)")]
+        public int ServicePeriodKM { get; set; }
+        [DisplayName("TIPO DE PROPIEDAD")]
+        public OwnershipType OwnershipType { get; set; }
+        [DisplayName("NOMBRE DEL PROPIETARIO")]
+        public string? OwnersName { get; set; }
+        [DisplayName("PROPIETARIO LEGAL")]
+        public string? PropietaryName { get; set; }
+        [DisplayName("RESPONSABLE DEL VEHÍCULO")]
+        public string? VehicleResponsibleName { get; set; }
+        [DisplayName("DEPARTAMENTOS ASIGNADO")]
+        public string? Departments { get; set; }
+        [DisplayName("UBICACIÓN")]
+        public string? Location { get; set; }
+        [DisplayName("CARTA RESPONSIVA")]
+        public bool? ResponsiveLetter { get; set; }
+        [DisplayName("DUPLICADO DE LLAVE")]
+        public bool? DuplicateKey { get; set; }
+        [DisplayName("PÓLIZA ACTUAL")]
+        public string? CurrentPolicy { get; set; }
+        [DisplayName("FECHA DE VENCIMIENTO DE PÓLIZA ACTUAL")]
+        public DateOnly? ExpirationDate { get; set; }
+        [DisplayName("ASEGURADORA ACTUAL")]
+        public string NameCompany { get; set; }
+        [DisplayName("COSTO DE PÓLIZA ACTUAL")]
+        public decimal? PolicyCostValue { get; set; }
+        [DisplayName("FECHA ULTIMO SERVICIO")]
+        public DateOnly? LastServiceDate { get; set; }
+        [DisplayName("FECHA PROXIMO SERVICIO")]
+        public DateOnly? NextServiceDate { get; set; }
+        [DisplayName("SUBTOTAL")]
+        public decimal? SubTotal { get; set; }
+        [DisplayName("IVA")]
+        public decimal? IVA { get; set; }
+        [DisplayName("TOTAL")]
+        public decimal? Total { get; set; }
+        [DisplayName("NÚMERO DE FACTURA")]
+        public string? InvoiceNumber { get; set; }
+        
+        [DisplayName("OBSERVACIONES")]
+        public string? VehicleObservation { get; set; }
+        [DisplayName("ES UTILITARIO")]
+        public bool IsUtilitary { get; set; }
     }
 
     public class ExportPolicyDto
