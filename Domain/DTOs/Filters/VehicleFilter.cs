@@ -26,6 +26,8 @@ namespace Domain.DTOs.Filters
         public string? InvoiceNumber { get; set; }
         public int? PropietaryId { get; set; }
         public int? MunicipalityId { get; set; }
+        public bool? ResponsiveLetter { get; set; }
+        public bool? DuplicateKey { get; set; }
         public decimal? MinDesiredPerformance { get; set; }
         public decimal? MaxDesiredPerformance { get; set; }
         public DateTime? CreatedBefore { get; set; } 
