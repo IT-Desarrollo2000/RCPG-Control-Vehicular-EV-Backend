@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Domain.Entities.State
@@ -13,6 +14,7 @@ namespace Domain.Entities.State
         public string Name { get; set; }
         public int CountryId { get; set; }
         public virtual Countries Countries { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Municipalities> Municipalities { get; set; }
     }
 }

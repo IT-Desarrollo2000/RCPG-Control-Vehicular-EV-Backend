@@ -53,7 +53,7 @@ namespace Domain.DTOs.Reponses
         public int? PropietaryId { get; set; }
         public PropietaryDto? Propietary { get; set; }
         public int? MunicipalityId { get; set; }
-        public virtual Municipalities? Municipalities { get; set; }
+        public virtual MunicipalitiesDto? Municipalities { get; set; }
         public decimal? SubTotal { get; set; }
         public decimal? IVA { get; set; }
         public decimal? Total { get; set; }

@@ -38,7 +38,7 @@ namespace Application.Services
             filter.PageNumber = filter.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filter.PageNumber;
             filter.PageSize = filter.PageSize == 0 ? _paginationOptions.DefaultPageSize : filter.PageSize;
 
-            string properties = "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies,Policies,Propietary,Municipalities";
+            string properties = "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies,Policies,Propietary,Municipalities,Municipalities.States";
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
             var departament = new Departaments();
@@ -547,7 +547,7 @@ namespace Application.Services
         public async Task<GenericResponse<VehiclesDto>> GetVehicleById(int id)
         {
             GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
-            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies,Propietary,Municipalities");
+            var entity = await _unitOfWork.VehicleRepo.Get(filter: a => a.Id == id, includeProperties: "VehicleImages,Checklists,AssignedDepartments,AssignedDepartments.Company,Policy,PhotosOfCirculationCards,Policy.PhotosOfPolicies,Propietary,Municipalities,Municipalities.States");
 
             var veh = entity.FirstOrDefault();
 
