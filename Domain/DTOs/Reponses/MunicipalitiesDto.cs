@@ -14,8 +14,7 @@ namespace Domain.DTOs.Reponses
         public int Id { get; set; }
         public string Name { get; set; }
         public int StateId { get; set; }
-        [JsonIgnore]
-        public virtual States States { get; set; }
+        public States States { get; set; }
         [JsonIgnore]
         public virtual ICollection<Vehicle> Vehicles { get; set; }
     }
