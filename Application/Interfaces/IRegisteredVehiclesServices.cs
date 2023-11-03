@@ -3,6 +3,7 @@ using Domain.DTOs.Filters;
 using Domain.DTOs.Reponses;
 using Domain.DTOs.Requests;
 using Domain.Entities.Registered_Cars;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Interfaces
 {
@@ -10,14 +11,17 @@ namespace Application.Interfaces
     {
         Task<GenericResponse<List<PhotosOfCirculationCard>>> AddCirculationCardImage(CirculationCardRequest circulationCardRequest, int vehicleId);
         Task<GenericResponse<VehicleImage>> AddVehicleImage(VehicleImageRequest request, int vehicleId);
+        Task<GenericResponse<VehiclesDto>> AddVehicleInvoiceFile(IFormFile file, int vehicleId);
         Task<GenericResponse<VehiclesDto>> AddVehicles(VehicleRequest vehicleRequest);
         Task<GenericResponse<bool>> DeleteCirculationCardImage(int VehicleId);
         Task<GenericResponse<bool>> DeleteVehicleImage(int VehicleImageId);
         Task<GenericResponse<bool>> DeleteVehicles(int id);
+        Task<GenericResponse<List<string>>> GetBrandNames();
         Task<GenericResponse<List<GetExpensesDto>>> GetExpenses(int VehicleId);
         Task<GenericResponse<List<GetExpensesDtoList>>> GetExpensesByCar(List<int> VehicleId);
         Task<PagedList<SpecialVehicleDto>> GetFilteredVehicles(SpecialVehicleFilter filter);
         Task<GenericResponse<ServicesMaintenanceDto>> GetLatestMaintenanceDto(int vehicleId);
+        Task<GenericResponse<List<string>>> GetResponsibleNames();
         Task<GenericResponse<List<GraphicsDto>>> GetServicesAndMaintenanceList(List<int> VehicleId);
         Task<GenericResponse<GraphicsDto>> GetServicesAndWorkshop(int VehicleId);
         Task<GenericResponse<VehiclesDto>> GetVehicleById(int id);

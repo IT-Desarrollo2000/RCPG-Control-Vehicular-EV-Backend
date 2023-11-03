@@ -50,13 +50,13 @@ namespace Domain.DTOs.Reponses
         public int ServicePeriodKM { get; set; }
         [DisplayName("TIPO DE PROPIEDAD")]
         public OwnershipType OwnershipType { get; set; }
-        [DisplayName("NOMBRE DEL PROPIETARIO")]
+        [DisplayName("PROPIETARIO - RAZÓN SOCIAL")]
         public string? OwnersName { get; set; }
-        [DisplayName("PROPIETARIO LEGAL")]
+        [DisplayName("PROPIETARIO - NOMBRE")]
         public string? PropietaryName { get; set; }
         [DisplayName("RESPONSABLE DEL VEHÍCULO")]
         public string? VehicleResponsibleName { get; set; }
-        [DisplayName("DEPARTAMENTOS ASIGNADO")]
+        [DisplayName("COMPAÑIA - DEPARTAMENTOS ASIGNADO")]
         public string? Departments { get; set; }
         [DisplayName("UBICACIÓN")]
         public string? Location { get; set; }
@@ -67,15 +67,15 @@ namespace Domain.DTOs.Reponses
         [DisplayName("PÓLIZA ACTUAL")]
         public string? CurrentPolicy { get; set; }
         [DisplayName("FECHA DE VENCIMIENTO DE PÓLIZA ACTUAL")]
-        public DateOnly? ExpirationDate { get; set; }
+        public string? ExpirationDate { get; set; }
         [DisplayName("ASEGURADORA ACTUAL")]
         public string NameCompany { get; set; }
         [DisplayName("COSTO DE PÓLIZA ACTUAL")]
         public decimal? PolicyCostValue { get; set; }
         [DisplayName("FECHA ULTIMO SERVICIO")]
-        public DateOnly? LastServiceDate { get; set; }
+        public string? LastServiceDate { get; set; }
         [DisplayName("FECHA PROXIMO SERVICIO")]
-        public DateOnly? NextServiceDate { get; set; }
+        public string? NextServiceDate { get; set; }
         [DisplayName("SUBTOTAL")]
         public decimal? SubTotal { get; set; }
         [DisplayName("IVA")]

@@ -289,11 +289,11 @@ namespace Application.Services
 
             if (Query != null)
             {
-                vehicles = await _unitOfWork.VehicleRepo.Get(filter: Query, includeProperties: properties);
+                vehicles = await _unitOfWork.VehicleRepo.Get(filter: Query, includeProperties: properties, orderBy: v => v.OrderBy(x => x.Name));
             }
             else
             {
-                vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: properties);
+                vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: properties, orderBy: v => v.OrderBy(x => x.Name));
             }
 
             var dtos = _mapper.Map<IEnumerable<VehiclesDto>>(vehicles);
@@ -422,6 +422,31 @@ namespace Application.Services
 
                 //Guardar el Vehiculo 
                 await _unitOfWork.VehicleRepo.Add(entity);
+
+                //Guardar el archivo de factura del vehiculo
+                if (vehicleRequest.VehicleInvoiceFile != null )
+                {
+                    if (vehicleRequest.VehicleInvoiceFile.ContentType.Contains("pdf"))
+                    {
+                        //Manipular el nombre de archivo
+                        var uploadDate = DateTime.UtcNow;
+                        Random rndm = new Random();
+                        string FileExtn = System.IO.Path.GetExtension(vehicleRequest.VehicleInvoiceFile.FileName);
+                        var filePath = $"Invoices/Serie_{entity.Serial}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{entity.Serial}{rndm.Next(1, 1000)}{FileExtn}";
+                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(vehicleRequest.VehicleInvoiceFile, _azureBlobContainers.Value.RegisteredCars, filePath);
+
+
+                        entity.InvoiceFilePath = filePath;
+                        entity.InvoiceFileUrl = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.RegisteredCars, filePath);
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de pdf", 3);
+
+                        return response;
+                    }
+                }
 
                 //Guardar las fotos
                 var images = new List<VehicleImage>();
@@ -1346,6 +1371,106 @@ namespace Application.Services
 
                 response.success = true;
                 response.Data = dto;
+
+                return response;
+            }
+            catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<List<string>>> GetResponsibleNames()
+        {
+            GenericResponse<List<string>> response = new GenericResponse<List<string>>();
+            try
+            {
+                var query = await _unitOfWork.VehicleRepo.GetAll();
+                var list = query.Where(x => x.VehicleResponsibleName != null).Select(x => x.VehicleResponsibleName).Distinct().Order().ToList();
+
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    list[i] = list[i].ToUpper();
+                }
+
+                response.success = true;
+                response.Data = list;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<List<string>>> GetBrandNames()
+        {
+            GenericResponse<List<string>> response = new GenericResponse<List<string>>();
+            try
+            {
+                var query = await _unitOfWork.VehicleRepo.GetAll();
+                var list = query.Where(x => x.Brand != null).Select(x => x.Brand).Order().Distinct().ToList();
+
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    list[i] = list[i].ToUpper();
+                }
+
+                response.success = true;
+                response.Data = list;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<VehiclesDto>> AddVehicleInvoiceFile(IFormFile file, int vehicleId)
+        {
+            GenericResponse<VehiclesDto> response = new GenericResponse<VehiclesDto>();
+            try
+            {
+                var vehicle = await _unitOfWork.VehicleRepo.GetById(vehicleId);
+                if(vehicle == null)
+                {
+                    response.AddError("Not found", "No se encontro el vehiculo especificado", 2);
+                    response.success = false;
+                    return response;
+                }
+
+                if (file.ContentType.Contains("pdf"))
+                {
+                    //Manipular el nombre de archivo
+                    var uploadDate = DateTime.UtcNow;
+                    Random rndm = new Random();
+                    string FileExtn = System.IO.Path.GetExtension(file.FileName);
+                    var filePath = $"Invoices/Serie_{vehicle.Serial}/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{vehicle.Serial}{rndm.Next(1, 1000)}{FileExtn}";
+                    var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(file, _azureBlobContainers.Value.RegisteredCars, filePath);
+
+
+                    vehicle.InvoiceFilePath = filePath;
+                    vehicle.InvoiceFileUrl = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.RegisteredCars, filePath);
+                }
+                else
+                {
+                    response.success = false;
+                    response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de pdf", 3);
+
+                    return response;
+                }
+
+                await _unitOfWork.VehicleRepo.Update(vehicle);
+                await _unitOfWork.SaveChangesAsync();
+
+                response.success = true;
+                response.Data = _mapper.Map<VehiclesDto>(vehicle);
 
                 return response;
             }

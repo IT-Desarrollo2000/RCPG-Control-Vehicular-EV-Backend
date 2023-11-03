@@ -62,6 +62,7 @@ namespace Domain.DTOs.Requests
         public decimal? Total { get; set; }
         public bool? ResponsiveLetter { get; set; }
         public bool? DuplicateKey { get; set; }
+        public IFormFile? VehicleInvoiceFile { get; set; }
 
     }
 

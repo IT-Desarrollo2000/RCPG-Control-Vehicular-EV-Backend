@@ -42,6 +42,7 @@ namespace Application.Interfaces
         IRepository<Countries> CountriesRepo { get; }
         IRepository<States> StatesRepo { get; }
         IRepository<Municipalities> MunicipalitiesRepo { get; }
+        IRepository<VehicleTenency> TenencyRepo { get; }
 
         void Dispose();
         void SaveChanges();

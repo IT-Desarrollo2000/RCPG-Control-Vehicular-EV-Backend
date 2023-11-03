@@ -56,7 +56,7 @@ namespace Infrastructure.Mappings
             //Vehicle
             CreateMap<Vehicle, VehicleRequest>().ReverseMap();
             CreateMap<Vehicle, VehiclesDto>()
-                .ForMember(s => s.PhotosOfPolicies, o => o.MapFrom(s => s.Policy.PhotosOfPolicies))
+                .ForMember(s => s.PhotosOfPolicies, o => o.MapFrom(s => s.Policy.PhotosOfPolicies)) 
                 .ReverseMap();
             CreateMap<VehicleRequest, VehiclesDto>().ReverseMap();
             CreateMap<Vehicle, UnrelatedVehiclesDto>().ReverseMap();
@@ -81,14 +81,12 @@ namespace Infrastructure.Mappings
                 .ForMember(v => v.PropietaryName, opt => opt.MapFrom(p => p.Propietary.DisplayName))
                 .ForMember(v => v.OwnersName, opt => opt.MapFrom(p => p.Propietary.CompanyName))
                 .ForMember(v => v.CurrentPolicy, opt => opt.MapFrom(p => p.Policy.PolicyNumber))
-                .ForMember(v => v.ExpirationDate, opt => opt.MapFrom(p => DateOnly.FromDateTime(p.Policy.ExpirationDate)))
+                .ForMember(v => v.ExpirationDate, opt => opt.MapFrom(p => DateOnly.FromDateTime(p.Policy.ExpirationDate).ToString("dd/MM/yyyy")))
                 .ForMember(v => v.NameCompany, opt => opt.MapFrom(p => p.Policy.NameCompany))
                 .ForMember(v => v.PolicyCostValue, opt => opt.MapFrom(p => p.Policy.PolicyCostValue));
             CreateMap<Vehicle, PolicyExportDto>()
-                .ForMember(v => v.VehicleId, o => o.MapFrom(p => p.Id))
-                .ForMember(v => v.PolicyId, o => o.MapFrom(p => p.Policy.Id))
                 .ForMember(v => v.PolicyNumber, o => o.MapFrom(p => p.Policy.PolicyNumber))
-                .ForMember(v => v.ExpirationDate, o => o.MapFrom(p => p.Policy.ExpirationDate))
+                .ForMember(v => v.ExpirationDate, o => o.MapFrom(p => DateOnly.FromDateTime(p.Policy.ExpirationDate).ToString("dd/MM/yyyy")))
                 .ForMember(v => v.NameCompany, o => o.MapFrom(p => p.Policy.NameCompany))
                 .ForMember(v => v.PolicyCostValue, o => o.MapFrom(p => p.Policy.PolicyCostValue));
 

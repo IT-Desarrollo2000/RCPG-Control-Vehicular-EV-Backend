@@ -2,6 +2,7 @@ using Domain.Entities.Departament;
 using Domain.Entities.Municipality;
 using Domain.Entities.Registered_Cars;
 using Domain.Enums;
+using System.ComponentModel;
 
 namespace Domain.DTOs.Reponses
 {
@@ -59,6 +60,24 @@ namespace Domain.DTOs.Reponses
         public decimal? Total { get; set; }
         public bool? ResponsiveLetter { get; set; }
         public bool? DuplicateKey { get; set; }
+        [DisplayName("TenencyValidity")]
+        public DateTime? TenencyPaymentDate { get; set; }
+        public DateTime? PlatePaymentDate { get; set; }
+        public string? InvoiceFileUrl { get; set; }
+        public bool IsTenencyPaid
+        {
+            get
+            {
+                return TenencyPaymentDate.HasValue ? TenencyPaymentDate.Value.Year == DateTime.UtcNow.Year : false;
+            }
+        }
+        public bool IsPlatePaid
+        {
+            get
+            {
+                return PlatePaymentDate.HasValue;
+            }
+        }
     }
 
 }

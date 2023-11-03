@@ -281,6 +281,15 @@ namespace Application.Services
                     await _unitOfWork.PhotosOfSpendingRepo.Delete(photo.Id);
                 }
 
+                //Eliminar tenencia asociada en donde aplique
+                var tenencyQ = await _unitOfWork.TenencyRepo.Get(t => t.ExpenseId == id);
+                var tenency = tenencyQ.FirstOrDefault();
+                if(tenency != null)
+                {
+                    tenency.ExpenseId = null;
+                    await _unitOfWork.TenencyRepo.Update(tenency);
+                }
+
                 var exists = await _unitOfWork.ExpensesRepo.Delete(id);
                 await _unitOfWork.SaveChangesAsync();
                 var expensesdto = _mapper.Map<Expenses>(exp);
@@ -682,6 +691,228 @@ namespace Application.Services
                 return response;
             }
             catch(Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+        
+        public async Task<GenericResponse<ExpensesDto>> TenencyExpense(TenecyExpenseRequest request)
+        {
+            GenericResponse<ExpensesDto> response = new GenericResponse<ExpensesDto>();
+            try
+            {
+                //Verificar que si exista el vehiculo especificado
+                var vehicle = await _unitOfWork.VehicleRepo.GetById(request.VehicleId);
+                if (vehicle == null)
+                {
+                    response.success = false;
+                    response.AddError("Vehiculo no encontrado", $"El vehiculo con Id {request.VehicleId}", 2);
+                    return response;
+                }
+
+                //Si se envio un departamento verificar su existencia
+                if (request.DepartmentId.HasValue)
+                {
+                    var department = await _unitOfWork.Departaments.GetById(request.DepartmentId.Value);
+                    if (department == null)
+                    {
+                        response.success = false;
+                        response.AddError("Departamento no encontrado", $"El Departamento con Id {request.DepartmentId.Value}", 3);
+                        return response;
+                    }
+                }
+
+                //Buscar el tipo de gasto asociado a polizas
+                var typeOfExp = await _unitOfWork.TypesOfExpensesRepo.Get(e => e.Name.ToUpper() == "TENENCIA");
+                var exist = typeOfExp.FirstOrDefault();
+                if (exist == null)
+                {
+                    response.success = false;
+                    response.AddError("Tipo de gasto no encontrado", $"El Tipo de gasto Tenencia no se encuentra en el sistema", 4);
+                    return response;
+                }
+
+
+                //Generar el gasto
+                var newExpense = new Expenses
+                {
+                    Invoiced = request.Invoiced,
+                    ExpenseDate = request.ExpenseDate,
+                    Comment = request.Comment,
+                    Cost = request.Cost,
+                    TypesOfExpenses = exist,
+                    DepartmentId = request.DepartmentId ?? null,
+                    ERPFolio = Guid.NewGuid().ToString()
+                };
+
+                //Asignar el auto al gasto
+                newExpense.Vehicles.Add(vehicle);
+
+                //Agregar fecha de pago de tenencia al vehiculo
+                vehicle.TenencyPaymentDate = new DateTime(request.TenencyYear,1,1);
+
+                //Guardar el gasto
+                await _unitOfWork.VehicleRepo.Update(vehicle);
+                
+                //Guardar las imagenes del gasto
+                foreach (var photo in request.ExpenseAttachments)
+                {
+                    //Validar imagenes y Guardar las imagenes en el blobstorage
+                    if (photo.ContentType.Contains("image"))
+                    {
+                        //Manipular el nombre de archivo
+                        var uploadDate = DateTime.UtcNow;
+                        Random rndm = new Random();
+                        string FileExtn = System.IO.Path.GetExtension(photo.FileName);
+                        var filePath = $"Expense_Policy/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{exist.Id}{rndm.Next(1, 1000)}{FileExtn}";
+                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(photo, _azureBlobContainers.Value.ExpenseAttachments, filePath);
+
+                        //Agregar la imagen en BD
+                        var newImage = new PhotosOfSpending()
+                        {
+                            FilePath = filePath,
+                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.ExpenseAttachments, filePath)
+                        };
+
+                        newExpense.PhotosOfSpending.Add(newImage);
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 6);
+
+                        return response;
+                    }
+                }
+
+                await _unitOfWork.ExpensesRepo.Add(newExpense);
+                await _unitOfWork.SaveChangesAsync();
+
+                //Crear registro de tenencia
+                var newTenency = new VehicleTenency()
+                {
+                    ExpenseId = newExpense.Id,
+                    TenencyPaymentDate = request.ExpenseDate,
+                    TenencyCost = request.Cost,
+                    TenencyYear = request.TenencyYear,
+                    VehicleId = vehicle.Id
+                };
+
+                //Guardar la tenencia
+                await _unitOfWork.TenencyRepo.Add(newTenency);
+                await _unitOfWork.SaveChangesAsync();
+
+                response.success = true;
+                response.Data = _mapper.Map<ExpensesDto>(newExpense);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.success = false;
+                response.AddError("Error", ex.Message, 1);
+                return response;
+            }
+        }
+
+        public async Task<GenericResponse<ExpensesDto>> PlatesExpense(PlateExpenseRequest request)
+        {
+            GenericResponse<ExpensesDto> response = new GenericResponse<ExpensesDto>();
+            try
+            {
+                //Verificar que si exista el vehiculo especificado
+                var vehicle = await _unitOfWork.VehicleRepo.GetById(request.VehicleId);
+                if (vehicle == null)
+                {
+                    response.success = false;
+                    response.AddError("Vehiculo no encontrado", $"El vehiculo con Id {request.VehicleId}", 2);
+                    return response;
+                }
+
+                //Si se envio un departamento verificar su existencia
+                if (request.DepartmentId.HasValue)
+                {
+                    var department = await _unitOfWork.Departaments.GetById(request.DepartmentId.Value);
+                    if (department == null)
+                    {
+                        response.success = false;
+                        response.AddError("Departamento no encontrado", $"El Departamento con Id {request.DepartmentId.Value}", 3);
+                        return response;
+                    }
+                }
+
+                //Buscar el tipo de gasto asociado a polizas
+                var typeOfExp = await _unitOfWork.TypesOfExpensesRepo.Get(e => e.Name.ToUpper() == "PLACAS");
+                var exist = typeOfExp.FirstOrDefault();
+                if (exist == null)
+                {
+                    response.success = false;
+                    response.AddError("Tipo de gasto no encontrado", $"El Tipo de gasto Tenencia no se encuentra en el sistema", 4);
+                    return response;
+                }
+
+                //Generar el gasto
+                var newExpense = new Expenses
+                {
+                    Invoiced = request.Invoiced,
+                    ExpenseDate = request.ExpenseDate,
+                    Comment = request.Comment,
+                    Cost = request.Cost,
+                    TypesOfExpenses = exist,
+                    DepartmentId = request.DepartmentId ?? null,
+                    ERPFolio = Guid.NewGuid().ToString()
+                };
+
+                //Asignar el auto al gasto
+                newExpense.Vehicles.Add(vehicle);
+
+                //Agregar fecha de pago de tenencia al vehiculo
+                vehicle.PlatePaymentDate = request.ExpenseDate;
+                vehicle.CarRegistrationPlate = request.PlateNumber;
+
+                //Guardar el gasto
+                await _unitOfWork.VehicleRepo.Update(vehicle);
+
+                //Guardar las imagenes del gasto
+                foreach (var photo in request.ExpenseAttachments)
+                {
+                    //Validar imagenes y Guardar las imagenes en el blobstorage
+                    if (photo.ContentType.Contains("image"))
+                    {
+                        //Manipular el nombre de archivo
+                        var uploadDate = DateTime.UtcNow;
+                        Random rndm = new Random();
+                        string FileExtn = System.IO.Path.GetExtension(photo.FileName);
+                        var filePath = $"Expense_Policy/{uploadDate.Day}{uploadDate.Month}{uploadDate.Year}_{exist.Id}{rndm.Next(1, 1000)}{FileExtn}";
+                        var uploadedUrl = await _blobStorageService.UploadFileToBlobAsync(photo, _azureBlobContainers.Value.ExpenseAttachments, filePath);
+
+                        //Agregar la imagen en BD
+                        var newImage = new PhotosOfSpending()
+                        {
+                            FilePath = filePath,
+                            FileURL = await _blobStorageService.GetFileUrl(_azureBlobContainers.Value.ExpenseAttachments, filePath)
+                        };
+
+                        newExpense.PhotosOfSpending.Add(newImage);
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.AddError("Archivo de Imagen Invalido", "Uno o mas archivos no corresponden a un archivo de Imagen", 6);
+
+                        return response;
+                    }
+                }
+
+                await _unitOfWork.ExpensesRepo.Add(newExpense);
+                await _unitOfWork.SaveChangesAsync();
+
+                response.success = true;
+                response.Data = _mapper.Map<ExpensesDto>(newExpense);
+                return response;
+            }
+            catch (Exception ex)
             {
                 response.success = false;
                 response.AddError("Error", ex.Message, 1);

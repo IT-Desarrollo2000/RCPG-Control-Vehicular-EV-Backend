@@ -41,6 +41,14 @@ namespace Application.Services
                         response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
                         response.success = false;
                         return response;
+                    case "PLACAS":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
+                        response.success = false;
+                        return response;
+                    case "TENENCIA":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
+                        response.success = false;
+                        return response;
                     default:
                         break;
                 }
@@ -65,7 +73,7 @@ namespace Application.Services
             GenericResponse<List<TypesOfExpensesDto>> response = new GenericResponse<List<TypesOfExpensesDto>>();
             try
             {
-                var tags = await _unitOfWork.TypesOfExpensesRepo.GetAll();
+                var tags = await _unitOfWork.TypesOfExpensesRepo.Get(orderBy: v => v.OrderBy(x => x.Name));
                 var prueba = _mapper.Map<List<TypesOfExpensesDto>>(tags);
                 response.success = true;
                 response.Data = prueba;
@@ -128,6 +136,14 @@ namespace Application.Services
                         response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede modificar", 2);
                         response.success = false;
                         return response;
+                    case "PLACAS":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
+                        response.success = false;
+                        return response;
+                    case "TENENCIA":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
+                        response.success = false;
+                        return response;
                     default:
                         break;
                 }
@@ -173,6 +189,14 @@ namespace Application.Services
                         return response;
                     case "POLIZAS":
                         response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede eliminar", 2);
+                        response.success = false;
+                        return response;
+                    case "PLACAS":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
+                        response.success = false;
+                        return response;
+                    case "TENENCIA":
+                        response.AddError("Acción Invalida", "Este tipo de gasto es generado por el sistema y no se puede generar", 2);
                         response.success = false;
                         return response;
                     default:

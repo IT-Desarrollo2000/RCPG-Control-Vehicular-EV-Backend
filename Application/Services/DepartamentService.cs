@@ -26,7 +26,7 @@ namespace Application.Services
             GenericResponse<List<DepartamentDto>> response = new GenericResponse<List<DepartamentDto>>();
             try
             {
-                var entidades = await _unitOfWork.Departaments.Get(includeProperties: "Company,AssignedVehicles,Supervisors,Expenses");
+                var entidades = await _unitOfWork.Departaments.Get(includeProperties: "Company,AssignedVehicles,Supervisors,Expenses", orderBy: t => t.OrderBy(m => m.Name));
                 var dtos = _mapper.Map<List<DepartamentDto>>(entidades);
                 response.success = true;
                 response.Data = dtos;

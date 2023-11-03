@@ -13,8 +13,10 @@ namespace Application.Interfaces
         Task<GenericResponse<Expenses>> DeleteExpenses(int id);
         Task<PagedList<ExpensesDto>> GetExpenses(ExpensesFilter filter);
         Task<GenericResponse<ExpensesDto>> GetExpensesById(int id);
+        Task<GenericResponse<ExpensesDto>> PlatesExpense(PlateExpenseRequest request);
         Task<GenericResponse<ExpensesDto>> PolicyExpense(PolicyExpenseRequest request);
         Task<GenericResponse<ExpensesDto>> PostExpenses(ExpensesRequest expensesRequest);
         Task<GenericResponse<Expenses>> PutExpenses(ExpenseUpdateRequest expensesRequest, int id);
+        Task<GenericResponse<ExpensesDto>> TenencyExpense(TenecyExpenseRequest request);
     }
 }

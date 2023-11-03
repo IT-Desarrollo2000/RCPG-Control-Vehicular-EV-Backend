@@ -96,6 +96,31 @@ namespace Infrastructure.Persistence
 
                 await unitOfWork.TypesOfExpensesRepo.Add(newType);
             }
+
+            var platesExpense = await unitOfWork.TypesOfExpensesRepo.Get(e => e.Name == "Placas");
+            if (preventiveMtn.SingleOrDefault() == null)
+            {
+                var newType = new TypesOfExpenses()
+                {
+                    Name = "Placas",
+                    Description = "Gasto generado por pago de Emplacado de Vehículo"
+                };
+
+                await unitOfWork.TypesOfExpensesRepo.Add(newType);
+            }
+
+            var tenencyExpense = await unitOfWork.TypesOfExpensesRepo.Get(e => e.Name == "Tenencia");
+            if (preventiveMtn.SingleOrDefault() == null)
+            {
+                var newType = new TypesOfExpenses()
+                {
+                    Name = "Tenencia",
+                    Description = "Gasto generado por pago de Tenencia de Vehículo"
+                };
+
+                await unitOfWork.TypesOfExpensesRepo.Add(newType);
+            }
+
             await unitOfWork.SaveChangesAsync();
         }
     }

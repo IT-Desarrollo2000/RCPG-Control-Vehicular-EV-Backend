@@ -223,6 +223,17 @@ namespace API.Controllers
         }
 
         [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpPost]
+        [Route("Vehicle/AddInvoiceFile")]
+        public async Task<IActionResult> AddInvoiceFile([FromForm] InvoiceFileRequest request)
+        {
+            var result = await _registeredVehiclesServices.AddVehicleInvoiceFile(request.InvoiceFile, request.VehicleId);
+            if (result.success) { return Ok(result); } else { return BadRequest(result); }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(GenericResponse<bool>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HttpDelete]
@@ -278,6 +289,28 @@ namespace API.Controllers
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
 
             return Ok(response);
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetResponsibleNames")]
+        public async Task<IActionResult> GetResponsibleNames()
+        {
+            var result = await _registeredVehiclesServices.GetResponsibleNames();
+            if (result.success) { return Ok(result); } else { return NotFound(result); }
+        }
+
+        [Authorize(Roles = "Supervisor, Administrator, AdminUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HttpGet]
+        [Route("GetBrandNames")]
+        public async Task<IActionResult> GetBrandNames()
+        {
+            var result = await _registeredVehiclesServices.GetBrandNames();
+            if (result.success) { return Ok(result); } else { return NotFound(result); }
         }
     }
 }
