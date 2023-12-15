@@ -27,10 +27,10 @@ namespace Domain.Entities.Registered_Cars
         public string Color { get; set; }
         public string Brand { get; set; }
         public int ModelYear { get; set; }
-        public int FuelCapacity { get; set; }
-        public int CurrentKM { get; set; }
+        public int? FuelCapacity { get; set; }
+        public int? CurrentKM { get; set; }
         public int InitialKM { get; set; }
-        public CurrentFuel CurrentFuel { get; set; }
+        public CurrentFuel? CurrentFuel { get; set; }
         public FuelType FuelType { get; set; }
         public VehicleType VehicleType { get; set; }
         public VehicleStatus VehicleStatus { get; set; }
@@ -40,7 +40,7 @@ namespace Domain.Entities.Registered_Cars
         public int ServicePeriodKM { get; set; }
         public OwnershipType OwnershipType { get; set; }
         public string? OwnersName { get; set; }
-        public decimal DesiredPerformance { get; set; }
+        public decimal? DesiredPerformance { get; set; }
         public string VehicleQRId { get; set; }
         public string? VehicleObservation { get ; set; }
         public string? CarRegistrationPlate { get; set; }
