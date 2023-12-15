@@ -23,7 +23,7 @@ namespace Application.Services
         public async Task<GenericResponse<List<CompanyDto>>> GetCompanyAll()
         {
             GenericResponse<List<CompanyDto>> response = new GenericResponse<List<CompanyDto>>();
-            var entidades = await _unitOfWork.Companies.Get(includeProperties: "Departaments,Departaments.AssignedVehicles,Departaments.Supervisors");
+            var entidades = await _unitOfWork.Companies.Get(includeProperties: "Departaments,Departaments.AssignedVehicles,Departaments.Supervisors", orderBy: t => t.OrderBy(m => m.Name));
             var dtos = _mapper.Map<List<CompanyDto>>(entidades);
             response.success = true;
             response.Data = dtos;
@@ -34,7 +34,6 @@ namespace Application.Services
         public async Task<GenericResponse<CompanyDto>> GetCompanyById(int Id)
         {
             GenericResponse<CompanyDto> response = new GenericResponse<CompanyDto>();
-            //var entidad = await _unitOfWork.Companies.GetById(Id);
             var profile = await _unitOfWork.Companies.Get(filter: p => p.Id == Id, includeProperties: "Departaments,Departaments.AssignedVehicles,Departaments.Supervisors");
             var result = profile.FirstOrDefault();
             var CompanyDTO = _mapper.Map<CompanyDto>(result);

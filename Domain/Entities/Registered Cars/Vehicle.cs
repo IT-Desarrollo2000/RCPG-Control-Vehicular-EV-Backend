@@ -18,7 +18,9 @@ namespace Domain.Entities.Registered_Cars
             this.VehicleReports = new HashSet<VehicleReport>();
             this.VehicleReportsUses = new HashSet<VehicleReportUse>();
             this.PhotosOfCirculationCards = new HashSet<PhotosOfCirculationCard>();
+            this.Tenencies = new HashSet<VehicleTenency>();
         }
+
         public string Name { get; set; }
         public string Serial { get; set; }
         public bool IsUtilitary { get; set; }
@@ -58,6 +60,10 @@ namespace Domain.Entities.Registered_Cars
         public decimal? Total { get; set; }
         public bool? ResponsiveLetter { get; set; }
         public bool? DuplicateKey { get; set; }
+        public DateTime? TenencyPaymentDate { get; set; }
+        public DateTime? PlatePaymentDate { get; set;  }
+        public string? InvoiceFilePath { get; set; }
+        public string? InvoiceFileUrl { get; set; }
         public virtual ICollection<Policy> Policies { get; set; }
         public virtual ICollection<Departaments> AssignedDepartments { get; set; }
         public virtual ICollection<VehicleImage> VehicleImages { get; set; }
@@ -68,6 +74,6 @@ namespace Domain.Entities.Registered_Cars
         public virtual ICollection<VehicleReport> VehicleReports { get; set; }
         public virtual ICollection<VehicleReportUse> VehicleReportsUses { get; set; }
         public virtual ICollection<PhotosOfCirculationCard> PhotosOfCirculationCards { get; set; }
-
+        public virtual ICollection<VehicleTenency> Tenencies { get; set; }
     }
 }

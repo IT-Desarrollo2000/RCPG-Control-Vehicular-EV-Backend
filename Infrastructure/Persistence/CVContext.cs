@@ -85,6 +85,8 @@ namespace Infrastructure.Persistence
         //Municipality
         public virtual DbSet<Municipalities> Municipalities { get; set; }
 
+        //Tenency
+        public virtual DbSet<VehicleTenency> VehicleTenencies { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -112,6 +114,7 @@ namespace Infrastructure.Persistence
             builder.ApplyConfiguration(new AdditionalInformationConfiguration());
             builder.ApplyConfiguration(new CountryConfiguration());
             builder.ApplyConfiguration(new StateConfiguration());
+            builder.ApplyConfiguration(new VehicleTenencyConfiguration());
         }
     }
 }

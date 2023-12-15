@@ -45,6 +45,7 @@ namespace Infrastructure.Repositories
         private readonly IRepository<Countries> _CountriesRepo;
         private readonly IRepository<States> _StatesRepo;
         private readonly IRepository<Municipalities> _MunicipalitiesRepo; 
+        private readonly IRepository<VehicleTenency> _VehicleTenencyRepo;
 
         public UnitOfWork(CVContext context)
         {
@@ -81,6 +82,8 @@ namespace Infrastructure.Repositories
         public IRepository<Countries> CountriesRepo => _CountriesRepo ?? new BaseRepository<Countries>(_context);
         public IRepository<States> StatesRepo => _StatesRepo ?? new BaseRepository<States>(_context);
         public IRepository<Municipalities> MunicipalitiesRepo => _MunicipalitiesRepo ?? new BaseRepository<Municipalities>(_context);
+        public IRepository<VehicleTenency> TenencyRepo => _VehicleTenencyRepo ?? new BaseRepository<VehicleTenency>(_context);
+
 
         //FUNCIONES DEL SERVICIO
         public void Dispose()

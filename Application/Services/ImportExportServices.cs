@@ -9,6 +9,7 @@ using Domain.Entities.Registered_Cars;
 using Domain.Enums;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -82,11 +83,11 @@ namespace Application.Services
 
             if (Query != null)
             {
-                vehicles = await _unitOfWork.VehicleRepo.Get(filter: Query, includeProperties: properties);
+                vehicles = await _unitOfWork.VehicleRepo.Get(filter: Query, includeProperties: properties, orderBy: v => v.OrderBy(x => x.ModelYear));
             }
             else
             {
-                vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: properties);
+                vehicles = await _unitOfWork.VehicleRepo.Get(includeProperties: properties, orderBy: v => v.OrderBy(x => x.ModelYear));
             }
 
             var dtos = _mapper.Map<List<VehicleExportDto>>(vehicles);
@@ -97,14 +98,14 @@ namespace Application.Services
                 var lastServiceDate = await _unitOfWork.VehicleServiceRepo.Get(x => x.VehicleId == dto.Id);
                 if(lastServiceDate.Count() > 0 && lastServiceDate.LastOrDefault().CreatedDate.HasValue)
                 {
-                    dto.LastServiceDate = DateOnly.FromDateTime(lastServiceDate.LastOrDefault().CreatedDate.Value);
+                    dto.LastServiceDate = DateOnly.FromDateTime(lastServiceDate.LastOrDefault().CreatedDate.Value).ToString("dd/MM/yyyy");
                 }
                 
                 var nextServiceDate = await _unitOfWork.VehicleServiceRepo.Get(x => x.VehicleId == dto.Id);
                 
                 if (lastServiceDate.Count() > 0 && lastServiceDate.LastOrDefault().NextService.HasValue)
                 {
-                    dto.NextServiceDate = DateOnly.FromDateTime(lastServiceDate.LastOrDefault().NextService.Value);
+                    dto.NextServiceDate = DateOnly.FromDateTime(lastServiceDate.LastOrDefault().NextService.Value).ToString("dd/MM/yyyy");
                 }
 
                 //Agregar departamentos
@@ -190,6 +191,23 @@ namespace Application.Services
             }
 
             dtos = _mapper.Map<List<PolicyExportDto>>(vehicles);
+
+            foreach(var dto in dtos)
+            {
+                var lastPoliciesQ = await _unitOfWork.VehicleRepo.Get(v => v.Id == dto.Id, includeProperties: "Policies");
+                var lastPolicies = lastPoliciesQ.FirstOrDefault().Policies;
+                if (lastPolicies.Count() >= 2)
+                {
+                    var lastPolicy = lastPolicies.ToList()[lastPolicies.ToList().Count() - 2];
+                    if(lastPolicy != null)
+                    {
+                        dto.OldPolicyCostValue = lastPolicy.PolicyCostValue;
+                        dto.OldPolicyNumber = lastPolicy.PolicyNumber;
+                        dto.OldExpirationDate = DateOnly.FromDateTime(lastPolicy.ExpirationDate).ToString("dd/MM/yyyy");
+                        dto.OldNameCompany = lastPolicy.NameCompany;
+                    }
+                }
+            }
 
             var pagedData = PagedList<PolicyExportDto>.Create(dtos, filter.PageNumber, filter.PageSize);
 

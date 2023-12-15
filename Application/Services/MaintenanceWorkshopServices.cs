@@ -109,11 +109,11 @@ namespace Application.Services
 
             if (Query != null)
             {
-                userApprovals = await _unitOfWork.MaintenanceWorkshopRepo.Get(filter: Query, includeProperties: "VehicleMaintenances,Expenses");
+                userApprovals = await _unitOfWork.MaintenanceWorkshopRepo.Get(filter: Query, includeProperties: "VehicleMaintenances,Expenses", orderBy: t => t.OrderBy(m => m.Name));
             }
             else
             {
-                userApprovals = await _unitOfWork.MaintenanceWorkshopRepo.Get(includeProperties: "VehicleMaintenances,Expenses");
+                userApprovals = await _unitOfWork.MaintenanceWorkshopRepo.Get(includeProperties: "VehicleMaintenances,Expenses", orderBy: t => t.OrderBy(m => m.Name));
             }
 
             var pagedApprovals = PagedList<VehicleMaintenanceWorkshop>.Create(userApprovals, filter.PageNumber, filter.PageSize);
