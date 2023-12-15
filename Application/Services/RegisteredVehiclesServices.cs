@@ -1076,7 +1076,7 @@ namespace Application.Services
             }
             decimal fuelCapacity = Convert.ToDecimal(entity.FuelCapacity);
 
-            decimal PerformanceOfVehicle = (performanceRequest.CurrentKm - performanceRequest.PreviousKm) / entity.FuelCapacity;
+            decimal PerformanceOfVehicle = (performanceRequest.CurrentKm - performanceRequest.PreviousKm) / entity.FuelCapacity.Value;
 
             PerformanceDto performance = new PerformanceDto();
             performance.PerformanceOfVehicle = PerformanceOfVehicle;
@@ -1105,7 +1105,7 @@ namespace Application.Services
 
                 decimal fuelCapacity = Convert.ToDecimal(entity.FuelCapacity);
 
-                decimal PerformanceOfVehicle = (element.CurrentKm - element.PreviousKm) / entity.FuelCapacity;
+                decimal PerformanceOfVehicle = (element.CurrentKm - element.PreviousKm) / entity.FuelCapacity.Value;
 
                 PerformanceDto performance = new PerformanceDto();
                 performance.PerformanceOfVehicle = PerformanceOfVehicle;

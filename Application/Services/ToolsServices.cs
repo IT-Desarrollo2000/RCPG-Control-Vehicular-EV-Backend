@@ -504,7 +504,7 @@ namespace Application.Services
                             {
                                 double differenceKM = vehicle.InitialKM / vehicle.ServicePeriodKM;
                                 double periodAmountKM = Math.Ceiling((double)vehicle.CurrentKM / vehicle.ServicePeriodKM) * vehicle.ServicePeriodKM;
-                                double KMForNextService = periodAmountKM - vehicle.CurrentKM;
+                                double KMForNextService = periodAmountKM - vehicle.CurrentKM.Value;
                                 if (vehicle.InitialKM == vehicle.CurrentKM)
                                 {
                                     MaintenanceSpotlightDto dtoNope = _mapper.Map<MaintenanceSpotlightDto>(vehicle);
@@ -738,7 +738,7 @@ namespace Application.Services
                             {
                                 double differenceKM = vehicle.InitialKM / vehicle.ServicePeriodKM;
                                 double periodAmountKM = Math.Ceiling((double)vehicle.CurrentKM / vehicle.ServicePeriodKM) * vehicle.ServicePeriodKM;
-                                double KMForNextService = periodAmountKM - vehicle.CurrentKM;
+                                double KMForNextService = periodAmountKM - vehicle.CurrentKM.Value;
                                 if (vehicle.InitialKM == vehicle.CurrentKM)
                                 {
                                     MaintenanceSpotlightDto dtoNope = _mapper.Map<MaintenanceSpotlightDto>(vehicle);

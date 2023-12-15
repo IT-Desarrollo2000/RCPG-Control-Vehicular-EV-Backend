@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Data
 {
     [DbContext(typeof(CVContext))]
-    partial class CVContextModelSnapshot : ModelSnapshot
+    [Migration("20231215213556_Changing-obligatory-byIsa")]
+    partial class ChangingobligatorybyIsa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1176,7 +1179,7 @@ namespace Infrastructure.Persistence.Data
                     b.Property<int?>("CurrentFuel")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CurrentKM")
+                    b.Property<int>("CurrentKM")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("DesiredPerformance")
@@ -1197,7 +1200,7 @@ namespace Infrastructure.Persistence.Data
                     b.Property<decimal?>("IVA")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("InitialKM")
+                    b.Property<int?>("InitialKM")
                         .HasColumnType("int");
 
                     b.Property<string>("InvoiceFilePath")
