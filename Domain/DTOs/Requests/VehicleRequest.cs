@@ -25,10 +25,10 @@ namespace Domain.DTOs.Requests
         public string Brand { get; set; }
         [Required]
         public int ModelYear { get; set; }
+        [Required]
+        public int? FuelCapacity { get; set; }
         //[Required]
-        public int FuelCapacity { get; set; }
-        //[Required]
-        public CurrentFuel CurrentFuel { get; set; }
+        public CurrentFuel? CurrentFuel { get; set; }
         [Required]
         public FuelType FuelType { get; set; }
         [Required]
@@ -41,9 +41,9 @@ namespace Domain.DTOs.Requests
         public OwnershipType OwnershipType { get; set; }
         public string? OwnersName { get; set; }
         //[Required]
-        public decimal DesiredPerformance { get; set; }
+        public decimal? DesiredPerformance { get; set; }
         //[Required]
-        public int CurrentKM { get; set; }
+        public int? CurrentKM { get; set; }
         public string? VehicleObservation { get; set; } = "";
         public string? CarRegistrationPlate { get; set; }
         public string? FuelCardNumber { get; set; }
