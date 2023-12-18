@@ -25,7 +25,7 @@ namespace Domain.DTOs.Requests
         public string Brand { get; set; }
         [Required]
         public int ModelYear { get; set; }
-        [Required]
+        //[Required]
         public int? FuelCapacity { get; set; }
         //[Required]
         public CurrentFuel? CurrentFuel { get; set; }
