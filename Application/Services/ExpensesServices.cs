@@ -601,7 +601,8 @@ namespace Application.Services
                     Vehicle = vehicle,
                     PolicyNumber = request.PolicyNumber,
                     ExpirationDate = request.PolicyExpirationDate,
-                    NameCompany = request.PolicyCompanyName
+                    NameCompany = request.PolicyCompanyName,
+                    PolicyCostValue = request.Cost
                 };
 
                 //Generar el gasto
