@@ -388,6 +388,7 @@ namespace Application.Services
 
                         foreach (var vehicle in vehicles)
                         {
+                            if (vehicle.ServicePeriodKM == 0) continue;
                             var lastServicesQuery = await _unitOfWork.VehicleServiceRepo.Get(filter: s => s.Status == VehicleServiceStatus.FINALIZADO && s.VehicleId == vehicle.Id && s.Vehicle.AssignedDepartments.Any(r => r.Id == item), includeProperties: "Vehicle,Vehicle.AssignedDepartments");
                             var lastServices = lastServicesQuery.LastOrDefault();
 
@@ -622,6 +623,7 @@ namespace Application.Services
                         List<MaintenanceSpotlightDto> dtos = new List<MaintenanceSpotlightDto>();
                         foreach (var vehicle in vehicles)
                         {
+                            if (vehicle.ServicePeriodKM == 0) continue;
                             var lastServicesQuery = await _unitOfWork.VehicleServiceRepo.Get(filter: s => s.Status == VehicleServiceStatus.FINALIZADO && s.VehicleId == vehicle.Id, includeProperties: "Vehicle,Vehicle.AssignedDepartments");
                             var lastServices = lastServicesQuery.LastOrDefault();
 
