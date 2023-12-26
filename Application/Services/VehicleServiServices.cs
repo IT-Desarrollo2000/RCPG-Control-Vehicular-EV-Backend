@@ -172,7 +172,7 @@ namespace Application.Services
                 }
 
                 var entidad = _mapper.Map<VehicleService>(vehicleServiceRequest);
-                entidad.InitialFuel = resultVehicle.CurrentFuel;
+                entidad.InitialCharge = resultVehicle.CurrentChargeKwH;
                 entidad.InitialMileage = resultVehicle.CurrentKM;
                 entidad.Status = Domain.Enums.VehicleServiceStatus.EN_CURSO;
                 entidad.Workshop = workshopExists;
@@ -268,7 +268,7 @@ namespace Application.Services
 
                 if(request.NextServiceKM.HasValue) { result.NextServiceKM = request.NextServiceKM.Value;}
 
-                if(request.FinalFuel.HasValue) { result.FinalFuel= request.FinalFuel.Value; }
+                if(request.FinalCharge.HasValue) { result.FinalCharge= request.FinalCharge.Value; }
 
                 if(request.FinalMileage.HasValue) { result.FinalMileage = request.FinalMileage.Value; }
 
@@ -314,7 +314,7 @@ namespace Application.Services
                     return response;
                 }
 
-                result.FinalFuel = request.FinalFuel;
+                result.FinalCharge = request.FinalCharge;
                 result.FinalMileage = result.FinalMileage;
                 result.Status = Domain.Enums.VehicleServiceStatus.FINALIZADO;
                 result.NextService = request.NextService;
@@ -324,7 +324,7 @@ namespace Application.Services
                 //Actualizar estatus del vehiculo
                 var vehicle = await _unitOfWork.VehicleRepo.GetById(result.VehicleId);
                 vehicle.VehicleStatus = Domain.Enums.VehicleStatus.ACTIVO;
-                vehicle.CurrentFuel = request.FinalFuel;
+                vehicle.CurrentChargeKwH = request.FinalCharge;
                 vehicle.CurrentKM = request.FinalMileage;
 
                 //Verificar que el gasto exista

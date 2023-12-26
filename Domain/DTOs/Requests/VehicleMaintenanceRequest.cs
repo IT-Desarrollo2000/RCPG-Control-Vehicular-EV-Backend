@@ -13,7 +13,7 @@ namespace Domain.DTOs.Requests
 
         public DateTime? MaintenanceDate { get; set; }
         public int? InitialMileage { get; set; }
-        public CurrentFuel? InitialFuel { get; set; }
+        public int? InitialCharge { get; set; }
 
         public int? WorkShopId { get; set; }
         public int? AdminUserId { get; set; }

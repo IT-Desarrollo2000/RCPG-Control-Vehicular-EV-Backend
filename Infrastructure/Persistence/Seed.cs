@@ -13,17 +13,17 @@ namespace Infrastructure.Persistence
         public static async Task SeedUsers(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, IUnitOfWork unitOfWork)
         {
             //SI HAY USUARIOS ACTIVOS EL SEED NO CORRE, COMENTAR CREACION DE SUPER ADMIN PARA CORRER EL SEED CON ROLES EXTRA
-            if (await userManager.Users.AnyAsync(x => x.UserName == "CVAdmin")) return;
+            if (await userManager.Users.AnyAsync(x => x.UserName == "EVAdmin")) return;
 
             var user = new AppUser()
             {
-                UserName = "CVAdmin",
+                UserName = "EVAdmin",
                 Email = "it.desarrollo2000@gmail.com",
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true
             };
 
-            var adminuser1 = await userManager.CreateAsync(user, "CVAdmin2023");
+            var adminuser1 = await userManager.CreateAsync(user, "EVAdmin2024");
 
             if (!await roleManager.RoleExistsAsync("Administrator"))
             {
@@ -45,7 +45,7 @@ namespace Infrastructure.Persistence
                 await roleManager.CreateAsync(new AppRole { Name = "Supervisor" });
             }
 
-            var adminUser = await userManager.FindByNameAsync("CVAdmin");
+            var adminUser = await userManager.FindByNameAsync("EVAdmin");
             await userManager.AddToRoleAsync(adminUser, "Administrator");
 
             //Crear los tipos de gastos por default

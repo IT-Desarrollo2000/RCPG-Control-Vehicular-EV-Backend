@@ -38,10 +38,8 @@ namespace Domain.DTOs.Reponses
         public string? CarRegistrationPlate { get; set; }
         [DisplayName("ESTATUS DEL VEHÍCULO")]
         public VehicleStatus VehicleStatus { get; set; }
-        [DisplayName("TIPO DE COMBUSTIBLE")]
-        public FuelType FuelType { get; set; }
         [DisplayName("CAPACIDAD DE COMBUSTIBLE")]
-        public int FuelCapacity { get; set; }
+        public int ChargeCapacityKwH { get; set; }
         [DisplayName("KILOMETRAJE ACTUAL")]
         public int CurrentKM { get; set; }
         [DisplayName("PERIODO DE SERVICIO (MESES)")]

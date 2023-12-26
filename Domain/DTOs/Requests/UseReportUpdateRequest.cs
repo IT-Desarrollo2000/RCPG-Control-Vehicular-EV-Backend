@@ -22,8 +22,8 @@ namespace Domain.DTOs.Requests
         public double? FinalMileage { get; set; }
         public string? Observations { get; set; }
         public DateTime? UseDate { get; set; }
-        public CurrentFuel? CurrentFuelLoad { get; set; }
-        public CurrentFuel? LastFuelLoad { get; set; }
+        public int? CurrentChargeLoad { get; set; }
+        public int? LastChargeLoad { get; set; }
 
         public List<int> DestinationsToRemove { get; set; }
         public List<DestinationRequest> DestinationsToAdd { get; set; }

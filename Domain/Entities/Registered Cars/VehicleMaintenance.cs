@@ -15,9 +15,9 @@ namespace Domain.Entities.Registered_Cars
         public VehicleServiceStatus Status { get; set; }
 
         public int? InitialMileage { get; set; }
-        public CurrentFuel? InitialFuel { get; set; }
+        public int? InitialCharge { get; set; }
         public int? FinalMileage { get; set; }
-        public CurrentFuel? FinalFuel { get; set; }
+        public int? FinalCharge { get; set; }
 
 
         public int VehicleId { get; set; }

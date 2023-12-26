@@ -45,13 +45,13 @@ namespace Application.Services
             IEnumerable<Vehicle> vehicles = null;
             Expression<Func<Vehicle, bool>> Query = null;
 
-            if (filter.CurrentFuel.HasValue)
+            if (filter.CurrentChargeKwH.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.CurrentFuel == filter.CurrentFuel.Value);
+                    Query = Query.And(p => p.CurrentChargeKwH == filter.CurrentChargeKwH.Value);
                 }
-                else { Query = p => p.CurrentFuel == filter.CurrentFuel.Value; }
+                else { Query = p => p.CurrentChargeKwH == filter.CurrentChargeKwH.Value; }
             }
 
             if (filter.OwnershipType.HasValue)
@@ -70,15 +70,6 @@ namespace Application.Services
                     Query = Query.And(p => p.VehicleType == filter.VehicleType.Value);
                 }
                 else { Query = p => p.VehicleType == filter.VehicleType.Value; }
-            }
-
-            if (filter.FuelType.HasValue)
-            {
-                if (Query != null)
-                {
-                    Query = Query.And(p => p.FuelType == filter.FuelType.Value);
-                }
-                else { Query = p => p.FuelType == filter.FuelType.Value; }
             }
 
             if (Query != null)
@@ -221,9 +212,8 @@ namespace Application.Services
             try
             {
                 var entity = _mapper.Map<Vehicle>(vehicleImportExpertRequest);
-                entity.FuelCapacity = vehicleImportExpertRequest.FuelCapacity ?? 30;
-                entity.CurrentFuel = vehicleImportExpertRequest.CurrentFuel ?? CurrentFuel.MEDIUM;
-                entity.FuelType = vehicleImportExpertRequest.FuelType ?? FuelType.GASOLINA_REGULAR;
+                entity.ChargeCapacityKwH = vehicleImportExpertRequest.ChargeCapacityKwH ?? 0;
+                entity.CurrentChargeKwH = vehicleImportExpertRequest.CurrentChargeKwH ?? 0;
                 entity.ServicePeriodMonths = vehicleImportExpertRequest.ServicePeriodMonths ?? 6;
                 entity.ServicePeriodKM = vehicleImportExpertRequest.ServicePeriodKM ?? 10000;
                 entity.DesiredPerformance = vehicleImportExpertRequest.DesiredPerformance ?? 8;

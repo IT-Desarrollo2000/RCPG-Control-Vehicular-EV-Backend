@@ -13,7 +13,7 @@ namespace Domain.DTOs.Reponses
         public DateTime UseDate { get; set; }
         public int? UserProfileId { get; set; }
         public int? AppUserId { get; set; }
-        public CurrentFuel? CurrentFuelLoad { get; set; }
+        public int? CurrentChargeKwH { get; set; }
         public bool Verification { get; set; }
         public int VehicleId { get; set; }
         public string VehicleName { get; set; }

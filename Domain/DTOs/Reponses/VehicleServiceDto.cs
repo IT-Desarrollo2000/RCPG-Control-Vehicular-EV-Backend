@@ -14,9 +14,9 @@ namespace Domain.DTOs.Reponses
         public DateTime NextService { get; set; }
         public int NextServiceKM { get; set; }
         public int InitialMileage { get; set; }
-        public CurrentFuel InitialFuel { get; set; }
+        public int InitialCharge { get; set; }
         public int FinalMileage { get; set; }
-        public CurrentFuel FinalFuel { get; set; }
+        public int FinalCharge { get; set; }
         public int VehicleId { get; set; }
         public VehiclesDto Vehicle { get; set; }
         public string? Comment { get; set; }
@@ -36,9 +36,9 @@ namespace Domain.DTOs.Reponses
         public DateTime NextService { get; set; }
         public int NextServiceKM { get; set; }
         public int InitialMileage { get; set; }
-        public CurrentFuel InitialFuel { get; set; }
+        public int InitialCharge { get; set; }
         public int FinalMileage { get; set; }
-        public CurrentFuel FinalFuel { get; set; }
+        public int FinalCharge { get; set; }
         public string? Comment { get; set; }
         public int? ExpenseId { get; set; }
         public DateTime? CreatedDate { get; set; }

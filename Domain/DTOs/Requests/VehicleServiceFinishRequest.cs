@@ -19,7 +19,7 @@ namespace Domain.DTOs.Requests
         [Required]
         public int FinalMileage { get; set; }
         [Required]
-        public CurrentFuel FinalFuel { get; set; }
+        public int FinalCharge { get; set; }
         public string? Comment { get; set; }
         public int? ExpenseId { get; set; }
 

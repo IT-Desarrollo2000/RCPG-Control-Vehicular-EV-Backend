@@ -192,9 +192,9 @@ namespace Application.Services
                 Status = result.Status,
                 Comment = result.Comment,
                 InitialMileage = result.InitialMileage,
-                InitialFuel = result.InitialFuel,
+                InitialCharge = result.InitialCharge,
                 FinalMileage = result.FinalMileage,
-                FinalFuel = result.FinalFuel,
+                FinalCharge = result.FinalCharge,
                 VehicleId = result.VehicleId,
                 Vehicle = Vehicle,
                 WorkShopId = result.WorkShopId,
@@ -285,7 +285,7 @@ namespace Application.Services
                 entidad.ApprovedByUserId = request.AdminUserId;
 
                 //Asignar los datos relacionados del vehiculo
-                entidad.InitialFuel = request.InitialFuel ?? vehicleExists.CurrentFuel;
+                entidad.InitialCharge = request.InitialCharge ?? vehicleExists.CurrentChargeKwH;
                 entidad.InitialMileage = request.InitialMileage ?? vehicleExists.CurrentKM;
                 entidad.MaintenanceDate = request.MaintenanceDate ?? DateTime.UtcNow;
 
@@ -336,13 +336,13 @@ namespace Application.Services
 
                 //Mapear Elementos
                 maintenance.Status = VehicleServiceStatus.FINALIZADO;
-                maintenance.FinalFuel = request.FinalFuel;
+                maintenance.FinalCharge = request.FinalChargeKwH;
                 maintenance.FinalMileage = request.FinalMileage;
                 maintenance.Comment = request.Comment ?? "N/A";
 
                 //Asignar los datos relacionados del vehiculo
                 var vehicle = await _unitOfWork.VehicleRepo.GetById(maintenance.VehicleId);
-                vehicle.CurrentFuel = request.FinalFuel;
+                vehicle.CurrentChargeKwH = request.FinalChargeKwH;
                 vehicle.CurrentKM = request.FinalMileage;
                 vehicle.VehicleStatus = VehicleStatus.ACTIVO;
 

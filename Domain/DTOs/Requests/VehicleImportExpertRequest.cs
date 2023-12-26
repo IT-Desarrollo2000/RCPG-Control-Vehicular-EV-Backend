@@ -23,12 +23,8 @@ namespace Domain.DTOs.Requests
         public string Brand { get; set; }
         [Required]
         public int ModelYear { get; set; }
-        
-        public int? FuelCapacity { get; set; }
-      
-        public CurrentFuel? CurrentFuel { get; set; }
-        
-        public FuelType? FuelType { get; set; }
+        public int? ChargeCapacityKwH { get; set; }
+        public int? CurrentChargeKwH { get; set; }
         [Required]
         public VehicleType VehicleType { get; set; }
         

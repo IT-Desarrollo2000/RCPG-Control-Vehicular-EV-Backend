@@ -18,7 +18,7 @@ namespace Domain.DTOs.Requests
         public DateTime? NextService { get; set; }
         public int? NextServiceKM { get; set; }
         public int? FinalMileage { get; set; }
-        public CurrentFuel? FinalFuel { get; set; }
+        public int? FinalCharge { get; set; }
         public string? Comment { get; set; }
         public int? ExpenseId { get; set; }
     }

@@ -696,7 +696,7 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasKey("Id");
 
-                    b.ToTable("AdditionalInformation");
+                    b.ToTable("VehicleAdditionalInfo");
                 });
 
             modelBuilder.Entity("Domain.Entities.Registered_Cars.Checklist", b =>
@@ -1166,6 +1166,9 @@ namespace Infrastructure.Persistence.Data
                     b.Property<string>("CarRegistrationPlate")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ChargeCapacityKwH")
+                        .HasColumnType("int");
+
                     b.Property<string>("Color")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1173,7 +1176,7 @@ namespace Infrastructure.Persistence.Data
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CurrentFuel")
+                    b.Property<int>("CurrentChargeKwH")
                         .HasColumnType("int");
 
                     b.Property<int?>("CurrentKM")
@@ -1185,14 +1188,8 @@ namespace Infrastructure.Persistence.Data
                     b.Property<bool?>("DuplicateKey")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("FuelCapacity")
-                        .HasColumnType("int");
-
                     b.Property<string>("FuelCardNumber")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("FuelType")
-                        .HasColumnType("int");
 
                     b.Property<decimal?>("IVA")
                         .HasColumnType("decimal(18,2)");
@@ -1344,13 +1341,13 @@ namespace Infrastructure.Persistence.Data
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("FinalFuel")
+                    b.Property<int?>("FinalCharge")
                         .HasColumnType("int");
 
                     b.Property<int?>("FinalMileage")
                         .HasColumnType("int");
 
-                    b.Property<int?>("InitialFuel")
+                    b.Property<int?>("InitialCharge")
                         .HasColumnType("int");
 
                     b.Property<int?>("InitialMileage")
@@ -1547,7 +1544,7 @@ namespace Infrastructure.Persistence.Data
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("CurrentFuelLoad")
+                    b.Property<int?>("CurrentChargeLoad")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("FinalMileage")
@@ -1571,7 +1568,7 @@ namespace Infrastructure.Persistence.Data
                     b.Property<double?>("InitialMileage")
                         .HasColumnType("float");
 
-                    b.Property<int?>("LastFuelLoad")
+                    b.Property<int?>("LastChargeLoad")
                         .HasColumnType("int");
 
                     b.Property<string>("Observations")
@@ -1631,13 +1628,13 @@ namespace Infrastructure.Persistence.Data
                     b.Property<int?>("ExpenseId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("FinalFuel")
+                    b.Property<int?>("FinalCharge")
                         .HasColumnType("int");
 
                     b.Property<int?>("FinalMileage")
                         .HasColumnType("int");
 
-                    b.Property<int?>("InitialFuel")
+                    b.Property<int?>("InitialCharge")
                         .HasColumnType("int");
 
                     b.Property<int?>("InitialMileage")
@@ -2159,8 +2156,7 @@ namespace Infrastructure.Persistence.Data
                     b.HasOne("Domain.Entities.Registered_Cars.Policy", "Policy")
                         .WithMany("PhotosOfPolicies")
                         .HasForeignKey("PolicyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Policy");
                 });
@@ -2185,7 +2181,8 @@ namespace Infrastructure.Persistence.Data
 
                     b.HasOne("Domain.Entities.Registered_Cars.Vehicle", "Vehicle")
                         .WithMany("Policies")
-                        .HasForeignKey("VehicleId");
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("CurrentVehicle");
 

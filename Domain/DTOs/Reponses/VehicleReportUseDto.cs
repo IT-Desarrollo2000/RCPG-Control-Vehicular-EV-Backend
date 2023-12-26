@@ -22,8 +22,8 @@ namespace Domain.DTOs.Reponses
         public DateTime UseDate { get; set; }
         public int? UserProfileId { get; set; }
         public int? AppUserId { get; set; }
-        public CurrentFuel? CurrentFuelLoad { get; set; }
-        public CurrentFuel? LastFuelLoad { get; set; }
+        public int? CurrentChargeLoad { get; set; }
+        public int? LastChargeLoad { get; set; }
         public bool Verification { get; set; }
         public int VehicleId { get; set; }
         public string VehicleName { get; set; }
@@ -54,8 +54,8 @@ namespace Domain.DTOs.Reponses
 
         public int Id { get; set; }
         public double? InitialMileage { get; set; }
-        public CurrentFuel? CurrentFuelLoad { get; set; }
-        public CurrentFuel? LastFuelLoad { get; set; }
+        public int? CurrentChargeLoad { get; set; }
+        public int? LastChargeLoad { get; set; }
         public double? FinalMileage { get; set; }
         public ReportUseType StatusReportUse { get; set; }
         public int VehicleId { get; set; }

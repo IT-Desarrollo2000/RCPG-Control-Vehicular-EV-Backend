@@ -669,7 +669,6 @@ namespace Application.Services
             return pagedadditionalinformation;
         } 
         
-
         public async Task<GenericResponse<AdditionalInformationDto>> PostAdditionalInformation( AdditionalInformationRequest additionalInformationRequest)
         {
             GenericResponse<AdditionalInformationDto> response = new GenericResponse<AdditionalInformationDto>();

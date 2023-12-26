@@ -79,13 +79,13 @@ namespace Application.Services
                 else { Query = p => p.IsUtilitary == filter.IsUtilitary.Value; }
             }
 
-            if (filter.FuelCapacity.HasValue)
+            if (filter.ChargeCapacityKwH.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.FuelCapacity == filter.FuelCapacity.Value);
+                    Query = Query.And(p => p.ChargeCapacityKwH == filter.ChargeCapacityKwH.Value);
                 }
-                else { Query = p => p.FuelCapacity == filter.FuelCapacity.Value; }
+                else { Query = p => p.ChargeCapacityKwH == filter.ChargeCapacityKwH.Value; }
             }
 
             if (filter.ServicePeriodMonths.HasValue)
@@ -106,22 +106,13 @@ namespace Application.Services
                 else { Query = p => p.ServicePeriodKM <= filter.ServicePeriodKM.Value; }
             }
 
-            if (filter.CurrentFuel.HasValue)
+            if (filter.CurrentChargeKwH.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.CurrentFuel == filter.CurrentFuel.Value);
+                    Query = Query.And(p => p.CurrentChargeKwH == filter.CurrentChargeKwH.Value);
                 }
-                else { Query = p => p.CurrentFuel == filter.CurrentFuel.Value; }
-            }
-
-            if (filter.FuelType.HasValue)
-            {
-                if (Query != null)
-                {
-                    Query = Query.And(p => p.FuelType == filter.FuelType.Value);
-                }
-                else { Query = p => p.FuelType == filter.FuelType.Value; }
+                else { Query = p => p.CurrentChargeKwH == filter.CurrentChargeKwH.Value; }
             }
 
             if (filter.OwnershipType.HasValue)
@@ -765,19 +756,14 @@ namespace Application.Services
                     veh.ModelYear = request.ModelYear.Value;
                 }
 
-                if (request.FuelCapacity.HasValue)
+                if (request.ChargeCapacityKwH.HasValue)
                 {
-                    veh.FuelCapacity = request.FuelCapacity.Value;
+                    veh.CurrentChargeKwH = request.ChargeCapacityKwH.Value;
                 }
 
-                if (request.CurrentFuel.HasValue)
+                if (request.CurrentChargeKwH.HasValue)
                 {
-                    veh.CurrentFuel = request.CurrentFuel.Value;
-                }
-
-                if (request.FuelType.HasValue)
-                {
-                    veh.FuelType = request.FuelType.Value;
+                    veh.CurrentChargeKwH = request.CurrentChargeKwH.Value;
                 }
 
                 if (request.VehicleType.HasValue)
@@ -1074,9 +1060,9 @@ namespace Application.Services
 
                 return response;
             }
-            decimal fuelCapacity = Convert.ToDecimal(entity.FuelCapacity);
+            decimal fuelCapacity = Convert.ToDecimal(entity.ChargeCapacityKwH);
 
-            decimal PerformanceOfVehicle = (performanceRequest.CurrentKm - performanceRequest.PreviousKm) / entity.FuelCapacity.Value;
+            decimal PerformanceOfVehicle = (performanceRequest.CurrentKm - performanceRequest.PreviousKm) / entity.ChargeCapacityKwH.Value;
 
             PerformanceDto performance = new PerformanceDto();
             performance.PerformanceOfVehicle = PerformanceOfVehicle;
@@ -1103,9 +1089,9 @@ namespace Application.Services
                     return response;
                 }
 
-                decimal fuelCapacity = Convert.ToDecimal(entity.FuelCapacity);
+                decimal fuelCapacity = Convert.ToDecimal(entity.ChargeCapacityKwH);
 
-                decimal PerformanceOfVehicle = (element.CurrentKm - element.PreviousKm) / entity.FuelCapacity.Value;
+                decimal PerformanceOfVehicle = (element.CurrentKm - element.PreviousKm) / entity.ChargeCapacityKwH.Value;
 
                 PerformanceDto performance = new PerformanceDto();
                 performance.PerformanceOfVehicle = PerformanceOfVehicle;

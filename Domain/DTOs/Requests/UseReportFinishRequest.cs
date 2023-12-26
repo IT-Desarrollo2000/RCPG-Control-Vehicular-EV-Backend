@@ -14,7 +14,7 @@ namespace Domain.DTOs.Requests
         public int UseReportId { get; set; }
 
         [Required]
-        public CurrentFuel FinalFuelLoad { get; set; }
+        public int FinalChargeLoad { get; set; }
 
         [Required]
         public double FinalMileage { get; set; }
@@ -37,7 +37,7 @@ namespace Domain.DTOs.Requests
         public int UseReportId { get; set; }
 
         [Required]
-        public CurrentFuel FinalFuelLoad { get; set; }
+        public int FinalChargeLoad { get; set; }
 
         [Required]
         public double FinalMileage { get; set; }

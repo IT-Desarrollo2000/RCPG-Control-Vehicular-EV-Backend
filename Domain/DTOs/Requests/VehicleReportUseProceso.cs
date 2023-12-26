@@ -25,7 +25,7 @@ namespace Domain.DTOs.Requests
 
         public bool? IsVehicleClean { get; set; }
 
-        public CurrentFuel? CurrentFuelLoad { get; set; }
+        public int? CurrentChargeLoad { get; set; }
 
         public double? InitialMileage { get; set; }
         public double? InitialLatitude { get; set; }
@@ -54,7 +54,7 @@ namespace Domain.DTOs.Requests
 
         public bool? IsVehicleClean { get; set; }
 
-        public CurrentFuel? CurrentFuelLoad { get; set; }
+        public int? CurrentChargeLoad { get; set; }
 
         public double? InitialMileage { get; set; }
         public double? InitialLatitude { get; set; }

@@ -38,7 +38,8 @@ namespace Infrastructure
             //Azure blob storage
             services.AddScoped(options =>
             {
-                return new BlobServiceClient(configuration.GetConnectionString("AzureBlobStorage"));
+                //Desarrollo
+                return new BlobServiceClient(configuration.GetConnectionString("DebugStorage"));
             });
 
             services.AddScoped<IBlobStorageService, BlobStorageService>();

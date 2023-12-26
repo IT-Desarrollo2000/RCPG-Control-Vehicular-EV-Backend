@@ -116,13 +116,13 @@ namespace Application.Services
                 else { Query = p => p.AppUserId == filter.AppUserId.Value; }
             }
 
-            if (filter.CurrentFuelLoad.HasValue)
+            if (filter.CurrentChargeLoad.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.CurrentFuelLoad >= filter.CurrentFuelLoad.Value);
+                    Query = Query.And(p => p.CurrentChargeLoad >= filter.CurrentChargeLoad.Value);
                 }
-                else { Query = p => p.CurrentFuelLoad >= filter.CurrentFuelLoad.Value; }
+                else { Query = p => p.CurrentChargeLoad >= filter.CurrentChargeLoad.Value; }
             }
 
             if (filter.Verification.HasValue)
@@ -235,13 +235,13 @@ namespace Application.Services
                 else { Query = p => p.AppUserId == filter.AppUserId.Value; }
             }
 
-            if (filter.CurrentFuelLoad.HasValue)
+            if (filter.CurrentChargeLoad.HasValue)
             {
                 if (Query != null)
                 {
-                    Query = Query.And(p => p.CurrentFuelLoad >= filter.CurrentFuelLoad.Value);
+                    Query = Query.And(p => p.CurrentChargeLoad >= filter.CurrentChargeLoad.Value);
                 }
-                else { Query = p => p.CurrentFuelLoad >= filter.CurrentFuelLoad.Value; }
+                else { Query = p => p.CurrentChargeLoad >= filter.CurrentChargeLoad.Value; }
             }
 
             if (filter.Verification.HasValue)
@@ -382,7 +382,7 @@ namespace Application.Services
                 var newUseReport = _mapper.Map<VehicleReportUse>(request);
                 newUseReport.StatusReportUse = ReportUseType.ViajeNormal;
                 newUseReport.InitialMileage = request.InitialMileage ?? Convert.ToInt32(vehicleExists.CurrentKM);
-                newUseReport.CurrentFuelLoad = request.CurrentFuelLoad ?? vehicleExists.CurrentFuel;
+                newUseReport.CurrentChargeLoad = request.CurrentChargeLoad ?? vehicleExists.CurrentChargeKwH;
                 newUseReport.UserProfile = userExists;
                 newUseReport.UseDate = request.UseDate;
                 newUseReport.Verification = false;
@@ -500,7 +500,7 @@ namespace Application.Services
                 var newUseReport = _mapper.Map<VehicleReportUse>(request);
                 newUseReport.StatusReportUse = ReportUseType.ViajeRapido;
                 newUseReport.InitialMileage = Convert.ToInt32(vehicleExists.CurrentKM);
-                newUseReport.CurrentFuelLoad = vehicleExists.CurrentFuel;
+                newUseReport.CurrentChargeLoad = vehicleExists.CurrentChargeKwH;
                 newUseReport.UserProfile = userExists;
                 newUseReport.UseDate = DateTime.UtcNow;
                 newUseReport.Verification = false;
@@ -598,7 +598,7 @@ namespace Application.Services
                 var newUseReport = _mapper.Map<VehicleReportUse>(request);
                 newUseReport.StatusReportUse = ReportUseType.ViajeNormal;
                 newUseReport.InitialMileage = request.InitialMileage ?? Convert.ToInt32(vehicleExists.CurrentKM);
-                newUseReport.CurrentFuelLoad = request.CurrentFuelLoad ?? vehicleExists.CurrentFuel;
+                newUseReport.CurrentChargeLoad = request.CurrentChargeLoad ?? vehicleExists.CurrentChargeKwH;
                 newUseReport.AppUser = userExists;
                 newUseReport.UseDate = request.UseDate;
                 newUseReport.Verification = true;
@@ -799,7 +799,7 @@ namespace Application.Services
 
                 //Modificar datos del reporte
                 useReport.FinalMileage = request.FinalMileage;
-                useReport.LastFuelLoad = request.FinalFuelLoad;
+                useReport.LastChargeLoad = request.FinalChargeLoad;
                 useReport.StatusReportUse = ReportUseType.Finalizado;
                 useReport.Observations = request.Observations ?? "N/A";
                 useReport.FinishedByAdminId = request.FinishedByAdminId ?? null;
@@ -809,7 +809,7 @@ namespace Application.Services
                 vehicle.VehicleStatus = VehicleStatus.ACTIVO;
                 vehicle.IsClean = request.IsVehicleClean ?? vehicle.IsClean;
                 vehicle.CurrentKM = Convert.ToInt32(request.FinalMileage);
-                vehicle.CurrentFuel = request.FinalFuelLoad;
+                vehicle.CurrentChargeKwH = request.FinalChargeLoad;
 
                 //Guardar los cambios
                 await _unitOfWork.VehicleRepo.Update(vehicle);
@@ -903,7 +903,7 @@ namespace Application.Services
 
                 //Modificar datos del reporte
                 useReport.FinalMileage = request.FinalMileage;
-                useReport.LastFuelLoad = request.FinalFuelLoad;
+                useReport.LastChargeLoad = request.FinalChargeLoad;
                 useReport.StatusReportUse = ReportUseType.Finalizado;
                 useReport.Observations = request.Observations ?? "N/A";
                 useReport.FinishedByAdminId = request.FinishedByAdminId ?? null;
@@ -921,7 +921,7 @@ namespace Application.Services
                 vehicle.VehicleStatus = VehicleStatus.ACTIVO;
                 vehicle.IsClean = request.IsVehicleClean ?? vehicle.IsClean;
                 vehicle.CurrentKM = Convert.ToInt32(request.FinalMileage);
-                vehicle.CurrentFuel = request.FinalFuelLoad;
+                vehicle.CurrentChargeKwH = request.FinalChargeLoad;
 
                 //Guardar los cambios
                 await _unitOfWork.VehicleRepo.Update(vehicle);
@@ -1039,8 +1039,8 @@ namespace Application.Services
                 //Modificar los datos
                 useReport.InitialMileage = request.InitialMileage ?? useReport.InitialMileage;
                 useReport.FinalMileage = request.FinalMileage ?? useReport.FinalMileage;
-                useReport.CurrentFuelLoad = request.CurrentFuelLoad ?? useReport.CurrentFuelLoad;
-                useReport.LastFuelLoad = request.LastFuelLoad ?? useReport.LastFuelLoad;
+                useReport.CurrentChargeLoad = request.CurrentChargeLoad ?? useReport.CurrentChargeLoad;
+                useReport.LastChargeLoad = request.LastChargeLoad ?? useReport.LastChargeLoad;
                 useReport.UseDate = request.UseDate ?? useReport.UseDate;
                 useReport.Observations = request.Observations ?? useReport.Observations;
 
